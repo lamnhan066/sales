@@ -5,6 +5,17 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "sales (Web)",
+            "request": "launch",
+            "type": "dart",
+            "args": [
+                "-d",
+                "chrome",
+                "--web-port",
+                "60330"
+            ]
+        },
+        {
             "name": "sales",
             "request": "launch",
             "type": "dart"
