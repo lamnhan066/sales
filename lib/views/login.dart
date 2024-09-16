@@ -4,14 +4,14 @@ import 'package:language_helper/language_helper.dart';
 import 'package:sales/controllers/login_controller.dart';
 import 'package:sales/di.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class LoginView extends StatefulWidget {
+  const LoginView({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<LoginView> createState() => _LoginViewState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginViewState extends State<LoginView> {
   final loginController = getIt<LoginController>();
 
   String username = '';

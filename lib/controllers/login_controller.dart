@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:boxw/boxw.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -17,7 +18,7 @@ class LoginController {
     final isAutomaticallyLogin = await boxWDialog(
       context: context,
       content: Builder(builder: (context) {
-        Timer(const Duration(seconds: 3), () {
+        Timer(const Duration(seconds: kReleaseMode ? 3 : 0), () {
           if (context.mounted) {
             Navigator.pop(context, true);
           }
