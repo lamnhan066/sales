@@ -29,41 +29,40 @@ class _DashboardViewState extends State<DashboardView> {
 
   @override
   void initState() {
-    () async {
-      database.getTotalProductCount().then((value) {
-        setState(() {
-          totalProductCount = value;
-        });
+    database.getTotalProductCount().then((value) {
+      setState(() {
+        totalProductCount = value;
       });
-      database.getFiveLowStockProducts().then((value) {
-        setState(() {
-          fiveLowStockProducts = value;
-        });
+    });
+    database.getFiveLowStockProducts().then((value) {
+      setState(() {
+        fiveLowStockProducts = value;
       });
-      database.getFiveHighestSalesProducts().then((value) {
-        setState(() {
-          fiveHighestSalesProducts = value;
-        });
+    });
+    database.getFiveHighestSalesProducts().then((value) {
+      setState(() {
+        fiveHighestSalesProducts = value;
       });
-      database.getDailyOrderCount(DateTime.now()).then((value) {
-        setState(() {
-          dailyOrderCount = value;
-        });
+    });
+    database.getDailyOrderCount(DateTime.now()).then((value) {
+      setState(() {
+        dailyOrderCount = value;
       });
-      database.getDailyRevenue(DateTime.now()).then((value) {
-        setState(() {
-          dailyRevenue = value;
-        });
+    });
+    database.getDailyRevenue(DateTime.now()).then((value) {
+      setState(() {
+        dailyRevenue = value;
       });
-      database.getThreeRecentOrders().then((value) {
-        setState(() {
-          threeRecentOrders = value;
-        });
+    });
+    database.getThreeRecentOrders().then((value) {
+      setState(() {
+        threeRecentOrders = value;
       });
-      database.getMonthlyRevenues(DateTime.now()).then((values) {
-        monthlyRevenues = values;
-      });
-    }();
+    });
+    database.getMonthlyRevenues(DateTime.now()).then((values) {
+      monthlyRevenues = values;
+    });
+
     super.initState();
   }
 
