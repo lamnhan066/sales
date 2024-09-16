@@ -29,5 +29,7 @@ abstract interface class Database {
   Future<List<Product>> getFiveHighestSalesProducts();
   Future<int> getDailyOrderCount(DateTime date);
   Future<int> getDailyRevenue(DateTime date);
-  Future<List<Order>> getThreeRecentOrders();
+  Future<List<int>> getMonthlyRevenues(DateTime date);
+  Future<(Map<Order, List<OrderItem>>, Map<Order, List<Product>>)>
+      getThreeRecentOrders();
 }

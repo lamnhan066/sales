@@ -15,3 +15,9 @@ class PasswordCryptor {
     return encryptor.decrypt64(encryptedPassword, iv: iv);
   }
 }
+
+class Utils {
+  static String formatDate(DateTime date) {
+    return '${date.hour}h${date.minute.toString().padLeft(2, '0')} ${date.day}/${date.month}/${date.year}';
+  }
+}
