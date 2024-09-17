@@ -4,6 +4,8 @@ import 'package:sales/models/category.dart';
 import 'package:sales/models/order.dart';
 import 'package:sales/models/order_item.dart';
 import 'package:sales/models/product.dart';
+import 'package:sales/models/product_order_by.dart';
+import 'package:string_normalizer/string_normalizer.dart';
 
 import 'database.dart';
 
@@ -129,23 +131,77 @@ class TestDatabase implements Database {
   }
 
   @override
-  Future<List<Category>> getCategories() async {
+  Future<List<Category>> getAllCategories() async {
     return _categories;
   }
 
   @override
-  Future<List<OrderItem>> getOrderItems() async {
+  Future<List<OrderItem>> getAllOrderItems() async {
     return _orderItems;
   }
 
   @override
-  Future<List<Order>> getOrders() async {
+  Future<List<Order>> getAllOrders() async {
     return _orders;
   }
 
   @override
-  Future<List<Product>> getProducts() async {
-    return _products;
+  Future<int> getTotalProductsCount({
+    ProductOrderBy orderBy = ProductOrderBy.none,
+    String filter = '',
+  }) async {
+    return (await getAllProducts(orderBy: orderBy, filter: filter)).length;
+  }
+
+  @override
+  Future<List<Product>> getProducts({
+    int page = 0,
+    int perpage = 10,
+    ProductOrderBy orderBy = ProductOrderBy.nameInc,
+    String filter = '',
+  }) async {
+    List<Product> result =
+        await getAllProducts(orderBy: orderBy, filter: filter);
+    // Đảm bảo không xảy ra lỗi nếu page là trang cuối và số sản phẩm nhỏ hơn `perpage`.
+    int minPerpage = min(perpage, result.length - page * perpage);
+    return result.sublist(page * perpage, minPerpage + page * perpage);
+  }
+
+  @override
+  Future<List<Product>> getAllProducts({
+    ProductOrderBy orderBy = ProductOrderBy.none,
+    String filter = '',
+  }) async {
+    List<Product> result = [];
+    if (filter != '') {
+      filter = filter.normalize().toLowerCase();
+      for (final product in _products) {
+        if (product.name.nml.toLowerCase().contains(filter)) {
+          result.add(product);
+        }
+      }
+    } else {
+      result.addAll(_products);
+    }
+
+    switch (orderBy) {
+      case ProductOrderBy.none:
+        break;
+      case ProductOrderBy.nameInc:
+        result.sort((a, b) => a.name.compareTo(b.name));
+      case ProductOrderBy.nameDesc:
+        result.sort((a, b) => b.name.compareTo(a.name));
+      case ProductOrderBy.importPriceInc:
+        result.sort((a, b) => a.importPrice.compareTo(b.importPrice));
+      case ProductOrderBy.importPriceDesc:
+        result.sort((a, b) => b.importPrice.compareTo(a.importPrice));
+      case ProductOrderBy.countInc:
+        result.sort((a, b) => a.count.compareTo(b.count));
+      case ProductOrderBy.countDesc:
+        result.sort((a, b) => b.count.compareTo(a.count));
+    }
+
+    return result;
   }
 
   @override
@@ -194,7 +250,7 @@ class TestDatabase implements Database {
 
   @override
   Future<int> getDailyOrderCount(DateTime date) async {
-    final orders = await getOrders();
+    final orders = await getAllOrders();
     final dailyOrders = orders.where(
       (o) =>
           o.date.year == date.year &&
@@ -206,14 +262,14 @@ class TestDatabase implements Database {
 
   @override
   Future<int> getDailyRevenue(DateTime date) async {
-    final orders = await getOrders();
+    final orders = await getAllOrders();
     final dailyOrders = orders.where(
       (o) =>
           o.date.year == date.year &&
           o.date.month == date.month &&
           o.date.day == date.day,
     );
-    final orderItems = await getOrderItems();
+    final orderItems = await getAllOrderItems();
     int revenue = 0;
     for (final item in orderItems) {
       for (final order in dailyOrders) {
@@ -227,8 +283,8 @@ class TestDatabase implements Database {
 
   @override
   Future<List<Product>> getFiveHighestSalesProducts() async {
-    final products = await getProducts();
-    final orderItems = await getOrderItems();
+    final products = await getAllProducts();
+    final orderItems = await getAllOrderItems();
     final orderedProductQuantities = <Product, int>{};
     for (final p in products) {
       for (final orderItem in orderItems) {
@@ -248,7 +304,7 @@ class TestDatabase implements Database {
 
   @override
   Future<List<Product>> getFiveLowStockProducts() async {
-    final products = await getProducts();
+    final products = await getAllProducts();
     final lowStockProducts = products.where((p) => p.count < 5).toList();
     return lowStockProducts.sublist(0, min(lowStockProducts.length, 5));
   }
@@ -256,10 +312,10 @@ class TestDatabase implements Database {
   @override
   Future<(Map<Order, List<OrderItem>>, Map<Order, List<Product>>)>
       getThreeRecentOrders() async {
-    final orders = await getOrders();
+    final orders = await getAllOrders();
     orders.sort((a, b) => a.date.compareTo(b.date));
     final orderItemMap = <Order, List<OrderItem>>{};
-    final orderItems = await getOrderItems();
+    final orderItems = await getAllOrderItems();
     for (final order in orders.sublist(0, min(orders.length, 3))) {
       orderItemMap.putIfAbsent(order, () => []);
       for (final item in orderItems) {
@@ -269,7 +325,7 @@ class TestDatabase implements Database {
       }
     }
     final productMap = <Order, List<Product>>{};
-    final products = await getProducts();
+    final products = await getAllProducts();
     for (final order in orders.sublist(0, min(orders.length, 3))) {
       productMap.putIfAbsent(order, () => []);
       for (final orderItem in orderItemMap[order]!) {
@@ -285,17 +341,17 @@ class TestDatabase implements Database {
 
   @override
   Future<int> getTotalProductCount() async {
-    final products = await getProducts();
+    final products = await getAllProducts();
     return products.length;
   }
 
   @override
   Future<List<int>> getMonthlyRevenues(DateTime date) async {
-    final orders = await getOrders();
+    final orders = await getAllOrders();
     final monthlyOrders = orders.where(
       (o) => o.date.year == date.year && o.date.month == date.month,
     );
-    final orderItems = await getOrderItems();
+    final orderItems = await getAllOrderItems();
     final revenues = <int>[];
 
     final now = DateTime.now();

@@ -495,6 +495,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.2"
+  string_normalizer:
+    dependency: "direct main"
+    description:
+      name: string_normalizer
+      sha256: "9f6763c45ae649f746944acd53ac4795e8243c036a4cb153a0fa72646dbbbfb4"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.1"
   string_scanner:
     dependency: transitive
     description:

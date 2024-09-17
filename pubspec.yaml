@@ -42,6 +42,7 @@ dependencies:
   encrypt: ^5.0.3
   package_info_plus: ^8.0.2
   chart_sparkline: ^1.1.1
+  string_normalizer: ^0.3.1
 
 dev_dependencies:
   flutter_test:

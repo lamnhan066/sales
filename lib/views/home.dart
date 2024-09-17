@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sales/views/dashboard.dart';
+import 'package:sales/views/products.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -11,6 +11,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    return const DashboardView();
+    return const ProductsView();
   }
 }
