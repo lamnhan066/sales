@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:sales/models/category.dart';
 import 'package:sales/models/order.dart';
 import 'package:sales/models/order_item.dart';
@@ -10,29 +11,28 @@ abstract interface class Database {
   Future<void> removeCategory(Category category);
   Future<List<Category>> getAllCategories();
 
+  Future<(int id, String sku)> generateProductIdSku();
   Future<void> addProduct(Product product);
   Future<void> updateProduct(Product product);
   Future<void> removeProduct(Product product);
 
   /// Lấy danh sách sản phẩm.
   ///
-  /// Lấy danh sách sản phẩm ở trang [page] cụ thể, mỗi trang sẽ chứa [perpage]
-  /// sản phẩm.
-  Future<List<Product>> getProducts({
-    int page = 0,
+  /// Lấy danh sách sản phẩm theo điều kiện và trả về (tổng số trang, danh sách sản phẩm trang hiện tại).
+  Future<(int, List<Product>)> getProducts({
+    int page = 1,
     int perpage = 10,
     ProductOrderBy orderBy = ProductOrderBy.none,
-    String filter = '',
-  });
-
-  /// Lấy tổng số sản phẩm.
-  Future<int> getTotalProductsCount({
-    ProductOrderBy orderBy = ProductOrderBy.none,
-    String filter = '',
+    String searchText = '',
+    RangeValues? rangeValues,
   });
 
   /// Lấy toàn bộ danh sách sản phẩm.
-  Future<List<Product>> getAllProducts();
+  Future<List<Product>> getAllProducts({
+    ProductOrderBy orderBy = ProductOrderBy.none,
+    String searchText = '',
+    RangeValues? rangeValues,
+  });
 
   Future<void> addOrder(Order order);
   Future<void> updateOrder(Order order);

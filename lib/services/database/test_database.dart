@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/material.dart';
 import 'package:sales/models/category.dart';
 import 'package:sales/models/order.dart';
 import 'package:sales/models/order_item.dart';
@@ -20,6 +21,7 @@ class TestDatabase implements Database {
       id: 0,
       sku: 'P00000001',
       name: 'Cafe',
+      imagePath: [],
       importPrice: 10000,
       count: 2,
       description: 'Cafe Cafe',
@@ -29,6 +31,7 @@ class TestDatabase implements Database {
       id: 1,
       sku: 'P00000001',
       name: 'Trà',
+      imagePath: [],
       importPrice: 10000,
       count: 20,
       description: 'Trà Trà',
@@ -38,6 +41,7 @@ class TestDatabase implements Database {
       id: 2,
       sku: 'P00000002',
       name: 'Cơm',
+      imagePath: [],
       importPrice: 10000,
       count: 3,
       description: 'Cơm Cơm',
@@ -47,6 +51,7 @@ class TestDatabase implements Database {
       id: 3,
       sku: 'P00000003',
       name: 'Chổi',
+      imagePath: [],
       importPrice: 10000,
       count: 20,
       description: 'Chổi Chổi',
@@ -146,42 +151,49 @@ class TestDatabase implements Database {
   }
 
   @override
-  Future<int> getTotalProductsCount({
-    ProductOrderBy orderBy = ProductOrderBy.none,
-    String filter = '',
-  }) async {
-    return (await getAllProducts(orderBy: orderBy, filter: filter)).length;
+  Future<(int, String)> generateProductIdSku() async {
+    final id = _products.last.id + 1;
+    return (_products.last.id + 1, 'P${id.toString().padLeft(8, '0')}');
   }
 
   @override
-  Future<List<Product>> getProducts({
-    int page = 0,
+  Future<(int, List<Product>)> getProducts({
+    int page = 1,
     int perpage = 10,
     ProductOrderBy orderBy = ProductOrderBy.nameInc,
-    String filter = '',
+    String searchText = '',
+    RangeValues? rangeValues,
   }) async {
-    List<Product> result =
-        await getAllProducts(orderBy: orderBy, filter: filter);
-    // Đảm bảo không xảy ra lỗi nếu page là trang cuối và số sản phẩm nhỏ hơn `perpage`.
-    int minPerpage = min(perpage, result.length - page * perpage);
-    return result.sublist(page * perpage, minPerpage + page * perpage);
+    List<Product> result = await getAllProducts(
+      orderBy: orderBy,
+      searchText: searchText,
+      rangeValues: rangeValues,
+    );
+    return (
+      result.length,
+      result.skip((page - 1) * perpage).take(perpage).toList()
+    );
   }
 
   @override
   Future<List<Product>> getAllProducts({
     ProductOrderBy orderBy = ProductOrderBy.none,
-    String filter = '',
+    String searchText = '',
+    RangeValues? rangeValues,
   }) async {
-    List<Product> result = [];
-    if (filter != '') {
-      filter = filter.normalize().toLowerCase();
-      for (final product in _products) {
-        if (product.name.nml.toLowerCase().contains(filter)) {
-          result.add(product);
-        }
-      }
-    } else {
-      result.addAll(_products);
+    // Tạo một bản sao chép từ `_products`.
+    List<Product> result = [..._products.where((e) => e.deleted == false)];
+
+    if (rangeValues != null) {
+      result.removeWhere((product) =>
+          product.importPrice < rangeValues.start ||
+          product.importPrice > rangeValues.end);
+    }
+
+    if (searchText != '') {
+      // Xoá dấu.
+      searchText = searchText.normalize().toLowerCase();
+      result.removeWhere((p) => !p.name.nml.toLowerCase().contains(searchText));
     }
 
     switch (orderBy) {
@@ -206,22 +218,26 @@ class TestDatabase implements Database {
 
   @override
   Future<void> removeCategory(Category category) async {
-    _categories.remove(category);
+    category = category.copyWith(deleted: true);
+    updateCategory(category);
   }
 
   @override
   Future<void> removeOrder(Order order) async {
-    _orders.remove(order);
+    order = order.copyWith(deleted: true);
+    updateOrder(order);
   }
 
   @override
   Future<void> removeOrderItem(OrderItem orderItem) async {
-    _orderItems.remove(orderItem);
+    orderItem = orderItem.copyWith(deleted: true);
+    updateOrderItem(orderItem);
   }
 
   @override
   Future<void> removeProduct(Product product) async {
-    _products.remove(product);
+    product = product.copyWith(deleted: true);
+    updateProduct(product);
   }
 
   @override
