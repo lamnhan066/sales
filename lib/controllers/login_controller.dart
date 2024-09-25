@@ -11,6 +11,27 @@ import 'package:sales/views/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginController {
+  String username = '';
+  String password = '';
+  bool rememberMe = true;
+  String version = '1.0.0';
+  String error = '';
+
+  void initial(BuildContext context, Function setState) async {
+    final v = await getVersion();
+    setState(() {
+      version = v;
+    });
+    final remembered = readRememberedInformation();
+    setState(() {
+      username = remembered.$1;
+      password = remembered.$2;
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      checkAndLoginAutomatically(context);
+    });
+  }
+
   void checkAndLoginAutomatically(BuildContext context) async {
     final prefs = getIt<SharedPreferences>();
     if (!prefs.containsKey('Login.Username')) return;
@@ -51,8 +72,9 @@ class LoginController {
     BuildContext context,
     username,
     String password,
-    bool rememberMe,
-  ) async {
+    bool rememberMe, [
+    Function? setState,
+  ]) async {
     if (rememberMe) {
       _saveRememberedPassword(username, password);
     } else {
@@ -63,6 +85,12 @@ class LoginController {
         context,
         MaterialPageRoute(builder: (context) => const HomeScreen()),
       );
+    } else {
+      if (setState != null) {
+        setState(() {
+          error = 'Tên tài khoản hoặc mật khẩu không đúng'.tr;
+        });
+      }
     }
   }
 
@@ -139,5 +167,62 @@ class LoginController {
     final prefs = getIt<SharedPreferences>();
     prefs.remove('Login.Username');
     prefs.remove('Login.Password');
+  }
+
+  void onUsernameChanged(
+    BuildContext context,
+    void Function(VoidCallback fn) setState,
+    String username,
+  ) {
+    this.username = username;
+
+    if (error.isNotEmpty) {
+      setState(() {
+        error = '';
+      });
+    }
+  }
+
+  void onPasswordChanged(
+    BuildContext context,
+    void Function(VoidCallback fn) setState,
+    String pw,
+  ) {
+    password = pw;
+
+    if (error.isNotEmpty) {
+      setState(() {
+        error = '';
+      });
+    }
+  }
+
+  void onRememberCheckboxChanged(
+    BuildContext context,
+    void Function(VoidCallback fn) setState, [
+    bool? value,
+  ]) {
+    if (value == null) {
+      setState(() {
+        rememberMe = !rememberMe;
+      });
+    } else {
+      setState(() {
+        rememberMe = value;
+      });
+    }
+  }
+
+  void onLoginButtonTapped(
+    BuildContext context,
+    void Function(VoidCallback fn) setState,
+  ) {
+    login(
+      context,
+      username,
+      password,
+      rememberMe,
+      setState,
+    );
   }
 }

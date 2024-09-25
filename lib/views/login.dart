@@ -12,32 +12,12 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
-  final loginController = getIt<LoginController>();
-
-  String username = '';
-  String password = '';
-  bool rememberMe = true;
-  String version = '1.0.0';
+  final controller = getIt<LoginController>();
 
   @override
   void initState() {
-    getVersion();
-    final remembered = loginController.readRememberedInformation();
-    setState(() {
-      username = remembered.$1;
-      password = remembered.$2;
-    });
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      loginController.checkAndLoginAutomatically(context);
-    });
+    controller.initial(context, setState);
     super.initState();
-  }
-
-  void getVersion() async {
-    final v = await loginController.getVersion();
-    setState(() {
-      version = v;
-    });
   }
 
   @override
@@ -66,38 +46,41 @@ class _LoginViewState extends State<LoginView> {
                 BoxWInput(
                   title: 'Tên tài khoản'.tr,
                   textAlign: TextAlign.left,
-                  initial: username,
-                  onChanged: (un) {
-                    username = un;
+                  initial: controller.username,
+                  onChanged: (username) {
+                    controller.onUsernameChanged(context, setState, username);
                   },
                 ),
                 BoxWInput(
                   title: 'Mật khẩu'.tr,
                   textAlign: TextAlign.left,
-                  initial: password,
+                  initial: controller.password,
                   obscureText: true,
                   onChanged: (pw) {
-                    password = pw;
+                    controller.onPasswordChanged(context, setState, pw);
                   },
                 ),
+                if (controller.error.isNotEmpty)
+                  Text(
+                    controller.error,
+                    style: const TextStyle(color: Colors.redAccent),
+                  ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: GestureDetector(
                     onTap: () {
-                      setState(() {
-                        rememberMe = !rememberMe;
-                      });
+                      controller.onRememberCheckboxChanged(context, setState);
                     },
                     child: Row(
                       children: [
                         Checkbox(
-                          value: rememberMe,
+                          value: controller.rememberMe,
                           onChanged: (value) {
-                            if (value != null) {
-                              setState(() {
-                                rememberMe = value;
-                              });
-                            }
+                            controller.onRememberCheckboxChanged(
+                              context,
+                              setState,
+                              value,
+                            );
                           },
                         ),
                         Text('Nhớ thông tin của tôi'.tr)
@@ -111,12 +94,7 @@ class _LoginViewState extends State<LoginView> {
                     width: double.infinity,
                     child: FilledButton(
                       onPressed: () {
-                        loginController.login(
-                          context,
-                          username,
-                          password,
-                          rememberMe,
-                        );
+                        controller.onLoginButtonTapped(context, setState);
                       },
                       child: Text('Đăng Nhập'.tr),
                     ),
@@ -128,7 +106,7 @@ class _LoginViewState extends State<LoginView> {
                   children: [
                     TextButton(
                       onPressed: () {
-                        loginController.serverConfiguration(context);
+                        controller.serverConfiguration(context);
                       },
                       child: const Row(
                         children: [
@@ -143,7 +121,7 @@ class _LoginViewState extends State<LoginView> {
                     Padding(
                       padding: const EdgeInsets.only(right: 8),
                       child: Text(
-                        'Phiên bản: $version',
+                        'Phiên bản: ${controller.version}',
                         style: const TextStyle(color: Colors.grey),
                       ),
                     ),

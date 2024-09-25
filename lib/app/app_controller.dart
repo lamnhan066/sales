@@ -12,7 +12,7 @@ class AppController {
 
   Widget getLastView() {
     return switch (
-        ViewsModel.values.byName(prefs.getString('LastView') ?? 'dashboard')) {
+        ViewsModel.values.byName(prefs.getString('LastView') ?? 'products')) {
       ViewsModel.dashboard => const DashboardView(),
       // TODO: Bổ sung màn hình Orders
       ViewsModel.orders => throw UnimplementedError(),

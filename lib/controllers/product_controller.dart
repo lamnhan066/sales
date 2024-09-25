@@ -105,10 +105,10 @@ class ProductController {
     final data = await Database.loadDataFromExcel();
     if (!context.mounted) return;
 
-    final categories = data.$1;
-    final products = data.$2;
+    final tempCategories = data.$1;
+    final tempProducts = data.$2;
 
-    if (products.isEmpty) {
+    if (tempProducts.isEmpty) {
       boxWAlert(
         context: context,
         title: 'Nhập dữ liệu'.tr,
@@ -122,33 +122,32 @@ class ProductController {
         content: 'Có @{count} sản phẩm trong dữ liệu cần nhập. '
                 'Dữ liệu mới sẽ thay thế dữ liệu cũ và không thể hoàn tác.\n\n'
                 'Bạn có muốn tiếp tục không?'
-            .trP({'count': products.length}),
+            .trP({'count': tempProducts.length}),
         confirmText: 'Đồng ý'.tr,
         cancelText: 'Huỷ'.tr,
       );
 
       if (confirm) {
-        for (final category in categories) {
-          await database.addCategory(category);
-        }
-        for (final product in products) {
-          await database.addProduct(product);
-        }
-      }
+        await database.clear();
 
-      database
-          .getProducts(
-        page: page,
-        perpage: perpage,
-        searchText: searchText,
-        orderBy: orderBy,
-        rangeValues: rangeValues,
-      )
-          .then((values) {
-        setState(() {
-          _updatePagesCountAndList(values.$1, values.$2);
+        await database.saveAllCategories(tempCategories);
+        await database.saveAllProducts(tempProducts);
+
+        categories.addAll(tempCategories);
+        database
+            .getProducts(
+          page: page,
+          perpage: perpage,
+          searchText: searchText,
+          orderBy: orderBy,
+          rangeValues: rangeValues,
+        )
+            .then((values) {
+          setState(() {
+            _updatePagesCountAndList(values.$1, values.$2);
+          });
         });
-      });
+      }
     }
   }
 

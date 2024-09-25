@@ -47,6 +47,7 @@ abstract interface class Database {
   }
 
   Future<void> initial();
+  Future<void> clear();
 
   Future<void> addCategory(Category category);
   Future<void> updateCategory(Category category);

@@ -49,6 +49,11 @@ class Category {
 
   factory Category.fromJson(String source) =>
       Category.fromMap(json.decode(source));
+
+  @override
+  String toString() {
+    return 'Category(id: $id, name: $name, description: $description, deleted: $deleted)';
+  }
 }
 
 extension CategoryExtension on List<Category> {

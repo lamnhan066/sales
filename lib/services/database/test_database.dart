@@ -124,6 +124,14 @@ class TestDatabase implements Database {
   }
 
   @override
+  Future<void> clear() async {
+    _products.clear();
+    _categories.clear();
+    _orders.clear();
+    _orderItems.clear();
+  }
+
+  @override
   Future<void> addCategory(Category category) async {
     _categories.add(category);
   }

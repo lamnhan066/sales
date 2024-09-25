@@ -21,10 +21,19 @@ class LocalDatabase implements Database {
 
   @override
   Future<void> initial() async {
+    await clear();
+
     _categories.addAll(await getAllCategories());
     _products.addAll(await getAllProducts());
     _orderItems.addAll(await getAllOrderItems());
     _orders.addAll(await getAllOrders());
+  }
+
+  Future<void> clear() async {
+    await _pref.remove('Categories');
+    await _pref.remove('Products');
+    await _pref.remove('Orders');
+    await _pref.remove('OrderItems');
   }
 
   @override
