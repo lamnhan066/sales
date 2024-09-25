@@ -1,16 +1,19 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:sales/di.dart';
 import 'package:sales/models/category.dart';
 import 'package:sales/models/order.dart';
 import 'package:sales/models/order_item.dart';
 import 'package:sales/models/product.dart';
 import 'package:sales/models/product_order_by.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:string_normalizer/string_normalizer.dart';
 
 import 'database.dart';
 
-class TestDatabase implements Database {
+class LocalDatabase implements Database {
+  final _pref = getIt<SharedPreferences>();
   final _categories = <Category>[];
   final _products = <Product>[];
   final _orderItems = <OrderItem>[];
@@ -18,144 +21,78 @@ class TestDatabase implements Database {
 
   @override
   Future<void> initial() async {
-    _categories.addAll([
-      Category(id: 0, name: 'Thức uống', description: 'Thức uống'),
-      Category(id: 1, name: 'Thức ăn', description: 'Thức ăn'),
-      Category(id: 2, name: 'Gia dụng', description: 'Gia dụng'),
-    ]);
-    _products.addAll([
-      Product(
-        id: 0,
-        sku: 'P00000001',
-        name: 'Cafe',
-        imagePath: [],
-        importPrice: 10000,
-        count: 2,
-        description: 'Cafe Cafe',
-        categoryId: 0,
-      ),
-      Product(
-        id: 1,
-        sku: 'P00000001',
-        name: 'Trà',
-        imagePath: [],
-        importPrice: 10000,
-        count: 20,
-        description: 'Trà Trà',
-        categoryId: 0,
-      ),
-      Product(
-        id: 2,
-        sku: 'P00000002',
-        name: 'Cơm',
-        imagePath: [],
-        importPrice: 10000,
-        count: 3,
-        description: 'Cơm Cơm',
-        categoryId: 1,
-      ),
-      Product(
-        id: 3,
-        sku: 'P00000003',
-        name: 'Chổi',
-        imagePath: [],
-        importPrice: 10000,
-        count: 20,
-        description: 'Chổi Chổi',
-        categoryId: 2,
-      ),
-    ]);
-    _orderItems.addAll([
-      OrderItem(
-        id: 0,
-        quantity: 10,
-        unitSalePrice: 10000,
-        totalPrice: 100000,
-        productId: 0,
-        orderId: 0,
-      ),
-      OrderItem(
-        id: 1,
-        quantity: 10,
-        unitSalePrice: 10000,
-        totalPrice: 100000,
-        productId: 1,
-        orderId: 0,
-      ),
-      OrderItem(
-        id: 2,
-        quantity: 10,
-        unitSalePrice: 10000,
-        totalPrice: 100000,
-        productId: 2,
-        orderId: 0,
-      ),
-      OrderItem(
-        id: 3,
-        quantity: 10,
-        unitSalePrice: 10000,
-        totalPrice: 100000,
-        productId: 1,
-        orderId: 1,
-      ),
-      OrderItem(
-        id: 4,
-        quantity: 10,
-        unitSalePrice: 10000,
-        totalPrice: 100000,
-        productId: 2,
-        orderId: 1,
-      ),
-    ]);
-    _orders.addAll([
-      Order(
-        id: 0,
-        status: OrderStatus.paid,
-        date: DateTime.now(),
-        deleted: false,
-      ),
-      Order(
-        id: 1,
-        status: OrderStatus.paid,
-        date: DateTime.now().subtract(const Duration(days: 1)),
-        deleted: false,
-      ),
-    ]);
+    _categories.addAll(await getAllCategories());
+    _products.addAll(await getAllProducts());
+    _orderItems.addAll(await getAllOrderItems());
+    _orders.addAll(await getAllOrders());
   }
 
   @override
   Future<void> addCategory(Category category) async {
+    final categories = await getAllCategories();
+    categories.add(category);
+    await saveAllCategories(categories);
     _categories.add(category);
   }
 
   @override
   Future<void> addOrder(Order order) async {
+    final orders = await getAllOrders();
+    orders.add(order);
+    await saveAllOrders(orders);
     _orders.add(order);
   }
 
   @override
   Future<void> addOrderItem(OrderItem orderItem) async {
+    final orderItems = await getAllOrderItems();
+    orderItems.add(orderItem);
+    await saveAllOrderItems(orderItems);
     _orderItems.add(orderItem);
   }
 
   @override
   Future<void> addProduct(Product product) async {
+    final products = await getAllProducts();
+    products.add(product);
+    await saveAllProducts(products);
     _products.add(product);
   }
 
   @override
   Future<List<Category>> getAllCategories() async {
-    return _categories;
+    final categoriesJson = _pref.getStringList('Categories') ?? [];
+    final categories = <Category>[];
+    if (categoriesJson.isNotEmpty) {
+      for (final category in categoriesJson) {
+        categories.add(Category.fromJson(category));
+      }
+    }
+    return categories;
   }
 
   @override
   Future<List<OrderItem>> getAllOrderItems() async {
-    return _orderItems;
+    final orderItems = <OrderItem>[];
+    final orderItemJson = _pref.getStringList('OrderItems') ?? [];
+    if (orderItemJson.isNotEmpty) {
+      for (final orderItem in orderItemJson) {
+        orderItems.add(OrderItem.fromJson(orderItem));
+      }
+    }
+    return orderItems;
   }
 
   @override
   Future<List<Order>> getAllOrders() async {
-    return _orders;
+    final orders = <Order>[];
+    final ordersJson = _pref.getStringList('Orders') ?? [];
+    if (ordersJson.isNotEmpty) {
+      for (final order in ordersJson) {
+        orders.add(Order.fromJson(order));
+      }
+    }
+    return orders;
   }
 
   @override
@@ -189,8 +126,17 @@ class TestDatabase implements Database {
     String searchText = '',
     RangeValues? rangeValues,
   }) async {
-    // Tạo một bản sao chép từ `_products`.
-    List<Product> result = [..._products.where((e) => e.deleted == false)];
+    List<Product> result = [];
+
+    final productsJson = _pref.getStringList('Products') ?? [];
+    if (productsJson.isNotEmpty) {
+      for (final productJson in productsJson) {
+        final product = Product.fromJson(productJson);
+        if (!product.deleted) {
+          result.add(product);
+        }
+      }
+    }
 
     if (rangeValues != null) {
       result.removeWhere((product) =>
@@ -400,25 +346,24 @@ class TestDatabase implements Database {
 
   @override
   Future<void> saveAllCategories(List<Category> categories) async {
-    _categories.clear();
-    _categories.addAll(categories);
+    await _pref.setStringList(
+        'Categories', categories.map((e) => e.toJson()).toList());
   }
 
   @override
   Future<void> saveAllOrderItems(List<OrderItem> orderItems) async {
-    _orderItems.clear();
-    _orderItems.addAll(orderItems);
+    await _pref.setStringList(
+        'OrderItems', orderItems.map((e) => e.toJson()).toList());
   }
 
   @override
   Future<void> saveAllOrders(List<Order> orders) async {
-    _orders.clear();
-    _orders.addAll(orders);
+    await _pref.setStringList('Orders', orders.map((e) => e.toJson()).toList());
   }
 
   @override
   Future<void> saveAllProducts(List<Product> products) async {
-    _products.clear();
-    _products.addAll(products);
+    await _pref.setStringList(
+        'Products', products.map((e) => e.toJson()).toList());
   }
 }

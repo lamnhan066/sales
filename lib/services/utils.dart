@@ -1,4 +1,8 @@
+import 'dart:typed_data';
+
 import 'package:encrypt/encrypt.dart' as e;
+import 'package:excel/excel.dart';
+import 'package:file_picker/file_picker.dart';
 
 class PasswordCryptor {
   static String encrypt(String username, String password) {
@@ -19,5 +23,25 @@ class PasswordCryptor {
 class Utils {
   static String formatDate(DateTime date) {
     return '${date.hour}h${date.minute.toString().padLeft(2, '0')} ${date.day}/${date.month}/${date.year}';
+  }
+
+  static Future<Excel?> getExcelFile() async {
+    try {
+      final FilePickerResult? file = await FilePicker.platform.pickFiles(
+        withData: true,
+        type: FileType.custom,
+        allowedExtensions: ['xlsx'],
+      );
+
+      if (file != null && file.files.isNotEmpty) {
+        final Uint8List bytes = file.files.first.bytes!;
+
+        return Excel.decodeBytes(bytes);
+      } else {
+        return null;
+      }
+    } on Exception {
+      rethrow;
+    }
   }
 }

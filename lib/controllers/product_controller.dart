@@ -61,7 +61,7 @@ class ProductController {
         onChanged: (value) {
           final p = int.tryParse(value);
           if (p != null) {
-            tempPage = page;
+            tempPage = p;
           }
         },
       ),
@@ -98,6 +98,57 @@ class ProductController {
     if (result == true && tempPage != page) {
       page = tempPage;
       _changePage(setState, page);
+    }
+  }
+
+  void loadDataFromExcel(BuildContext context, Function setState) async {
+    final data = await Database.loadDataFromExcel();
+    if (!context.mounted) return;
+
+    final categories = data.$1;
+    final products = data.$2;
+
+    if (products.isEmpty) {
+      boxWAlert(
+        context: context,
+        title: 'Nhập dữ liệu'.tr,
+        content: 'Dữ liệu bạn đang chọn trống!'.tr,
+        buttonText: 'Ok'.tr,
+      );
+    } else {
+      final confirm = await boxWConfirm(
+        context: context,
+        title: 'Nhập dữ liệu'.tr,
+        content: 'Có @{count} sản phẩm trong dữ liệu cần nhập. '
+                'Dữ liệu mới sẽ thay thế dữ liệu cũ và không thể hoàn tác.\n\n'
+                'Bạn có muốn tiếp tục không?'
+            .trP({'count': products.length}),
+        confirmText: 'Đồng ý'.tr,
+        cancelText: 'Huỷ'.tr,
+      );
+
+      if (confirm) {
+        for (final category in categories) {
+          await database.addCategory(category);
+        }
+        for (final product in products) {
+          await database.addProduct(product);
+        }
+      }
+
+      database
+          .getProducts(
+        page: page,
+        perpage: perpage,
+        searchText: searchText,
+        orderBy: orderBy,
+        rangeValues: rangeValues,
+      )
+          .then((values) {
+        setState(() {
+          _updatePagesCountAndList(values.$1, values.$2);
+        });
+      });
     }
   }
 
@@ -202,6 +253,14 @@ class ProductController {
         });
       });
     }
+  }
+
+  void infoProduct(
+    BuildContext context,
+    void Function(VoidCallback fn) setState,
+    Product p,
+  ) async {
+    await _infoProductDialog(context, p);
   }
 
   void copyProduct(
@@ -452,6 +511,16 @@ class ProductController {
     }
   }
 
+  Future<Product?> _infoProductDialog(BuildContext context, Product product) {
+    return _productDialog(
+      context: context,
+      title: 'Thêm Sản Phẩm'.tr,
+      product: product,
+      generateIdSku: true,
+      readOnly: true,
+    );
+  }
+
   Future<Product?> _addProductDialog(BuildContext context) {
     return _productDialog(
       context: context,
@@ -479,11 +548,13 @@ class ProductController {
     );
   }
 
+  // TODO: Thêm phần hiển thị hình ảnh và có thêm hình ảnh
   Future<Product?> _productDialog({
     required BuildContext context,
     required String title,
     required Product? product,
     required bool generateIdSku,
+    bool readOnly = false,
   }) async {
     Product tempProduct = product ??
         Product(
@@ -505,86 +576,97 @@ class ProductController {
       final result = await boxWDialog(
         context: context,
         title: title,
-        content: Column(
-          children: [
-            BoxWInput(
-              title: 'Mã sản phẩm'.tr,
-              initial: tempProduct.sku,
-              onChanged: (value) {
-                tempProduct = tempProduct.copyWith(sku: value);
-              },
-            ),
-            BoxWInput(
-              title: 'Tên sản phẩm'.tr,
-              initial: tempProduct.name,
-              onChanged: (value) {
-                tempProduct = tempProduct.copyWith(name: value);
-              },
-            ),
-            BoxWInput(
-              title: 'Mô tả',
-              initial: tempProduct.description,
-              onChanged: (value) {
-                tempProduct = tempProduct.copyWith(description: value);
-              },
-            ),
-            BoxWInput(
-              title: 'Giá nhập',
-              initial: tempProduct.importPrice.toString(),
-              validator: (value) {
-                if (value != null) {
-                  final n = int.tryParse(value);
-                  if (n == null) {
-                    return 'Vui lòng chỉ nhập số'.tr;
+        content: SingleChildScrollView(
+          child: Column(
+            children: [
+              BoxWInput(
+                title: 'Mã sản phẩm'.tr,
+                initial: tempProduct.sku,
+                readOnly: readOnly,
+                onChanged: (value) {
+                  tempProduct = tempProduct.copyWith(sku: value);
+                },
+              ),
+              BoxWInput(
+                title: 'Tên sản phẩm'.tr,
+                initial: tempProduct.name,
+                readOnly: readOnly,
+                onChanged: (value) {
+                  tempProduct = tempProduct.copyWith(name: value);
+                },
+              ),
+              BoxWInput(
+                title: 'Mô tả',
+                initial: tempProduct.description,
+                readOnly: readOnly,
+                onChanged: (value) {
+                  tempProduct = tempProduct.copyWith(description: value);
+                },
+              ),
+              BoxWInput(
+                title: 'Giá nhập',
+                initial: tempProduct.importPrice.toString(),
+                readOnly: readOnly,
+                validator: (value) {
+                  if (value != null) {
+                    final n = int.tryParse(value);
+                    if (n == null) {
+                      return 'Vui lòng chỉ nhập số'.tr;
+                    }
+                    return null;
                   }
                   return null;
-                }
-                return null;
-              },
-              onChanged: (value) {
-                final importPrice = int.tryParse(value);
-                if (importPrice != null) {
-                  tempProduct = tempProduct.copyWith(importPrice: importPrice);
-                } else {
-                  // TODO: Báo lỗi khi không thể parse giá
-                }
-              },
-            ),
-            BoxWInput(
-              title: 'Số lượng',
-              initial: tempProduct.count.toString(),
-              validator: (value) {
-                if (value != null) {
-                  final n = int.tryParse(value);
-                  if (n == null) {
-                    return 'Vui lòng chỉ nhập số'.tr;
+                },
+                onChanged: (value) {
+                  final importPrice = int.tryParse(value);
+                  if (importPrice != null) {
+                    tempProduct =
+                        tempProduct.copyWith(importPrice: importPrice);
+                  } else {
+                    // TODO: Báo lỗi khi không thể parse giá
+                  }
+                },
+              ),
+              BoxWInput(
+                title: 'Số lượng',
+                initial: tempProduct.count.toString(),
+                readOnly: readOnly,
+                validator: (value) {
+                  if (value != null) {
+                    final n = int.tryParse(value);
+                    if (n == null) {
+                      return 'Vui lòng chỉ nhập số'.tr;
+                    }
+                    return null;
                   }
                   return null;
-                }
-                return null;
-              },
-              onChanged: (value) {
-                final count = int.tryParse(value);
-                if (count != null) {
-                  tempProduct = tempProduct.copyWith(count: count);
-                } else {
-                  // TODO: Báo lỗi khi không thể parse số lượng
-                }
-              },
-            ),
-            BoxWDropdown(
-              items: categories
-                  .map((e) => DropdownMenuItem(
-                        value: e.id,
-                        child: Text(e.name),
-                      ))
-                  .toList(),
-              value: tempProduct.categoryId,
-              onChanged: (value) {
-                tempProduct = tempProduct.copyWith(categoryId: value);
-              },
-            ),
-          ],
+                },
+                onChanged: (value) {
+                  final count = int.tryParse(value);
+                  if (count != null) {
+                    tempProduct = tempProduct.copyWith(count: count);
+                  } else {
+                    // TODO: Báo lỗi khi không thể parse số lượng
+                  }
+                },
+              ),
+              BoxWDropdown(
+                title: 'Loại'.tr,
+                items: categories
+                    .map((e) => DropdownMenuItem(
+                          value: e.id,
+                          child: Text(e.name),
+                        ))
+                    .toList(),
+                value: tempProduct.categoryId,
+                onChanged: readOnly
+                    ? null
+                    : (int? value) {
+                        tempProduct = tempProduct.copyWith(categoryId: value);
+                      },
+              ),
+            ],
+          ),
         ),
         buttons: (context) {
           return [
@@ -624,7 +706,7 @@ class ProductController {
   void _updatePagesCountAndList(int totalProductsCount, List<Product> p) {
     products = p;
 
-    totalPage = (totalProductsCount / perpage).round();
+    totalPage = (totalProductsCount / perpage).floor();
     // Nếu tồn tại số dư thì số trang được cộng thêm 1 vì tôn tại trang có
     // ít hơn `_perpage` sản phẩm.
     if (totalProductsCount % perpage != 0) {

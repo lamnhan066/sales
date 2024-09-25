@@ -43,6 +43,13 @@ class _ProductsViewState extends State<ProductsView> {
                 ),
                 Row(
                   children: [
+                    IconButton(
+                      color: Theme.of(context).primaryColor,
+                      onPressed: () {
+                        controller.loadDataFromExcel(context, setState);
+                      },
+                      icon: const Icon(Icons.upload_rounded),
+                    ),
                     SizedBox(
                       width: 200,
                       child: BoxWInput(
@@ -72,121 +79,145 @@ class _ProductsViewState extends State<ProductsView> {
               ],
             ),
           ),
-          Table(
-            children: [
-              const TableRow(children: [
-                TableCell(
-                  child: Text(
-                    'STT',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-                TableCell(
-                  child: Text(
-                    'ID',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-                TableCell(
-                  child: Text('Tên',
+          Expanded(
+            child: SizedBox(
+              width: double.infinity,
+              child: DataTable(
+                dataRowMinHeight: 68,
+                dataRowMaxHeight: 68,
+                columns: [
+                  const DataColumn(
+                    label: Text(
+                      'STT',
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                ),
-                TableCell(
-                  child: Text('Giá nhập',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                ),
-                TableCell(
-                  child: Text('Loại',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                ),
-                TableCell(
-                  child: Text(
-                    'Số lượng',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                   ),
-                ),
-                TableCell(
-                  child: Text(
-                    'Hành động',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                  const DataColumn(
+                    label: Text(
+                      'ID',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                   ),
-                ),
-              ]),
-              for (final p in controller.products)
-                TableRow(
-                  children: [
-                    TableCell(
-                      verticalAlignment: TableCellVerticalAlignment.middle,
-                      child: Text(
-                        '${controller.products.indexOf(p)}',
+                  DataColumn(
+                    label: ConstrainedBox(
+                      constraints: const BoxConstraints(minWidth: 220),
+                      child: const Text(
+                        'Tên',
                         textAlign: TextAlign.center,
+                        style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
-                    TableCell(
-                      verticalAlignment: TableCellVerticalAlignment.middle,
-                      child: Text(p.sku, textAlign: TextAlign.center),
-                    ),
-                    TableCell(
-                      verticalAlignment: TableCellVerticalAlignment.middle,
-                      child: Text(p.name, textAlign: TextAlign.center),
-                    ),
-                    TableCell(
-                      verticalAlignment: TableCellVerticalAlignment.middle,
-                      child: Text(
-                        '${p.importPrice}',
+                  ),
+                  const DataColumn(
+                    label: Text('Giá nhập',
                         textAlign: TextAlign.center,
-                      ),
-                    ),
-                    TableCell(
-                      verticalAlignment: TableCellVerticalAlignment.middle,
-                      child: Text(
-                        controller.categories.fromId(p.categoryId).name,
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                  ),
+                  const DataColumn(
+                    label: Text('Loại',
                         textAlign: TextAlign.center,
-                      ),
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                  ),
+                  const DataColumn(
+                    label: Text(
+                      'Số lượng',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    TableCell(
-                      verticalAlignment: TableCellVerticalAlignment.middle,
-                      child: Text('${p.count}', textAlign: TextAlign.center),
+                  ),
+                  const DataColumn(
+                    label: Text(
+                      'Hành động',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    TableCell(
-                      verticalAlignment: TableCellVerticalAlignment.middle,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          IconButton(
-                            onPressed: () {
-                              controller.editProduct(context, setState, p);
-                            },
-                            icon: const Icon(Icons.edit),
+                  ),
+                ],
+                rows: [
+                  for (final p in controller.products)
+                    DataRow(
+                      cells: [
+                        DataCell(
+                          Text(
+                            '${(controller.page - 1) * controller.perpage + controller.products.indexOf(p) + 1}',
+                            textAlign: TextAlign.center,
                           ),
-                          IconButton(
-                            onPressed: () {
-                              controller.copyProduct(context, setState, p);
-                            },
-                            icon: const Icon(Icons.copy),
-                          ),
-                          IconButton(
-                            onPressed: () {
-                              controller.removeProduct(context, setState, p);
-                            },
-                            icon: const Icon(
-                              Icons.close_rounded,
-                              color: Colors.red,
+                        ),
+                        DataCell(
+                          Text(p.sku, textAlign: TextAlign.center),
+                        ),
+                        DataCell(
+                          Tooltip(
+                            message: p.name,
+                            child: ConstrainedBox(
+                              constraints: const BoxConstraints(minWidth: 220),
+                              child: Text(
+                                p.name,
+                                textAlign: TextAlign.center,
+                              ),
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                        DataCell(
+                          Text(
+                            '${p.importPrice}',
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        DataCell(
+                          ConstrainedBox(
+                            constraints: const BoxConstraints(minWidth: 70),
+                            child: Text(
+                              controller.categories.fromId(p.categoryId).name,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                        DataCell(
+                          Text('${p.count}', textAlign: TextAlign.center),
+                        ),
+                        DataCell(
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              IconButton(
+                                onPressed: () {
+                                  controller.infoProduct(context, setState, p);
+                                },
+                                icon: const Icon(Icons.info_rounded),
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  controller.editProduct(context, setState, p);
+                                },
+                                icon: const Icon(Icons.edit),
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  controller.copyProduct(context, setState, p);
+                                },
+                                icon: const Icon(Icons.copy),
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  controller.removeProduct(
+                                      context, setState, p);
+                                },
+                                icon: const Icon(
+                                  Icons.close_rounded,
+                                  color: Colors.red,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-            ],
+                ],
+              ),
+            ),
           ),
           const Expanded(child: SizedBox()),
           Padding(
@@ -208,13 +239,12 @@ class _ProductsViewState extends State<ProductsView> {
                     icon: Text('0/0'),
                   )
                 else
-                  for (int i = 0; i < controller.totalPage; i++)
-                    IconButton(
-                      onPressed: () {
-                        controller.onPageChanged(context, setState);
-                      },
-                      icon: Text('${i + 1}/${controller.totalPage}'),
-                    ),
+                  IconButton(
+                    onPressed: () {
+                      controller.onPageChanged(context, setState);
+                    },
+                    icon: Text('${controller.page}/${controller.totalPage}'),
+                  ),
                 IconButton(
                   onPressed: controller.page == controller.totalPage ||
                           controller.totalPage == 0

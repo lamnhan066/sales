@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class Category {
   final int id;
   final String name;
@@ -24,6 +26,29 @@ class Category {
       deleted: deleted ?? this.deleted,
     );
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'description': description,
+      'deleted': deleted,
+    };
+  }
+
+  factory Category.fromMap(Map<String, dynamic> map) {
+    return Category(
+      id: map['id']?.toInt() ?? 0,
+      name: map['name'] ?? '',
+      description: map['description'] ?? '',
+      deleted: map['deleted'] ?? false,
+    );
+  }
+
+  String toJson() => json.encode(toMap());
+
+  factory Category.fromJson(String source) =>
+      Category.fromMap(json.decode(source));
 }
 
 extension CategoryExtension on List<Category> {

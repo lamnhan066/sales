@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 enum OrderStatus { created, paid, canceled }
 
 class Order {
@@ -26,4 +28,26 @@ class Order {
       deleted: deleted ?? this.deleted,
     );
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'status': status.name,
+      'date': date.millisecondsSinceEpoch,
+      'deleted': deleted,
+    };
+  }
+
+  factory Order.fromMap(Map<String, dynamic> map) {
+    return Order(
+      id: map['id']?.toInt() ?? 0,
+      status: OrderStatus.values.byName(map['status']),
+      date: DateTime.fromMillisecondsSinceEpoch(map['date']),
+      deleted: map['deleted'] ?? false,
+    );
+  }
+
+  String toJson() => json.encode(toMap());
+
+  factory Order.fromJson(String source) => Order.fromMap(json.decode(source));
 }
