@@ -114,6 +114,13 @@ abstract class Database {
     return (id, 'P${id.toString().padLeft(8, '0')}');
   }
 
+  /// Trình tạo ra `id` và `sku`.
+  Future<int> generateCategoryId() async {
+    final count = await getAllCategories();
+    final id = count.length + 1;
+    return id;
+  }
+
   /// Thêm sản phẩm mới.
   @mustCallSuper
   Future<void> addProduct(Product product);

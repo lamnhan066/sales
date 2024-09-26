@@ -112,14 +112,18 @@ class _ProductsViewState extends State<ProductsView> {
                       ),
                     ),
                     const DataColumn(
-                      label: Text('Giá nhập',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      label: Text(
+                        'Giá nhập',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ),
                     const DataColumn(
-                      label: Text('Loại',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      label: Text(
+                        'Loại hàng',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ),
                     const DataColumn(
                       label: Text(
@@ -165,7 +169,7 @@ class _ProductsViewState extends State<ProductsView> {
                           DataCell(
                             Text(
                               '${p.importPrice}',
-                              textAlign: TextAlign.center,
+                              textAlign: TextAlign.right,
                             ),
                           ),
                           DataCell(

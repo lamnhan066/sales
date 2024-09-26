@@ -133,7 +133,6 @@ class ProductController {
         await database.saveAllCategories(tempCategories);
         await database.saveAllProducts(tempProducts);
 
-        categories = tempCategories;
         _updateCurrentPage(setState);
       }
     }
@@ -143,10 +142,10 @@ class ProductController {
     BuildContext context,
     void Function(VoidCallback fn) setState,
   ) async {
-    final product = await _addProductDialog(context);
+    final product = await _addProductDialog(context, setState);
 
     if (product != null) {
-      database.addProduct(product);
+      await database.addProduct(product);
       _updateCurrentPage(setState);
     }
   }
@@ -198,10 +197,10 @@ class ProductController {
     void Function(VoidCallback fn) setState,
     Product p,
   ) async {
-    final product = await _editProductDialog(context, p);
+    final product = await _editProductDialog(context, setState, p);
 
     if (product != null) {
-      database.updateProduct(product);
+      await database.updateProduct(product);
       _updateCurrentPage(setState);
     }
   }
@@ -211,7 +210,7 @@ class ProductController {
     void Function(VoidCallback fn) setState,
     Product p,
   ) async {
-    await _infoProductDialog(context, p);
+    await _infoProductDialog(context, setState, p);
   }
 
   void copyProduct(
@@ -219,20 +218,17 @@ class ProductController {
     void Function(VoidCallback fn) setState,
     Product p,
   ) async {
-    final product = await _copyProductDialog(context, p);
+    final product = await _copyProductDialog(context, setState, p);
 
     if (product != null) {
-      database.addProduct(product);
+      await database.addProduct(product);
       _updateCurrentPage(setState);
     }
   }
 
   Future<void> onSearchChanged(Function setState, String text) async {
     searchText = text;
-    final p = await database.getProducts(perpage: perpage, searchText: text);
-    setState(() {
-      _updatePagesCountAndList(p.$1, p.$2);
-    });
+    _updateCurrentPage(setState);
   }
 
   void onFilterTapped(
@@ -427,9 +423,14 @@ class ProductController {
     }
   }
 
-  Future<Product?> _infoProductDialog(BuildContext context, Product product) {
+  Future<Product?> _infoProductDialog(
+    BuildContext context,
+    Function setState,
+    Product product,
+  ) {
     return _productDialog(
       context: context,
+      setState: setState,
       title: 'Thông Tin Sản Phẩm'.tr,
       product: product,
       generateIdSku: true,
@@ -437,27 +438,32 @@ class ProductController {
     );
   }
 
-  Future<Product?> _addProductDialog(BuildContext context) {
+  Future<Product?> _addProductDialog(BuildContext context, Function setState) {
     return _productDialog(
       context: context,
+      setState: setState,
       title: 'Thêm Sản Phẩm'.tr,
       product: null,
       generateIdSku: true,
     );
   }
 
-  Future<Product?> _editProductDialog(BuildContext context, Product product) {
+  Future<Product?> _editProductDialog(
+      BuildContext context, Function setState, Product product) {
     return _productDialog(
       context: context,
+      setState: setState,
       title: 'Sửa Sản Phẩm'.tr,
       product: product,
       generateIdSku: false,
     );
   }
 
-  Future<Product?> _copyProductDialog(BuildContext context, Product product) {
+  Future<Product?> _copyProductDialog(
+      BuildContext context, Function setState, Product product) {
     return _productDialog(
       context: context,
+      setState: setState,
       title: 'Chép Sản Phẩm'.tr,
       product: product,
       generateIdSku: true,
@@ -467,6 +473,7 @@ class ProductController {
   // TODO: Thêm phần hiển thị hình ảnh và có thêm hình ảnh
   Future<Product?> _productDialog({
     required BuildContext context,
+    required Function setState,
     required String title,
     required Product? product,
     required bool generateIdSku,
@@ -567,36 +574,92 @@ class ProductController {
                     }
                   },
                 ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: BoxWDropdown(
-                        title: 'Loại'.tr,
-                        items: categories
-                            .map((e) => DropdownMenuItem(
-                                  value: e.id,
-                                  child: Text(e.name),
-                                ))
-                            .toList(),
-                        value: tempProduct.categoryId,
-                        onChanged: readOnly
-                            ? null
-                            : (int? value) {
-                                tempProduct =
-                                    tempProduct.copyWith(categoryId: value);
-                              },
+                StatefulBuilder(builder: (context, localSetState) {
+                  return Row(
+                    children: [
+                      Expanded(
+                        child: BoxWDropdown(
+                          title: 'Loại hàng'.tr,
+                          items: categories
+                              .map((e) => DropdownMenuItem(
+                                    value: e.id,
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(e.name),
+                                        Row(
+                                          children: [
+                                            IconButton(
+                                              onPressed: () {
+                                                _infoCategory(
+                                                    context, setState, e);
+                                              },
+                                              icon: const Icon(
+                                                  Icons.info_rounded),
+                                            ),
+                                            IconButton(
+                                              onPressed: () async {
+                                                await _editCategory(
+                                                    context, setState, e);
+                                                if (context.mounted) {
+                                                  Navigator.pop(context);
+                                                }
+                                              },
+                                              icon: const Icon(Icons.edit),
+                                            ),
+                                            IconButton(
+                                              onPressed: () async {
+                                                await _removeCategory(
+                                                    context, setState, e);
+                                                localSetState(() {});
+                                                if (context.mounted) {
+                                                  Navigator.pop(context);
+                                                }
+                                              },
+                                              icon: const Icon(
+                                                Icons.close_rounded,
+                                                color: Colors.red,
+                                              ),
+                                            ),
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                  ))
+                              .toList(),
+                          value: tempProduct.categoryId,
+                          selectedItemBuilder: (context) {
+                            return categories
+                                .map((e) => DropdownMenuItem(
+                                      value: e.id,
+                                      child: Text(e.name),
+                                    ))
+                                .toList();
+                          },
+                          onChanged: readOnly
+                              ? null
+                              : (int? value) {
+                                  localSetState(() {
+                                    tempProduct =
+                                        tempProduct.copyWith(categoryId: value);
+                                  });
+                                },
+                        ),
                       ),
-                    ),
-                    IconButton(
-                      onPressed: readOnly
-                          ? null
-                          : () {
-                              // TODO: Thêm loại hàng
-                            },
-                      icon: const Icon(Icons.add),
-                    ),
-                  ],
-                ),
+                      IconButton(
+                        onPressed: readOnly
+                            ? null
+                            : () async {
+                                await _addCategory(context, setState);
+                                localSetState(() {});
+                              },
+                        icon: const Icon(Icons.add),
+                      ),
+                    ],
+                  );
+                }),
                 BoxWInput(
                   title: 'Mô tả',
                   initial: tempProduct.description,
@@ -646,18 +709,16 @@ class ProductController {
   }
 
   void _updateCurrentPage(Function setState) async {
-    await database
-        .getProducts(
+    categories = await database.getAllCategories();
+    final (totalPages, products) = await database.getProducts(
       page: page,
       perpage: perpage,
       searchText: searchText,
       orderBy: orderBy,
       rangeValues: rangeValues,
-    )
-        .then((values) {
-      setState(() {
-        _updatePagesCountAndList(values.$1, values.$2);
-      });
+    );
+    setState(() {
+      _updatePagesCountAndList(totalPages, products);
     });
   }
 
@@ -673,19 +734,8 @@ class ProductController {
   }
 
   void _changePage(Function setState, int newPage) async {
-    setState(() {
-      page = newPage;
-    });
-    final p = await database.getProducts(
-      page: page,
-      perpage: perpage,
-      searchText: searchText,
-      orderBy: orderBy,
-      rangeValues: rangeValues,
-    );
-    setState(() {
-      _updatePagesCountAndList(p.$1, p.$2);
-    });
+    page = newPage;
+    _updateCurrentPage(setState);
   }
 
   String _getOrderByName(ProductOrderBy orderBy) {
@@ -705,5 +755,144 @@ class ProductController {
       return 'Tối đa'.tr;
     }
     return '$price';
+  }
+
+  Future<void> _infoCategory(
+    BuildContext context,
+    Function setState,
+    Category category,
+  ) async {
+    await _categoryDialog(
+      context,
+      'Chi Tiết Loại Hàng'.tr,
+      category,
+      true,
+    );
+  }
+
+  Future<void> _addCategory(BuildContext context, Function setState) async {
+    Category tempCategory = Category(
+      id: await database.generateCategoryId(),
+      name: '',
+      description: '',
+    );
+
+    if (context.mounted) {
+      final category = await _categoryDialog(
+        context,
+        'Thêm Loại Hàng'.tr,
+        tempCategory,
+      );
+
+      if (category != null) {
+        await database.addCategory(category);
+        _updateCurrentPage(setState);
+      }
+    }
+  }
+
+  Future<void> _editCategory(
+    BuildContext context,
+    Function setState,
+    Category category,
+  ) async {
+    if (context.mounted) {
+      final c = await _categoryDialog(
+        context,
+        'Sửa Loại Hàng'.tr,
+        category,
+      );
+
+      if (c != null) {
+        await database.updateCategory(c);
+        _updateCurrentPage(setState);
+      }
+    }
+  }
+
+  Future<void> _removeCategory(
+    BuildContext context,
+    Function setState,
+    Category category,
+  ) async {
+    final result = await boxWConfirm(
+      context: context,
+      title: 'Xác nhận'.tr,
+      content: 'Bạn có chắc muốn xoá loại hàng ${category.name} không?'.tr,
+      confirmText: 'Đồng ý'.tr,
+      cancelText: 'Huỷ'.tr,
+    );
+
+    if (result) {
+      await database.removeCategory(category);
+      _updateCurrentPage(setState);
+    }
+  }
+
+  Future<Category?> _categoryDialog(
+    BuildContext context,
+    String title,
+    Category category, [
+    bool readOnly = false,
+  ]) async {
+    final result = await boxWDialog<bool>(
+      context: context,
+      title: title,
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          BoxWInput(
+            title: 'Tên'.tr,
+            initial: category.name,
+            readOnly: readOnly,
+            onChanged: (value) {
+              category = category.copyWith(name: value);
+            },
+          ),
+          BoxWInput(
+            title: 'Mô tả'.tr,
+            initial: category.description,
+            readOnly: readOnly,
+            onChanged: (value) {
+              category = category.copyWith(description: value);
+            },
+          ),
+        ],
+      ),
+      buttons: (context) {
+        return [
+          Buttons(
+            axis: Axis.horizontal,
+            buttons: [
+              Padding(
+                padding: const EdgeInsets.only(right: 20),
+                child: FilledButton(
+                  onPressed: () {
+                    Navigator.pop(context, true);
+                  },
+                  child: Text('OK'.tr),
+                ),
+              ),
+              if (!readOnly)
+                Padding(
+                  padding: const EdgeInsets.only(left: 20),
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text('Huỷ'.tr),
+                  ),
+                ),
+            ],
+          ),
+        ];
+      },
+    );
+
+    if (result == true) {
+      return category;
+    }
+
+    return null;
   }
 }

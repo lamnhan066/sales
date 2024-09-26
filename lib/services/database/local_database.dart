@@ -89,8 +89,11 @@ class LocalDatabase extends Database {
     final categoriesJson = _pref.getStringList('Categories') ?? [];
     final categories = <Category>[];
     if (categoriesJson.isNotEmpty) {
-      for (final category in categoriesJson) {
-        categories.add(Category.fromJson(category));
+      for (final categoryJson in categoriesJson) {
+        final category = Category.fromJson(categoryJson);
+        if (!category.deleted) {
+          categories.add(category);
+        }
       }
     }
     return categories;
