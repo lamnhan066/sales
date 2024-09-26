@@ -497,113 +497,116 @@ class ProductController {
           minWidth: 280,
           maxWidth: MediaQuery.sizeOf(context).width * 3 / 5,
         ),
-        content: SingleChildScrollView(
-          child: Column(
-            children: [
-              BoxWInput(
-                title: 'Mã sản phẩm'.tr,
-                initial: tempProduct.sku,
-                readOnly: readOnly,
-                onChanged: (value) {
-                  tempProduct = tempProduct.copyWith(sku: value);
-                },
-              ),
-              BoxWInput(
-                title: 'Tên sản phẩm'.tr,
-                initial: tempProduct.name,
-                readOnly: readOnly,
-                onChanged: (value) {
-                  tempProduct = tempProduct.copyWith(name: value);
-                },
-              ),
-              BoxWInput(
-                title: 'Mô tả',
-                initial: tempProduct.description,
-                readOnly: readOnly,
-                minLines: 1,
-                maxLines: 10,
-                onChanged: (value) {
-                  tempProduct = tempProduct.copyWith(description: value);
-                },
-              ),
-              BoxWInput(
-                title: 'Giá nhập',
-                initial: tempProduct.importPrice.toString(),
-                readOnly: readOnly,
-                validator: (value) {
-                  if (value != null) {
-                    final n = int.tryParse(value);
-                    if (n == null) {
-                      return 'Vui lòng chỉ nhập số'.tr;
+        content: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.sizeOf(context).height * 3 / 5,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                BoxWInput(
+                  title: 'Mã sản phẩm'.tr,
+                  initial: tempProduct.sku,
+                  readOnly: readOnly,
+                  onChanged: (value) {
+                    tempProduct = tempProduct.copyWith(sku: value);
+                  },
+                ),
+                BoxWInput(
+                  title: 'Tên sản phẩm'.tr,
+                  initial: tempProduct.name,
+                  readOnly: readOnly,
+                  onChanged: (value) {
+                    tempProduct = tempProduct.copyWith(name: value);
+                  },
+                ),
+                BoxWInput(
+                  title: 'Giá nhập',
+                  initial: tempProduct.importPrice.toString(),
+                  readOnly: readOnly,
+                  validator: (value) {
+                    if (value != null) {
+                      final n = int.tryParse(value);
+                      if (n == null) {
+                        return 'Vui lòng chỉ nhập số'.tr;
+                      }
+                      return null;
                     }
                     return null;
-                  }
-                  return null;
-                },
-                onChanged: (value) {
-                  final importPrice = int.tryParse(value);
-                  if (importPrice != null) {
-                    tempProduct =
-                        tempProduct.copyWith(importPrice: importPrice);
-                  } else {
-                    // TODO: Báo lỗi khi không thể parse giá
-                  }
-                },
-              ),
-              BoxWInput(
-                title: 'Số lượng',
-                initial: tempProduct.count.toString(),
-                readOnly: readOnly,
-                validator: (value) {
-                  if (value != null) {
-                    final n = int.tryParse(value);
-                    if (n == null) {
-                      return 'Vui lòng chỉ nhập số'.tr;
+                  },
+                  onChanged: (value) {
+                    final importPrice = int.tryParse(value);
+                    if (importPrice != null) {
+                      tempProduct =
+                          tempProduct.copyWith(importPrice: importPrice);
+                    } else {
+                      // TODO: Báo lỗi khi không thể parse giá
+                    }
+                  },
+                ),
+                BoxWInput(
+                  title: 'Số lượng',
+                  initial: tempProduct.count.toString(),
+                  readOnly: readOnly,
+                  validator: (value) {
+                    if (value != null) {
+                      final n = int.tryParse(value);
+                      if (n == null) {
+                        return 'Vui lòng chỉ nhập số'.tr;
+                      }
+                      return null;
                     }
                     return null;
-                  }
-                  return null;
-                },
-                onChanged: (value) {
-                  final count = int.tryParse(value);
-                  if (count != null) {
-                    tempProduct = tempProduct.copyWith(count: count);
-                  } else {
-                    // TODO: Báo lỗi khi không thể parse số lượng
-                  }
-                },
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: BoxWDropdown(
-                      title: 'Loại'.tr,
-                      items: categories
-                          .map((e) => DropdownMenuItem(
-                                value: e.id,
-                                child: Text(e.name),
-                              ))
-                          .toList(),
-                      value: tempProduct.categoryId,
-                      onChanged: readOnly
-                          ? null
-                          : (int? value) {
-                              tempProduct =
-                                  tempProduct.copyWith(categoryId: value);
-                            },
+                  },
+                  onChanged: (value) {
+                    final count = int.tryParse(value);
+                    if (count != null) {
+                      tempProduct = tempProduct.copyWith(count: count);
+                    } else {
+                      // TODO: Báo lỗi khi không thể parse số lượng
+                    }
+                  },
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: BoxWDropdown(
+                        title: 'Loại'.tr,
+                        items: categories
+                            .map((e) => DropdownMenuItem(
+                                  value: e.id,
+                                  child: Text(e.name),
+                                ))
+                            .toList(),
+                        value: tempProduct.categoryId,
+                        onChanged: readOnly
+                            ? null
+                            : (int? value) {
+                                tempProduct =
+                                    tempProduct.copyWith(categoryId: value);
+                              },
+                      ),
                     ),
-                  ),
-                  IconButton(
-                    onPressed: readOnly
-                        ? null
-                        : () {
-                            // TODO: Thêm loại hàng
-                          },
-                    icon: const Icon(Icons.add),
-                  ),
-                ],
-              ),
-            ],
+                    IconButton(
+                      onPressed: readOnly
+                          ? null
+                          : () {
+                              // TODO: Thêm loại hàng
+                            },
+                      icon: const Icon(Icons.add),
+                    ),
+                  ],
+                ),
+                BoxWInput(
+                  title: 'Mô tả',
+                  initial: tempProduct.description,
+                  readOnly: readOnly,
+                  onChanged: (value) {
+                    tempProduct = tempProduct.copyWith(description: value);
+                  },
+                ),
+              ],
+            ),
           ),
         ),
         buttons: (context) {
@@ -619,14 +622,15 @@ class ProductController {
                       },
                       child: Text('OK'.tr)),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 20),
-                  child: TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text('Huỷ'.tr)),
-                ),
+                if (!readOnly)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20),
+                    child: TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text('Huỷ'.tr)),
+                  ),
               ],
             ),
           ];
