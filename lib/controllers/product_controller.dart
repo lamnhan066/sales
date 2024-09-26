@@ -133,20 +133,8 @@ class ProductController {
         await database.saveAllCategories(tempCategories);
         await database.saveAllProducts(tempProducts);
 
-        categories.addAll(tempCategories);
-        database
-            .getProducts(
-          page: page,
-          perpage: perpage,
-          searchText: searchText,
-          orderBy: orderBy,
-          rangeValues: rangeValues,
-        )
-            .then((values) {
-          setState(() {
-            _updatePagesCountAndList(values.$1, values.$2);
-          });
-        });
+        categories = tempCategories;
+        _updateCurrentPage(setState);
       }
     }
   }
@@ -159,19 +147,7 @@ class ProductController {
 
     if (product != null) {
       database.addProduct(product);
-      database
-          .getProducts(
-        page: page,
-        perpage: perpage,
-        searchText: searchText,
-        orderBy: orderBy,
-        rangeValues: rangeValues,
-      )
-          .then((values) {
-        setState(() {
-          _updatePagesCountAndList(values.$1, values.$2);
-        });
-      });
+      _updateCurrentPage(setState);
     }
   }
 
@@ -213,19 +189,7 @@ class ProductController {
 
     if (result == true) {
       await database.removeProduct(p);
-      database
-          .getProducts(
-        page: page,
-        perpage: perpage,
-        searchText: searchText,
-        orderBy: orderBy,
-        rangeValues: rangeValues,
-      )
-          .then((values) {
-        setState(() {
-          _updatePagesCountAndList(values.$1, values.$2);
-        });
-      });
+      _updateCurrentPage(setState);
     }
   }
 
@@ -238,19 +202,7 @@ class ProductController {
 
     if (product != null) {
       database.updateProduct(product);
-      database
-          .getProducts(
-        page: page,
-        perpage: perpage,
-        searchText: searchText,
-        orderBy: orderBy,
-        rangeValues: rangeValues,
-      )
-          .then((values) {
-        setState(() {
-          _updatePagesCountAndList(values.$1, values.$2);
-        });
-      });
+      _updateCurrentPage(setState);
     }
   }
 
@@ -271,19 +223,7 @@ class ProductController {
 
     if (product != null) {
       database.addProduct(product);
-      database
-          .getProducts(
-        page: page,
-        perpage: perpage,
-        searchText: searchText,
-        orderBy: orderBy,
-        rangeValues: rangeValues,
-      )
-          .then((values) {
-        setState(() {
-          _updatePagesCountAndList(values.$1, values.$2);
-        });
-      });
+      _updateCurrentPage(setState);
     }
   }
 
@@ -419,19 +359,7 @@ class ProductController {
 
     if (result == true && rangeValues != tempRangeValues) {
       rangeValues = tempRangeValues;
-      database
-          .getProducts(
-        page: page,
-        perpage: perpage,
-        searchText: searchText,
-        orderBy: orderBy,
-        rangeValues: rangeValues,
-      )
-          .then((values) {
-        setState(() {
-          _updatePagesCountAndList(values.$1, values.$2);
-        });
-      });
+      _updateCurrentPage(setState);
     }
   }
 
@@ -495,18 +423,7 @@ class ProductController {
 
     if (result == true && tempOrderBy != orderBy) {
       orderBy = tempOrderBy;
-      database
-          .getProducts(
-        page: page,
-        perpage: perpage,
-        searchText: searchText,
-        orderBy: orderBy,
-      )
-          .then((values) {
-        setState(() {
-          _updatePagesCountAndList(values.$1, values.$2);
-        });
-      });
+      _updateCurrentPage(setState);
     }
   }
 
@@ -700,6 +617,22 @@ class ProductController {
     }
 
     return null;
+  }
+
+  void _updateCurrentPage(Function setState) async {
+    await database
+        .getProducts(
+      page: page,
+      perpage: perpage,
+      searchText: searchText,
+      orderBy: orderBy,
+      rangeValues: rangeValues,
+    )
+        .then((values) {
+      setState(() {
+        _updatePagesCountAndList(values.$1, values.$2);
+      });
+    });
   }
 
   void _updatePagesCountAndList(int totalProductsCount, List<Product> p) {
