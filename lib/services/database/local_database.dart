@@ -14,10 +14,7 @@ class LocalDatabase extends Database {
   final _pref = getIt<SharedPreferences>();
 
   @override
-  Future<void> initial() async {
-    await clear();
-    return super.initial();
-  }
+  Future<void> initial() async {}
 
   @override
   Future<void> clear() async {
@@ -25,7 +22,6 @@ class LocalDatabase extends Database {
     await _pref.remove('Products');
     await _pref.remove('Orders');
     await _pref.remove('OrderItems');
-    return super.clear();
   }
 
   @override
@@ -33,7 +29,14 @@ class LocalDatabase extends Database {
     final categories = await getAllCategories();
     categories.add(category);
     await saveAllCategories(categories);
-    super.addCategory(category);
+  }
+
+  @override
+  Future<void> updateCategory(Category category) async {
+    final categories = await getAllCategories();
+    final index = categories.indexWhere((e) => e.id == category.id);
+    categories[index] = category;
+    await saveAllCategories(categories);
   }
 
   @override
@@ -41,7 +44,14 @@ class LocalDatabase extends Database {
     final orders = await getAllOrders();
     orders.add(order);
     await saveAllOrders(orders);
-    super.addOrder(order);
+  }
+
+  @override
+  Future<void> updateOrder(Order order) async {
+    final orders = await getAllOrders();
+    final index = orders.indexWhere((e) => e.id == order.id);
+    orders[index] = order;
+    await saveAllOrders(orders);
   }
 
   @override
@@ -49,7 +59,14 @@ class LocalDatabase extends Database {
     final orderItems = await getAllOrderItems();
     orderItems.add(orderItem);
     await saveAllOrderItems(orderItems);
-    super.addOrderItem(orderItem);
+  }
+
+  @override
+  Future<void> updateOrderItem(OrderItem orderItem) async {
+    final orderItems = await getAllOrderItems();
+    final index = orderItems.indexWhere((e) => e.id == orderItem.id);
+    orderItems[index] = orderItem;
+    await saveAllOrderItems(orderItems);
   }
 
   @override
@@ -57,7 +74,14 @@ class LocalDatabase extends Database {
     final products = await getAllProducts();
     products.add(product);
     await saveAllProducts(products);
-    super.addProduct(product);
+  }
+
+  @override
+  Future<void> updateProduct(Product product) async {
+    final products = await getAllProducts();
+    final index = products.indexWhere((e) => e.id == product.id);
+    products[index] = product;
+    await saveAllProducts(products);
   }
 
   @override
@@ -150,26 +174,22 @@ class LocalDatabase extends Database {
   Future<void> saveAllCategories(List<Category> categories) async {
     await _pref.setStringList(
         'Categories', categories.map((e) => e.toJson()).toList());
-    super.saveAllCategories(categories);
   }
 
   @override
   Future<void> saveAllOrderItems(List<OrderItem> orderItems) async {
     await _pref.setStringList(
         'OrderItems', orderItems.map((e) => e.toJson()).toList());
-    super.saveAllOrderItems(orderItems);
   }
 
   @override
   Future<void> saveAllOrders(List<Order> orders) async {
     await _pref.setStringList('Orders', orders.map((e) => e.toJson()).toList());
-    super.saveAllOrders(orders);
   }
 
   @override
   Future<void> saveAllProducts(List<Product> products) async {
     await _pref.setStringList(
         'Products', products.map((e) => e.toJson()).toList());
-    super.saveAllProducts(products);
   }
 }

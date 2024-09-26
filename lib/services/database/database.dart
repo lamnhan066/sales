@@ -8,7 +8,6 @@ import 'package:sales/models/order_item.dart';
 import 'package:sales/models/product.dart';
 import 'package:sales/models/product_order_by.dart';
 import 'package:sales/services/utils.dart';
-import 'package:string_normalizer/string_normalizer.dart';
 
 abstract class Database {
   static Future<(List<Category>, List<Product>)> loadDataFromExcel() async {
@@ -48,27 +47,11 @@ abstract class Database {
     return (categories, products);
   }
 
-  final _categories = <Category>[];
-  final _products = <Product>[];
-  final _orderItems = <OrderItem>[];
-  final _orders = <Order>[];
-
   /// Khởi tạo.
-  Future<void> initial() async {
-    _categories.addAll(await getAllCategories());
-    _products.addAll(await getAllProducts());
-    _orderItems.addAll(await getAllOrderItems());
-    _orders.addAll(await getAllOrders());
-  }
+  Future<void> initial();
 
   /// Xoá tất cả các dữ liệu.
-  @mustCallSuper
-  Future<void> clear() async {
-    _products.clear();
-    _categories.clear();
-    _orders.clear();
-    _orderItems.clear();
-  }
+  Future<void> clear();
 
   /// Nhập dữ liệu với vào dữ liệu hiện tại.
   ///
@@ -107,17 +90,10 @@ abstract class Database {
   }
 
   /// Thêm loại hàng mới.
-  @mustCallSuper
-  Future<void> addCategory(Category category) async {
-    _categories.add(category);
-  }
+  Future<void> addCategory(Category category);
 
   /// Sửa và cập nhật loại hàng,
-  @mustCallSuper
-  Future<void> updateCategory(Category category) async {
-    final i = _categories.indexWhere((item) => item.id == category.id);
-    _categories[i] = category;
-  }
+  Future<void> updateCategory(Category category);
 
   /// Xoá loại hàng.
   Future<void> removeCategory(Category category) async {
@@ -126,14 +102,10 @@ abstract class Database {
   }
 
   /// Lấy danh sách tất cả các loại hàng.
-  Future<List<Category>> getAllCategories() async => _categories;
+  Future<List<Category>> getAllCategories();
 
   /// Lưu tất cả loại hàng vào CSDL.
-  @mustCallSuper
-  Future<void> saveAllCategories(List<Category> categories) async {
-    _categories.clear();
-    _categories.addAll(categories);
-  }
+  Future<void> saveAllCategories(List<Category> categories);
 
   /// Trình tạo ra `id` và `sku`.
   Future<(int id, String sku)> generateProductIdSku() async {
@@ -144,16 +116,10 @@ abstract class Database {
 
   /// Thêm sản phẩm mới.
   @mustCallSuper
-  Future<void> addProduct(Product product) async {
-    _products.add(product);
-  }
+  Future<void> addProduct(Product product);
 
   /// Cập nhật sản phẩm.
-  @mustCallSuper
-  Future<void> updateProduct(Product product) async {
-    final i = _products.indexWhere((item) => item.id == product.id);
-    _products[i] = product;
-  }
+  Future<void> updateProduct(Product product);
 
   /// Xoá sản phẩm.
   Future<void> removeProduct(Product product) async {
@@ -162,11 +128,7 @@ abstract class Database {
   }
 
   /// Lưu tất cả sản phẩm vào CSDL.
-  @mustCallSuper
-  Future<void> saveAllProducts(List<Product> products) async {
-    _products.clear();
-    _products.addAll(products);
-  }
+  Future<void> saveAllProducts(List<Product> products);
 
   /// Lấy danh sách sản phẩm.
   ///
@@ -195,54 +157,14 @@ abstract class Database {
     ProductOrderBy orderBy = ProductOrderBy.none,
     String searchText = '',
     RangeValues? rangeValues,
-  }) async {
-    // Tạo một bản sao chép từ `_products`.
-    List<Product> result = [..._products.where((e) => e.deleted == false)];
-
-    if (rangeValues != null) {
-      result.removeWhere((product) =>
-          product.importPrice < rangeValues.start ||
-          product.importPrice > rangeValues.end);
-    }
-
-    if (searchText != '') {
-      // Xoá dấu.
-      searchText = searchText.normalize().toLowerCase();
-      result.removeWhere((p) => !p.name.nml.toLowerCase().contains(searchText));
-    }
-
-    switch (orderBy) {
-      case ProductOrderBy.none:
-        break;
-      case ProductOrderBy.nameInc:
-        result.sort((a, b) => a.name.compareTo(b.name));
-      case ProductOrderBy.nameDesc:
-        result.sort((a, b) => b.name.compareTo(a.name));
-      case ProductOrderBy.importPriceInc:
-        result.sort((a, b) => a.importPrice.compareTo(b.importPrice));
-      case ProductOrderBy.importPriceDesc:
-        result.sort((a, b) => b.importPrice.compareTo(a.importPrice));
-      case ProductOrderBy.countInc:
-        result.sort((a, b) => a.count.compareTo(b.count));
-      case ProductOrderBy.countDesc:
-        result.sort((a, b) => b.count.compareTo(a.count));
-    }
-
-    return result;
-  }
+  });
 
   /// Thêm đơn đặt hàng.
-  @mustCallSuper
-  Future<void> addOrder(Order order) async {
-    _orders.add(order);
-  }
+  Future<void> addOrder(Order order);
 
   /// Cập nhật đơn đặt hàng.
   @mustCallSuper
-  Future<void> updateOrder(Order order) async {
-    final i = _orders.indexWhere((item) => item.id == order.id);
-    _orders[i] = order;
-  }
+  Future<void> updateOrder(Order order);
 
   /// Xoá đơn đặt hàng.
   Future<void> removeOrder(Order order) async {
@@ -251,27 +173,16 @@ abstract class Database {
   }
 
   /// Lấy danh sách tất cả các đơn hàng.
-  Future<List<Order>> getAllOrders() async => _orders;
+  Future<List<Order>> getAllOrders();
 
   /// Lưu tất cả các đơn đặt đặt hàng.
-  @mustCallSuper
-  Future<void> saveAllOrders(List<Order> orders) async {
-    _orders.clear();
-    _orders.addAll(orders);
-  }
+  Future<void> saveAllOrders(List<Order> orders);
 
   /// Thêm sản phẩm đã đặt hàng.
-  @mustCallSuper
-  Future<void> addOrderItem(OrderItem orderItem) async {
-    _orderItems.add(orderItem);
-  }
+  Future<void> addOrderItem(OrderItem orderItem);
 
   /// Cập nhật sản phẩm đã đặt hàng.
-  @mustCallSuper
-  Future<void> updateOrderItem(OrderItem orderItem) async {
-    final i = _orderItems.indexWhere((item) => item.id == orderItem.id);
-    _orderItems[i] = orderItem;
-  }
+  Future<void> updateOrderItem(OrderItem orderItem);
 
   /// Xoá sản phẩm đã đặt hàng.
   Future<void> removeOrderItem(OrderItem orderItem) async {
@@ -280,14 +191,10 @@ abstract class Database {
   }
 
   /// Lấy tất tất cả sản phẩm đã đặt hàng.
-  Future<List<OrderItem>> getAllOrderItems() async => _orderItems;
+  Future<List<OrderItem>> getAllOrderItems();
 
   /// Lưu tất cả sản phẩm đã đặt hàng.
-  @mustCallSuper
-  Future<void> saveAllOrderItems(List<OrderItem> orderItems) async {
-    _orderItems.clear();
-    _orderItems.addAll(orderItems);
-  }
+  Future<void> saveAllOrderItems(List<OrderItem> orderItems);
 
   /// Lấy tổng số lượng sản phẩm có trong CSDL.
   Future<int> getTotalProductCount() async {

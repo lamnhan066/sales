@@ -430,7 +430,7 @@ class ProductController {
   Future<Product?> _infoProductDialog(BuildContext context, Product product) {
     return _productDialog(
       context: context,
-      title: 'Thêm Sản Phẩm'.tr,
+      title: 'Thông Tin Sản Phẩm'.tr,
       product: product,
       generateIdSku: true,
       readOnly: true,
@@ -492,6 +492,11 @@ class ProductController {
       final result = await boxWDialog(
         context: context,
         title: title,
+        width: MediaQuery.sizeOf(context).width * 3 / 5,
+        constrains: BoxConstraints(
+          minWidth: 280,
+          maxWidth: MediaQuery.sizeOf(context).width * 3 / 5,
+        ),
         content: SingleChildScrollView(
           child: Column(
             children: [
@@ -515,6 +520,8 @@ class ProductController {
                 title: 'Mô tả',
                 initial: tempProduct.description,
                 readOnly: readOnly,
+                minLines: 1,
+                maxLines: 10,
                 onChanged: (value) {
                   tempProduct = tempProduct.copyWith(description: value);
                 },
@@ -566,20 +573,35 @@ class ProductController {
                   }
                 },
               ),
-              BoxWDropdown(
-                title: 'Loại'.tr,
-                items: categories
-                    .map((e) => DropdownMenuItem(
-                          value: e.id,
-                          child: Text(e.name),
-                        ))
-                    .toList(),
-                value: tempProduct.categoryId,
-                onChanged: readOnly
-                    ? null
-                    : (int? value) {
-                        tempProduct = tempProduct.copyWith(categoryId: value);
-                      },
+              Row(
+                children: [
+                  Expanded(
+                    child: BoxWDropdown(
+                      title: 'Loại'.tr,
+                      items: categories
+                          .map((e) => DropdownMenuItem(
+                                value: e.id,
+                                child: Text(e.name),
+                              ))
+                          .toList(),
+                      value: tempProduct.categoryId,
+                      onChanged: readOnly
+                          ? null
+                          : (int? value) {
+                              tempProduct =
+                                  tempProduct.copyWith(categoryId: value);
+                            },
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: readOnly
+                        ? null
+                        : () {
+                            // TODO: Thêm loại hàng
+                          },
+                    icon: const Icon(Icons.add),
+                  ),
+                ],
               ),
             ],
           ),
