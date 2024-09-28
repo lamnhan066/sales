@@ -87,16 +87,9 @@ class LocalDatabase extends Database {
   @override
   Future<List<Category>> getAllCategories() async {
     final categoriesJson = _pref.getStringList('Categories') ?? [];
-    final categories = <Category>[];
-    if (categoriesJson.isNotEmpty) {
-      for (final categoryJson in categoriesJson) {
-        final category = Category.fromJson(categoryJson);
-        if (!category.deleted) {
-          categories.add(category);
-        }
-      }
-    }
-    return categories;
+    return categoriesJson.map((e) => Category.fromJson(e)).where((category) {
+      return !category.deleted;
+    }).toList();
   }
 
   @override
@@ -129,32 +122,28 @@ class LocalDatabase extends Database {
     String searchText = '',
     RangeValues? rangeValues,
   }) async {
-    List<Product> result = [];
-
-    // Lấy tất cả dữ liệu không bị xoá từ CSDL.
+    // Lấy tất cả dữ liệu từ CSDL.
     final productsJson = _pref.getStringList('Products') ?? [];
-    if (productsJson.isNotEmpty) {
-      for (final productJson in productsJson) {
-        final product = Product.fromJson(productJson);
-        if (!product.deleted) {
-          result.add(product);
-        }
+    final result =
+        productsJson.map((e) => Product.fromJson(e)).where((product) {
+      // Sản phẩm đã bị xoá.
+      if (product.deleted) return false;
+
+      // Lọc theo mức giá.
+      bool priceFilter = true;
+      if (rangeValues != null) {
+        priceFilter = product.importPrice >= rangeValues.start &&
+            product.importPrice <= rangeValues.end;
       }
-    }
 
-    // Lọc theo mức giá.
-    if (rangeValues != null) {
-      result.removeWhere((product) =>
-          product.importPrice < rangeValues.start ||
-          product.importPrice > rangeValues.end);
-    }
+      // Tìm kiếm.
+      bool search = true;
+      if (searchText.isNotEmpty) {
+        search = product.name.normalize().toLowerCase().contains(searchText);
+      }
 
-    // Tìm kiếm.
-    if (searchText != '') {
-      // Xoá dấu.
-      searchText = searchText.normalize().toLowerCase();
-      result.removeWhere((p) => !p.name.nml.toLowerCase().contains(searchText));
-    }
+      return priceFilter && search;
+    }).toList();
 
     // Sắp xếp.
     switch (orderBy) {

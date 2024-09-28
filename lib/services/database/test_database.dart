@@ -198,20 +198,25 @@ class TestDatabase extends Database {
     String searchText = '',
     RangeValues? rangeValues,
   }) async {
-    // Tạo một bản sao chép từ `_products`.
-    List<Product> result = [..._products.where((e) => e.deleted == false)];
+    final result = _products.where((product) {
+      // Sản phẩm đã bị xoá.
+      if (product.deleted) return false;
 
-    if (rangeValues != null) {
-      result.removeWhere((product) =>
-          product.importPrice < rangeValues.start ||
-          product.importPrice > rangeValues.end);
-    }
+      // Lọc theo mức giá.
+      bool priceFilter = true;
+      if (rangeValues != null) {
+        priceFilter = product.importPrice >= rangeValues.start &&
+            product.importPrice <= rangeValues.end;
+      }
 
-    if (searchText != '') {
-      // Xoá dấu.
-      searchText = searchText.normalize().toLowerCase();
-      result.removeWhere((p) => !p.name.nml.toLowerCase().contains(searchText));
-    }
+      // Tìm kiếm.
+      bool search = true;
+      if (searchText.isNotEmpty) {
+        search = product.name.normalize().toLowerCase().contains(searchText);
+      }
+
+      return priceFilter && search;
+    }).toList();
 
     switch (orderBy) {
       case ProductOrderBy.none:
