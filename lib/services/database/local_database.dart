@@ -131,6 +131,7 @@ class LocalDatabase extends Database {
   }) async {
     List<Product> result = [];
 
+    // Lấy tất cả dữ liệu không bị xoá từ CSDL.
     final productsJson = _pref.getStringList('Products') ?? [];
     if (productsJson.isNotEmpty) {
       for (final productJson in productsJson) {
@@ -141,18 +142,21 @@ class LocalDatabase extends Database {
       }
     }
 
+    // Lọc theo mức giá.
     if (rangeValues != null) {
       result.removeWhere((product) =>
           product.importPrice < rangeValues.start ||
           product.importPrice > rangeValues.end);
     }
 
+    // Tìm kiếm.
     if (searchText != '') {
       // Xoá dấu.
       searchText = searchText.normalize().toLowerCase();
       result.removeWhere((p) => !p.name.nml.toLowerCase().contains(searchText));
     }
 
+    // Sắp xếp.
     switch (orderBy) {
       case ProductOrderBy.none:
         break;
