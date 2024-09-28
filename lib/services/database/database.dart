@@ -10,10 +10,11 @@ import 'package:sales/models/product_order_by.dart';
 import 'package:sales/services/utils.dart';
 
 abstract class Database {
-  static Future<(List<Category>, List<Product>)> loadDataFromExcel() async {
+  /// Load dữ liệu từ Excel.
+  static Future<(List<Category>, List<Product>)?> loadDataFromExcel() async {
     final excel = await Utils.getExcelFile();
     if (excel == null) {
-      throw UnsupportedError('Unsupported file');
+      return null;
     }
 
     final firstSheet = excel.tables.entries.first.value;

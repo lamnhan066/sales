@@ -47,15 +47,15 @@ class LoginController {
         return Column(
           children: [
             const CircularProgressIndicator(),
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 12),
-              child: Text('Đang tự động đăng nhập...'),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Text('Đang tự động đăng nhập...'.tr),
             ),
             FilledButton(
               onPressed: () {
                 Navigator.pop(context, false);
               },
-              child: const Text('Huỷ'),
+              child: Text('Huỷ'.tr),
             )
           ],
         );
@@ -98,7 +98,7 @@ class LoginController {
     String server = getServer();
     final isSaved = await boxWDialog(
       context: context,
-      title: 'Cấu hình máy chủ',
+      title: 'Cấu hình máy chủ'.tr,
       content: Column(
         children: [
           BoxWInput(
@@ -108,25 +108,26 @@ class LoginController {
               server = value;
             },
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context, false);
-                },
-                child: Text('Huỷ'.tr),
-              ),
-              FilledButton(
-                onPressed: () {
-                  Navigator.pop(context, true);
-                },
-                child: const Text('Lưu'),
-              ),
-            ],
-          )
         ],
       ),
+      buttons: (context) {
+        return [
+          Buttons(axis: Axis.horizontal, buttons: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, false);
+              },
+              child: Text('Huỷ'.tr),
+            ),
+            FilledButton(
+              onPressed: () {
+                Navigator.pop(context, true);
+              },
+              child: Text('Lưu'.tr),
+            ),
+          ])
+        ];
+      },
     );
 
     if (isSaved == true) {

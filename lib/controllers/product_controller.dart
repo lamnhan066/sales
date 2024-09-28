@@ -52,9 +52,10 @@ class ProductController {
           if (n == null) {
             return 'Số trang phải là số nguyên'.tr;
           }
-          if (n < 1) return 'Số trang phải lớn hơn hoặc bằng 1';
+          if (n < 1) return 'Số trang phải lớn hơn hoặc bằng 1'.tr;
           if (n > totalPage) {
-            return 'Số trang phải nhỏ hơn hoặc bằng $totalPage';
+            return 'Số trang phải nhỏ hơn hoặc bằng @{totalPage}'
+                .trP({'totalPage': totalPage});
           }
           return null;
         },
@@ -105,20 +106,29 @@ class ProductController {
     final data = await Database.loadDataFromExcel();
     if (!context.mounted) return;
 
+    if (data == null) {
+      boxWAlert(
+        context: context,
+        title: 'Nhập Excel',
+        content: 'Bạn chưa chọn tệp hoặc tệp chưa được hỗ trợ'.tr,
+      );
+      return;
+    }
+
     final tempCategories = data.$1;
     final tempProducts = data.$2;
 
     if (tempProducts.isEmpty) {
       boxWAlert(
         context: context,
-        title: 'Nhập dữ liệu'.tr,
+        title: 'Nhập Excel'.tr,
         content: 'Dữ liệu bạn đang chọn trống!'.tr,
         buttonText: 'Ok'.tr,
       );
     } else {
       final confirm = await boxWConfirm(
         context: context,
-        title: 'Nhập dữ liệu'.tr,
+        title: 'Nhập Excel'.tr,
         content: 'Có @{count} sản phẩm trong dữ liệu cần nhập. '
                 'Dữ liệu mới sẽ thay thế dữ liệu cũ và không thể hoàn tác.\n\n'
                 'Bạn có muốn tiếp tục không?'
@@ -158,7 +168,8 @@ class ProductController {
     final result = await boxWDialog(
       context: context,
       title: 'Xác nhận'.tr,
-      content: 'Bạn có chắc muốn xoá sản phẩm ${p.name} không?'.tr,
+      content:
+          'Bạn có chắc muốn xoá sản phẩm @{name} không?'.trP({'name': p.name}),
       buttons: (context) {
         return [
           Buttons(
@@ -167,18 +178,20 @@ class ProductController {
               Padding(
                 padding: const EdgeInsets.only(right: 20),
                 child: FilledButton(
-                    onPressed: () {
-                      Navigator.pop(context, true);
-                    },
-                    child: Text('OK'.tr)),
+                  onPressed: () {
+                    Navigator.pop(context, true);
+                  },
+                  child: Text('OK'.tr),
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 20),
                 child: TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text('Huỷ'.tr)),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('Huỷ'.tr),
+                ),
               ),
             ],
           ),
@@ -334,18 +347,20 @@ class ProductController {
               Padding(
                 padding: const EdgeInsets.only(right: 20),
                 child: FilledButton(
-                    onPressed: () {
-                      Navigator.pop(context, true);
-                    },
-                    child: Text('OK'.tr)),
+                  onPressed: () {
+                    Navigator.pop(context, true);
+                  },
+                  child: Text('OK'.tr),
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 20),
                 child: TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text('Huỷ'.tr)),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('Huỷ'.tr),
+                ),
               ),
             ],
           ),
@@ -528,7 +543,7 @@ class ProductController {
                   },
                 ),
                 BoxWInput(
-                  title: 'Giá nhập',
+                  title: 'Giá nhập'.tr,
                   initial: tempProduct.importPrice.toString(),
                   readOnly: readOnly,
                   validator: (value) {
@@ -552,7 +567,7 @@ class ProductController {
                   },
                 ),
                 BoxWInput(
-                  title: 'Số lượng',
+                  title: 'Số lượng'.tr,
                   initial: tempProduct.count.toString(),
                   readOnly: readOnly,
                   validator: (value) {
@@ -680,19 +695,21 @@ class ProductController {
                 Padding(
                   padding: const EdgeInsets.only(right: 20),
                   child: FilledButton(
-                      onPressed: () {
-                        Navigator.pop(context, true);
-                      },
-                      child: Text('OK'.tr)),
+                    onPressed: () {
+                      Navigator.pop(context, true);
+                    },
+                    child: Text('OK'.tr),
+                  ),
                 ),
                 if (!readOnly)
                   Padding(
                     padding: const EdgeInsets.only(left: 20),
                     child: TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: Text('Huỷ'.tr)),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text('Huỷ'.tr),
+                    ),
                   ),
               ],
             ),
@@ -818,7 +835,8 @@ class ProductController {
     final result = await boxWConfirm(
       context: context,
       title: 'Xác nhận'.tr,
-      content: 'Bạn có chắc muốn xoá loại hàng ${category.name} không?'.tr,
+      content: 'Bạn có chắc muốn xoá loại hàng @{name} không?'
+          .trP({'name': category.name}),
       confirmText: 'Đồng ý'.tr,
       cancelText: 'Huỷ'.tr,
     );

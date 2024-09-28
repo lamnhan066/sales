@@ -87,56 +87,56 @@ class _ProductsViewState extends State<ProductsView> {
                   dataRowMinHeight: 68,
                   dataRowMaxHeight: 68,
                   columns: [
-                    const DataColumn(
+                    DataColumn(
                       label: Text(
-                        'STT',
+                        'STT'.tr,
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
-                    const DataColumn(
+                    DataColumn(
                       label: Text(
-                        'ID',
+                        'ID'.tr,
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
                     DataColumn(
                       label: ConstrainedBox(
                         constraints: const BoxConstraints(minWidth: 220),
-                        child: const Text(
-                          'Tên',
+                        child: Text(
+                          'Tên'.tr,
                           textAlign: TextAlign.center,
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
                     ),
-                    const DataColumn(
+                    DataColumn(
                       label: Text(
-                        'Giá nhập',
+                        'Giá nhập'.tr,
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
-                    const DataColumn(
+                    DataColumn(
                       label: Text(
-                        'Loại hàng',
+                        'Loại hàng'.tr,
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
-                    const DataColumn(
+                    DataColumn(
                       label: Text(
-                        'Số lượng',
+                        'Số lượng'.tr,
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
-                    const DataColumn(
+                    DataColumn(
                       label: Text(
-                        'Hành động',
+                        'Hành động'.tr,
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
                   ],

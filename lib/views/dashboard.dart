@@ -41,7 +41,9 @@ class _DashboardViewState extends State<DashboardView> {
                           Text('Tổng số sản phẩm'.tr),
                           divider,
                           Text(
-                            '${controller.totalProductCount} sản phẩm',
+                            '@{count} sản phẩm'.trP({
+                              'count': controller.totalProductCount,
+                            }),
                             style: const TextStyle(fontSize: 18),
                           ),
                         ],
@@ -56,7 +58,9 @@ class _DashboardViewState extends State<DashboardView> {
                           Text('Tổng số đơn hàng trong ngày'.tr),
                           divider,
                           Text(
-                            '${controller.dailyOrderCount} đơn',
+                            '@{count} đơn'.trP({
+                              'count': controller.dailyOrderCount,
+                            }),
                             style: const TextStyle(fontSize: 18),
                           ),
                         ],
@@ -71,7 +75,9 @@ class _DashboardViewState extends State<DashboardView> {
                           Text('Tổng doanh thu trong ngày'.tr),
                           divider,
                           Text(
-                            '${controller.dailyRevenue} đồng',
+                            '@{dailyRevenue} đồng'.trP({
+                              'dailyRevenue': controller.dailyRevenue,
+                            }),
                             style: const TextStyle(fontSize: 18),
                           ),
                         ],
