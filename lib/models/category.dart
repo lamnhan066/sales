@@ -36,12 +36,30 @@ class Category {
     };
   }
 
+  Map<String, dynamic> toSqlMap() {
+    return {
+      'c_id': id,
+      'c_name': name,
+      'c_description': description,
+      'c_deleted': deleted,
+    };
+  }
+
   factory Category.fromMap(Map<String, dynamic> map) {
     return Category(
       id: map['id']?.toInt() ?? 0,
       name: map['name'] ?? '',
       description: map['description'] ?? '',
       deleted: map['deleted'] ?? false,
+    );
+  }
+
+  factory Category.fromSqlMap(Map<String, dynamic> map) {
+    return Category(
+      id: map['c_id']?.toInt() ?? 0,
+      name: map['c_name'] ?? '',
+      description: map['c_description'] ?? '',
+      deleted: map['c_deleted'] ?? false,
     );
   }
 

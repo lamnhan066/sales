@@ -16,6 +16,10 @@ class TestDatabase extends Database {
 
   @override
   Future<void> initial() async {
+    _categories.clear();
+    _products.clear();
+    _orderItems.clear();
+    _orders.clear();
     _categories.addAll([
       Category(id: 0, name: 'Thức uống', description: 'Thức uống'),
       Category(id: 1, name: 'Thức ăn', description: 'Thức ăn'),
@@ -221,15 +225,15 @@ class TestDatabase extends Database {
     switch (orderBy) {
       case ProductOrderBy.none:
         break;
-      case ProductOrderBy.nameInc:
+      case ProductOrderBy.nameAsc:
         result.sort((a, b) => a.name.compareTo(b.name));
       case ProductOrderBy.nameDesc:
         result.sort((a, b) => b.name.compareTo(a.name));
-      case ProductOrderBy.importPriceInc:
+      case ProductOrderBy.importPriceAsc:
         result.sort((a, b) => a.importPrice.compareTo(b.importPrice));
       case ProductOrderBy.importPriceDesc:
         result.sort((a, b) => b.importPrice.compareTo(a.importPrice));
-      case ProductOrderBy.countInc:
+      case ProductOrderBy.countAsc:
         result.sort((a, b) => a.count.compareTo(b.count));
       case ProductOrderBy.countDesc:
         result.sort((a, b) => b.count.compareTo(a.count));

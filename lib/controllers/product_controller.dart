@@ -152,6 +152,23 @@ class ProductController {
     BuildContext context,
     void Function(VoidCallback fn) setState,
   ) async {
+    if (categories.isEmpty) {
+      if (await boxWConfirm(
+            context: context,
+            title: 'Thông báo',
+            content:
+                'Bạn cần có it nhất một loại hàng để có thể thêm sản phẩm.\n\n'
+                        'Bạn có muốn thêm loại hàng không?'
+                    .tr,
+            confirmText: 'Đồng ý'.tr,
+            cancelText: 'Huỷ'.tr,
+          ) &&
+          context.mounted) {
+        await _addCategory(context, setState);
+      }
+      return;
+    }
+
     final product = await _addProductDialog(context, setState);
 
     if (product != null) {
@@ -758,11 +775,11 @@ class ProductController {
   String _getOrderByName(ProductOrderBy orderBy) {
     return switch (orderBy) {
       ProductOrderBy.none => 'Không'.tr,
-      ProductOrderBy.nameInc => 'Tên tăng dần'.tr,
+      ProductOrderBy.nameAsc => 'Tên tăng dần'.tr,
       ProductOrderBy.nameDesc => 'Tên giảm dần'.tr,
-      ProductOrderBy.importPriceInc => 'Giá tăng dần'.tr,
+      ProductOrderBy.importPriceAsc => 'Giá tăng dần'.tr,
       ProductOrderBy.importPriceDesc => 'Giá giảm dần'.tr,
-      ProductOrderBy.countInc => 'Số lượng tăng đần'.tr,
+      ProductOrderBy.countAsc => 'Số lượng tăng đần'.tr,
       ProductOrderBy.countDesc => 'Số lượng giảm đần'.tr,
     };
   }

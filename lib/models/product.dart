@@ -66,6 +66,20 @@ class Product {
     };
   }
 
+  Map<String, dynamic> toSqlMap() {
+    return {
+      'p_id': id,
+      'p_sku': sku,
+      'p_name': name,
+      'p_image_path': imagePath,
+      'p_import_price': importPrice,
+      'p_count': count,
+      'p_description': description,
+      'p_category_id': categoryId,
+      'p_deleted': deleted,
+    };
+  }
+
   factory Product.fromMap(Map<String, dynamic> map) {
     return Product(
       id: map['id']?.toInt() ?? 0,
@@ -77,6 +91,20 @@ class Product {
       description: map['description'] ?? '',
       categoryId: map['categoryId']?.toInt() ?? 0,
       deleted: map['deleted'] ?? false,
+    );
+  }
+
+  factory Product.fromSqlMap(Map<String, dynamic> map) {
+    return Product(
+      id: map['p_id']?.toInt() ?? 0,
+      sku: map['p_sku'] ?? '',
+      name: map['p_name'] ?? '',
+      imagePath: List<String>.from(map['p_image_path']),
+      importPrice: map['p_import_price']?.toInt() ?? 0,
+      count: map['p_count']?.toInt() ?? 0,
+      description: map['p_description'] ?? '',
+      categoryId: map['p_category_id']?.toInt() ?? 0,
+      deleted: map['p_deleted'] ?? false,
     );
   }
 

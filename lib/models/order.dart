@@ -38,12 +38,30 @@ class Order {
     };
   }
 
+  Map<String, dynamic> toSqlMap() {
+    return {
+      'o_id': id,
+      'o_status': status.name,
+      'o_date': date,
+      'o_deleted': deleted,
+    };
+  }
+
   factory Order.fromMap(Map<String, dynamic> map) {
     return Order(
       id: map['id']?.toInt() ?? 0,
       status: OrderStatus.values.byName(map['status']),
       date: DateTime.fromMillisecondsSinceEpoch(map['date']),
       deleted: map['deleted'] ?? false,
+    );
+  }
+
+  factory Order.fromSqlMap(Map<String, dynamic> map) {
+    return Order(
+      id: map['o_id']?.toInt() ?? 0,
+      status: OrderStatus.values.byName(map['o_status']),
+      date: DateTime.parse(map['o_date']),
+      deleted: map['o_deleted'] ?? false,
     );
   }
 

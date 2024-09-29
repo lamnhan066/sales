@@ -51,6 +51,18 @@ class OrderItem {
     };
   }
 
+  Map<String, dynamic> toSqlMap() {
+    return {
+      'oi_id': id,
+      'oi_quantity': quantity,
+      'oi_unit_sale_price': unitSalePrice,
+      'oi_total_price': totalPrice,
+      'oi_product_id': productId,
+      'oi_order_id': orderId,
+      'oi_deleted': deleted,
+    };
+  }
+
   factory OrderItem.fromMap(Map<String, dynamic> map) {
     return OrderItem(
       id: map['id']?.toInt() ?? 0,
@@ -60,6 +72,18 @@ class OrderItem {
       productId: map['productId']?.toInt() ?? 0,
       orderId: map['orderId']?.toInt() ?? 0,
       deleted: map['deleted'] ?? false,
+    );
+  }
+
+  factory OrderItem.fromSqlMap(Map<String, dynamic> map) {
+    return OrderItem(
+      id: map['oi_id']?.toInt() ?? 0,
+      quantity: map['oi_quantity']?.toInt() ?? 0,
+      unitSalePrice: map['oi_unit_sale_price']?.toDouble() ?? 0.0,
+      totalPrice: map['oi_total_price']?.toInt() ?? 0,
+      productId: map['oi_productI_i']?.toInt() ?? 0,
+      orderId: map['oi_order_id']?.toInt() ?? 0,
+      deleted: map['oi_deleted'] ?? false,
     );
   }
 

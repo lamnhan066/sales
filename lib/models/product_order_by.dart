@@ -1,9 +1,9 @@
 enum ProductOrderBy {
   none,
-  nameInc,
+  nameAsc,
   nameDesc,
-  importPriceInc,
+  importPriceAsc,
   importPriceDesc,
-  countInc,
+  countAsc,
   countDesc
 }

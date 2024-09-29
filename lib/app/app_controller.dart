@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sales/di.dart';
+import 'package:sales/models/postgres_settings.dart';
 import 'package:sales/models/views_model.dart';
 import 'package:sales/views/dashboard.dart';
 import 'package:sales/views/products.dart';
@@ -7,8 +8,24 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class AppController {
   final prefs = getIt<SharedPreferences>();
+  var postgresSettings = PostgresSettings(
+    host: 'localhost',
+    database: 'postgres',
+    username: 'postgres',
+    password: 'sales',
+  );
 
-  Future<void> initial() async {}
+  Future<void> initial() async {
+    final postgresSettingsJson = prefs.getString('PostgresSettings');
+    if (postgresSettingsJson != null) {
+      postgresSettings = PostgresSettings.fromJson(postgresSettingsJson);
+    }
+  }
+
+  Future<void> changePostgresSettings(PostgresSettings settings) async {
+    postgresSettings = settings;
+    await prefs.setString('PostgresSettings', settings.toJson());
+  }
 
   Widget getLastView() {
     return switch (
