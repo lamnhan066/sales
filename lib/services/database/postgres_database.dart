@@ -302,15 +302,26 @@ class PostgresDatabase extends Database {
 
   @override
   Future<int> getTotalProductCount() async {
-    const sql = 'SELECT last_value FROM products_sequence';
+    const sql = 'SELECT count(*) FROM products WHERE p_deleted = FALSE';
     final result = await _connection.execute(sql);
     return result.first.first as int;
   }
 
   @override
-  Future<int> getAllCategoriesCount() async {
+  Future<(int, String)> generateProductIdSku() async {
+    const sql = 'SELECT last_value FROM products_sequence';
+    final result = await _connection.execute(sql);
+    final count = result.first.first as int;
+    final id = count + 1;
+    return (id, 'P${id.toString().padLeft(8, '0')}');
+  }
+
+  @override
+  Future<int> generateCategoryId() async {
     const sql = 'SELECT last_value FROM categories_sequence';
     final result = await _connection.execute(sql);
-    return result.first.first as int;
+    final count = result.first.first as int;
+    final id = count + 1;
+    return id;
   }
 }

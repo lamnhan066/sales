@@ -105,12 +105,6 @@ abstract class Database {
   /// Lấy danh sách tất cả các loại hàng.
   Future<List<Category>> getAllCategories();
 
-  /// Lấy tổng số lượng loại hàng có trong CSDL.
-  Future<int> getAllCategoriesCount() async {
-    final categories = await getAllCategories();
-    return categories.length;
-  }
-
   /// Lưu tất cả loại hàng vào CSDL.
   Future<void> saveAllCategories(List<Category> categories);
 
@@ -123,7 +117,8 @@ abstract class Database {
 
   /// Trình tạo ra `id` cho loại hàng.
   Future<int> generateCategoryId() async {
-    final count = await getAllCategoriesCount();
+    final categories = await getAllCategories();
+    final count = categories.length;
     final id = count + 1;
     return id;
   }
