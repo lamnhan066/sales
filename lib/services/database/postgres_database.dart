@@ -69,7 +69,7 @@ class PostgresDatabase extends Database {
 
   @override
   Future<void> removeCategory(Category category) async {
-    const sql = 'REMOVE FROM categories WHERE c_id = @id';
+    const sql = 'DELETE FROM categories WHERE c_id = @id';
     await _connection.execute(Sql.named(sql), parameters: {
       'id': category.id,
     });
@@ -98,7 +98,7 @@ class PostgresDatabase extends Database {
 
   @override
   Future<void> removeOrder(Order order) async {
-    const sql = 'REMOVE FROM orders WHERE o_id = @id';
+    const sql = 'DELETE FROM orders WHERE o_id = @id';
     await _connection.execute(Sql.named(sql), parameters: {
       'id': order.id,
     });
@@ -126,7 +126,7 @@ class PostgresDatabase extends Database {
 
   @override
   Future<void> removeOrderItem(OrderItem orderItem) async {
-    const sql = 'REMOVE FROM order_items WHERE oi_id = @id';
+    const sql = 'DELETE FROM order_items WHERE oi_id = @id';
     await _connection.execute(Sql.named(sql), parameters: {
       'id': orderItem.id,
     });
@@ -156,7 +156,7 @@ class PostgresDatabase extends Database {
 
   @override
   Future<void> removeProduct(Product product) async {
-    const sql = 'REMOVE FROM products WHERE p_id = @id';
+    const sql = 'DELETE FROM products WHERE p_id = @id';
     await _connection.execute(Sql.named(sql), parameters: {
       'id': product.id,
     });
