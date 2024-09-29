@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:boxw/boxw.dart';
 import 'package:flutter/material.dart';
 import 'package:language_helper/language_helper.dart';
@@ -40,6 +42,19 @@ class ProductController {
 
   void onPageChanged(BuildContext context, Function setState) async {
     int tempPage = page;
+    final validatorController = StreamController<bool>();
+    String? validator(String? p) {
+      if (p == null) return 'Bạn cần nhập số trang'.tr;
+      final n = int.tryParse(p);
+      if (n == null) return 'Số trang phải là số nguyên'.tr;
+      if (n < 1) return 'Số trang phải >= 1'.tr;
+      if (n > totalPage) {
+        return 'Số trang phải <= @{totalPage}'.trP({'totalPage': totalPage});
+      }
+      tempPage = n;
+      return null;
+    }
+
     final result = await boxWDialog(
       context: context,
       title: 'Chọn trang'.tr,
@@ -47,39 +62,35 @@ class ProductController {
         initial: '$tempPage',
         keyboardType: TextInputType.number,
         validator: (p) {
-          if (p == null) return 'Bạn cần nhập số trang'.tr;
-          final n = int.tryParse(p);
-          if (n == null) {
-            return 'Số trang phải là số nguyên'.tr;
+          final validate = validator(p);
+          if (validate == null) {
+            validatorController.add(true);
+          } else {
+            validatorController.add(false);
           }
-          if (n < 1) return 'Số trang phải lớn hơn hoặc bằng 1'.tr;
-          if (n > totalPage) {
-            return 'Số trang phải nhỏ hơn hoặc bằng @{totalPage}'
-                .trP({'totalPage': totalPage});
-          }
-          return null;
-        },
-        onChanged: (value) {
-          final p = int.tryParse(value);
-          if (p != null) {
-            tempPage = p;
-          }
+          return validate;
         },
       ),
       buttons: (context) {
-        // TODO: Ẩn button khi validation ở input không trả về null.
         return [
           Buttons(
             axis: Axis.horizontal,
             buttons: [
-              Padding(
-                padding: const EdgeInsets.only(right: 20),
-                child: FilledButton(
-                  onPressed: () {
-                    Navigator.pop(context, true);
-                  },
-                  child: Text('OK'.tr),
-                ),
+              StreamBuilder<bool>(
+                stream: validatorController.stream,
+                builder: (context, snapshot) {
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 20),
+                    child: FilledButton(
+                      onPressed: !snapshot.hasData || snapshot.data != true
+                          ? null
+                          : () {
+                              Navigator.pop(context, true);
+                            },
+                      child: Text('OK'.tr),
+                    ),
+                  );
+                },
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 20),
@@ -527,6 +538,9 @@ class ProductController {
       tempProduct = tempProduct.copyWith(id: idSku.$1, sku: idSku.$2);
     }
 
+    final form = GlobalKey<FormState>();
+    final formValidator = StreamController<bool>();
+
     if (context.mounted) {
       final result = await boxWDialog(
         context: context,
@@ -540,167 +554,177 @@ class ProductController {
           constraints: BoxConstraints(
             maxHeight: MediaQuery.sizeOf(context).height * 3 / 5,
           ),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                BoxWInput(
-                  title: 'Mã sản phẩm'.tr,
-                  initial: tempProduct.sku,
-                  readOnly: readOnly,
-                  onChanged: (value) {
-                    tempProduct = tempProduct.copyWith(sku: value);
-                  },
-                ),
-                BoxWInput(
-                  title: 'Tên sản phẩm'.tr,
-                  initial: tempProduct.name,
-                  readOnly: readOnly,
-                  onChanged: (value) {
-                    tempProduct = tempProduct.copyWith(name: value);
-                  },
-                ),
-                BoxWInput(
-                  title: 'Giá nhập'.tr,
-                  initial: tempProduct.importPrice.toString(),
-                  readOnly: readOnly,
-                  validator: (value) {
-                    if (value != null) {
-                      final n = int.tryParse(value);
-                      if (n == null) {
-                        return 'Vui lòng chỉ nhập số'.tr;
+          child: Form(
+            key: form,
+            onChanged: () {
+              formValidator.add(form.currentState!.validate());
+            },
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  BoxWInput(
+                    title: 'Mã sản phẩm'.tr,
+                    initial: tempProduct.sku,
+                    readOnly: readOnly,
+                    onChanged: (value) {
+                      tempProduct = tempProduct.copyWith(sku: value);
+                    },
+                  ),
+                  BoxWInput(
+                    title: 'Tên sản phẩm'.tr,
+                    initial: tempProduct.name,
+                    readOnly: readOnly,
+                    onChanged: (value) {
+                      tempProduct = tempProduct.copyWith(name: value);
+                    },
+                  ),
+                  BoxWInput(
+                    title: 'Giá nhập'.tr,
+                    initial: tempProduct.importPrice.toString(),
+                    readOnly: readOnly,
+                    validator: (value) {
+                      if (value != null) {
+                        final n = int.tryParse(value);
+                        if (n == null) {
+                          return 'Vui lòng chỉ nhập số'.tr;
+                        }
                       }
                       return null;
-                    }
-                    return null;
-                  },
-                  onChanged: (value) {
-                    final importPrice = int.tryParse(value);
-                    if (importPrice != null) {
-                      tempProduct =
-                          tempProduct.copyWith(importPrice: importPrice);
-                    } else {
-                      // TODO: Báo lỗi khi không thể parse giá
-                    }
-                  },
-                ),
-                BoxWInput(
-                  title: 'Số lượng'.tr,
-                  initial: tempProduct.count.toString(),
-                  readOnly: readOnly,
-                  validator: (value) {
-                    if (value != null) {
-                      final n = int.tryParse(value);
-                      if (n == null) {
-                        return 'Vui lòng chỉ nhập số'.tr;
+                    },
+                    onChanged: (value) {
+                      final importPrice = int.tryParse(value);
+                      if (importPrice != null) {
+                        tempProduct =
+                            tempProduct.copyWith(importPrice: importPrice);
+                      }
+                    },
+                  ),
+                  BoxWInput(
+                    title: 'Số lượng'.tr,
+                    initial: tempProduct.count.toString(),
+                    readOnly: readOnly,
+                    validator: (value) {
+                      if (value != null) {
+                        final n = int.tryParse(value);
+                        if (n == null) {
+                          return 'Vui lòng chỉ nhập số'.tr;
+                        }
                       }
                       return null;
-                    }
-                    return null;
-                  },
-                  onChanged: (value) {
-                    final count = int.tryParse(value);
-                    if (count != null) {
-                      tempProduct = tempProduct.copyWith(count: count);
-                    } else {
-                      // TODO: Báo lỗi khi không thể parse số lượng
-                    }
-                  },
-                ),
-                StatefulBuilder(builder: (context, localSetState) {
-                  return Row(
-                    children: [
-                      Expanded(
-                        child: BoxWDropdown(
-                          title: 'Loại hàng'.tr,
-                          items: categories
-                              .map((e) => DropdownMenuItem(
-                                    value: e.id,
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.max,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(e.name),
-                                        Row(
-                                          children: [
-                                            IconButton(
-                                              onPressed: () {
-                                                _infoCategory(
-                                                    context, setState, e);
-                                              },
-                                              icon: const Icon(
-                                                  Icons.info_rounded),
-                                            ),
-                                            IconButton(
-                                              onPressed: () async {
-                                                await _editCategory(
-                                                    context, setState, e);
-                                                if (context.mounted) {
-                                                  Navigator.pop(context);
-                                                }
-                                              },
-                                              icon: const Icon(Icons.edit),
-                                            ),
-                                            IconButton(
-                                              onPressed: () async {
-                                                await _removeCategory(
-                                                    context, setState, e);
-                                                localSetState(() {});
-                                                if (context.mounted) {
-                                                  Navigator.pop(context);
-                                                }
-                                              },
-                                              icon: const Icon(
-                                                Icons.close_rounded,
-                                                color: Colors.red,
-                                              ),
-                                            ),
-                                          ],
-                                        )
-                                      ],
-                                    ),
-                                  ))
-                              .toList(),
-                          value: tempProduct.categoryId,
-                          selectedItemBuilder: (context) {
-                            return categories
-                                .map((e) => DropdownMenuItem(
-                                      value: e.id,
-                                      child: Text(e.name),
-                                    ))
-                                .toList();
-                          },
-                          onChanged: readOnly
-                              ? null
-                              : (int? value) {
+                    },
+                    onChanged: (value) {
+                      final count = int.tryParse(value);
+                      if (count != null) {
+                        tempProduct = tempProduct.copyWith(count: count);
+                      }
+                    },
+                  ),
+                  if (readOnly)
+                    BoxWInput(
+                      title: 'Loại hàng'.tr,
+                      initial: categories
+                          .singleWhere((e) => e.id == tempProduct.categoryId)
+                          .name,
+                      readOnly: true,
+                    )
+                  else
+                    StatefulBuilder(
+                      builder: (context, localSetState) {
+                        return Row(
+                          children: [
+                            Expanded(
+                              child: BoxWDropdown(
+                                title: 'Loại hàng'.tr,
+                                items: categories
+                                    .map((e) => DropdownMenuItem(
+                                          value: e.id,
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.max,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(e.name),
+                                              Row(
+                                                children: [
+                                                  IconButton(
+                                                    onPressed: () {
+                                                      _infoCategory(
+                                                          context, setState, e);
+                                                    },
+                                                    icon: const Icon(
+                                                        Icons.info_rounded),
+                                                  ),
+                                                  IconButton(
+                                                    onPressed: () async {
+                                                      await _editCategory(
+                                                          context, setState, e);
+                                                      if (context.mounted) {
+                                                        Navigator.pop(context);
+                                                      }
+                                                    },
+                                                    icon:
+                                                        const Icon(Icons.edit),
+                                                  ),
+                                                  IconButton(
+                                                    onPressed: () async {
+                                                      await _removeCategory(
+                                                          context, setState, e);
+                                                      localSetState(() {});
+                                                      if (context.mounted) {
+                                                        Navigator.pop(context);
+                                                      }
+                                                    },
+                                                    icon: const Icon(
+                                                      Icons.close_rounded,
+                                                      color: Colors.red,
+                                                    ),
+                                                  ),
+                                                ],
+                                              )
+                                            ],
+                                          ),
+                                        ))
+                                    .toList(),
+                                value: tempProduct.categoryId,
+                                selectedItemBuilder: (context) {
+                                  return categories
+                                      .map((e) => DropdownMenuItem(
+                                            value: e.id,
+                                            child: Text(e.name),
+                                          ))
+                                      .toList();
+                                },
+                                onChanged: (int? value) {
                                   localSetState(() {
                                     tempProduct =
                                         tempProduct.copyWith(categoryId: value);
                                   });
                                 },
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: readOnly
-                            ? null
-                            : () async {
-                                await _addCategory(context, setState);
-                                localSetState(() {});
-                              },
-                        icon: const Icon(Icons.add),
-                      ),
-                    ],
-                  );
-                }),
-                BoxWInput(
-                  title: 'Mô tả',
-                  initial: tempProduct.description,
-                  readOnly: readOnly,
-                  onChanged: (value) {
-                    tempProduct = tempProduct.copyWith(description: value);
-                  },
-                ),
-              ],
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: readOnly
+                                  ? null
+                                  : () async {
+                                      await _addCategory(context, setState);
+                                      localSetState(() {});
+                                    },
+                              icon: const Icon(Icons.add),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  BoxWInput(
+                    title: 'Mô tả'.tr,
+                    initial: tempProduct.description,
+                    readOnly: readOnly,
+                    onChanged: (value) {
+                      tempProduct = tempProduct.copyWith(description: value);
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -709,15 +733,21 @@ class ProductController {
             Buttons(
               axis: Axis.horizontal,
               buttons: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 20),
-                  child: FilledButton(
-                    onPressed: () {
-                      Navigator.pop(context, true);
-                    },
-                    child: Text('OK'.tr),
-                  ),
-                ),
+                StreamBuilder<bool>(
+                    stream: formValidator.stream,
+                    builder: (context, snapshot) {
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 20),
+                        child: FilledButton(
+                          onPressed: !snapshot.hasData || snapshot.data != true
+                              ? null
+                              : () {
+                                  Navigator.pop(context, true);
+                                },
+                          child: Text('OK'.tr),
+                        ),
+                      );
+                    }),
                 if (!readOnly)
                   Padding(
                     padding: const EdgeInsets.only(left: 20),
