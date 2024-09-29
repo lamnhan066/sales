@@ -105,25 +105,30 @@ abstract class Database {
   /// Lấy danh sách tất cả các loại hàng.
   Future<List<Category>> getAllCategories();
 
+  /// Lấy tổng số lượng loại hàng có trong CSDL.
+  Future<int> getAllCategoriesCount() async {
+    final categories = await getAllCategories();
+    return categories.length;
+  }
+
   /// Lưu tất cả loại hàng vào CSDL.
   Future<void> saveAllCategories(List<Category> categories);
 
-  /// Trình tạo ra `id` và `sku`.
+  /// Trình tạo ra `id` và `sku` cho sản phẩm.
   Future<(int id, String sku)> generateProductIdSku() async {
     final count = await getTotalProductCount();
     final id = count + 1;
     return (id, 'P${id.toString().padLeft(8, '0')}');
   }
 
-  /// Trình tạo ra `id` và `sku`.
+  /// Trình tạo ra `id` cho loại hàng.
   Future<int> generateCategoryId() async {
-    final count = await getAllCategories();
-    final id = count.length + 1;
+    final count = await getAllCategoriesCount();
+    final id = count + 1;
     return id;
   }
 
   /// Thêm sản phẩm mới.
-  @mustCallSuper
   Future<void> addProduct(Product product);
 
   /// Cập nhật sản phẩm.
@@ -171,7 +176,6 @@ abstract class Database {
   Future<void> addOrder(Order order);
 
   /// Cập nhật đơn đặt hàng.
-  @mustCallSuper
   Future<void> updateOrder(Order order);
 
   /// Xoá đơn đặt hàng.
@@ -195,7 +199,7 @@ abstract class Database {
   /// Xoá sản phẩm đã đặt hàng.
   Future<void> removeOrderItem(OrderItem orderItem) async {
     orderItem = orderItem.copyWith(deleted: true);
-    updateOrderItem(orderItem);
+    await updateOrderItem(orderItem);
   }
 
   /// Lấy tất tất cả sản phẩm đã đặt hàng.

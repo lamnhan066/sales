@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:sales/app/app_controller.dart';
 import 'package:sales/di.dart';
 import 'package:sales/services/utils.dart';
 import 'package:sales/views/home.dart';
@@ -17,7 +18,7 @@ class LoginController {
   String version = '1.0.0';
   String error = '';
 
-  void initial(BuildContext context, Function setState) async {
+  Future<void> initial(BuildContext context, Function setState) async {
     final v = await getVersion();
     setState(() {
       version = v;
@@ -39,7 +40,7 @@ class LoginController {
     final isAutomaticallyLogin = await boxWDialog(
       context: context,
       content: Builder(builder: (context) {
-        Timer(const Duration(seconds: kReleaseMode ? 3 : 0), () {
+        final timer = Timer(const Duration(seconds: kReleaseMode ? 3 : 0), () {
           if (context.mounted) {
             Navigator.pop(context, true);
           }
@@ -53,6 +54,7 @@ class LoginController {
             ),
             FilledButton(
               onPressed: () {
+                timer.cancel();
                 Navigator.pop(context, false);
               },
               child: Text('Huỷ'.tr),
@@ -63,7 +65,6 @@ class LoginController {
     );
 
     if (isAutomaticallyLogin && context.mounted) {
-      final (username, password) = readRememberedInformation();
       login(context, username, password, true);
     }
   }
@@ -95,55 +96,12 @@ class LoginController {
   }
 
   void serverConfiguration(BuildContext context) async {
-    String server = getServer();
-    final isSaved = await boxWDialog(
-      context: context,
-      title: 'Cấu hình máy chủ'.tr,
-      content: Column(
-        children: [
-          BoxWInput(
-            title: 'Máy chủ'.tr,
-            initial: server,
-            onChanged: (value) {
-              server = value;
-            },
-          ),
-        ],
-      ),
-      buttons: (context) {
-        return [
-          Buttons(axis: Axis.horizontal, buttons: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context, false);
-              },
-              child: Text('Huỷ'.tr),
-            ),
-            FilledButton(
-              onPressed: () {
-                Navigator.pop(context, true);
-              },
-              child: Text('Lưu'.tr),
-            ),
-          ])
-        ];
-      },
-    );
-
-    if (isSaved == true) {
-      final prefs = getIt<SharedPreferences>();
-      prefs.setString('Settings.Server', server);
-    }
+    getIt<AppController>().settingsDialog(context);
   }
 
   Future<String> getVersion() async {
     final info = await PackageInfo.fromPlatform();
     return info.version;
-  }
-
-  String getServer() {
-    final prefs = getIt<SharedPreferences>();
-    return prefs.getString('Settings.Server') ?? '';
   }
 
   (String username, String password) readRememberedInformation() {

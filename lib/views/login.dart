@@ -12,11 +12,16 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
+  final usernameEdittingController = TextEditingController();
+  final passwordEdittingController = TextEditingController();
   final controller = getIt<LoginController>();
 
   @override
   void initState() {
-    controller.initial(context, setState);
+    controller.initial(context, setState).then((_) {
+      usernameEdittingController.text = controller.username;
+      passwordEdittingController.text = controller.password;
+    });
     super.initState();
   }
 
@@ -45,16 +50,16 @@ class _LoginViewState extends State<LoginView> {
                 ),
                 BoxWInput(
                   title: 'Tên tài khoản'.tr,
+                  controller: usernameEdittingController,
                   textAlign: TextAlign.left,
-                  initial: controller.username,
                   onChanged: (username) {
                     controller.onUsernameChanged(context, setState, username);
                   },
                 ),
                 BoxWInput(
                   title: 'Mật khẩu'.tr,
+                  controller: passwordEdittingController,
                   textAlign: TextAlign.left,
-                  initial: controller.password,
                   obscureText: true,
                   onChanged: (pw) {
                     controller.onPasswordChanged(context, setState, pw);

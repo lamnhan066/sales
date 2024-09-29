@@ -25,7 +25,10 @@ class PostgresDatabase extends Database {
         username: postgresSettings.username,
         password: postgresSettings.password,
       ),
-      settings: const ConnectionSettings(sslMode: SslMode.disable),
+      settings: postgresSettings.host == 'localhost' ||
+              postgresSettings.host == '127.0.0.1'
+          ? const ConnectionSettings(sslMode: SslMode.disable)
+          : null,
     );
   }
 
@@ -222,13 +225,11 @@ class PostgresDatabase extends Database {
       parameters.addAll({'searchText': '%$searchText%'});
     }
 
-    if (orderBy != ProductOrderBy.none) {
-      sql += ' ORDER BY ';
-    }
+    sql += ' ORDER BY ';
 
     switch (orderBy) {
       case ProductOrderBy.none:
-        break;
+        sql += 'p_sku ASC';
       case ProductOrderBy.nameAsc:
         sql += 'p_name ASC';
       case ProductOrderBy.nameDesc:
@@ -297,5 +298,19 @@ class PostgresDatabase extends Database {
       }
       await updateProduct(product);
     }
+  }
+
+  @override
+  Future<int> getTotalProductCount() async {
+    const sql = 'SELECT last_value FROM products_sequence';
+    final result = await _connection.execute(sql);
+    return result.first.first as int;
+  }
+
+  @override
+  Future<int> getAllCategoriesCount() async {
+    const sql = 'SELECT last_value FROM categories_sequence';
+    final result = await _connection.execute(sql);
+    return result.first.first as int;
   }
 }
