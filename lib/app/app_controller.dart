@@ -6,11 +6,17 @@ import 'package:sales/models/postgres_settings.dart';
 import 'package:sales/models/views_model.dart';
 import 'package:sales/services/database/database.dart';
 import 'package:sales/views/dashboard.dart';
+import 'package:sales/views/orders.dart';
 import 'package:sales/views/products.dart';
+import 'package:sales/views/report.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppController {
   final prefs = getIt<SharedPreferences>();
+
+  ViewsModel get view => _view;
+  ViewsModel _view = ViewsModel.dashboard;
+
   var postgresSettings = PostgresSettings(
     host: 'localhost',
     database: 'postgres',
@@ -23,6 +29,8 @@ class AppController {
     if (postgresSettingsJson != null) {
       postgresSettings = PostgresSettings.fromJson(postgresSettingsJson);
     }
+    _view = ViewsModel.values
+        .byName(prefs.getString('LastView') ?? ViewsModel.dashboard.name);
   }
 
   Future<void> changePostgresSettings(PostgresSettings settings) async {
@@ -30,23 +38,22 @@ class AppController {
     await prefs.setString('PostgresSettings', settings.toJson());
   }
 
-  Widget getLastView() {
+  Widget getView() {
     return switch (
         ViewsModel.values.byName(prefs.getString('LastView') ?? 'products')) {
       ViewsModel.dashboard => const DashboardView(),
-      // TODO: Bổ sung màn hình Orders
-      ViewsModel.orders => throw UnimplementedError(),
+      ViewsModel.orders => const OrdersView(),
       ViewsModel.products => const ProductsView(),
-      // TODO: Bổ sung màn hình Report
-      ViewsModel.report => throw UnimplementedError(),
-      // TODO: Bổ sung màn hình Setting
-      ViewsModel.setting => throw UnimplementedError(),
+      ViewsModel.report => const ReportView(),
     };
   }
 
   // TODO: Bổ sung vào các Navigation để có thể lưu được trạng thái màn hình mở cối
-  void setLastView(ViewsModel view) {
+  void setView(ViewsModel view, Function setState) {
     prefs.setString('LastView', view.name);
+    setState(() {
+      _view = view;
+    });
   }
 
   void settingsDialog(BuildContext context) async {
@@ -54,11 +61,6 @@ class AppController {
     final result = await boxWDialog(
       context: context,
       title: 'Cấu Hình Máy Chủ'.tr,
-      // width: MediaQuery.sizeOf(context).width * 3 / 5,
-      // constrains: BoxConstraints(
-      //   minWidth: 280,
-      //   maxWidth: MediaQuery.sizeOf(context).width * 3 / 5,
-      // ),
       content: Column(
         children: [
           BoxWInput(

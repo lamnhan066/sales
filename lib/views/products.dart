@@ -25,9 +25,6 @@ class _ProductsViewState extends State<ProductsView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Sản phẩm'.tr),
-      ),
       body: Column(
         children: [
           Padding(

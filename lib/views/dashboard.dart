@@ -25,7 +25,6 @@ class _DashboardViewState extends State<DashboardView> {
   Widget build(BuildContext context) {
     Widget divider = const SizedBox(width: 100, child: Divider());
     return Scaffold(
-      appBar: AppBar(title: Text('Tổng Quan'.tr)),
       body: Align(
         alignment: Alignment.topCenter,
         child: SingleChildScrollView(

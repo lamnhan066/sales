@@ -47,7 +47,9 @@ class DashboardController {
       });
     });
     database.getMonthlyRevenues(DateTime.now()).then((values) {
-      monthlyRevenues = values;
+      setState(() {
+        monthlyRevenues = values;
+      });
     });
   }
 }
