@@ -180,7 +180,9 @@ class _DashboardViewState extends State<DashboardView> {
                         child: SizedBox(
                           width: 600,
                           child: Sparkline(
-                            data: controller.monthlyRevenues.cast<double>(),
+                            data: controller.monthlyRevenues
+                                .map((e) => e.toDouble())
+                                .toList(),
                             gridLinesEnable: true,
                             gridLinelabel: (gridLineValue) {
                               return '${(gridLineValue / 1000).round()}k';

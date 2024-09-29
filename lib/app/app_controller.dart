@@ -39,8 +39,7 @@ class AppController {
   }
 
   Widget getView() {
-    return switch (
-        ViewsModel.values.byName(prefs.getString('LastView') ?? 'products')) {
+    return switch (_view) {
       ViewsModel.dashboard => const DashboardView(),
       ViewsModel.orders => const OrdersView(),
       ViewsModel.products => const ProductsView(),
@@ -48,7 +47,6 @@ class AppController {
     };
   }
 
-  // TODO: Bổ sung vào các Navigation để có thể lưu được trạng thái màn hình mở cối
   void setView(ViewsModel view, Function setState) {
     prefs.setString('LastView', view.name);
     setState(() {
