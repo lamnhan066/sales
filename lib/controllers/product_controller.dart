@@ -113,6 +113,7 @@ class ProductController {
     }
   }
 
+  // TODO: Hiển thị dialog để người dùng có thể tải xuống mẫu hoặc dữ liệu hiện tại
   void loadDataFromExcel(BuildContext context, Function setState) async {
     final data = await Database.loadDataFromExcel();
     if (!context.mounted) return;
@@ -277,17 +278,6 @@ class ProductController {
     void Function(VoidCallback fn) setState,
   ) async {
     var tempRangeValues = rangeValues;
-    List<double> prices = [
-      0,
-      1000000,
-      3000000,
-      5000000,
-      10000000,
-      20000000,
-      50000000,
-      100000000,
-      double.infinity,
-    ];
     final startController =
         TextEditingController(text: _getPriceRangeText(tempRangeValues.start));
     final endController =
@@ -301,65 +291,90 @@ class ProductController {
             return Column(
               children: [
                 Text('Lọc theo mức giá'.tr),
-                BoxWInput(
-                  controller: startController,
-                  title: 'Từ'.tr,
-                  initial: _getPriceRangeText(tempRangeValues.start),
-                  onChanged: (value) {
-                    final start = double.tryParse(value);
-                    if (start != null) {
-                      tempRangeValues = RangeValues(start, tempRangeValues.end);
-                    }
-                  },
-                  keyboardType: TextInputType.number,
-                ),
-                Wrap(
+                Row(
                   children: [
-                    for (final price in prices)
-                      InkWell(
-                        onTap: () {
-                          startController.text = _getPriceRangeText(price);
-                          tempRangeValues =
-                              RangeValues(price, tempRangeValues.end);
+                    Expanded(
+                      child: BoxWInput(
+                        controller: startController,
+                        title: 'Từ'.tr,
+                        initial: _getPriceRangeText(tempRangeValues.start),
+                        validator: (value) {
+                          if (value == null) {
+                            return 'Không được bỏ trống'.tr;
+                          }
+                          final n = double.tryParse(value);
+                          if (n == null) {
+                            return 'Phải là số nguyên'.tr;
+                          }
+                          return null;
                         },
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            _getPriceRangeText(price),
-                            style: const TextStyle(fontSize: 13),
-                          ),
+                        onChanged: (value) {
+                          final start = double.tryParse(value);
+                          if (start != null) {
+                            tempRangeValues =
+                                RangeValues(start, tempRangeValues.end);
+                          }
+                        },
+                        keyboardType: TextInputType.number,
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        startController.text = _getPriceRangeText(0);
+                        tempRangeValues = RangeValues(0, tempRangeValues.end);
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text(
+                          '0',
+                          style: TextStyle(fontSize: 13),
                         ),
                       ),
+                    ),
                   ],
                 ),
-                BoxWInput(
-                  controller: endController,
-                  title: 'Đến'.tr,
-                  onChanged: (value) {
-                    final end = double.tryParse(value);
-                    if (end != null) {
-                      tempRangeValues = RangeValues(tempRangeValues.start, end);
-                    }
-                  },
-                  keyboardType: TextInputType.number,
-                ),
-                Wrap(
+                Row(
                   children: [
-                    for (final price in prices)
-                      InkWell(
-                        onTap: () {
-                          endController.text = _getPriceRangeText(price);
-                          tempRangeValues =
-                              RangeValues(tempRangeValues.start, price);
+                    Expanded(
+                      child: BoxWInput(
+                        controller: endController,
+                        title: 'Đến'.tr,
+                        validator: (value) {
+                          if (value == 'Tối đa'.tr) return null;
+                          if (value == null) {
+                            return 'Không được bỏ trống'.tr;
+                          }
+                          final n = double.tryParse(value);
+                          if (n == null) {
+                            return 'Phải là số nguyên'.tr;
+                          }
+                          return null;
                         },
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            _getPriceRangeText(price),
-                            style: const TextStyle(fontSize: 13),
-                          ),
+                        onChanged: (value) {
+                          final end = double.tryParse(value);
+                          if (end != null) {
+                            tempRangeValues =
+                                RangeValues(tempRangeValues.start, end);
+                          }
+                        },
+                        keyboardType: TextInputType.number,
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        endController.text =
+                            _getPriceRangeText(double.infinity);
+                        tempRangeValues =
+                            RangeValues(tempRangeValues.start, double.infinity);
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          _getPriceRangeText(double.infinity),
+                          style: const TextStyle(fontSize: 13),
                         ),
                       ),
+                    ),
                   ],
                 ),
               ],
@@ -818,7 +833,7 @@ class ProductController {
     if (price == double.infinity) {
       return 'Tối đa'.tr;
     }
-    return '$price';
+    return '${price.toInt()}';
   }
 
   Future<void> _infoCategory(
