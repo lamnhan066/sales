@@ -32,14 +32,25 @@
     - Cho phép xem danh sách sản phẩm theo loại > Xem chi tiết > Xóa / Sửa:
         - Có hỗ trợ phân trang
         - Cho phép sắp xếp theo 1 loại tiêu chí
-        - Cho phép lọc lại theo khoảng giá
-        - Cho phép tìm kiếm dựa theo từ khóa trong tên sản phẩm
+        - Cho phép lọc lại theo khoảng giá:
+            - Khoảng giá thấp sẽ có giá trị mặc định là 0 và có nút chọn riêng.
+            - Khoảng giá cao sẽ có giá trị mặc định là `Tối đa` và có nút chọn riêng.
+        - Cho phép tìm kiếm dựa theo từ khóa trong tên sản phẩm:
     - Thêm mới sản phẩm.
-    - TODO: Thêm mới loại sản phẩm.
-    - TODO: Cho phép import dữ liệu từ tập tin Excel hoặc Access.
-    - TODO: Bổ sung dữ liệu mẫu:
+    - Thêm mới loại sản phẩm.
+    - Cho phép import dữ liệu từ tập tin Excel.
+    - Dữ liệu mẫu:
         - Loại sản phẩm: có ít nhất 3 loại
         - Sản phẩm:
             - Mỗi loại sản phẩm có tối thiểu 22 sản phẩm.
             - Mỗi sản phẩm có tối thiểu 3 hình.
             - Dữ liệu mẫu không cần phải là thật nhưng nên giống thật.
+    - Dữ liệu từ 3 nguồn:
+        - Memory.
+        - Shared Preferences.
+        - Postgres:
+            - Tìm hiểu cách sử dụng pgAdmin:
+                - Cách tạo bảng thông qua GUI (ERD tool).
+                - Cách để tự động tạo id (tự động tăng số) thông qua sequence.
+            - Tìm hiểu cách sử dụng postgres:
+                - Cách để lấy được số hiện tại của trình tự động tạo số.
