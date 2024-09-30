@@ -1,22 +1,26 @@
 enum ProductOrderBy {
   /// Sắp xếp theo sku tăng dần (Mặc định).
-  none,
+  none('p_sku ASC'),
 
   /// Sắp xếp theo tên tăng dần.
-  nameAsc,
+  nameAsc('p_name ASC'),
 
   /// Sắp xếp theo tên giảm dần.
-  nameDesc,
+  nameDesc('p_name DESC'),
 
   /// Sắp xếp theo giá nhập tăng dần.
-  importPriceAsc,
+  importPriceAsc('p_import_price ASC'),
 
   /// Sắp xếp theo giá nhập giảm dần.
-  importPriceDesc,
+  importPriceDesc('p_import_price DESC'),
 
   /// Sắp xếp theo số lượng tăng dần.
-  countAsc,
+  countAsc('p_count ASC'),
 
   /// Sắp xếp theo số lượng giảm dần.
-  countDesc
+  countDesc('p_count DESC');
+
+  final String sql;
+
+  const ProductOrderBy(this.sql);
 }

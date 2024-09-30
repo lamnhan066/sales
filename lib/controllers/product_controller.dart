@@ -12,12 +12,12 @@ import 'package:sales/services/database/database.dart';
 class ProductController {
   final database = getIt<Database>();
   List<Product> products = [];
-  int totalProductsCount = 0;
   final int perpage = 10;
   int page = 1;
   ProductOrderBy orderBy = ProductOrderBy.none;
   String searchText = '';
   RangeValues rangeValues = const RangeValues(0, double.infinity);
+  int? categoryIdFilter;
   List<Category> categories = [];
   int totalPage = 0;
 
@@ -270,7 +270,7 @@ class ProductController {
 
   Future<void> onSearchChanged(Function setState, String text) async {
     searchText = text;
-    _updateCurrentPage(setState);
+    _updateCurrentPage(setState, resetPage: true);
   }
 
   void onFilterTapped(
@@ -377,6 +377,22 @@ class ProductController {
                     ),
                   ],
                 ),
+                Text('Lọc theo loại hàng'.tr),
+                BoxWDropdown<int?>(
+                  title: 'Loại hàng'.tr,
+                  items: categories
+                      .map((e) => DropdownMenuItem(
+                            value: e.id,
+                            child: Text(e.name),
+                          ))
+                      .toList(),
+                  value: categoryIdFilter,
+                  onChanged: (int? value) {
+                    setState(() {
+                      categoryIdFilter = value;
+                    });
+                  },
+                ),
               ],
             );
           }),
@@ -413,7 +429,7 @@ class ProductController {
 
     if (result == true && rangeValues != tempRangeValues) {
       rangeValues = tempRangeValues;
-      _updateCurrentPage(setState);
+      _updateCurrentPage(setState, resetPage: true);
     }
   }
 
@@ -477,7 +493,7 @@ class ProductController {
 
     if (result == true && tempOrderBy != orderBy) {
       orderBy = tempOrderBy;
-      _updateCurrentPage(setState);
+      _updateCurrentPage(setState, resetPage: true);
     }
   }
 
@@ -787,9 +803,11 @@ class ProductController {
     return null;
   }
 
-  void _updateCurrentPage(Function setState) async {
+  void _updateCurrentPage(Function setState, {bool resetPage = false}) async {
+    if (resetPage) page = 1;
+
     categories = await database.getAllCategories();
-    final (totalPages, products) = await database.getProducts(
+    final products = await database.getProducts(
       page: page,
       perpage: perpage,
       searchText: searchText,
@@ -797,7 +815,7 @@ class ProductController {
       rangeValues: rangeValues,
     );
     setState(() {
-      _updatePagesCountAndList(totalPages, products);
+      _updatePagesCountAndList(products.$1, products.$2);
     });
   }
 

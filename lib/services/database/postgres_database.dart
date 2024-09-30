@@ -211,29 +211,14 @@ class PostgresDatabase extends Database {
       }
     }
 
+    // TODO: Tìm cách normalize trước khi query để hiển thị kết quả tốt hơn
     if (searchText.isNotEmpty) {
-      sql += ' AND p_name LIKE @searchText';
+      sql += ' AND LOWER(p_name) LIKE LOWER(@searchText)';
       parameters.addAll({'searchText': '%$searchText%'});
     }
 
-    sql += ' ORDER BY ';
+    sql += ' ORDER BY ${orderBy.sql}';
 
-    switch (orderBy) {
-      case ProductOrderBy.none:
-        sql += 'p_sku ASC';
-      case ProductOrderBy.nameAsc:
-        sql += 'p_name ASC';
-      case ProductOrderBy.nameDesc:
-        sql += 'p_name DESC';
-      case ProductOrderBy.importPriceAsc:
-        sql += 'p_import_price ASC';
-      case ProductOrderBy.importPriceDesc:
-        sql += 'p_import_price DESC';
-      case ProductOrderBy.countAsc:
-        sql += 'p_count ASC';
-      case ProductOrderBy.countDesc:
-        sql += 'p_count DESC';
-    }
     final result =
         await _connection.execute(Sql.named(sql), parameters: parameters);
     return result.map((e) => Product.fromSqlMap(e.toColumnMap())).toList();
