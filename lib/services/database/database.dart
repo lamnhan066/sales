@@ -148,11 +148,13 @@ abstract class Database {
     ProductOrderBy orderBy = ProductOrderBy.none,
     String searchText = '',
     RangeValues? rangeValues,
+    int? categoryId,
   }) async {
     List<Product> result = await getAllProducts(
       orderBy: orderBy,
       searchText: searchText,
       rangeValues: rangeValues,
+      categoryId: categoryId,
     );
     return (
       result.length,
@@ -165,6 +167,7 @@ abstract class Database {
     ProductOrderBy orderBy = ProductOrderBy.none,
     String searchText = '',
     RangeValues? rangeValues,
+    int? categoryId,
   });
 
   /// Thêm đơn đặt hàng.

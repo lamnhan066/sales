@@ -191,9 +191,15 @@ class PostgresDatabase extends Database {
     ProductOrderBy orderBy = ProductOrderBy.none,
     String searchText = '',
     RangeValues? rangeValues,
+    int? categoryId,
   }) async {
     String sql = 'SELECT * FROM products WHERE p_deleted=FALSE';
     Map<String, Object> parameters = {};
+
+    if (categoryId != null) {
+      sql += ' AND p_category_id = @categoryId';
+      parameters.addAll({'categoryId': categoryId});
+    }
 
     if (rangeValues != null) {
       if (rangeValues.start > 0 && rangeValues.start != double.infinity) {
@@ -232,8 +238,9 @@ class PostgresDatabase extends Database {
           .execute(Sql.named(sql), parameters: {'id': category.id});
       if (result.isEmpty) {
         await addCategory(category);
+      } else {
+        await updateCategory(category);
       }
-      await updateCategory(category);
     }
   }
 
@@ -245,8 +252,9 @@ class PostgresDatabase extends Database {
           .execute(Sql.named(sql), parameters: {'id': orderItem.id});
       if (result.isEmpty) {
         await addOrderItem(orderItem);
+      } else {
+        await updateOrderItem(orderItem);
       }
-      await updateOrderItem(orderItem);
     }
   }
 
@@ -258,8 +266,9 @@ class PostgresDatabase extends Database {
           .execute(Sql.named(sql), parameters: {'id': order.id});
       if (result.isEmpty) {
         await addOrder(order);
+      } else {
+        await updateOrder(order);
       }
-      await updateOrder(order);
     }
   }
 
@@ -271,8 +280,9 @@ class PostgresDatabase extends Database {
           .execute(Sql.named(sql), parameters: {'id': product.id});
       if (result.isEmpty) {
         await addProduct(product);
+      } else {
+        await updateProduct(product);
       }
-      await updateProduct(product);
     }
   }
 

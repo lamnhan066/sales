@@ -184,11 +184,13 @@ class TestDatabase extends Database {
     ProductOrderBy orderBy = ProductOrderBy.none,
     String searchText = '',
     RangeValues? rangeValues,
+    int? categoryId,
   }) async {
     List<Product> result = await getAllProducts(
       orderBy: orderBy,
       searchText: searchText,
       rangeValues: rangeValues,
+      categoryId: categoryId,
     );
     return (
       result.length,
@@ -201,10 +203,16 @@ class TestDatabase extends Database {
     ProductOrderBy orderBy = ProductOrderBy.none,
     String searchText = '',
     RangeValues? rangeValues,
+    int? categoryId,
   }) async {
     final result = _products.where((product) {
       // Sản phẩm đã bị xoá.
       if (product.deleted) return false;
+
+      // Lọc theo loại hàng.
+      if (categoryId != null && product.categoryId != categoryId) {
+        return false;
+      }
 
       // Lọc theo mức giá.
       bool priceFilter = true;

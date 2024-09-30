@@ -121,6 +121,7 @@ class LocalDatabase extends Database {
     ProductOrderBy orderBy = ProductOrderBy.none,
     String searchText = '',
     RangeValues? rangeValues,
+    int? categoryId,
   }) async {
     // Lấy tất cả dữ liệu từ CSDL.
     final productsJson = _pref.getStringList('Products') ?? [];
@@ -128,6 +129,11 @@ class LocalDatabase extends Database {
         productsJson.map((e) => Product.fromJson(e)).where((product) {
       // Sản phẩm đã bị xoá.
       if (product.deleted) return false;
+
+      // Lọc theo loại hàng.
+      if (categoryId != null && product.categoryId != categoryId) {
+        return false;
+      }
 
       // Lọc theo mức giá.
       bool priceFilter = true;

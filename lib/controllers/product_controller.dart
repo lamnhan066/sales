@@ -269,6 +269,9 @@ class ProductController {
   }
 
   Future<void> onSearchChanged(Function setState, String text) async {
+    // Chỉ tải lại dữ liệu khi có sự thay đổi.
+    if (searchText == text) return;
+
     searchText = text;
     _updateCurrentPage(setState, resetPage: true);
   }
@@ -278,6 +281,7 @@ class ProductController {
     void Function(VoidCallback fn) setState,
   ) async {
     var tempRangeValues = rangeValues;
+    var tempCategoryIdFilter = categoryIdFilter;
     final startController =
         TextEditingController(text: _getPriceRangeText(tempRangeValues.start));
     final endController =
@@ -385,12 +389,14 @@ class ProductController {
                             value: e.id,
                             child: Text(e.name),
                           ))
-                      .toList(),
-                  value: categoryIdFilter,
+                      .toList()
+                    ..insert(
+                      0,
+                      DropdownMenuItem(value: null, child: Text('Tất cả'.tr)),
+                    ),
+                  value: tempCategoryIdFilter,
                   onChanged: (int? value) {
-                    setState(() {
-                      categoryIdFilter = value;
-                    });
+                    tempCategoryIdFilter = value;
                   },
                 ),
               ],
@@ -427,8 +433,12 @@ class ProductController {
       },
     );
 
-    if (result == true && rangeValues != tempRangeValues) {
+    // Chỉ tải lại dữ liệu khi có sự thay đổi.
+    if (result == true &&
+        (rangeValues != tempRangeValues ||
+            categoryIdFilter != tempCategoryIdFilter)) {
       rangeValues = tempRangeValues;
+      categoryIdFilter = tempCategoryIdFilter;
       _updateCurrentPage(setState, resetPage: true);
     }
   }
@@ -491,6 +501,7 @@ class ProductController {
       },
     );
 
+    // Chỉ tải lại dữ liệu khi có sự thay đổi.
     if (result == true && tempOrderBy != orderBy) {
       orderBy = tempOrderBy;
       _updateCurrentPage(setState, resetPage: true);
@@ -813,6 +824,7 @@ class ProductController {
       searchText: searchText,
       orderBy: orderBy,
       rangeValues: rangeValues,
+      categoryId: categoryIdFilter,
     );
     setState(() {
       _updatePagesCountAndList(products.$1, products.$2);
