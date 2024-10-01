@@ -28,7 +28,10 @@ abstract class Database {
         category = categories.singleWhere((e) => e.name == categoryName);
       } catch (_) {
         category = Category(
-            id: categories.length, name: categoryName, description: '');
+          id: categories.length,
+          name: categoryName,
+          description: '',
+        );
         categories.add(category);
       }
       products.add(

@@ -6,6 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:language_helper/language_helper.dart';
+import 'package:sales/components/close_button.dart';
 import 'package:sales/di.dart';
 import 'package:sales/models/category.dart';
 import 'package:sales/models/product.dart';
@@ -794,15 +795,18 @@ extension PrivateProductController on ProductController {
                               border: Border.all(
                                 color: Theme.of(context).colorScheme.outline,
                               ),
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(12)),
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(12),
+                              ),
                             ),
                             height: 300,
                             width: double.infinity,
                             child: ScrollConfiguration(
                               behavior:
                                   ScrollConfiguration.of(context).copyWith(
-                                dragDevices: {...PointerDeviceKind.values},
+                                dragDevices: {
+                                  ...PointerDeviceKind.values,
+                                },
                               ),
                               child: ListView.builder(
                                 scrollDirection: Axis.horizontal,
@@ -812,7 +816,8 @@ extension PrivateProductController on ProductController {
                                       tempProduct.imagePath.elementAt(index);
                                   return Padding(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 6),
+                                      horizontal: 6,
+                                    ),
                                     child: readOnly
                                         ? _resolveImage(source)
                                         : Stack(
@@ -821,15 +826,7 @@ extension PrivateProductController on ProductController {
                                               Positioned.fill(
                                                 child: Align(
                                                   alignment: Alignment.topRight,
-                                                  child: IconButton.filled(
-                                                    color: Colors.white,
-                                                    icon: const Icon(
-                                                      Icons.close_rounded,
-                                                    ),
-                                                    style: IconButton.styleFrom(
-                                                      backgroundColor:
-                                                          Colors.redAccent,
-                                                    ),
+                                                  child: CircleCloseButton(
                                                     onPressed: () {
                                                       _removeImage(
                                                         context,
@@ -850,17 +847,18 @@ extension PrivateProductController on ProductController {
                             ),
                           ),
                         ),
-                        IconButton(
-                          onPressed: () {
-                            _addImage(
-                              context,
-                              tempProduct.imagePath,
-                              validateForm,
-                              listViewSetState,
-                            );
-                          },
-                          icon: const Icon(Icons.add),
-                        ),
+                        if (!readOnly)
+                          IconButton(
+                            onPressed: () {
+                              _addImage(
+                                context,
+                                tempProduct.imagePath,
+                                validateForm,
+                                listViewSetState,
+                              );
+                            },
+                            icon: const Icon(Icons.add),
+                          ),
                       ],
                     );
                   }),
