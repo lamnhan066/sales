@@ -1,1 +1,1 @@
-enum ViewsModel { dashboard, orders, products, report }
+enum ViewsModel { dashboard, products, orders, report }
