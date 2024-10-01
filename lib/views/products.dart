@@ -222,6 +222,7 @@ class _ProductsViewState extends State<ProductsView> {
                                 minWidth: 80,
                                 maxWidth: 100,
                               ),
+                              // TODO: Giá nhập nên hiện theo dạng phân cách hàng ngàn bằng dấu phẩy
                               child: Text(
                                 '${p.importPrice}',
                                 textAlign: TextAlign.right,
