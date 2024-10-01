@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:boxw/boxw.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/di.dart';
@@ -570,17 +571,18 @@ extension PrivateProductController on ProductController {
     required bool generateIdSku,
     bool readOnly = false,
   }) async {
-    Product tempProduct = product ??
-        Product(
-          id: 0,
-          sku: '',
-          name: '',
-          imagePath: [],
-          importPrice: 0,
-          count: 1,
-          description: '',
-          categoryId: categories.first.id,
-        );
+    Product tempProduct =
+        product?.copyWith(imagePath: [...product.imagePath]) ??
+            Product(
+              id: 0,
+              sku: '',
+              name: '',
+              imagePath: [],
+              importPrice: 0,
+              count: 1,
+              description: '',
+              categoryId: categories.first.id,
+            );
     if (generateIdSku || product == null) {
       final idSku = await database.generateProductIdSku();
       tempProduct = tempProduct.copyWith(id: idSku.$1, sku: idSku.$2);
@@ -588,6 +590,10 @@ extension PrivateProductController on ProductController {
 
     final form = GlobalKey<FormState>();
     final formValidator = StreamController<bool>();
+
+    void validateForm() {
+      formValidator.add(form.currentState!.validate());
+    }
 
     if (context.mounted) {
       final result = await boxWDialog(
@@ -604,9 +610,7 @@ extension PrivateProductController on ProductController {
           ),
           child: Form(
             key: form,
-            onChanged: () {
-              formValidator.add(form.currentState!.validate());
-            },
+            onChanged: validateForm,
             child: SingleChildScrollView(
               child: Column(
                 children: [
@@ -777,6 +781,78 @@ extension PrivateProductController on ProductController {
                         );
                       },
                     ),
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 12),
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Theme.of(context).colorScheme.outline,
+                      ),
+                      borderRadius: const BorderRadius.all(Radius.circular(12)),
+                    ),
+                    height: 300,
+                    width: double.infinity,
+                    child:
+                        StatefulBuilder(builder: (context, listViewSetState) {
+                      return ScrollConfiguration(
+                        behavior: ScrollConfiguration.of(context).copyWith(
+                          dragDevices: {...PointerDeviceKind.values},
+                        ),
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: tempProduct.imagePath.length,
+                          itemBuilder: (context, index) {
+                            final url = tempProduct.imagePath.elementAt(index);
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 6),
+                              child: readOnly
+                                  ? Image.network(url)
+                                  : Stack(
+                                      children: [
+                                        Image.network(url),
+                                        Positioned.fill(
+                                          child: Align(
+                                            alignment: Alignment.topRight,
+                                            child: IconButton.filled(
+                                              color: Colors.white,
+                                              icon: const Icon(
+                                                Icons.close_rounded,
+                                              ),
+                                              style: IconButton.styleFrom(
+                                                backgroundColor:
+                                                    Colors.redAccent,
+                                              ),
+                                              onPressed: () async {
+                                                final isRemoved =
+                                                    await boxWConfirm(
+                                                  context: context,
+                                                  title: 'Xoá ảnh'.tr,
+                                                  content:
+                                                      'Bạn có chắc muốn xoá ảnh này không?'
+                                                          .tr,
+                                                  confirmText: 'Có'.tr,
+                                                  cancelText: 'Không'.tr,
+                                                );
+
+                                                if (isRemoved) {
+                                                  tempProduct.imagePath
+                                                      .removeAt(index);
+                                                  listViewSetState(() {});
+                                                  validateForm();
+                                                }
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                            );
+                          },
+                        ),
+                      );
+                    }),
+                  ),
                   BoxWInput(
                     title: 'Mô tả'.tr,
                     initial: tempProduct.description,
