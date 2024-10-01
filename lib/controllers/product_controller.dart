@@ -165,21 +165,24 @@ class ProductController {
     void Function(VoidCallback fn) setState,
   ) async {
     if (categories.isEmpty) {
-      if (await boxWConfirm(
-            context: context,
-            title: 'Thông báo',
-            content:
-                'Bạn cần có it nhất một loại hàng để có thể thêm sản phẩm.\n\n'
-                        'Bạn có muốn thêm loại hàng không?'
-                    .tr,
-            confirmText: 'Đồng ý'.tr,
-            cancelText: 'Huỷ'.tr,
-          ) &&
-          context.mounted) {
-        await _addCategory(context, setState);
-      }
-      return;
+      final isAccepted = await boxWConfirm(
+        context: context,
+        title: 'Thông báo',
+        content: 'Bạn cần có it nhất một loại hàng để có thể thêm sản phẩm.\n\n'
+                'Bạn có muốn thêm loại hàng không?'
+            .tr,
+        confirmText: 'Đồng ý'.tr,
+        cancelText: 'Huỷ'.tr,
+      );
+
+      if (!isAccepted || !context.mounted) return;
+
+      final isAdded = await _addCategory(context, setState);
+
+      if (!isAdded) return;
     }
+
+    if (!context.mounted) return;
 
     final product = await _addProductDialog(context, setState);
 
@@ -197,8 +200,9 @@ class ProductController {
     final result = await boxWDialog(
       context: context,
       title: 'Xác nhận'.tr,
-      content:
-          'Bạn có chắc muốn xoá sản phẩm @{name} không?'.trP({'name': p.name}),
+      content: 'Bạn có chắc muốn xoá sản phẩm @{name} không?'.trP({
+        'name': p.name,
+      }),
       buttons: (context) {
         return [
           Buttons(
@@ -691,15 +695,27 @@ class ProductController {
                                                   IconButton(
                                                     onPressed: () {
                                                       _infoCategory(
-                                                          context, setState, e);
+                                                        context,
+                                                        setState,
+                                                        e,
+                                                      );
                                                     },
                                                     icon: const Icon(
-                                                        Icons.info_rounded),
+                                                      Icons.info_rounded,
+                                                    ),
                                                   ),
                                                   IconButton(
                                                     onPressed: () async {
-                                                      await _editCategory(
-                                                          context, setState, e);
+                                                      final result =
+                                                          await _editCategory(
+                                                        context,
+                                                        setState,
+                                                        e,
+                                                      );
+                                                      if (result) {
+                                                        localSetState(() {});
+                                                      }
+
                                                       if (context.mounted) {
                                                         Navigator.pop(context);
                                                       }
@@ -709,9 +725,15 @@ class ProductController {
                                                   ),
                                                   IconButton(
                                                     onPressed: () async {
-                                                      await _removeCategory(
-                                                          context, setState, e);
-                                                      localSetState(() {});
+                                                      final result =
+                                                          await _removeCategory(
+                                                        context,
+                                                        setState,
+                                                        e,
+                                                      );
+                                                      if (result) {
+                                                        localSetState(() {});
+                                                      }
                                                       if (context.mounted) {
                                                         Navigator.pop(context);
                                                       }
@@ -747,9 +769,8 @@ class ProductController {
                             IconButton(
                               onPressed: readOnly
                                   ? null
-                                  : () async {
-                                      await _addCategory(context, setState);
-                                      localSetState(() {});
+                                  : () {
+                                      _addCategory(context, setState);
                                     },
                               icon: const Icon(Icons.add),
                             ),
@@ -814,7 +835,10 @@ class ProductController {
     return null;
   }
 
-  void _updateCurrentPage(Function setState, {bool resetPage = false}) async {
+  Future<void> _updateCurrentPage(
+    Function setState, {
+    bool resetPage = false,
+  }) async {
     if (resetPage) page = 1;
 
     categories = await database.getAllCategories();
@@ -879,7 +903,10 @@ class ProductController {
     );
   }
 
-  Future<void> _addCategory(BuildContext context, Function setState) async {
+  Future<bool> _addCategory(
+    BuildContext context,
+    Function setState,
+  ) async {
     Category tempCategory = Category(
       id: await database.generateCategoryId(),
       name: '',
@@ -896,30 +923,35 @@ class ProductController {
       if (category != null) {
         await database.addCategory(category);
         _updateCurrentPage(setState);
+        return true;
       }
     }
+
+    return false;
   }
 
-  Future<void> _editCategory(
+  /// Cập nhật category. Trả về `true` nếu có sự thay đổi.
+  Future<bool> _editCategory(
     BuildContext context,
     Function setState,
     Category category,
   ) async {
-    if (context.mounted) {
-      final c = await _categoryDialog(
-        context,
-        'Sửa Loại Hàng'.tr,
-        category,
-      );
+    final c = await _categoryDialog(
+      context,
+      'Sửa Loại Hàng'.tr,
+      category,
+    );
 
-      if (c != null) {
-        await database.updateCategory(c);
-        _updateCurrentPage(setState);
-      }
+    if (c != null) {
+      await database.updateCategory(c);
+      await _updateCurrentPage(setState);
+      return true;
     }
+
+    return false;
   }
 
-  Future<void> _removeCategory(
+  Future<bool> _removeCategory(
     BuildContext context,
     Function setState,
     Category category,
@@ -935,8 +967,11 @@ class ProductController {
 
     if (result) {
       await database.removeCategory(category);
-      _updateCurrentPage(setState);
+      await _updateCurrentPage(setState);
+      return true;
     }
+
+    return false;
   }
 
   Future<Category?> _categoryDialog(

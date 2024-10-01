@@ -40,7 +40,6 @@ class _HomeScreenState extends State<HomeScreen> {
       width: 220,
       child: NavigationDrawer(children: [
         AppBar(
-          title: Text('Trang'.tr),
           automaticallyImplyLeading: false,
         ),
         for (final view in ViewsModel.values)
