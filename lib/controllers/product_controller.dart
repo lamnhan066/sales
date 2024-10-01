@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:boxw/boxw.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:language_helper/language_helper.dart';
@@ -781,78 +783,87 @@ extension PrivateProductController on ProductController {
                         );
                       },
                     ),
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 12),
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Theme.of(context).colorScheme.outline,
-                      ),
-                      borderRadius: const BorderRadius.all(Radius.circular(12)),
-                    ),
-                    height: 300,
-                    width: double.infinity,
-                    child:
-                        StatefulBuilder(builder: (context, listViewSetState) {
-                      return ScrollConfiguration(
-                        behavior: ScrollConfiguration.of(context).copyWith(
-                          dragDevices: {...PointerDeviceKind.values},
-                        ),
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: tempProduct.imagePath.length,
-                          itemBuilder: (context, index) {
-                            final url = tempProduct.imagePath.elementAt(index);
-                            return Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 6),
-                              child: readOnly
-                                  ? Image.network(url)
-                                  : Stack(
-                                      children: [
-                                        Image.network(url),
-                                        Positioned.fill(
-                                          child: Align(
-                                            alignment: Alignment.topRight,
-                                            child: IconButton.filled(
-                                              color: Colors.white,
-                                              icon: const Icon(
-                                                Icons.close_rounded,
+                  StatefulBuilder(builder: (context, listViewSetState) {
+                    return Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 12),
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Theme.of(context).colorScheme.outline,
+                              ),
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(12)),
+                            ),
+                            height: 300,
+                            width: double.infinity,
+                            child: ScrollConfiguration(
+                              behavior:
+                                  ScrollConfiguration.of(context).copyWith(
+                                dragDevices: {...PointerDeviceKind.values},
+                              ),
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: tempProduct.imagePath.length,
+                                itemBuilder: (context, index) {
+                                  final source =
+                                      tempProduct.imagePath.elementAt(index);
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 6),
+                                    child: readOnly
+                                        ? _resolveImage(source)
+                                        : Stack(
+                                            children: [
+                                              _resolveImage(source),
+                                              Positioned.fill(
+                                                child: Align(
+                                                  alignment: Alignment.topRight,
+                                                  child: IconButton.filled(
+                                                    color: Colors.white,
+                                                    icon: const Icon(
+                                                      Icons.close_rounded,
+                                                    ),
+                                                    style: IconButton.styleFrom(
+                                                      backgroundColor:
+                                                          Colors.redAccent,
+                                                    ),
+                                                    onPressed: () {
+                                                      _removeImage(
+                                                        context,
+                                                        tempProduct.imagePath,
+                                                        index,
+                                                        validateForm,
+                                                        listViewSetState,
+                                                      );
+                                                    },
+                                                  ),
+                                                ),
                                               ),
-                                              style: IconButton.styleFrom(
-                                                backgroundColor:
-                                                    Colors.redAccent,
-                                              ),
-                                              onPressed: () async {
-                                                final isRemoved =
-                                                    await boxWConfirm(
-                                                  context: context,
-                                                  title: 'Xoá ảnh'.tr,
-                                                  content:
-                                                      'Bạn có chắc muốn xoá ảnh này không?'
-                                                          .tr,
-                                                  confirmText: 'Có'.tr,
-                                                  cancelText: 'Không'.tr,
-                                                );
-
-                                                if (isRemoved) {
-                                                  tempProduct.imagePath
-                                                      .removeAt(index);
-                                                  listViewSetState(() {});
-                                                  validateForm();
-                                                }
-                                              },
-                                            ),
+                                            ],
                                           ),
-                                        ),
-                                      ],
-                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            _addImage(
+                              context,
+                              tempProduct.imagePath,
+                              validateForm,
+                              listViewSetState,
                             );
                           },
+                          icon: const Icon(Icons.add),
                         ),
-                      );
-                    }),
-                  ),
+                      ],
+                    );
+                  }),
                   BoxWInput(
                     title: 'Mô tả'.tr,
                     initial: tempProduct.description,
@@ -1114,5 +1125,124 @@ extension PrivateProductController on ProductController {
     }
 
     return null;
+  }
+
+  void _removeImage(
+    BuildContext context,
+    List<String> imagePath,
+    int index,
+    Function validateForm,
+    Function listViewSetState,
+  ) async {
+    final isRemoved = await boxWConfirm(
+      context: context,
+      title: 'Xoá Ảnh'.tr,
+      content: 'Bạn có chắc muốn xoá ảnh này không?'.tr,
+      confirmText: 'Có'.tr,
+      cancelText: 'Không'.tr,
+    );
+
+    if (isRemoved) {
+      imagePath.removeAt(index);
+      listViewSetState(() {});
+      validateForm();
+    }
+  }
+
+  void _addImage(
+    BuildContext context,
+    List<String> imagePath,
+    Function validateForm,
+    Function listViewSetState,
+  ) async {
+    String path = '';
+    final pathStreamController = StreamController<String>();
+    final textController = TextEditingController();
+    final isAccepted = await boxWDialog(
+      context: context,
+      title: 'Thêm Ảnh'.tr,
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'Vui lòng chọn ảnh từ đường dẫn\ntừ máy hoặc internet'.tr,
+            textAlign: TextAlign.center,
+          ),
+          BoxWInput(
+            controller: textController,
+            title: 'Đường dẫn'.tr,
+            minLines: 1,
+            maxLines: 4,
+            onChanged: (value) {
+              path = value;
+              pathStreamController.add(value);
+            },
+          ),
+          TextButton(
+            onPressed: () async {
+              final picked = await FilePicker.platform.pickFiles(
+                dialogTitle: 'Chọn ảnh',
+                type: FileType.image,
+              );
+
+              if (picked != null && picked.count > 0) {
+                path = picked.files.first.path!;
+                pathStreamController.add(path);
+                textController.text = path;
+              }
+            },
+            child: Text('Chọn ảnh từ máy'.tr),
+          ),
+        ],
+      ),
+      buttons: (ctx) {
+        return [
+          Buttons(
+            axis: Axis.horizontal,
+            buttons: [
+              StreamBuilder<String>(
+                stream: pathStreamController.stream,
+                builder: (context, snapshot) {
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 20),
+                    child: FilledButton(
+                      onPressed: !snapshot.hasData || snapshot.data == ''
+                          ? null
+                          : () {
+                              Navigator.pop(ctx, true);
+                            },
+                      child: Text('Thêm'.tr),
+                    ),
+                  );
+                },
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 20),
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.pop(ctx);
+                  },
+                  child: Text('Huỷ'.tr),
+                ),
+              ),
+            ],
+          ),
+        ];
+      },
+    );
+
+    if (isAccepted == true && path.isNotEmpty) {
+      imagePath.add(path);
+      listViewSetState(() {});
+      validateForm();
+    }
+  }
+
+  /// Kiểm tra `source` là URL hay Path để trả về ảnh.
+  Image _resolveImage(String source) {
+    if (source.startsWith('http')) {
+      return Image.network(source);
+    }
+    return Image.file(File(source));
   }
 }
