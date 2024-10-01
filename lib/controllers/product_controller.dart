@@ -167,7 +167,7 @@ class ProductController {
     if (categories.isEmpty) {
       final isAccepted = await boxWConfirm(
         context: context,
-        title: 'Thông báo',
+        title: 'Thông báo'.tr,
         content: 'Bạn cần có it nhất một loại hàng để có thể thêm sản phẩm.\n\n'
                 'Bạn có muốn thêm loại hàng không?'
             .tr,
@@ -454,7 +454,7 @@ class ProductController {
     var tempOrderBy = orderBy;
     final result = await boxWDialog(
       context: context,
-      title: 'Sắp xếp',
+      title: 'Sắp xếp'.tr,
       content: Column(
         children: [
           StatefulBuilder(builder: (context, setState) {
@@ -511,7 +511,9 @@ class ProductController {
       _updateCurrentPage(setState, resetPage: true);
     }
   }
+}
 
+extension PrivateProductController on ProductController {
   Future<Product?> _infoProductDialog(
     BuildContext context,
     Function setState,
@@ -675,80 +677,77 @@ class ProductController {
                     )
                   else
                     StatefulBuilder(
-                      builder: (context, localSetState) {
+                      builder: (context, dropdownSetState) {
+                        final dropdowItems = categories.map((e) {
+                          return DropdownMenuItem(
+                            value: e.id,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(e.name),
+                                Row(
+                                  children: [
+                                    IconButton(
+                                      onPressed: () {
+                                        _infoCategory(
+                                          context,
+                                          setState,
+                                          e,
+                                        );
+                                      },
+                                      icon: const Icon(
+                                        Icons.info_rounded,
+                                      ),
+                                    ),
+                                    IconButton(
+                                      onPressed: () async {
+                                        final result = await _editCategory(
+                                          context,
+                                          setState,
+                                          e,
+                                        );
+                                        if (result) {
+                                          dropdownSetState(() {});
+                                        }
+
+                                        if (context.mounted) {
+                                          Navigator.pop(context);
+                                        }
+                                      },
+                                      icon: const Icon(Icons.edit),
+                                    ),
+                                    IconButton(
+                                      onPressed: () async {
+                                        final result = await _removeCategory(
+                                          context,
+                                          setState,
+                                          e,
+                                        );
+                                        if (result) {
+                                          dropdownSetState(() {});
+                                        }
+                                        if (context.mounted) {
+                                          Navigator.pop(context);
+                                        }
+                                      },
+                                      icon: const Icon(
+                                        Icons.close_rounded,
+                                        color: Colors.red,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
+                          );
+                        }).toList();
                         return Row(
                           children: [
                             Expanded(
                               child: BoxWDropdown(
                                 title: 'Loại hàng'.tr,
-                                items: categories
-                                    .map((e) => DropdownMenuItem(
-                                          value: e.id,
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.max,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(e.name),
-                                              Row(
-                                                children: [
-                                                  IconButton(
-                                                    onPressed: () {
-                                                      _infoCategory(
-                                                        context,
-                                                        setState,
-                                                        e,
-                                                      );
-                                                    },
-                                                    icon: const Icon(
-                                                      Icons.info_rounded,
-                                                    ),
-                                                  ),
-                                                  IconButton(
-                                                    onPressed: () async {
-                                                      final result =
-                                                          await _editCategory(
-                                                        context,
-                                                        setState,
-                                                        e,
-                                                      );
-                                                      if (result) {
-                                                        localSetState(() {});
-                                                      }
-
-                                                      if (context.mounted) {
-                                                        Navigator.pop(context);
-                                                      }
-                                                    },
-                                                    icon:
-                                                        const Icon(Icons.edit),
-                                                  ),
-                                                  IconButton(
-                                                    onPressed: () async {
-                                                      final result =
-                                                          await _removeCategory(
-                                                        context,
-                                                        setState,
-                                                        e,
-                                                      );
-                                                      if (result) {
-                                                        localSetState(() {});
-                                                      }
-                                                      if (context.mounted) {
-                                                        Navigator.pop(context);
-                                                      }
-                                                    },
-                                                    icon: const Icon(
-                                                      Icons.close_rounded,
-                                                      color: Colors.red,
-                                                    ),
-                                                  ),
-                                                ],
-                                              )
-                                            ],
-                                          ),
-                                        ))
-                                    .toList(),
+                                items: dropdowItems,
                                 value: tempProduct.categoryId,
                                 selectedItemBuilder: (context) {
                                   return categories
@@ -759,7 +758,7 @@ class ProductController {
                                       .toList();
                                 },
                                 onChanged: (int? value) {
-                                  localSetState(() {
+                                  dropdownSetState(() {
                                     tempProduct =
                                         tempProduct.copyWith(categoryId: value);
                                   });
