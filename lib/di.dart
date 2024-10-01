@@ -21,5 +21,6 @@ Future<void> setup() async {
 }
 
 Future<void> loadSetup() async {
+  await getIt<AppController>().initial();
   await getIt<Database>().initial();
 }

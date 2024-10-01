@@ -41,12 +41,22 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Text(title(appController.view)),
       ),
       drawer: NavigationDrawer(children: [
+        AppBar(
+          title: Text('Trang'.tr),
+          automaticallyImplyLeading: false,
+        ),
         for (final view in ViewsModel.values)
-          FilledButton(
-            onPressed: () {
+          ListTile(
+            tileColor: appController.view == view
+                ? Theme.of(context).primaryColor
+                : null,
+            textColor: appController.view == view
+                ? Theme.of(context).colorScheme.onPrimary
+                : null,
+            title: Text(title(view)),
+            onTap: () {
               appController.setView(view, setState);
             },
-            child: Text(title(view)),
           ),
       ]),
       body: loading
