@@ -36,11 +36,9 @@ class _HomeScreenState extends State<HomeScreen> {
       };
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(title(appController.view)),
-      ),
-      drawer: NavigationDrawer(children: [
+    final tab = SizedBox(
+      width: 220,
+      child: NavigationDrawer(children: [
         AppBar(
           title: Text('Trang'.tr),
           automaticallyImplyLeading: false,
@@ -54,14 +52,41 @@ class _HomeScreenState extends State<HomeScreen> {
                 ? Theme.of(context).colorScheme.onPrimary
                 : null,
             title: Text(title(view)),
+            trailing: Icon(
+              Icons.arrow_forward_ios_outlined,
+              size: 12,
+              color: appController.view == view
+                  ? Theme.of(context).colorScheme.onPrimary
+                  : null,
+            ),
             onTap: () {
               appController.setView(view, setState);
             },
           ),
       ]),
-      body: loading
-          ? const Center(child: CircularProgressIndicator())
-          : appController.getView(),
+    );
+
+    return Scaffold(
+      drawer: tab,
+      body: Row(
+        children: [
+          tab,
+          Expanded(
+            child: Column(
+              children: [
+                AppBar(
+                  title: Text(title(appController.view)),
+                ),
+                Expanded(
+                  child: loading
+                      ? const Center(child: CircularProgressIndicator())
+                      : appController.getView(),
+                )
+              ],
+            ),
+          )
+        ],
+      ),
     );
   }
 }
