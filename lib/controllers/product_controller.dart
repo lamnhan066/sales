@@ -7,6 +7,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/components/circle_close_button.dart';
+import 'package:sales/components/common_dialogs.dart';
 import 'package:sales/di.dart';
 import 'package:sales/models/category.dart';
 import 'package:sales/models/product.dart';
@@ -18,12 +19,12 @@ class ProductController {
   List<Product> products = [];
   final int perpage = 10;
   int page = 1;
+  int totalPage = 0;
   ProductOrderBy orderBy = ProductOrderBy.none;
   String searchText = '';
   RangeValues rangeValues = const RangeValues(0, double.infinity);
   int? categoryIdFilter;
   List<Category> categories = [];
-  int totalPage = 0;
 
   Future<void> initial(Function setState) async {
     await database.getAllCategories().then((value) {
@@ -45,74 +46,11 @@ class ProductController {
   }
 
   void onPageChanged(BuildContext context, Function setState) async {
-    int tempPage = page;
-    final validatorController = StreamController<bool>();
-    String? validator(String? p) {
-      if (p == null) return 'Bạn cần nhập số trang'.tr;
-      final n = int.tryParse(p);
-      if (n == null) return 'Số trang phải là số nguyên'.tr;
-      if (n < 1) return 'Số trang phải >= 1'.tr;
-      if (n > totalPage) {
-        return 'Số trang phải <= @{totalPage}'.trP({'totalPage': totalPage});
-      }
-      tempPage = n;
-      return null;
-    }
+    final newPage =
+        await pageChooser(context: context, page: page, totalPage: totalPage);
 
-    final result = await boxWDialog(
-      context: context,
-      title: 'Chọn trang'.tr,
-      content: BoxWInput(
-        initial: '$tempPage',
-        keyboardType: TextInputType.number,
-        validator: (p) {
-          final validate = validator(p);
-          if (validate == null) {
-            validatorController.add(true);
-          } else {
-            validatorController.add(false);
-          }
-          return validate;
-        },
-      ),
-      buttons: (context) {
-        return [
-          Buttons(
-            axis: Axis.horizontal,
-            buttons: [
-              StreamBuilder<bool>(
-                stream: validatorController.stream,
-                builder: (context, snapshot) {
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 20),
-                    child: FilledButton(
-                      onPressed: !snapshot.hasData || snapshot.data != true
-                          ? null
-                          : () {
-                              Navigator.pop(context, true);
-                            },
-                      child: Text('OK'.tr),
-                    ),
-                  );
-                },
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 20),
-                child: TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text('Huỷ'.tr),
-                ),
-              ),
-            ],
-          ),
-        ];
-      },
-    );
-
-    if (result == true && tempPage != page) {
-      page = tempPage;
+    if (newPage != null) {
+      page = newPage;
       _changePage(setState, page);
     }
   }
@@ -201,39 +139,14 @@ class ProductController {
     void Function(VoidCallback fn) setState,
     Product p,
   ) async {
-    final result = await boxWDialog(
+    final result = await boxWConfirm(
       context: context,
       title: 'Xác nhận'.tr,
       content: 'Bạn có chắc muốn xoá sản phẩm @{name} không?'.trP({
         'name': p.name,
       }),
-      buttons: (context) {
-        return [
-          Buttons(
-            axis: Axis.horizontal,
-            buttons: [
-              Padding(
-                padding: const EdgeInsets.only(right: 20),
-                child: FilledButton(
-                  onPressed: () {
-                    Navigator.pop(context, true);
-                  },
-                  child: Text('OK'.tr),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 20),
-                child: TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text('Huỷ'.tr),
-                ),
-              ),
-            ],
-          ),
-        ];
-      },
+      confirmText: 'Đồng ý'.tr,
+      cancelText: 'Huỷ'.tr,
     );
 
     if (result == true) {
@@ -565,7 +478,6 @@ extension PrivateProductController on ProductController {
     );
   }
 
-  // TODO: Thêm phần hiển thị hình ảnh và có thêm hình ảnh
   Future<Product?> _productDialog({
     required BuildContext context,
     required Function setState,
