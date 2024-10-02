@@ -16,7 +16,7 @@ class SampleMemoryDatabase extends MemoryDatabase {
     await saveAllProducts([
       Product(
         id: 0,
-        sku: 'P00000001',
+        sku: 'P00000000',
         name: 'Cafe',
         imagePath: [],
         importPrice: 10000,
