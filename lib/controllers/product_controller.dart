@@ -510,6 +510,8 @@ extension PrivateProductController on ProductController {
       formValidator.add(form.currentState!.validate());
     }
 
+    if (readOnly) formValidator.add(true);
+
     if (context.mounted) {
       final result = await boxWDialog(
         context: context,
