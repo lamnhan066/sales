@@ -7,6 +7,7 @@ import 'package:sales/models/order.dart';
 import 'package:sales/models/order_item.dart';
 import 'package:sales/models/product.dart';
 import 'package:sales/models/product_order_by.dart';
+import 'package:sales/models/range_of_dates.dart';
 import 'package:sales/services/utils.dart';
 
 abstract class Database {
@@ -186,7 +187,22 @@ abstract class Database {
   }
 
   /// Lấy danh sách tất cả các đơn hàng.
-  Future<List<Order>> getAllOrders();
+  Future<List<Order>> getAllOrders({
+    RangeOfDates? dateRange,
+  });
+
+  /// Lấy danh sách đơn hàng theo điều kiện.
+  Future<({int totalCount, List<Order> orders})> getOrders({
+    int page = 1,
+    int perpage = 10,
+    RangeOfDates? dateRange,
+  }) async {
+    final result = await getAllOrders(dateRange: dateRange);
+    return (
+      totalCount: result.length,
+      orders: result.skip((page - 1) * perpage).take(perpage).toList()
+    );
+  }
 
   /// Lưu tất cả các đơn đặt đặt hàng.
   Future<void> saveAllOrders(List<Order> orders);

@@ -5,6 +5,7 @@ import 'package:sales/models/order.dart';
 import 'package:sales/models/order_item.dart';
 import 'package:sales/models/product.dart';
 import 'package:sales/models/product_order_by.dart';
+import 'package:sales/models/range_of_dates.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:string_normalizer/string_normalizer.dart';
 
@@ -105,15 +106,23 @@ class LocalDatabase extends Database {
   }
 
   @override
-  Future<List<Order>> getAllOrders() async {
-    final orders = <Order>[];
+  Future<List<Order>> getAllOrders({
+    RangeOfDates? dateRange,
+  }) async {
     final ordersJson = _pref.getStringList('Orders') ?? [];
-    if (ordersJson.isNotEmpty) {
-      for (final order in ordersJson) {
-        orders.add(Order.fromJson(order));
+    final orders = ordersJson.map((e) => Order.fromJson(e)).where((o) {
+      if (o.deleted) return false;
+
+      // Lọc theo ngày
+      if (dateRange != null &&
+          (o.date.isBefore(dateRange.from) || o.date.isAfter(dateRange.to))) {
+        return false;
       }
-    }
-    return orders;
+
+      return true;
+    });
+
+    return orders.toList();
   }
 
   @override

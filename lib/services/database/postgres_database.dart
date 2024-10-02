@@ -7,6 +7,8 @@ import 'package:sales/models/order.dart';
 import 'package:sales/models/order_item.dart';
 import 'package:sales/models/product.dart';
 import 'package:sales/models/product_order_by.dart';
+import 'package:sales/models/range_of_dates.dart';
+import 'package:sales/services/utils.dart';
 
 import 'database.dart';
 
@@ -180,8 +182,12 @@ class PostgresDatabase extends Database {
   }
 
   @override
-  Future<List<Order>> getAllOrders() async {
-    const sql = 'SELECT * FROM orders WHERE o_deleted=FALSE';
+  Future<List<Order>> getAllOrders({RangeOfDates? dateRange}) async {
+    String sql = 'SELECT * FROM orders WHERE o_deleted=FALSE';
+    if (dateRange != null) {
+      sql += " AND o_date >= '${Utils.dateToSql(dateRange.from)}'";
+      sql += " AND o_date <= '${Utils.dateToSql(dateRange.to)}'";
+    }
     final result = await _connection.execute(sql);
     return result.map((e) => Order.fromSqlMap(e.toColumnMap())).toList();
   }
