@@ -6,8 +6,11 @@ import 'package:language_helper/language_helper.dart';
 import 'package:sales/components/common_dialogs.dart';
 import 'package:sales/di.dart';
 import 'package:sales/models/order.dart';
+import 'package:sales/models/order_item.dart';
+import 'package:sales/models/order_status.dart';
 import 'package:sales/models/range_of_dates.dart';
 import 'package:sales/services/database/database.dart';
+import 'package:sales/services/utils.dart';
 
 class OrderController {
   final database = getIt<Database>();
@@ -128,7 +131,7 @@ extension PrivateOrderController on OrderController {
       setState: setState,
       title: 'Thông Tin Đơn'.tr,
       order: order,
-      generateIdSku: true,
+      generateId: false,
       readOnly: true,
     );
   }
@@ -139,7 +142,7 @@ extension PrivateOrderController on OrderController {
       setState: setState,
       title: 'Thêm Đơn'.tr,
       order: null,
-      generateIdSku: true,
+      generateId: true,
     );
   }
 
@@ -150,7 +153,7 @@ extension PrivateOrderController on OrderController {
       setState: setState,
       title: 'Sửa Đơn'.tr,
       order: order,
-      generateIdSku: false,
+      generateId: false,
     );
   }
 
@@ -161,7 +164,7 @@ extension PrivateOrderController on OrderController {
       setState: setState,
       title: 'Chép Đơn'.tr,
       order: order,
-      generateIdSku: true,
+      generateId: true,
     );
   }
 
@@ -203,7 +206,7 @@ extension PrivateOrderController on OrderController {
     required Function setState,
     required String title,
     required Order? order,
-    required bool generateIdSku,
+    required bool generateId,
     bool readOnly = false,
   }) async {
     Order tempOrder = order ??
@@ -213,13 +216,19 @@ extension PrivateOrderController on OrderController {
           date: DateTime.now(),
           deleted: false,
         );
-    if (generateIdSku || order == null) {
+    if (generateId || order == null) {
       final id = await database.generateCategoryId();
       tempOrder = tempOrder.copyWith(id: id);
     }
 
     final form = GlobalKey<FormState>();
     final formValidator = StreamController<bool>();
+
+    final List<OrderItem> orderItems = await database.getOrderItems(
+      orderId: tempOrder.id,
+    );
+
+    final products = await database.getAllProducts();
 
     void validateForm() {
       formValidator.add(form.currentState!.validate());
@@ -234,18 +243,120 @@ extension PrivateOrderController on OrderController {
           minWidth: 280,
           maxWidth: MediaQuery.sizeOf(context).width * 3 / 5,
         ),
-        content: ConstrainedBox(
-          constraints: BoxConstraints(
-            maxHeight: MediaQuery.sizeOf(context).height * 3 / 5,
-          ),
-          child: Form(
-            key: form,
-            onChanged: validateForm,
-            child: const SingleChildScrollView(
-              child: Column(
-                children: [],
+        content: Form(
+          key: form,
+          onChanged: validateForm,
+          child: Column(
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Flexible(
+                    child: BoxWInput(
+                      readOnly: readOnly,
+                      initial: Utils.formatDateTime(tempOrder.date),
+                      title: 'Ngày Giờ'.tr,
+                    ),
+                  ),
+                  Flexible(
+                    child: BoxWDropdown(
+                      title: 'Trạng thái'.tr,
+                      items: OrderStatus.values
+                          .map((e) => DropdownMenuItem(
+                                value: e,
+                                child: Text(e.text),
+                              ))
+                          .toList(),
+                      value: tempOrder.status,
+                      onChanged: (value) {},
+                    ),
+                  ),
+                ],
               ),
-            ),
+              SingleChildScrollView(
+                child: Column(
+                  children: [
+                    const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 180,
+                          child: Text(
+                            'Tên Sản Phẩm',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 120,
+                          child: Text(
+                            'Số Lượng',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 120,
+                          child: Text(
+                            'Đơn Giá',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 100,
+                          child: Text(
+                            'Thành Tiền',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
+                    ),
+                    for (final item in orderItems)
+                      Builder(
+                        builder: (context) {
+                          final product = products
+                              .firstWhere((e) => e.id == item.productId);
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                width: 180,
+                                child: Text(
+                                  product.name,
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 120,
+                                child: Text(
+                                  '${item.quantity}',
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 120,
+                                child: Text(
+                                  '${item.unitSalePrice}',
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 100,
+                                child: Text(
+                                  '${item.totalPrice}',
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      )
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
         buttons: (context) {
