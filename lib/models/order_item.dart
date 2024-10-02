@@ -16,7 +16,7 @@ class OrderItem {
     required this.totalPrice,
     required this.productId,
     required this.orderId,
-    this.deleted = true,
+    this.deleted = false,
   });
 
   OrderItem copyWith({
@@ -91,4 +91,9 @@ class OrderItem {
 
   factory OrderItem.fromJson(String source) =>
       OrderItem.fromMap(json.decode(source));
+
+  @override
+  String toString() {
+    return 'OrderItem(id: $id, quantity: $quantity, unitSalePrice: $unitSalePrice, totalPrice: $totalPrice, productId: $productId, orderId: $orderId, deleted: $deleted)';
+  }
 }

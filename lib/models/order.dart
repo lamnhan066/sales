@@ -1,20 +1,6 @@
 import 'dart:convert';
 
-import 'package:language_helper/language_helper.dart';
-
-enum OrderStatus {
-  created,
-  paid,
-  cancelled;
-
-  String get text {
-    return switch (this) {
-      OrderStatus.created => 'Đã tạo'.tr,
-      OrderStatus.paid => 'Đã thanh toán'.tr,
-      OrderStatus.cancelled => 'Đã huỷ'.tr,
-    };
-  }
-}
+import 'package:sales/models/order_status.dart';
 
 class Order {
   final int id;
@@ -26,7 +12,7 @@ class Order {
     required this.id,
     required this.status,
     required this.date,
-    required this.deleted,
+    this.deleted = false,
   });
 
   Order copyWith({
