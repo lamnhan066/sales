@@ -21,8 +21,16 @@ class PasswordCryptor {
 }
 
 class Utils {
-  static String formatDate(DateTime date) {
-    return '${date.hour}h${date.minute.toString().padLeft(2, '0')} ${date.day}/${date.month}/${date.year}';
+  static String formatDateTime(DateTime date) {
+    String padLeft2(int number) {
+      return '$number'.padLeft(2, '0');
+    }
+
+    final hour = padLeft2(date.hour);
+    final minute = padLeft2(date.minute);
+    final day = padLeft2(date.day);
+    final month = padLeft2(date.month);
+    return '${hour}h$minute $day/$month/${date.year}';
   }
 
   static Future<Excel?> getExcelFile() async {

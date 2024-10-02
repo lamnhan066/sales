@@ -441,7 +441,7 @@ extension PrivateProductController on ProductController {
       setState: setState,
       title: 'Thông Tin Sản Phẩm'.tr,
       product: product,
-      generateIdSku: true,
+      generateIdSku: false,
       readOnly: true,
     );
   }

@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/controllers/order_controller.dart';
 import 'package:sales/di.dart';
+import 'package:sales/services/utils.dart';
 
 class OrdersView extends StatefulWidget {
   const OrdersView({super.key});
@@ -76,10 +77,10 @@ class _OrdersViewState extends State<OrdersView> {
                     DataColumn(
                       label: ConstrainedBox(
                         constraints: const BoxConstraints(
-                          minWidth: 220,
+                          minWidth: 150,
                         ),
                         child: Text(
-                          'Ngày'.tr,
+                          'Ngày Giờ'.tr,
                           textAlign: TextAlign.center,
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
@@ -130,10 +131,10 @@ class _OrdersViewState extends State<OrdersView> {
                           DataCell(
                             ConstrainedBox(
                               constraints: const BoxConstraints(
-                                minWidth: 220,
+                                minWidth: 150,
                               ),
                               child: Text(
-                                '${o.date}',
+                                Utils.formatDateTime(o.date),
                                 textAlign: TextAlign.center,
                               ),
                             ),

@@ -141,7 +141,7 @@ class _DashboardViewState extends State<DashboardView> {
                                 padding: const EdgeInsets.all(8.0),
                                 child: Column(
                                   children: [
-                                    Text(Utils.formatDate(order.date)),
+                                    Text(Utils.formatDateTime(order.date)),
                                     divider,
                                     for (int i = 0;
                                         i <
