@@ -69,8 +69,8 @@ class ProductController {
       return;
     }
 
-    final tempCategories = data.$1;
-    final tempProducts = data.$2;
+    final tempCategories = data.categories;
+    final tempProducts = data.products;
 
     if (tempProducts.isEmpty) {
       boxWAlert(

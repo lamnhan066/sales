@@ -12,7 +12,8 @@ import 'package:sales/services/utils.dart';
 
 abstract class Database {
   /// Load dữ liệu từ Excel.
-  static Future<(List<Category>, List<Product>)?> loadDataFromExcel() async {
+  static Future<({List<Category> categories, List<Product> products})?>
+      loadDataFromExcel() async {
     final excel = await Utils.getExcelFile();
     if (excel == null) {
       return null;
@@ -49,7 +50,7 @@ abstract class Database {
         ),
       );
     }
-    return (categories, products);
+    return (categories: categories, products: products);
   }
 
   /// Khởi tạo.
