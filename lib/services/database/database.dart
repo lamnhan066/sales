@@ -220,8 +220,18 @@ abstract class Database {
     await updateOrderItem(orderItem);
   }
 
+  /// Lấy danh sách sản phẩm đã đặt theo mã đơn và mã sản phẩm.
+  Future<List<OrderItem>> getOrderItems({
+    int? orderId,
+    int? productId,
+  }) =>
+      getAllOrderItems(orderId: orderId, productId: productId);
+
   /// Lấy tất tất cả sản phẩm đã đặt hàng.
-  Future<List<OrderItem>> getAllOrderItems();
+  Future<List<OrderItem>> getAllOrderItems({
+    int? orderId,
+    int? productId,
+  });
 
   /// Lưu tất cả sản phẩm đã đặt hàng.
   Future<void> saveAllOrderItems(List<OrderItem> orderItems);

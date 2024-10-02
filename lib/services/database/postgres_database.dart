@@ -175,8 +175,17 @@ class PostgresDatabase extends Database {
   }
 
   @override
-  Future<List<OrderItem>> getAllOrderItems() async {
-    const sql = 'SELECT * FROM order_items WHERE oi_deleted=FALSE';
+  Future<List<OrderItem>> getAllOrderItems({
+    int? orderId,
+    int? productId,
+  }) async {
+    var sql = 'SELECT * FROM order_items WHERE oi_deleted=FALSE';
+    if (orderId != null) {
+      sql += ' AND oi_order_id = $orderId';
+    }
+    if (productId != null) {
+      sql += ' AND oi_product_id = $orderId';
+    }
     final result = await _connection.execute(sql);
     return result.map((e) => OrderItem.fromSqlMap(e.toColumnMap())).toList();
   }

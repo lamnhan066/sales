@@ -201,7 +201,24 @@ class MemoryDatabase extends Database {
   }
 
   @override
-  Future<List<OrderItem>> getAllOrderItems() async => _orderItems;
+  Future<List<OrderItem>> getAllOrderItems({
+    int? orderId,
+    int? productId,
+  }) async {
+    print(_orderItems);
+    return _orderItems.where((e) {
+      if (e.deleted) return false;
+
+      if (orderId != null && e.orderId != orderId) {
+        return false;
+      }
+
+      if (productId != null && e.productId != productId) {
+        return false;
+      }
+      return true;
+    }).toList();
+  }
 
   @override
   Future<void> saveAllOrderItems(List<OrderItem> orderItems) async {

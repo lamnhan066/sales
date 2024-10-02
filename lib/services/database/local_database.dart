@@ -94,15 +94,24 @@ class LocalDatabase extends Database {
   }
 
   @override
-  Future<List<OrderItem>> getAllOrderItems() async {
-    final orderItems = <OrderItem>[];
+  Future<List<OrderItem>> getAllOrderItems({
+    int? orderId,
+    int? productId,
+  }) async {
     final orderItemJson = _pref.getStringList('OrderItems') ?? [];
-    if (orderItemJson.isNotEmpty) {
-      for (final orderItem in orderItemJson) {
-        orderItems.add(OrderItem.fromJson(orderItem));
+    final orderItems = orderItemJson.map((e) => OrderItem.fromJson(e));
+    return orderItems.where((e) {
+      if (e.deleted) return false;
+
+      if (orderId != null && e.orderId != orderId) {
+        return false;
       }
-    }
-    return orderItems;
+
+      if (productId != null && e.productId != productId) {
+        return false;
+      }
+      return true;
+    }).toList();
   }
 
   @override

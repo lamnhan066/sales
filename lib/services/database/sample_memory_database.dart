@@ -1,18 +1,19 @@
 import 'package:sales/models/category.dart';
 import 'package:sales/models/order.dart';
 import 'package:sales/models/order_item.dart';
+import 'package:sales/models/order_status.dart';
 import 'package:sales/models/product.dart';
 import 'package:sales/services/database/memory_database.dart';
 
 class SampleMemoryDatabase extends MemoryDatabase {
   @override
   Future<void> initial() async {
-    saveAllCategories([
+    await saveAllCategories([
       Category(id: 0, name: 'Thức uống', description: 'Thức uống'),
       Category(id: 1, name: 'Thức ăn', description: 'Thức ăn'),
       Category(id: 2, name: 'Gia dụng', description: 'Gia dụng'),
     ]);
-    saveAllProducts([
+    await saveAllProducts([
       Product(
         id: 0,
         sku: 'P00000001',
@@ -54,7 +55,7 @@ class SampleMemoryDatabase extends MemoryDatabase {
         categoryId: 2,
       ),
     ]);
-    saveAllOrderItems([
+    await saveAllOrderItems([
       OrderItem(
         id: 0,
         quantity: 10,
@@ -96,7 +97,7 @@ class SampleMemoryDatabase extends MemoryDatabase {
         orderId: 1,
       ),
     ]);
-    saveAllOrders([
+    await saveAllOrders([
       Order(
         id: 0,
         status: OrderStatus.paid,
