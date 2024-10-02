@@ -6,7 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:language_helper/language_helper.dart';
-import 'package:sales/components/close_button.dart';
+import 'package:sales/components/circle_close_button.dart';
 import 'package:sales/di.dart';
 import 'package:sales/models/category.dart';
 import 'package:sales/models/product.dart';
