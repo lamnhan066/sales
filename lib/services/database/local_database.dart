@@ -18,6 +18,9 @@ class LocalDatabase extends Database {
   Future<void> initial() async {}
 
   @override
+  Future<void> dispose() async {}
+
+  @override
   Future<void> clear() async {
     await _pref.remove('Categories');
     await _pref.remove('Products');

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:language_helper/language_helper.dart';
-import 'package:sales/app/app_controller.dart';
+import 'package:sales/controllers/home_controller.dart';
 import 'package:sales/di.dart';
 import 'package:sales/models/views_model.dart';
 
@@ -12,12 +12,12 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final appController = getIt<AppController>();
+  final controller = getIt<HomeController>();
   bool loading = true;
 
   @override
   void initState() {
-    loadSetup().then((_) {
+    controller.initial().then((_) {
       setState(() {
         loading = false;
       });
@@ -44,22 +44,21 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         for (final view in ViewsModel.values)
           ListTile(
-            tileColor: appController.view == view
-                ? Theme.of(context).primaryColor
-                : null,
-            textColor: appController.view == view
+            tileColor:
+                controller.view == view ? Theme.of(context).primaryColor : null,
+            textColor: controller.view == view
                 ? Theme.of(context).colorScheme.onPrimary
                 : null,
             title: Text(title(view)),
             trailing: Icon(
               Icons.arrow_forward_ios_outlined,
               size: 12,
-              color: appController.view == view
+              color: controller.view == view
                   ? Theme.of(context).colorScheme.onPrimary
                   : null,
             ),
             onTap: () {
-              appController.setView(view, setState);
+              controller.setView(view, setState);
             },
           ),
       ]),
@@ -74,12 +73,12 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               children: [
                 AppBar(
-                  title: Text(title(appController.view)),
+                  title: Text(title(controller.view)),
                 ),
                 Expanded(
                   child: loading
                       ? const Center(child: CircularProgressIndicator())
-                      : appController.getView(),
+                      : controller.getView(),
                 )
               ],
             ),

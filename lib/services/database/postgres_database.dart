@@ -35,6 +35,11 @@ class PostgresDatabase extends Database {
   }
 
   @override
+  Future<void> dispose() async {
+    await _connection.close();
+  }
+
+  @override
   Future<void> clear() async {
     await _connection.execute('DELETE FROM order_items');
     await _connection.execute('ALTER SEQUENCE order_items_sequence RESTART');

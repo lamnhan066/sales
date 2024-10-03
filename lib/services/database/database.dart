@@ -56,6 +56,9 @@ abstract class Database {
   /// Khởi tạo.
   Future<void> initial();
 
+  /// Giải phóng.
+  Future<void> dispose();
+
   /// Xoá tất cả các dữ liệu.
   Future<void> clear();
 

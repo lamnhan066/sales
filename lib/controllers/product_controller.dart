@@ -704,59 +704,89 @@ extension PrivateProductController on ProductController {
                         Expanded(
                           child: Container(
                             margin: const EdgeInsets.symmetric(horizontal: 12),
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Theme.of(context).colorScheme.outline,
-                              ),
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(12),
-                              ),
-                            ),
-                            height: 300,
+                            height: tempProduct.imagePath.isEmpty ? null : 300,
                             width: double.infinity,
-                            child: ScrollConfiguration(
-                              behavior:
-                                  ScrollConfiguration.of(context).copyWith(
-                                dragDevices: {
-                                  ...PointerDeviceKind.values,
-                                },
+                            child: InputDecorator(
+                              decoration: InputDecoration(
+                                isDense: true,
+                                border: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color:
+                                        Theme.of(context).colorScheme.outline,
+                                  ),
+                                  borderRadius:
+                                      BorderRadius.circular(BoxWConfig.radius),
+                                ),
+                                label: Text('Hình ảnh'.tr),
                               ),
-                              child: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: tempProduct.imagePath.length,
-                                itemBuilder: (context, index) {
-                                  final source =
-                                      tempProduct.imagePath.elementAt(index);
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 6,
-                                    ),
-                                    child: readOnly
-                                        ? _resolveImage(source)
-                                        : Stack(
-                                            children: [
-                                              _resolveImage(source),
-                                              Positioned.fill(
-                                                child: Align(
-                                                  alignment: Alignment.topRight,
-                                                  child: CircleCloseButton(
-                                                    onPressed: () {
-                                                      _removeImage(
-                                                        context,
-                                                        tempProduct.imagePath,
-                                                        index,
-                                                        validateForm,
-                                                        listViewSetState,
-                                                      );
-                                                    },
-                                                  ),
-                                                ),
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 6),
+                                child: tempProduct.imagePath.isEmpty
+                                    ? Text(
+                                        'Chưa có hình ảnh'.tr,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleMedium
+                                            ?.copyWith(
+                                                fontWeight: FontWeight.w400),
+                                      )
+                                    : ScrollConfiguration(
+                                        behavior:
+                                            ScrollConfiguration.of(context)
+                                                .copyWith(
+                                          dragDevices: {
+                                            ...PointerDeviceKind.values,
+                                          },
+                                        ),
+                                        child: ListView.builder(
+                                          scrollDirection: Axis.horizontal,
+                                          itemCount:
+                                              tempProduct.imagePath.length,
+                                          itemBuilder: (context, index) {
+                                            final source = tempProduct.imagePath
+                                                .elementAt(index);
+                                            return Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                horizontal: 6,
                                               ),
-                                            ],
-                                          ),
-                                  );
-                                },
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  // TODO: Mở trình xem ảnh khi nhấn vào ảnh
+                                                },
+                                                child: readOnly
+                                                    ? _resolveImage(source)
+                                                    : Stack(
+                                                        children: [
+                                                          _resolveImage(source),
+                                                          Positioned.fill(
+                                                            child: Align(
+                                                              alignment:
+                                                                  Alignment
+                                                                      .topRight,
+                                                              child:
+                                                                  CircleCloseButton(
+                                                                onPressed: () {
+                                                                  _removeImage(
+                                                                    context,
+                                                                    tempProduct
+                                                                        .imagePath,
+                                                                    index,
+                                                                    validateForm,
+                                                                    listViewSetState,
+                                                                  );
+                                                                },
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
                               ),
                             ),
                           ),
@@ -1084,7 +1114,7 @@ extension PrivateProductController on ProductController {
             controller: textController,
             title: 'Đường dẫn'.tr,
             minLines: 1,
-            maxLines: 4,
+            maxLines: 10,
             onChanged: (value) {
               path = value;
               pathStreamController.add(value);

@@ -19,6 +19,9 @@ class MemoryDatabase extends Database {
   Future<void> initial() async {}
 
   @override
+  Future<void> dispose() async {}
+
+  @override
   Future<void> clear() async {
     _products.clear();
     _categories.clear();
