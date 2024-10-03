@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+/// Màn hình báo cáo.
 class ReportView extends StatefulWidget {
+  /// Màn hình báo cáo.
   const ReportView({super.key});
 
   @override

@@ -4,7 +4,9 @@ import 'package:language_helper/language_helper.dart';
 import 'package:sales/controllers/login_controller.dart';
 import 'package:sales/di.dart';
 
+/// Màn hình đăng nhập.
 class LoginView extends StatefulWidget {
+  /// Màn hình đăng nhập.
   const LoginView({super.key});
 
   @override
@@ -18,11 +20,11 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   void initState() {
+    super.initState();
     controller.initial(context, setState).then((_) {
       usernameEdittingController.text = controller.username;
       passwordEdittingController.text = controller.password;
     });
-    super.initState();
   }
 
   @override
@@ -31,7 +33,7 @@ class _LoginViewState extends State<LoginView> {
       body: Row(
         children: [
           Expanded(
-            child: Container(
+            child: ColoredBox(
               color: Colors.purple,
               child: Center(
                 child: Text(
@@ -51,18 +53,16 @@ class _LoginViewState extends State<LoginView> {
                 BoxWInput(
                   title: 'Tên tài khoản'.tr,
                   controller: usernameEdittingController,
-                  textAlign: TextAlign.left,
                   onChanged: (username) {
-                    controller.onUsernameChanged(context, setState, username);
+                    controller.onUsernameChanged(setState, username);
                   },
                 ),
                 BoxWInput(
                   title: 'Mật khẩu'.tr,
                   controller: passwordEdittingController,
-                  textAlign: TextAlign.left,
                   obscureText: true,
                   onChanged: (pw) {
-                    controller.onPasswordChanged(context, setState, pw);
+                    controller.onPasswordChanged(setState, pw);
                   },
                 ),
                 if (controller.error.isNotEmpty)
@@ -74,7 +74,7 @@ class _LoginViewState extends State<LoginView> {
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: GestureDetector(
                     onTap: () {
-                      controller.onRememberCheckboxChanged(context, setState);
+                      controller.onRememberCheckboxChanged(setState);
                     },
                     child: Row(
                       children: [
@@ -82,13 +82,12 @@ class _LoginViewState extends State<LoginView> {
                           value: controller.rememberMe,
                           onChanged: (value) {
                             controller.onRememberCheckboxChanged(
-                              context,
                               setState,
-                              value,
+                              value: value,
                             );
                           },
                         ),
-                        Text('Nhớ thông tin của tôi'.tr)
+                        Text('Nhớ thông tin của tôi'.tr),
                       ],
                     ),
                   ),

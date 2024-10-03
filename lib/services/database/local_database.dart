@@ -6,11 +6,11 @@ import 'package:sales/models/order_item.dart';
 import 'package:sales/models/product.dart';
 import 'package:sales/models/product_order_by.dart';
 import 'package:sales/models/range_of_dates.dart';
+import 'package:sales/services/database/database.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:string_normalizer/string_normalizer.dart';
 
-import 'database.dart';
-
+/// Local database.
 class LocalDatabase extends Database {
   final _pref = getIt<SharedPreferences>();
 
@@ -91,7 +91,8 @@ class LocalDatabase extends Database {
   @override
   Future<List<Category>> getAllCategories() async {
     final categoriesJson = _pref.getStringList('Categories') ?? [];
-    return categoriesJson.map((e) => Category.fromJson(e)).where((category) {
+
+    return categoriesJson.map(Category.fromJson).where((category) {
       return !category.deleted;
     }).toList();
   }
@@ -102,7 +103,8 @@ class LocalDatabase extends Database {
     int? productId,
   }) async {
     final orderItemJson = _pref.getStringList('OrderItems') ?? [];
-    final orderItems = orderItemJson.map((e) => OrderItem.fromJson(e));
+    final orderItems = orderItemJson.map(OrderItem.fromJson);
+
     return orderItems.where((e) {
       if (e.deleted) return false;
 
@@ -113,6 +115,7 @@ class LocalDatabase extends Database {
       if (productId != null && e.productId != productId) {
         return false;
       }
+
       return true;
     }).toList();
   }
@@ -122,7 +125,7 @@ class LocalDatabase extends Database {
     RangeOfDates? dateRange,
   }) async {
     final ordersJson = _pref.getStringList('Orders') ?? [];
-    final orders = ordersJson.map((e) => Order.fromJson(e)).where((o) {
+    final orders = ordersJson.map(Order.fromJson).where((o) {
       if (o.deleted) return false;
 
       // Lọc theo ngày
@@ -146,8 +149,7 @@ class LocalDatabase extends Database {
   }) async {
     // Lấy tất cả dữ liệu từ CSDL.
     final productsJson = _pref.getStringList('Products') ?? [];
-    final result =
-        productsJson.map((e) => Product.fromJson(e)).where((product) {
+    final result = productsJson.map(Product.fromJson).where((product) {
       // Sản phẩm đã bị xoá.
       if (product.deleted) return false;
 
@@ -196,13 +198,17 @@ class LocalDatabase extends Database {
   @override
   Future<void> saveAllCategories(List<Category> categories) async {
     await _pref.setStringList(
-        'Categories', categories.map((e) => e.toJson()).toList());
+      'Categories',
+      categories.map((e) => e.toJson()).toList(),
+    );
   }
 
   @override
   Future<void> saveAllOrderItems(List<OrderItem> orderItems) async {
     await _pref.setStringList(
-        'OrderItems', orderItems.map((e) => e.toJson()).toList());
+      'OrderItems',
+      orderItems.map((e) => e.toJson()).toList(),
+    );
   }
 
   @override
@@ -213,6 +219,8 @@ class LocalDatabase extends Database {
   @override
   Future<void> saveAllProducts(List<Product> products) async {
     await _pref.setStringList(
-        'Products', products.map((e) => e.toJson()).toList());
+      'Products',
+      products.map((e) => e.toJson()).toList(),
+    );
   }
 }

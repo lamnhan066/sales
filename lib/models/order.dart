@@ -2,12 +2,21 @@ import 'dart:convert';
 
 import 'package:sales/models/order_status.dart';
 
+/// Đơn hàng.
 class Order {
+  /// Id.
   final int id;
+
+  /// Trạng thái.
   final OrderStatus status;
+
+  /// Ngày đặt hàng.
   final DateTime date;
+
+  /// Đánh dấu xoá.
   final bool deleted;
 
+  /// Đơn hàng.
   Order({
     required this.id,
     required this.status,
@@ -15,6 +24,31 @@ class Order {
     this.deleted = false,
   });
 
+  /// Map -> Order.
+  factory Order.fromMap(Map<String, dynamic> map) {
+    return Order(
+      id: (map['id'] as num?)?.toInt() ?? 0,
+      status: OrderStatus.values.byName(map['status'] as String),
+      date: DateTime.fromMillisecondsSinceEpoch(map['date'] as int),
+      deleted: map['deleted'] as bool,
+    );
+  }
+
+  /// SQL Map -> Order.
+  factory Order.fromSqlMap(Map<String, dynamic> map) {
+    return Order(
+      id: (map['o_id'] as num).toInt(),
+      status: OrderStatus.values.byName(map['o_status'] as String),
+      date: DateTime.parse(map['o_date'] as String),
+      deleted: map['o_deleted'] as bool,
+    );
+  }
+
+  /// JSON -> Order
+  factory Order.fromJson(String source) =>
+      Order.fromMap(json.decode(source) as Map<String, dynamic>);
+
+  /// Sao chép.
   Order copyWith({
     int? id,
     OrderStatus? status,
@@ -29,6 +63,7 @@ class Order {
     );
   }
 
+  /// Order -> Map
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -38,6 +73,7 @@ class Order {
     };
   }
 
+  /// Order -> SQL Map
   Map<String, dynamic> toSqlMap() {
     return {
       'o_id': id,
@@ -47,25 +83,6 @@ class Order {
     };
   }
 
-  factory Order.fromMap(Map<String, dynamic> map) {
-    return Order(
-      id: map['id']?.toInt() ?? 0,
-      status: OrderStatus.values.byName(map['status']),
-      date: DateTime.fromMillisecondsSinceEpoch(map['date']),
-      deleted: map['deleted'] ?? false,
-    );
-  }
-
-  factory Order.fromSqlMap(Map<String, dynamic> map) {
-    return Order(
-      id: map['o_id']?.toInt() ?? 0,
-      status: OrderStatus.values.byName(map['o_status']),
-      date: DateTime.parse(map['o_date']),
-      deleted: map['o_deleted'] ?? false,
-    );
-  }
-
+  /// Order -> JSON
   String toJson() => json.encode(toMap());
-
-  factory Order.fromJson(String source) => Order.fromMap(json.decode(source));
 }

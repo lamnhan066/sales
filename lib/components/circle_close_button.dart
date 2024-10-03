@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
 class CircleCloseButton extends StatelessWidget {
+  /// Nút tắt
   const CircleCloseButton({
     super.key,
     this.onPressed,
   });
 
+  /// Calback của nút tắt khi được nhấn.
   final VoidCallback? onPressed;
 
   @override

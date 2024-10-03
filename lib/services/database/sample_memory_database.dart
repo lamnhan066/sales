@@ -5,6 +5,7 @@ import 'package:sales/models/order_status.dart';
 import 'package:sales/models/product.dart';
 import 'package:sales/services/database/memory_database.dart';
 
+/// Database in the memory with sample data.
 class SampleMemoryDatabase extends MemoryDatabase {
   @override
   Future<void> initial() async {
@@ -102,13 +103,11 @@ class SampleMemoryDatabase extends MemoryDatabase {
         id: 0,
         status: OrderStatus.paid,
         date: DateTime.now(),
-        deleted: false,
       ),
       Order(
         id: 1,
         status: OrderStatus.paid,
         date: DateTime.now().subtract(const Duration(days: 1)),
-        deleted: false,
       ),
     ]);
   }

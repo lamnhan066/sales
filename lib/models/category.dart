@@ -1,11 +1,20 @@
 import 'dart:convert';
 
+/// Loại hàng.
 class Category {
+  /// Id.
   final int id;
+
+  /// Tên.
   final String name;
+
+  /// Mô tả.
   final String description;
+
+  /// Xoá.
   final bool deleted;
 
+  /// Loại hàng.
   Category({
     required this.id,
     required this.name,
@@ -13,6 +22,31 @@ class Category {
     this.deleted = false,
   });
 
+  /// Chuyển từ Map sang Category.
+  factory Category.fromMap(Map<String, dynamic> map) {
+    return Category(
+      id: (map['id'] as num?)?.toInt() ?? 0,
+      name: (map['name'] as String?) ?? '',
+      description: (map['description'] as String?) ?? '',
+      deleted: (map['deleted'] as bool?) ?? false,
+    );
+  }
+
+  /// Chuyển từ SQL Map sang Category.
+  factory Category.fromSqlMap(Map<String, dynamic> map) {
+    return Category(
+      id: (map['c_id'] as num?)?.toInt() ?? 0,
+      name: (map['c_name'] as String?) ?? '',
+      description: (map['c_description'] as String?) ?? '',
+      deleted: (map['c_deleted'] as bool?) ?? false,
+    );
+  }
+
+  /// Chuyển từ json sang Category.
+  factory Category.fromJson(String source) =>
+      Category.fromMap(json.decode(source) as Map<String, dynamic>);
+
+  /// Sao chép.
   Category copyWith({
     int? id,
     String? name,
@@ -27,6 +61,7 @@ class Category {
     );
   }
 
+  /// Chuyển sang Map.
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -36,6 +71,7 @@ class Category {
     };
   }
 
+  /// Chuyển sang dạng Map với key của SQL.
   Map<String, dynamic> toSqlMap() {
     return {
       'c_id': id,
@@ -45,28 +81,8 @@ class Category {
     };
   }
 
-  factory Category.fromMap(Map<String, dynamic> map) {
-    return Category(
-      id: map['id']?.toInt() ?? 0,
-      name: map['name'] ?? '',
-      description: map['description'] ?? '',
-      deleted: map['deleted'] ?? false,
-    );
-  }
-
-  factory Category.fromSqlMap(Map<String, dynamic> map) {
-    return Category(
-      id: map['c_id']?.toInt() ?? 0,
-      name: map['c_name'] ?? '',
-      description: map['c_description'] ?? '',
-      deleted: map['c_deleted'] ?? false,
-    );
-  }
-
+  /// Chuyển sang Json.
   String toJson() => json.encode(toMap());
-
-  factory Category.fromJson(String source) =>
-      Category.fromMap(json.decode(source));
 
   @override
   String toString() {
@@ -74,7 +90,9 @@ class Category {
   }
 }
 
+/// Extension của List<Category>.
 extension CategoryExtension on List<Category> {
+  /// Lấy loại hàng từ id.
   Category fromId(int id) {
     return singleWhere((c) => c.id == id);
   }

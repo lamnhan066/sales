@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/controllers/dashboard_controller.dart';
 import 'package:sales/di.dart';
-import 'package:sales/services/utils.dart';
+import 'package:sales/utils/utils.dart';
 
+/// Màn hình tổng quan.
 class DashboardView extends StatefulWidget {
+  /// Màn hình tổng quan.
   const DashboardView({super.key});
 
   @override
@@ -17,13 +19,14 @@ class _DashboardViewState extends State<DashboardView> {
 
   @override
   void initState() {
-    controller.initial(setState);
     super.initState();
+    controller.initial(setState);
   }
 
   @override
   Widget build(BuildContext context) {
-    Widget divider = const SizedBox(width: 100, child: Divider());
+    const Widget divider = SizedBox(width: 100, child: Divider());
+
     return Scaffold(
       body: Align(
         alignment: Alignment.topCenter,
@@ -135,7 +138,7 @@ class _DashboardViewState extends State<DashboardView> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           for (final order
-                              in controller.threeRecentOrders.$1.keys)
+                              in controller.threeRecentOrders.orderItems.keys)
                             Card(
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
@@ -146,21 +149,25 @@ class _DashboardViewState extends State<DashboardView> {
                                     for (int i = 0;
                                         i <
                                             controller.threeRecentOrders
-                                                .$1[order]!.length;
+                                                .orderItems[order]!.length;
                                         i++)
-                                      Builder(builder: (_) {
-                                        final orderItem = controller
-                                            .threeRecentOrders.$1[order]!
-                                            .elementAt(i);
-                                        final product = controller
-                                            .threeRecentOrders.$2[order]!
-                                            .elementAt(i);
+                                      Builder(
+                                        builder: (_) {
+                                          final orderItem = controller
+                                              .threeRecentOrders
+                                              .orderItems[order]!
+                                              .elementAt(i);
+                                          final product = controller
+                                              .threeRecentOrders
+                                              .products[order]!
+                                              .elementAt(i);
 
-                                        // TODO: Chỉnh sửa cách hiển thị đơn hàng để đẹp hơn
-                                        return Text(
-                                          '${product.name} - ${orderItem.quantity} - ${orderItem.totalPrice}',
-                                        );
-                                      }),
+                                          // TODO: Chỉnh sửa cách hiển thị đơn hàng để đẹp hơn
+                                          return Text(
+                                            '${product.name} - ${orderItem.quantity} - ${orderItem.totalPrice}',
+                                          );
+                                        },
+                                      ),
                                   ],
                                 ),
                               ),

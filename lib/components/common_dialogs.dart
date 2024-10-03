@@ -24,6 +24,7 @@ Future<int?> pageChooser({
       return 'Số trang phải <= @{totalPage}'.trP({'totalPage': totalPage});
     }
     tempPage = n;
+
     return null;
   }
 
@@ -40,6 +41,7 @@ Future<int?> pageChooser({
         } else {
           validatorController.add(false);
         }
+
         return validate;
       },
     ),
@@ -79,8 +81,11 @@ Future<int?> pageChooser({
     },
   );
 
+  await validatorController.close();
+
   if (result == true && tempPage != page) {
     return tempPage;
   }
+
   return null;
 }

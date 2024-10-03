@@ -5,10 +5,10 @@ import 'package:sales/models/order_item.dart';
 import 'package:sales/models/product.dart';
 import 'package:sales/models/product_order_by.dart';
 import 'package:sales/models/range_of_dates.dart';
+import 'package:sales/services/database/database.dart';
 import 'package:string_normalizer/string_normalizer.dart';
 
-import 'database.dart';
-
+/// Database using Memory.
 class MemoryDatabase extends Database {
   final _categories = <Category>[];
   final _products = <Product>[];
@@ -50,10 +50,11 @@ class MemoryDatabase extends Database {
   }
 
   @override
-  Future<(int id, String sku)> generateProductIdSku() async {
+  Future<({int id, String sku})> generateProductIdSku() async {
     final count = await getTotalProductCount();
     final id = count + 1;
-    return (id, 'P${id.toString().padLeft(8, '0')}');
+
+    return (id: id, sku: 'P${id.toString().padLeft(8, '0')}');
   }
 
   @override
@@ -74,7 +75,7 @@ class MemoryDatabase extends Database {
   }
 
   @override
-  Future<(int, List<Product>)> getProducts({
+  Future<({int totalCount, List<Product> products})> getProducts({
     int page = 1,
     int perpage = 10,
     ProductOrderBy orderBy = ProductOrderBy.none,
@@ -82,15 +83,16 @@ class MemoryDatabase extends Database {
     RangeValues? rangeValues,
     int? categoryId,
   }) async {
-    List<Product> result = await getAllProducts(
+    final List<Product> result = await getAllProducts(
       orderBy: orderBy,
       searchText: searchText,
       rangeValues: rangeValues,
       categoryId: categoryId,
     );
+
     return (
-      result.length,
-      result.skip((page - 1) * perpage).take(perpage).toList()
+      totalCount: result.length,
+      products: result.skip((page - 1) * perpage).take(perpage).toList()
     );
   }
 
@@ -159,8 +161,8 @@ class MemoryDatabase extends Database {
 
   @override
   Future<void> removeOrder(Order order) async {
-    order = order.copyWith(deleted: true);
-    await updateOrder(order);
+    final tempOrder = order.copyWith(deleted: true);
+    await updateOrder(tempOrder);
   }
 
   @override
@@ -199,8 +201,8 @@ class MemoryDatabase extends Database {
 
   @override
   Future<void> removeOrderItem(OrderItem orderItem) async {
-    orderItem = orderItem.copyWith(deleted: true);
-    updateOrderItem(orderItem);
+    final tempOrderItem = orderItem.copyWith(deleted: true);
+    await updateOrderItem(tempOrderItem);
   }
 
   @override
@@ -218,6 +220,7 @@ class MemoryDatabase extends Database {
       if (productId != null && e.productId != productId) {
         return false;
       }
+
       return true;
     }).toList();
   }

@@ -8,8 +8,9 @@ import 'package:sales/models/order_item.dart';
 import 'package:sales/models/product.dart';
 import 'package:sales/models/product_order_by.dart';
 import 'package:sales/models/range_of_dates.dart';
-import 'package:sales/services/utils.dart';
+import 'package:sales/utils/utils.dart';
 
+/// Database abstract.
 abstract class Database {
   /// Load dữ liệu từ Excel.
   static Future<({List<Category> categories, List<Product> products})?>
@@ -24,7 +25,7 @@ abstract class Database {
     final categories = <Category>[];
     for (int i = 1; i < firstSheet.maxRows; i++) {
       final row = firstSheet.rows.elementAt(i);
-      final categoryName = '${row.elementAt(6)!.value}';
+      final categoryName = '${row.elementAt(6)?.value}';
       Category category;
       try {
         category = categories.singleWhere((e) => e.name == categoryName);
@@ -39,17 +40,19 @@ abstract class Database {
       products.add(
         Product(
           id: i,
-          sku: '${row.elementAt(0)!.value}',
-          name: '${row.elementAt(1)!.value}',
-          imagePath: jsonDecode('${row.elementAt(2)!.value}').cast<String>(),
-          importPrice: int.parse('${row.elementAt(3)!.value}'),
-          count: int.parse('${row.elementAt(4)!.value}'),
-          description: '${row.elementAt(5)!.value}',
+          sku: '${row.first?.value}',
+          name: '${row.elementAt(1)?.value}',
+          imagePath: (jsonDecode('${row.elementAt(2)?.value}') as List<dynamic>)
+              .cast<String>(),
+          importPrice: int.parse('${row.elementAt(3)?.value}'),
+          count: int.parse('${row.elementAt(4)?.value}'),
+          description: '${row.elementAt(5)?.value}',
           categoryId: category.id,
-          deleted: bool.parse('${row.elementAt(7)!.value}'),
+          deleted: bool.parse('${row.elementAt(7)?.value}'),
         ),
       );
     }
+
     return (categories: categories, products: products);
   }
 
@@ -93,7 +96,9 @@ abstract class Database {
   /// Việc thay thế này sẽ dẫn đến dữ liệu ở database bị xoá hoàn toàn
   /// và được thay thế mới.
   Future<void> replace(
-      List<Category> categories, List<Product> products) async {
+    List<Category> categories,
+    List<Product> products,
+  ) async {
     await saveAllCategories(categories);
     await saveAllProducts(products);
   }
@@ -106,8 +111,8 @@ abstract class Database {
 
   /// Xoá loại hàng.
   Future<void> removeCategory(Category category) async {
-    category = category.copyWith(deleted: true);
-    await updateCategory(category);
+    final tempCategory = category.copyWith(deleted: true);
+    await updateCategory(tempCategory);
   }
 
   /// Lấy danh sách tất cả các loại hàng.
@@ -117,10 +122,11 @@ abstract class Database {
   Future<void> saveAllCategories(List<Category> categories);
 
   /// Trình tạo ra `id` và `sku` cho sản phẩm.
-  Future<(int id, String sku)> generateProductIdSku() async {
+  Future<({int id, String sku})> generateProductIdSku() async {
     final count = await getTotalProductCount();
     final id = count + 1;
-    return (id, 'P${id.toString().padLeft(8, '0')}');
+
+    return (id: id, sku: 'P${id.toString().padLeft(8, '0')}');
   }
 
   /// Trình tạo ra `id` cho loại hàng.
@@ -128,6 +134,7 @@ abstract class Database {
     final categories = await getAllCategories();
     final count = categories.length;
     final id = count + 1;
+
     return id;
   }
 
@@ -139,8 +146,8 @@ abstract class Database {
 
   /// Xoá sản phẩm.
   Future<void> removeProduct(Product product) async {
-    product = product.copyWith(deleted: true);
-    await updateProduct(product);
+    final tempProduct = product.copyWith(deleted: true);
+    await updateProduct(tempProduct);
   }
 
   /// Lưu tất cả sản phẩm vào CSDL.
@@ -150,7 +157,7 @@ abstract class Database {
   ///
   /// Lấy danh sách sản phẩm theo điều kiện và trả về (tổng số trang, danh sách
   /// sản phẩm trang hiện tại).
-  Future<(int, List<Product>)> getProducts({
+  Future<({int totalCount, List<Product> products})> getProducts({
     int page = 1,
     int perpage = 10,
     ProductOrderBy orderBy = ProductOrderBy.none,
@@ -158,15 +165,16 @@ abstract class Database {
     RangeValues? rangeValues,
     int? categoryId,
   }) async {
-    List<Product> result = await getAllProducts(
+    final List<Product> result = await getAllProducts(
       orderBy: orderBy,
       searchText: searchText,
       rangeValues: rangeValues,
       categoryId: categoryId,
     );
+
     return (
-      result.length,
-      result.skip((page - 1) * perpage).take(perpage).toList()
+      totalCount: result.length,
+      products: result.skip((page - 1) * perpage).take(perpage).toList()
     );
   }
 
@@ -186,8 +194,8 @@ abstract class Database {
 
   /// Xoá đơn đặt hàng.
   Future<void> removeOrder(Order order) async {
-    order = order.copyWith(deleted: true);
-    await updateOrder(order);
+    final tempOrder = order.copyWith(deleted: true);
+    await updateOrder(tempOrder);
   }
 
   /// Lấy danh sách tất cả các đơn hàng.
@@ -202,6 +210,7 @@ abstract class Database {
     RangeOfDates? dateRange,
   }) async {
     final result = await getAllOrders(dateRange: dateRange);
+
     return (
       totalCount: result.length,
       orders: result.skip((page - 1) * perpage).take(perpage).toList()
@@ -219,8 +228,8 @@ abstract class Database {
 
   /// Xoá sản phẩm đã đặt hàng.
   Future<void> removeOrderItem(OrderItem orderItem) async {
-    orderItem = orderItem.copyWith(deleted: true);
-    await updateOrderItem(orderItem);
+    final tempOrderItem = orderItem.copyWith(deleted: true);
+    await updateOrderItem(tempOrderItem);
   }
 
   /// Lấy danh sách sản phẩm đã đặt theo mã đơn và mã sản phẩm.
@@ -242,6 +251,7 @@ abstract class Database {
   /// Lấy tổng số lượng sản phẩm có trong CSDL.
   Future<int> getTotalProductCount() async {
     final products = await getAllProducts();
+
     return products.length;
   }
 
@@ -249,6 +259,7 @@ abstract class Database {
   Future<List<Product>> getFiveLowStockProducts() async {
     final products = await getAllProducts();
     final lowStockProducts = products.where((p) => p.count < 5).toList();
+
     return lowStockProducts.sublist(0, min(lowStockProducts.length, 5));
   }
 
@@ -266,9 +277,11 @@ abstract class Database {
         }
       }
     }
-    var entries = orderedProductQuantities.entries.toList();
-    entries.sort((MapEntry<Product, int> a, MapEntry<Product, int> b) =>
-        a.value.compareTo(b.value));
+    final entries = orderedProductQuantities.entries.toList();
+    entries.sort(
+      (MapEntry<Product, int> a, MapEntry<Product, int> b) =>
+          a.value.compareTo(b.value),
+    );
 
     return Map<Product, int>.fromEntries(entries).keys.toList();
   }
@@ -282,6 +295,7 @@ abstract class Database {
           o.date.month == date.month &&
           o.date.day == date.day,
     );
+
     return dailyOrders.length;
   }
 
@@ -303,6 +317,7 @@ abstract class Database {
         }
       }
     }
+
     return revenue;
   }
 
@@ -335,14 +350,18 @@ abstract class Database {
       }
       revenues.add(revenue);
     }
+
     return revenues;
   }
 
   /// Lấy danh sách 3 đơn đặt hàng gần đây nhất.
   ///
   /// Trả về danh sách sản phẩm đã đặt hàng và thông tin của đơn đặt hàng.
-  Future<(Map<Order, List<OrderItem>>, Map<Order, List<Product>>)>
-      getThreeRecentOrders() async {
+  Future<
+      ({
+        Map<Order, List<OrderItem>> orderItems,
+        Map<Order, List<Product>> products
+      })> getThreeRecentOrders() async {
     final orders = await getAllOrders();
     orders.sort((a, b) => a.date.compareTo(b.date));
     final orderItemMap = <Order, List<OrderItem>>{};
@@ -355,6 +374,7 @@ abstract class Database {
         }
       }
     }
+
     final productMap = <Order, List<Product>>{};
     final products = await getAllProducts();
     for (final order in orders.sublist(0, min(orders.length, 3))) {
@@ -367,6 +387,7 @@ abstract class Database {
         }
       }
     }
-    return (orderItemMap, productMap);
+
+    return (orderItems: orderItemMap, products: productMap);
   }
 }

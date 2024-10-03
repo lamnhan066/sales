@@ -1,3 +1,4 @@
+// ignore_for_file: function_lines_of_code
 import 'package:boxw/boxw.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -6,7 +7,9 @@ import 'package:sales/controllers/product_controller.dart';
 import 'package:sales/di.dart';
 import 'package:sales/models/category.dart';
 
+/// Màn hình sản phẩm.
 class ProductsView extends StatefulWidget {
+  /// Màn hình sản phẩm.
   const ProductsView({super.key});
 
   @override
@@ -18,8 +21,8 @@ class _ProductsViewState extends State<ProductsView> {
 
   @override
   void initState() {
-    controller.initial(setState);
     super.initState();
+    controller.initial(setState);
   }
 
   @override
@@ -50,7 +53,6 @@ class _ProductsViewState extends State<ProductsView> {
                     SizedBox(
                       width: 200,
                       child: BoxWInput(
-                        textAlign: TextAlign.left,
                         onChanged: (value) {
                           controller.onSearchChanged(setState, value);
                         },
@@ -265,28 +267,40 @@ class _ProductsViewState extends State<ProductsView> {
                                   IconButton(
                                     onPressed: () {
                                       controller.infoProduct(
-                                          context, setState, p);
+                                        context,
+                                        setState,
+                                        p,
+                                      );
                                     },
                                     icon: const Icon(Icons.info_rounded),
                                   ),
                                   IconButton(
                                     onPressed: () {
                                       controller.editProduct(
-                                          context, setState, p);
+                                        context,
+                                        setState,
+                                        p,
+                                      );
                                     },
                                     icon: const Icon(Icons.edit),
                                   ),
                                   IconButton(
                                     onPressed: () {
                                       controller.copyProduct(
-                                          context, setState, p);
+                                        context,
+                                        setState,
+                                        p,
+                                      );
                                     },
                                     icon: const Icon(Icons.copy),
                                   ),
                                   IconButton(
                                     onPressed: () {
                                       controller.removeProduct(
-                                          context, setState, p);
+                                        context,
+                                        setState,
+                                        p,
+                                      );
                                     },
                                     icon: const Icon(
                                       Icons.close_rounded,

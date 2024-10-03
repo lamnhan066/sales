@@ -6,6 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:language_helper/language_helper.dart';
+import 'package:sales/app/app_configs.dart';
 import 'package:sales/components/circle_close_button.dart';
 import 'package:sales/components/common_dialogs.dart';
 import 'package:sales/di.dart';
@@ -14,58 +15,90 @@ import 'package:sales/models/product.dart';
 import 'package:sales/models/product_order_by.dart';
 import 'package:sales/services/database/database.dart';
 
+/// Controller cho màn hình Products.
 class ProductController {
-  final database = getIt<Database>();
+  final _database = getIt<Database>();
+
+  /// Danh sách sản phẩm.
   List<Product> products = [];
+
+  /// Số sản phẩm mỗi trang.
   final int perpage = 10;
+
+  /// Vị trí trang hiện tại.
   int page = 1;
+
+  /// Tổng số trang.
   int totalPage = 0;
+
+  /// Sắp xếp sản phẩm theo tiêu chí.
   ProductOrderBy orderBy = ProductOrderBy.none;
+
+  /// Tìm kiếm sản phẩm.
   String searchText = '';
+
+  /// Khoảng giá của sản phẩm.
   RangeValues rangeValues = const RangeValues(0, double.infinity);
+
+  /// Lọc sản phẩm theo Loại hàng.
   int? categoryIdFilter;
+
+  /// Danh sách loại hàng.
   List<Category> categories = [];
 
-  Future<void> initial(Function setState) async {
-    await database.getAllCategories().then((value) {
+  /// Khởi tạo.
+  Future<void> initial(SetState setState) async {
+    await _database.getAllCategories().then((value) {
       categories = value;
     });
-    database.getProducts(page: 1).then((value) {
+    await _database.getProducts().then((value) {
       setState(() {
-        _updatePagesCountAndList(value.$1, value.$2);
+        _updatePagesCountAndList(value.totalCount, value.products);
       });
     });
   }
 
-  void onPagePrevious(Function setState) async {
-    if (page > 1) _changePage(setState, page - 1);
+  /// Callback cho nút trang trước.
+  Future<void> onPagePrevious(SetState setState) async {
+    if (page <= 1) return;
+
+    await _changePage(setState, page - 1);
   }
 
-  void onPageNext(Function setState) async {
-    if (page < totalPage) _changePage(setState, page + 1);
+  /// Callback cho nút trang kế.
+  Future<void> onPageNext(SetState setState) async {
+    if (page >= totalPage) return;
+
+    await _changePage(setState, page + 1);
   }
 
-  void onPageChanged(BuildContext context, Function setState) async {
+  /// Callback cho việc thay đổi trang.
+  Future<void> onPageChanged(BuildContext context, SetState setState) async {
     final newPage =
         await pageChooser(context: context, page: page, totalPage: totalPage);
 
     if (newPage != null) {
       page = newPage;
-      _changePage(setState, page);
+      await _changePage(setState, page);
     }
   }
 
   // TODO: Hiển thị dialog để người dùng có thể tải xuống mẫu hoặc dữ liệu hiện tại
-  void loadDataFromExcel(BuildContext context, Function setState) async {
+  /// Tải dữ liệu từ Excel.
+  Future<void> loadDataFromExcel(
+    BuildContext context,
+    SetState setState,
+  ) async {
     final data = await Database.loadDataFromExcel();
     if (!context.mounted) return;
 
     if (data == null) {
-      boxWAlert(
+      await boxWAlert(
         context: context,
         title: 'Nhập Excel',
         content: 'Bạn chưa chọn tệp hoặc tệp chưa được hỗ trợ'.tr,
       );
+
       return;
     }
 
@@ -73,7 +106,7 @@ class ProductController {
     final tempProducts = data.products;
 
     if (tempProducts.isEmpty) {
-      boxWAlert(
+      await boxWAlert(
         context: context,
         title: 'Nhập Excel'.tr,
         content: 'Dữ liệu bạn đang chọn trống!'.tr,
@@ -92,17 +125,18 @@ class ProductController {
       );
 
       if (confirm) {
-        await database.clear();
+        await _database.clear();
 
-        await database.saveAllCategories(tempCategories);
-        await database.saveAllProducts(tempProducts);
+        await _database.saveAllCategories(tempCategories);
+        await _database.saveAllProducts(tempProducts);
 
-        _updateCurrentPage(setState);
+        await _updateCurrentPage(setState);
       }
     }
   }
 
-  void addProduct(
+  /// Thêm sản phẩm.
+  Future<void> addProduct(
     BuildContext context,
     void Function(VoidCallback fn) setState,
   ) async {
@@ -129,12 +163,13 @@ class ProductController {
     final product = await _addProductDialog(context, setState);
 
     if (product != null) {
-      await database.addProduct(product);
-      _updateCurrentPage(setState);
+      await _database.addProduct(product);
+      await _updateCurrentPage(setState);
     }
   }
 
-  void removeProduct(
+  /// Xoá sản phẩm.
+  Future<void> removeProduct(
     BuildContext context,
     void Function(VoidCallback fn) setState,
     Product p,
@@ -150,12 +185,13 @@ class ProductController {
     );
 
     if (result == true) {
-      await database.removeProduct(p);
-      _updateCurrentPage(setState);
+      await _database.removeProduct(p);
+      await _updateCurrentPage(setState);
     }
   }
 
-  void editProduct(
+  /// Chỉnh sửa sản phẩm
+  Future<void> editProduct(
     BuildContext context,
     void Function(VoidCallback fn) setState,
     Product p,
@@ -163,12 +199,13 @@ class ProductController {
     final product = await _editProductDialog(context, setState, p);
 
     if (product != null) {
-      await database.updateProduct(product);
-      _updateCurrentPage(setState);
+      await _database.updateProduct(product);
+      await _updateCurrentPage(setState);
     }
   }
 
-  void infoProduct(
+  /// Hiển thị chi tiết sản phẩm.
+  Future<void> infoProduct(
     BuildContext context,
     void Function(VoidCallback fn) setState,
     Product p,
@@ -176,7 +213,8 @@ class ProductController {
     await _infoProductDialog(context, setState, p);
   }
 
-  void copyProduct(
+  /// Sao chép sản phẩm.
+  Future<void> copyProduct(
     BuildContext context,
     void Function(VoidCallback fn) setState,
     Product p,
@@ -184,20 +222,22 @@ class ProductController {
     final product = await _copyProductDialog(context, setState, p);
 
     if (product != null) {
-      await database.addProduct(product);
-      _updateCurrentPage(setState);
+      await _database.addProduct(product);
+      await _updateCurrentPage(setState);
     }
   }
 
-  Future<void> onSearchChanged(Function setState, String text) async {
+  /// Callback khi có thay đổi thông tin tìm kiếm.
+  Future<void> onSearchChanged(SetState setState, String text) async {
     // Chỉ tải lại dữ liệu khi có sự thay đổi.
     if (searchText == text) return;
 
     searchText = text;
-    _updateCurrentPage(setState, resetPage: true);
+    await _updateCurrentPage(setState, resetPage: true);
   }
 
-  void onFilterTapped(
+  /// Callback khi có sự thay đổi về lọc sản phẩm.
+  Future<void> onFilterTapped(
     BuildContext context,
     void Function(VoidCallback fn) setState,
   ) async {
@@ -212,117 +252,120 @@ class ProductController {
       title: 'Bộ lọc'.tr,
       content: Column(
         children: [
-          StatefulBuilder(builder: (context, setState) {
-            return Column(
-              children: [
-                Text('Lọc theo mức giá'.tr),
-                Row(
-                  children: [
-                    Expanded(
-                      child: BoxWInput(
-                        controller: startController,
-                        title: 'Từ'.tr,
-                        initial: _getPriceRangeText(tempRangeValues.start),
-                        validator: (value) {
-                          if (value == null) {
-                            return 'Không được bỏ trống'.tr;
-                          }
-                          final n = double.tryParse(value);
-                          if (n == null) {
-                            return 'Phải là số nguyên'.tr;
-                          }
-                          return null;
-                        },
-                        onChanged: (value) {
-                          final start = double.tryParse(value);
-                          if (start != null) {
-                            tempRangeValues =
-                                RangeValues(start, tempRangeValues.end);
-                          }
-                        },
-                        keyboardType: TextInputType.number,
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        startController.text = _getPriceRangeText(0);
-                        tempRangeValues = RangeValues(0, tempRangeValues.end);
+          Column(
+            children: [
+              Text('Lọc theo mức giá'.tr),
+              Row(
+                children: [
+                  Expanded(
+                    child: BoxWInput(
+                      controller: startController,
+                      title: 'Từ'.tr,
+                      initial: _getPriceRangeText(tempRangeValues.start),
+                      validator: (value) {
+                        if (value == null) {
+                          return 'Không được bỏ trống'.tr;
+                        }
+                        final n = double.tryParse(value);
+                        if (n == null) {
+                          return 'Phải là số nguyên'.tr;
+                        }
+
+                        return null;
                       },
-                      child: const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(
-                          '0',
-                          style: TextStyle(fontSize: 13),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: BoxWInput(
-                        controller: endController,
-                        title: 'Đến'.tr,
-                        validator: (value) {
-                          if (value == 'Tối đa'.tr) return null;
-                          if (value == null) {
-                            return 'Không được bỏ trống'.tr;
-                          }
-                          final n = double.tryParse(value);
-                          if (n == null) {
-                            return 'Phải là số nguyên'.tr;
-                          }
-                          return null;
-                        },
-                        onChanged: (value) {
-                          final end = double.tryParse(value);
-                          if (end != null) {
-                            tempRangeValues =
-                                RangeValues(tempRangeValues.start, end);
-                          }
-                        },
-                        keyboardType: TextInputType.number,
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        endController.text =
-                            _getPriceRangeText(double.infinity);
-                        tempRangeValues =
-                            RangeValues(tempRangeValues.start, double.infinity);
+                      onChanged: (value) {
+                        final start = double.tryParse(value);
+                        if (start != null) {
+                          tempRangeValues =
+                              RangeValues(start, tempRangeValues.end);
+                        }
                       },
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          _getPriceRangeText(double.infinity),
-                          style: const TextStyle(fontSize: 13),
-                        ),
+                      keyboardType: TextInputType.number,
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      startController.text = _getPriceRangeText(0);
+                      tempRangeValues = RangeValues(0, tempRangeValues.end);
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text(
+                        '0',
+                        style: TextStyle(fontSize: 13),
                       ),
                     ),
-                  ],
-                ),
-                Text('Lọc theo loại hàng'.tr),
-                BoxWDropdown<int?>(
-                  title: 'Loại hàng'.tr,
-                  items: categories
-                      .map((e) => DropdownMenuItem(
-                            value: e.id,
-                            child: Text(e.name),
-                          ))
-                      .toList()
-                    ..insert(
-                      0,
-                      DropdownMenuItem(value: null, child: Text('Tất cả'.tr)),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: BoxWInput(
+                      controller: endController,
+                      title: 'Đến'.tr,
+                      validator: (value) {
+                        if (value == 'Tối đa'.tr) return null;
+                        if (value == null) {
+                          return 'Không được bỏ trống'.tr;
+                        }
+                        final n = double.tryParse(value);
+                        if (n == null) {
+                          return 'Phải là số nguyên'.tr;
+                        }
+
+                        return null;
+                      },
+                      onChanged: (value) {
+                        final end = double.tryParse(value);
+                        if (end != null) {
+                          tempRangeValues =
+                              RangeValues(tempRangeValues.start, end);
+                        }
+                      },
+                      keyboardType: TextInputType.number,
                     ),
-                  value: tempCategoryIdFilter,
-                  onChanged: (int? value) {
-                    tempCategoryIdFilter = value;
-                  },
-                ),
-              ],
-            );
-          }),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      endController.text = _getPriceRangeText(double.infinity);
+                      tempRangeValues = RangeValues(
+                        tempRangeValues.start,
+                        double.infinity,
+                      );
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        _getPriceRangeText(double.infinity),
+                        style: const TextStyle(fontSize: 13),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Text('Lọc theo loại hàng'.tr),
+              BoxWDropdown<int?>(
+                title: 'Loại hàng'.tr,
+                items: categories
+                    .map(
+                      (e) => DropdownMenuItem(
+                        value: e.id,
+                        child: Text(e.name),
+                      ),
+                    )
+                    .toList()
+                  ..insert(
+                    0,
+                    DropdownMenuItem(child: Text('Tất cả'.tr)),
+                  ),
+                value: tempCategoryIdFilter,
+                onChanged: (int? value) {
+                  tempCategoryIdFilter = value;
+                },
+              ),
+            ],
+          ),
         ],
       ),
       buttons: (context) {
@@ -360,11 +403,12 @@ class ProductController {
             categoryIdFilter != tempCategoryIdFilter)) {
       rangeValues = tempRangeValues;
       categoryIdFilter = tempCategoryIdFilter;
-      _updateCurrentPage(setState, resetPage: true);
+      await _updateCurrentPage(setState, resetPage: true);
     }
   }
 
-  void onSortTapped(
+  /// Callback khi có sự thay đổi về sắp xếp.
+  Future<void> onSortTapped(
     BuildContext context,
     void Function(VoidCallback fn) setState,
   ) async {
@@ -374,25 +418,27 @@ class ProductController {
       title: 'Sắp xếp'.tr,
       content: Column(
         children: [
-          StatefulBuilder(builder: (context, setState) {
-            return Column(
-              children: [
-                for (final o in ProductOrderBy.values)
-                  RadioListTile(
-                    value: o,
-                    groupValue: tempOrderBy,
-                    title: Text(_getOrderByName(o)),
-                    onChanged: (value) {
-                      if (value != null) {
+          StatefulBuilder(
+            builder: (_, setState) {
+              return Column(
+                children: [
+                  for (final o in ProductOrderBy.values)
+                    RadioListTile(
+                      value: o,
+                      groupValue: tempOrderBy,
+                      title: Text(_getOrderByName(o)),
+                      onChanged: (value) {
+                        if (value == null) return;
+
                         setState(() {
                           tempOrderBy = value;
                         });
-                      }
-                    },
-                  ),
-              ],
-            );
-          }),
+                      },
+                    ),
+                ],
+              );
+            },
+          ),
         ],
       ),
       buttons: (context) {
@@ -403,18 +449,20 @@ class ProductController {
               Padding(
                 padding: const EdgeInsets.only(right: 20),
                 child: FilledButton(
-                    onPressed: () {
-                      Navigator.pop(context, true);
-                    },
-                    child: Text('OK'.tr)),
+                  onPressed: () {
+                    Navigator.pop(context, true);
+                  },
+                  child: Text('OK'.tr),
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 20),
                 child: TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text('Huỷ'.tr)),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('Huỷ'.tr),
+                ),
               ),
             ],
           ),
@@ -425,15 +473,16 @@ class ProductController {
     // Chỉ tải lại dữ liệu khi có sự thay đổi.
     if (result == true && tempOrderBy != orderBy) {
       orderBy = tempOrderBy;
-      _updateCurrentPage(setState, resetPage: true);
+      await _updateCurrentPage(setState, resetPage: true);
     }
   }
 }
 
+/// Nơi chứa các hàm Private
 extension PrivateProductController on ProductController {
   Future<Product?> _infoProductDialog(
     BuildContext context,
-    Function setState,
+    SetState setState,
     Product product,
   ) {
     return _productDialog(
@@ -446,7 +495,7 @@ extension PrivateProductController on ProductController {
     );
   }
 
-  Future<Product?> _addProductDialog(BuildContext context, Function setState) {
+  Future<Product?> _addProductDialog(BuildContext context, SetState setState) {
     return _productDialog(
       context: context,
       setState: setState,
@@ -457,7 +506,10 @@ extension PrivateProductController on ProductController {
   }
 
   Future<Product?> _editProductDialog(
-      BuildContext context, Function setState, Product product) {
+    BuildContext context,
+    SetState setState,
+    Product product,
+  ) {
     return _productDialog(
       context: context,
       setState: setState,
@@ -468,7 +520,10 @@ extension PrivateProductController on ProductController {
   }
 
   Future<Product?> _copyProductDialog(
-      BuildContext context, Function setState, Product product) {
+    BuildContext context,
+    SetState setState,
+    Product product,
+  ) {
     return _productDialog(
       context: context,
       setState: setState,
@@ -480,7 +535,7 @@ extension PrivateProductController on ProductController {
 
   Future<Product?> _productDialog({
     required BuildContext context,
-    required Function setState,
+    required SetState setState,
     required String title,
     required Product? product,
     required bool generateIdSku,
@@ -499,8 +554,8 @@ extension PrivateProductController on ProductController {
               categoryId: categories.first.id,
             );
     if (generateIdSku || product == null) {
-      final idSku = await database.generateProductIdSku();
-      tempProduct = tempProduct.copyWith(id: idSku.$1, sku: idSku.$2);
+      final idSku = await _database.generateProductIdSku();
+      tempProduct = tempProduct.copyWith(id: idSku.id, sku: idSku.sku);
     }
 
     final form = GlobalKey<FormState>();
@@ -603,7 +658,6 @@ extension PrivateProductController on ProductController {
                           return DropdownMenuItem(
                             value: e.id,
                             child: Row(
-                              mainAxisSize: MainAxisSize.max,
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(e.name),
@@ -613,7 +667,6 @@ extension PrivateProductController on ProductController {
                                       onPressed: () {
                                         _infoCategory(
                                           context,
-                                          setState,
                                           e,
                                         );
                                       },
@@ -658,7 +711,7 @@ extension PrivateProductController on ProductController {
                                       ),
                                     ),
                                   ],
-                                )
+                                ),
                               ],
                             ),
                           );
@@ -672,10 +725,12 @@ extension PrivateProductController on ProductController {
                                 value: tempProduct.categoryId,
                                 selectedItemBuilder: (context) {
                                   return categories
-                                      .map((e) => DropdownMenuItem(
-                                            value: e.id,
-                                            child: Text(e.name),
-                                          ))
+                                      .map(
+                                        (e) => DropdownMenuItem(
+                                          value: e.id,
+                                          child: Text(e.name),
+                                        ),
+                                      )
                                       .toList();
                                 },
                                 onChanged: (int? value) {
@@ -698,114 +753,126 @@ extension PrivateProductController on ProductController {
                         );
                       },
                     ),
-                  StatefulBuilder(builder: (context, listViewSetState) {
-                    return Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 12),
-                            height: tempProduct.imagePath.isEmpty ? null : 300,
-                            width: double.infinity,
-                            child: InputDecorator(
-                              decoration: InputDecoration(
-                                isDense: true,
-                                border: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color:
-                                        Theme.of(context).colorScheme.outline,
+                  StatefulBuilder(
+                    builder: (context, listViewSetState) {
+                      return Row(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              margin:
+                                  const EdgeInsets.symmetric(horizontal: 12),
+                              height:
+                                  tempProduct.imagePath.isEmpty ? null : 300,
+                              width: double.infinity,
+                              child: InputDecorator(
+                                decoration: InputDecoration(
+                                  isDense: true,
+                                  border: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color:
+                                          Theme.of(context).colorScheme.outline,
+                                    ),
+                                    borderRadius: BorderRadius.circular(
+                                      BoxWConfig.radius,
+                                    ),
                                   ),
-                                  borderRadius:
-                                      BorderRadius.circular(BoxWConfig.radius),
+                                  label: Text('Hình ảnh'.tr),
                                 ),
-                                label: Text('Hình ảnh'.tr),
-                              ),
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 6),
-                                child: tempProduct.imagePath.isEmpty
-                                    ? Text(
-                                        'Chưa có hình ảnh'.tr,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleMedium
-                                            ?.copyWith(
-                                                fontWeight: FontWeight.w400),
-                                      )
-                                    : ScrollConfiguration(
-                                        behavior:
-                                            ScrollConfiguration.of(context)
-                                                .copyWith(
-                                          dragDevices: {
-                                            ...PointerDeviceKind.values,
-                                          },
-                                        ),
-                                        child: ListView.builder(
-                                          scrollDirection: Axis.horizontal,
-                                          itemCount:
-                                              tempProduct.imagePath.length,
-                                          itemBuilder: (context, index) {
-                                            final source = tempProduct.imagePath
-                                                .elementAt(index);
-                                            return Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                horizontal: 6,
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 6),
+                                  child: tempProduct.imagePath.isEmpty
+                                      ? Text(
+                                          'Chưa có hình ảnh'.tr,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleMedium
+                                              ?.copyWith(
+                                                fontWeight: FontWeight.w400,
                                               ),
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  // TODO: Mở trình xem ảnh khi nhấn vào ảnh
-                                                },
-                                                child: readOnly
-                                                    ? _resolveImage(source)
-                                                    : Stack(
-                                                        children: [
-                                                          _resolveImage(source),
-                                                          Positioned.fill(
-                                                            child: Align(
-                                                              alignment:
-                                                                  Alignment
-                                                                      .topRight,
-                                                              child:
-                                                                  CircleCloseButton(
-                                                                onPressed: () {
-                                                                  _removeImage(
-                                                                    context,
-                                                                    tempProduct
-                                                                        .imagePath,
-                                                                    index,
-                                                                    validateForm,
-                                                                    listViewSetState,
-                                                                  );
-                                                                },
+                                        )
+                                      : ScrollConfiguration(
+                                          behavior:
+                                              ScrollConfiguration.of(context)
+                                                  .copyWith(
+                                            dragDevices: {
+                                              ...PointerDeviceKind.values,
+                                            },
+                                          ),
+                                          child: ListView.builder(
+                                            scrollDirection: Axis.horizontal,
+                                            itemCount:
+                                                tempProduct.imagePath.length,
+                                            itemBuilder: (context, index) {
+                                              final source = tempProduct
+                                                  .imagePath
+                                                  .elementAt(index);
+                                              return Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                  horizontal: 6,
+                                                ),
+                                                child: GestureDetector(
+                                                  onTap: () {
+                                                    // TODO: Mở trình xem ảnh khi nhấn vào ảnh
+                                                  },
+                                                  child: readOnly
+                                                      ? _resolveImage(source)
+                                                      : Stack(
+                                                          children: [
+                                                            _resolveImage(
+                                                              source,
+                                                            ),
+                                                            Positioned.fill(
+                                                              child: Align(
+                                                                alignment:
+                                                                    Alignment
+                                                                        .topRight,
+                                                                child:
+                                                                    CircleCloseButton(
+                                                                  onPressed:
+                                                                      () async {
+                                                                    await _removeImage(
+                                                                      context,
+                                                                      tempProduct
+                                                                          .imagePath,
+                                                                      index,
+                                                                      validateForm,
+                                                                    );
+                                                                    listViewSetState(
+                                                                      () {},
+                                                                    );
+                                                                  },
+                                                                ),
                                                               ),
                                                             ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                              ),
-                                            );
-                                          },
+                                                          ],
+                                                        ),
+                                                ),
+                                              );
+                                            },
+                                          ),
                                         ),
-                                      ),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        if (!readOnly)
-                          IconButton(
-                            onPressed: () {
-                              _addImage(
-                                context,
-                                tempProduct.imagePath,
-                                validateForm,
-                                listViewSetState,
-                              );
-                            },
-                            icon: const Icon(Icons.add),
-                          ),
-                      ],
-                    );
-                  }),
+                          if (!readOnly)
+                            IconButton(
+                              onPressed: () async {
+                                await _addImage(
+                                  context,
+                                  tempProduct.imagePath,
+                                  validateForm,
+                                );
+                                listViewSetState(() {});
+                              },
+                              icon: const Icon(Icons.add),
+                            ),
+                        ],
+                      );
+                    },
+                  ),
                   BoxWInput(
                     title: 'Mô tả'.tr,
                     initial: tempProduct.description,
@@ -825,20 +892,21 @@ extension PrivateProductController on ProductController {
               axis: Axis.horizontal,
               buttons: [
                 StreamBuilder<bool>(
-                    stream: formValidator.stream,
-                    builder: (context, snapshot) {
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 20),
-                        child: FilledButton(
-                          onPressed: !snapshot.hasData || snapshot.data != true
-                              ? null
-                              : () {
-                                  Navigator.pop(context, true);
-                                },
-                          child: Text('OK'.tr),
-                        ),
-                      );
-                    }),
+                  stream: formValidator.stream,
+                  builder: (context, snapshot) {
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 20),
+                      child: FilledButton(
+                        onPressed: !snapshot.hasData || snapshot.data != true
+                            ? null
+                            : () {
+                                Navigator.pop(context, true);
+                              },
+                        child: Text('OK'.tr),
+                      ),
+                    );
+                  },
+                ),
                 if (!readOnly)
                   Padding(
                     padding: const EdgeInsets.only(left: 20),
@@ -855,6 +923,8 @@ extension PrivateProductController on ProductController {
         },
       );
 
+      await formValidator.close();
+
       if (result == true) {
         return tempProduct;
       }
@@ -864,13 +934,13 @@ extension PrivateProductController on ProductController {
   }
 
   Future<void> _updateCurrentPage(
-    Function setState, {
+    SetState setState, {
     bool resetPage = false,
   }) async {
     if (resetPage) page = 1;
 
-    categories = await database.getAllCategories();
-    final products = await database.getProducts(
+    categories = await _database.getAllCategories();
+    final products = await _database.getProducts(
       page: page,
       perpage: perpage,
       searchText: searchText,
@@ -879,7 +949,7 @@ extension PrivateProductController on ProductController {
       categoryId: categoryIdFilter,
     );
     setState(() {
-      _updatePagesCountAndList(products.$1, products.$2);
+      _updatePagesCountAndList(products.totalCount, products.products);
     });
   }
 
@@ -894,9 +964,9 @@ extension PrivateProductController on ProductController {
     }
   }
 
-  void _changePage(Function setState, int newPage) async {
+  Future<void> _changePage(SetState setState, int newPage) async {
     page = newPage;
-    _updateCurrentPage(setState);
+    await _updateCurrentPage(setState);
   }
 
   String _getOrderByName(ProductOrderBy orderBy) {
@@ -915,12 +985,12 @@ extension PrivateProductController on ProductController {
     if (price == double.infinity) {
       return 'Tối đa'.tr;
     }
+
     return '${price.toInt()}';
   }
 
   Future<void> _infoCategory(
     BuildContext context,
-    Function setState,
     Category category,
   ) async {
     await _categoryDialog(
@@ -933,10 +1003,10 @@ extension PrivateProductController on ProductController {
 
   Future<bool> _addCategory(
     BuildContext context,
-    Function setState,
+    SetState setState,
   ) async {
-    Category tempCategory = Category(
-      id: await database.generateCategoryId(),
+    final Category tempCategory = Category(
+      id: await _database.generateCategoryId(),
       name: '',
       description: '',
     );
@@ -949,8 +1019,9 @@ extension PrivateProductController on ProductController {
       );
 
       if (category != null) {
-        await database.addCategory(category);
-        _updateCurrentPage(setState);
+        await _database.addCategory(category);
+        await _updateCurrentPage(setState);
+
         return true;
       }
     }
@@ -961,7 +1032,7 @@ extension PrivateProductController on ProductController {
   /// Cập nhật category. Trả về `true` nếu có sự thay đổi.
   Future<bool> _editCategory(
     BuildContext context,
-    Function setState,
+    SetState setState,
     Category category,
   ) async {
     final c = await _categoryDialog(
@@ -971,8 +1042,9 @@ extension PrivateProductController on ProductController {
     );
 
     if (c != null) {
-      await database.updateCategory(c);
+      await _database.updateCategory(c);
       await _updateCurrentPage(setState);
+
       return true;
     }
 
@@ -981,7 +1053,7 @@ extension PrivateProductController on ProductController {
 
   Future<bool> _removeCategory(
     BuildContext context,
-    Function setState,
+    SetState setState,
     Category category,
   ) async {
     final result = await boxWConfirm(
@@ -994,8 +1066,9 @@ extension PrivateProductController on ProductController {
     );
 
     if (result) {
-      await database.removeCategory(category);
+      await _database.removeCategory(category);
       await _updateCurrentPage(setState);
+
       return true;
     }
 
@@ -1008,6 +1081,7 @@ extension PrivateProductController on ProductController {
     Category category, [
     bool readOnly = false,
   ]) async {
+    Category tempCategory = category;
     final result = await boxWDialog<bool>(
       context: context,
       title: title,
@@ -1019,7 +1093,7 @@ extension PrivateProductController on ProductController {
             initial: category.name,
             readOnly: readOnly,
             onChanged: (value) {
-              category = category.copyWith(name: value);
+              tempCategory = category.copyWith(name: value);
             },
           ),
           BoxWInput(
@@ -1027,7 +1101,7 @@ extension PrivateProductController on ProductController {
             initial: category.description,
             readOnly: readOnly,
             onChanged: (value) {
-              category = category.copyWith(description: value);
+              tempCategory = category.copyWith(description: value);
             },
           ),
         ],
@@ -1062,19 +1136,18 @@ extension PrivateProductController on ProductController {
       },
     );
 
-    if (result == true) {
-      return category;
+    if (result ?? false) {
+      return tempCategory;
     }
 
     return null;
   }
 
-  void _removeImage(
+  Future<void> _removeImage(
     BuildContext context,
     List<String> imagePath,
     int index,
-    Function validateForm,
-    Function listViewSetState,
+    void Function() validateForm,
   ) async {
     final isRemoved = await boxWConfirm(
       context: context,
@@ -1086,16 +1159,14 @@ extension PrivateProductController on ProductController {
 
     if (isRemoved) {
       imagePath.removeAt(index);
-      listViewSetState(() {});
       validateForm();
     }
   }
 
-  void _addImage(
+  Future<void> _addImage(
     BuildContext context,
     List<String> imagePath,
-    Function validateForm,
-    Function listViewSetState,
+    VoidCallback validateForm,
   ) async {
     String path = '';
     final pathStreamController = StreamController<String>();
@@ -1113,7 +1184,6 @@ extension PrivateProductController on ProductController {
           BoxWInput(
             controller: textController,
             title: 'Đường dẫn'.tr,
-            minLines: 1,
             maxLines: 10,
             onChanged: (value) {
               path = value;
@@ -1173,9 +1243,11 @@ extension PrivateProductController on ProductController {
       },
     );
 
+    await pathStreamController.close();
+
     if (isAccepted == true && path.isNotEmpty) {
       imagePath.add(path);
-      listViewSetState(() {});
+
       validateForm();
     }
   }

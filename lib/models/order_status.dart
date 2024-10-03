@@ -1,8 +1,14 @@
 import 'package:language_helper/language_helper.dart';
 
+/// Trạng thái đơn hàng.
 enum OrderStatus {
+  /// Đã tạo.
   created,
+
+  /// Đã thanh toán.
   paid,
+
+  /// Đã huỷ.
   cancelled;
 
   String get text {

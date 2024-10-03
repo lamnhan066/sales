@@ -1,3 +1,4 @@
+/// Sắp xếp sản phẩm.
 enum ProductOrderBy {
   /// Sắp xếp theo sku tăng dần (Mặc định).
   none('p_sku ASC'),
@@ -20,7 +21,9 @@ enum ProductOrderBy {
   /// Sắp xếp theo số lượng giảm dần.
   countDesc('p_count DESC');
 
+  /// Lệnh SQL tương ứng.
   final String sql;
 
+  /// Sắp xếp sản phẩm.
   const ProductOrderBy(this.sql);
 }

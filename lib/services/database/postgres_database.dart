@@ -8,18 +8,19 @@ import 'package:sales/models/order_item.dart';
 import 'package:sales/models/product.dart';
 import 'package:sales/models/product_order_by.dart';
 import 'package:sales/models/range_of_dates.dart';
-import 'package:sales/services/utils.dart';
+import 'package:sales/services/database/database.dart';
+import 'package:sales/utils/utils.dart';
 
-import 'database.dart';
-
+/// Database using Postgres
 class PostgresDatabase extends Database {
   late Connection _connection;
 
+  /// Database using Postgres
   PostgresDatabase();
 
   @override
   Future<void> initial() async {
-    final postgresSettings = getIt<AppController>().postgresSettings;
+    final postgresSettings = getIt<AppController>().postgresConfigurations;
     _connection = await Connection.open(
       Endpoint(
         host: postgresSettings.host,
@@ -59,72 +60,93 @@ class PostgresDatabase extends Database {
   Future<void> addCategory(Category category) async {
     const sql =
         'INSERT INTO categories (c_name, c_description) VALUES (@name, @description)';
-    await _connection.execute(Sql.named(sql), parameters: {
-      'name': category.name,
-      'description': category.description,
-    });
+    await _connection.execute(
+      Sql.named(sql),
+      parameters: {
+        'name': category.name,
+        'description': category.description,
+      },
+    );
   }
 
   @override
   Future<void> updateCategory(Category category) async {
     const sql =
         'UPDATE categories SET c_id = @id, c_name = @name, c_description = @description, c_deleted = @deleted WHERE c_id=@id';
-    await _connection.execute(Sql.named(sql), parameters: {
-      'id': category.id,
-      'name': category.name,
-      'description': category.description,
-      'deleted': category.deleted,
-    });
+    await _connection.execute(
+      Sql.named(sql),
+      parameters: {
+        'id': category.id,
+        'name': category.name,
+        'description': category.description,
+        'deleted': category.deleted,
+      },
+    );
   }
 
   @override
   Future<void> removeCategory(Category category) async {
     const sql = 'DELETE FROM categories WHERE c_id = @id';
-    await _connection.execute(Sql.named(sql), parameters: {
-      'id': category.id,
-    });
+    await _connection.execute(
+      Sql.named(sql),
+      parameters: {
+        'id': category.id,
+      },
+    );
   }
 
   @override
   Future<void> addOrder(Order order) async {
     const sql = 'INSERT INTO orders (c_status, c_date) VALUES (@status, @date)';
-    await _connection.execute(Sql.named(sql), parameters: {
-      'status': order.status.name,
-      'date': TypedValue(Type.date, order.date),
-    });
+    await _connection.execute(
+      Sql.named(sql),
+      parameters: {
+        'status': order.status.name,
+        'date': TypedValue(Type.date, order.date),
+      },
+    );
   }
 
   @override
   Future<void> updateOrder(Order order) async {
     const sql =
         'UPDATE orders SET o_id = @id,  o_status = @status, o_date = @date, o_deleted = @deleted WHERE o_id=@id';
-    await _connection.execute(Sql.named(sql), parameters: {
-      'id': order.id,
-      'status': order.status.name,
-      'date': order.date,
-      'deleted': order.deleted,
-    });
+    await _connection.execute(
+      Sql.named(sql),
+      parameters: {
+        'id': order.id,
+        'status': order.status.name,
+        'date': order.date,
+        'deleted': order.deleted,
+      },
+    );
   }
 
   @override
   Future<void> removeOrder(Order order) async {
     const sql = 'DELETE FROM orders WHERE o_id = @id';
-    await _connection.execute(Sql.named(sql), parameters: {
-      'id': order.id,
-    });
+    await _connection.execute(
+      Sql.named(sql),
+      parameters: {
+        'id': order.id,
+      },
+    );
   }
 
   @override
   Future<void> addOrderItem(OrderItem orderItem) async {
     const sql =
         'INSERT INTO orders (oi_quantity, oi_unit_sale_price, oi_total_price, oi_product_id, oi_order_id) VALUES (@quantity, @unitSalePrice, @totalPrice, @productId, @orderId)';
-    await _connection.execute(Sql.named(sql), parameters: {
-      'quantity': orderItem.quantity,
-      'unitSalePrice': orderItem.unitSalePrice,
-      'totalPrice': orderItem.totalPrice,
-      'productId': orderItem.productId,
-      'orderId': orderItem.orderId,
-    });
+    await _connection.execute(
+      Sql.named(sql),
+      parameters: {
+        'quantity': orderItem.quantity,
+        'unitSalePrice': orderItem.unitSalePrice,
+        'totalPrice': orderItem.totalPrice,
+        'productId': orderItem.productId,
+        'orderId': orderItem.orderId,
+      },
+    );
   }
 
   @override
@@ -137,24 +159,30 @@ class PostgresDatabase extends Database {
   @override
   Future<void> removeOrderItem(OrderItem orderItem) async {
     const sql = 'DELETE FROM order_items WHERE oi_id = @id';
-    await _connection.execute(Sql.named(sql), parameters: {
-      'id': orderItem.id,
-    });
+    await _connection.execute(
+      Sql.named(sql),
+      parameters: {
+        'id': orderItem.id,
+      },
+    );
   }
 
   @override
   Future<void> addProduct(Product product) async {
     const sql =
         'INSERT INTO products (p_sku, p_name, p_image_path, p_import_price, p_count, p_description, p_category_id) VALUES (@sku, @name, @imagePath, @importPrice, @count, @description, @categoryId)';
-    await _connection.execute(Sql.named(sql), parameters: {
-      'sku': product.sku,
-      'name': product.name,
-      'imagePath': TypedValue(Type.varCharArray, product.imagePath),
-      'importPrice': product.importPrice,
-      'count': product.count,
-      'description': product.description,
-      'categoryId': product.categoryId,
-    });
+    await _connection.execute(
+      Sql.named(sql),
+      parameters: {
+        'sku': product.sku,
+        'name': product.name,
+        'imagePath': TypedValue(Type.varCharArray, product.imagePath),
+        'importPrice': product.importPrice,
+        'count': product.count,
+        'description': product.description,
+        'categoryId': product.categoryId,
+      },
+    );
   }
 
   @override
@@ -167,15 +195,19 @@ class PostgresDatabase extends Database {
   @override
   Future<void> removeProduct(Product product) async {
     const sql = 'DELETE FROM products WHERE p_id = @id';
-    await _connection.execute(Sql.named(sql), parameters: {
-      'id': product.id,
-    });
+    await _connection.execute(
+      Sql.named(sql),
+      parameters: {
+        'id': product.id,
+      },
+    );
   }
 
   @override
   Future<List<Category>> getAllCategories() async {
     const sql = 'SELECT * FROM categories WHERE c_deleted=FALSE';
     final result = await _connection.execute(sql);
+
     return result.map((e) => Category.fromSqlMap(e.toColumnMap())).toList();
   }
 
@@ -192,6 +224,7 @@ class PostgresDatabase extends Database {
       sql += ' AND oi_product_id = $orderId';
     }
     final result = await _connection.execute(sql);
+
     return result.map((e) => OrderItem.fromSqlMap(e.toColumnMap())).toList();
   }
 
@@ -203,6 +236,7 @@ class PostgresDatabase extends Database {
       sql += " AND o_date <= '${Utils.dateToSql(dateRange.to)}'";
     }
     final result = await _connection.execute(sql);
+
     return result.map((e) => Order.fromSqlMap(e.toColumnMap())).toList();
   }
 
@@ -214,7 +248,7 @@ class PostgresDatabase extends Database {
     int? categoryId,
   }) async {
     String sql = 'SELECT * FROM products WHERE p_deleted=FALSE';
-    Map<String, Object> parameters = {};
+    final Map<String, Object> parameters = {};
 
     if (categoryId != null) {
       sql += ' AND p_category_id = @categoryId';
@@ -247,6 +281,7 @@ class PostgresDatabase extends Database {
 
     final result =
         await _connection.execute(Sql.named(sql), parameters: parameters);
+
     return result.map((e) => Product.fromSqlMap(e.toColumnMap())).toList();
   }
 
@@ -310,24 +345,27 @@ class PostgresDatabase extends Database {
   Future<int> getTotalProductCount() async {
     const sql = 'SELECT count(*) FROM products WHERE p_deleted = FALSE';
     final result = await _connection.execute(sql);
-    return result.first.first as int;
+
+    return result.first.first as int? ?? 0;
   }
 
   @override
-  Future<(int, String)> generateProductIdSku() async {
+  Future<({int id, String sku})> generateProductIdSku() async {
     const sql = 'SELECT last_value FROM products_sequence';
     final result = await _connection.execute(sql);
-    final count = result.first.first as int;
+    final count = result.first.first as int? ?? 0;
     final id = count + 1;
-    return (id, 'P${id.toString().padLeft(8, '0')}');
+
+    return (id: id, sku: 'P${id.toString().padLeft(8, '0')}');
   }
 
   @override
   Future<int> generateCategoryId() async {
     const sql = 'SELECT last_value FROM categories_sequence';
     final result = await _connection.execute(sql);
-    final count = result.first.first as int;
+    final count = result.first.first as int? ?? 0;
     final id = count + 1;
+
     return id;
   }
 }

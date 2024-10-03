@@ -1,16 +1,36 @@
+// ignore_for_file: number_of_parameters
 import 'dart:convert';
 
+/// Sản phẩm.
 class Product {
+  /// Id.
   final int id;
+
+  /// Sku.
   final String sku;
+
+  /// Tên.
   final String name;
+
+  /// Danh sách hình ảnh dạng URL hoặc đường dẫn của tệp.
   final List<String> imagePath;
+
+  /// Giá nhập.
   final int importPrice;
+
+  /// Số lượng.
   final int count;
+
+  /// Mô tả.
   final String description;
+
+  /// Mã loại hàng.
   final int categoryId;
+
+  /// Đánh dấu xoá.
   final bool deleted;
 
+  /// Sản phẩm.
   Product({
     required this.id,
     required this.sku,
@@ -23,6 +43,41 @@ class Product {
     this.deleted = false,
   });
 
+  /// Map -> Product.
+  factory Product.fromMap(Map<String, dynamic> map) {
+    return Product(
+      id: (map['id'] as num).toInt(),
+      sku: map['sku'] as String,
+      name: map['name'] as String,
+      imagePath: List<String>.from(map['imagePath'] as List<dynamic>),
+      importPrice: (map['importPrice'] as num).toInt(),
+      count: (map['count'] as num).toInt(),
+      description: map['description'] as String,
+      categoryId: (map['categoryId'] as num).toInt(),
+      deleted: map['deleted'] as bool,
+    );
+  }
+
+  /// SQL Map -> Product
+  factory Product.fromSqlMap(Map<String, dynamic> map) {
+    return Product(
+      id: (map['p_id'] as num).toInt(),
+      sku: map['p_sku'] as String,
+      name: map['p_name'] as String,
+      imagePath: List<String>.from(map['p_image_path'] as List<dynamic>),
+      importPrice: (map['p_import_price'] as num).toInt(),
+      count: (map['p_count'] as num).toInt(),
+      description: map['p_description'] as String,
+      categoryId: (map['p_category_id'] as num).toInt(),
+      deleted: map['p_deleted'] as bool,
+    );
+  }
+
+  /// JSON -> Product
+  factory Product.fromJson(String source) =>
+      Product.fromMap(json.decode(source) as Map<String, dynamic>);
+
+  /// Sao chép.
   Product copyWith({
     int? id,
     String? sku,
@@ -49,9 +104,12 @@ class Product {
 
   @override
   String toString() {
-    return 'Product(id: $id, sku: $sku, name: $name, imagePath: $imagePath, importPrice: $importPrice, count: $count, description: $description, categoryId: $categoryId, deleted: $deleted)';
+    return 'Product(id: $id, sku: $sku, name: $name, imagePath: $imagePath, '
+        'importPrice: $importPrice, count: $count, description: $description, '
+        'categoryId: $categoryId, deleted: $deleted)';
   }
 
+  /// Product -> Map.
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -66,6 +124,7 @@ class Product {
     };
   }
 
+  /// Product -> SQL Map.
   Map<String, dynamic> toSqlMap() {
     return {
       'p_id': id,
@@ -80,36 +139,6 @@ class Product {
     };
   }
 
-  factory Product.fromMap(Map<String, dynamic> map) {
-    return Product(
-      id: map['id']?.toInt() ?? 0,
-      sku: map['sku'] ?? '',
-      name: map['name'] ?? '',
-      imagePath: List<String>.from(map['imagePath']),
-      importPrice: map['importPrice']?.toInt() ?? 0,
-      count: map['count']?.toInt() ?? 0,
-      description: map['description'] ?? '',
-      categoryId: map['categoryId']?.toInt() ?? 0,
-      deleted: map['deleted'] ?? false,
-    );
-  }
-
-  factory Product.fromSqlMap(Map<String, dynamic> map) {
-    return Product(
-      id: map['p_id']?.toInt() ?? 0,
-      sku: map['p_sku'] ?? '',
-      name: map['p_name'] ?? '',
-      imagePath: List<String>.from(map['p_image_path']),
-      importPrice: map['p_import_price']?.toInt() ?? 0,
-      count: map['p_count']?.toInt() ?? 0,
-      description: map['p_description'] ?? '',
-      categoryId: map['p_category_id']?.toInt() ?? 0,
-      deleted: map['p_deleted'] ?? false,
-    );
-  }
-
+  /// Product -> JSON.
   String toJson() => json.encode(toMap());
-
-  factory Product.fromJson(String source) =>
-      Product.fromMap(json.decode(source));
 }

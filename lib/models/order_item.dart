@@ -1,14 +1,28 @@
 import 'dart:convert';
 
 class OrderItem {
+  /// Id.
   final int id;
+
+  /// Số lượng.
   final int quantity;
+
+  /// Đơn giá.
   final double unitSalePrice;
+
+  /// Thành tiền.
   final int totalPrice;
+
+  /// Id của Product.
   final int productId;
+
+  /// Id của Order.
   final int orderId;
+
+  /// Đánh dấu xoá.
   final bool deleted;
 
+  /// Chi tiết đơn hàng.
   OrderItem({
     required this.id,
     required this.quantity,
@@ -19,6 +33,37 @@ class OrderItem {
     this.deleted = false,
   });
 
+  /// Map -> OrderItem.
+  factory OrderItem.fromMap(Map<String, dynamic> map) {
+    return OrderItem(
+      id: (map['id'] as num?)?.toInt() ?? 0,
+      quantity: (map['quantity'] as num?)?.toInt() ?? 0,
+      unitSalePrice: (map['unitSalePrice'] as num?)?.toDouble() ?? 0.0,
+      totalPrice: (map['totalPrice'] as num?)?.toInt() ?? 0,
+      productId: (map['productId'] as num?)?.toInt() ?? 0,
+      orderId: (map['orderId'] as num?)?.toInt() ?? 0,
+      deleted: (map['deleted'] as bool?) ?? false,
+    );
+  }
+
+  /// SQL Map -> OrderItem.
+  factory OrderItem.fromSqlMap(Map<String, dynamic> map) {
+    return OrderItem(
+      id: (map['oi_id'] as num?)?.toInt() ?? 0,
+      quantity: (map['oi_quantity'] as num?)?.toInt() ?? 0,
+      unitSalePrice: (map['oi_unit_sale_price'] as num?)?.toDouble() ?? 0.0,
+      totalPrice: (map['oi_total_price'] as num?)?.toInt() ?? 0,
+      productId: (map['oi_productI_i'] as num?)?.toInt() ?? 0,
+      orderId: (map['oi_order_id'] as num?)?.toInt() ?? 0,
+      deleted: (map['oi_deleted'] as bool?) ?? false,
+    );
+  }
+
+  /// JSON -> OrderItem.
+  factory OrderItem.fromJson(String source) =>
+      OrderItem.fromMap(json.decode(source) as Map<String, dynamic>);
+
+  /// Sao chép.
   OrderItem copyWith({
     int? id,
     int? quantity,
@@ -39,6 +84,7 @@ class OrderItem {
     );
   }
 
+  /// OrderItem -> Map.
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -51,6 +97,7 @@ class OrderItem {
     };
   }
 
+  /// OrderItem -> SQL Map.
   Map<String, dynamic> toSqlMap() {
     return {
       'oi_id': id,
@@ -63,34 +110,8 @@ class OrderItem {
     };
   }
 
-  factory OrderItem.fromMap(Map<String, dynamic> map) {
-    return OrderItem(
-      id: map['id']?.toInt() ?? 0,
-      quantity: map['quantity']?.toInt() ?? 0,
-      unitSalePrice: map['unitSalePrice']?.toDouble() ?? 0.0,
-      totalPrice: map['totalPrice']?.toInt() ?? 0,
-      productId: map['productId']?.toInt() ?? 0,
-      orderId: map['orderId']?.toInt() ?? 0,
-      deleted: map['deleted'] ?? false,
-    );
-  }
-
-  factory OrderItem.fromSqlMap(Map<String, dynamic> map) {
-    return OrderItem(
-      id: map['oi_id']?.toInt() ?? 0,
-      quantity: map['oi_quantity']?.toInt() ?? 0,
-      unitSalePrice: map['oi_unit_sale_price']?.toDouble() ?? 0.0,
-      totalPrice: map['oi_total_price']?.toInt() ?? 0,
-      productId: map['oi_productI_i']?.toInt() ?? 0,
-      orderId: map['oi_order_id']?.toInt() ?? 0,
-      deleted: map['oi_deleted'] ?? false,
-    );
-  }
-
+  /// OrderItem  -> JSON
   String toJson() => json.encode(toMap());
-
-  factory OrderItem.fromJson(String source) =>
-      OrderItem.fromMap(json.decode(source));
 
   @override
   String toString() {

@@ -1,11 +1,14 @@
+// ignore_for_file: function_lines_of_code
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/controllers/order_controller.dart';
 import 'package:sales/di.dart';
-import 'package:sales/services/utils.dart';
+import 'package:sales/utils/utils.dart';
 
+/// Màn hình đơn hàng.
 class OrdersView extends StatefulWidget {
+  /// Màn hình đơn hàng.
   const OrdersView({super.key});
 
   @override
@@ -17,8 +20,8 @@ class _OrdersViewState extends State<OrdersView> {
 
   @override
   void initState() {
-    controller.initial(setState);
     super.initState();
+    controller.initial(setState);
   }
 
   @override
@@ -162,28 +165,40 @@ class _OrdersViewState extends State<OrdersView> {
                                   IconButton(
                                     onPressed: () {
                                       controller.infoOrder(
-                                          context, setState, o);
+                                        context,
+                                        setState,
+                                        o,
+                                      );
                                     },
                                     icon: const Icon(Icons.info_rounded),
                                   ),
                                   IconButton(
                                     onPressed: () {
                                       controller.editOrder(
-                                          context, setState, o);
+                                        context,
+                                        setState,
+                                        o,
+                                      );
                                     },
                                     icon: const Icon(Icons.edit),
                                   ),
                                   IconButton(
                                     onPressed: () {
                                       controller.copyOrder(
-                                          context, setState, o);
+                                        context,
+                                        setState,
+                                        o,
+                                      );
                                     },
                                     icon: const Icon(Icons.copy),
                                   ),
                                   IconButton(
                                     onPressed: () {
                                       controller.removeOrder(
-                                          context, setState, o);
+                                        context,
+                                        setState,
+                                        o,
+                                      );
                                     },
                                     icon: const Icon(
                                       Icons.close_rounded,

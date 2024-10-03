@@ -2,39 +2,48 @@ import 'package:boxw/boxw.dart';
 import 'package:flutter/material.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/di.dart';
-import 'package:sales/models/postgres_settings.dart';
+import 'package:sales/models/postgres_configurations.dart';
 import 'package:sales/services/database/database.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// Controller của App
 class AppController {
-  final prefs = getIt<SharedPreferences>();
+  final _prefs = getIt<SharedPreferences>();
 
-  var postgresSettings = PostgresSettings(
+  /// Cấu hình Postgres
+  PostgresConfigurations postgresConfigurations = PostgresConfigurations(
     host: 'localhost',
     database: 'postgres',
     username: 'postgres',
     password: 'sales',
   );
 
+  /// Khởi tạo
   Future<void> initial() async {
     await getIt<Database>().initial();
-    final postgresSettingsJson = prefs.getString('PostgresSettings');
+    final postgresSettingsJson = _prefs.getString('PostgresSettings');
     if (postgresSettingsJson != null) {
-      postgresSettings = PostgresSettings.fromJson(postgresSettingsJson);
+      postgresConfigurations =
+          PostgresConfigurations.fromJson(postgresSettingsJson);
     }
   }
 
+  /// Giải phóng
   Future<void> dispose() async {
     await getIt<Database>().dispose();
   }
 
-  Future<void> changePostgresSettings(PostgresSettings settings) async {
-    postgresSettings = settings;
-    await prefs.setString('PostgresSettings', settings.toJson());
+  /// Thay đổi cấu hình Postgres
+  Future<void> changePostgresConfigurations(
+    PostgresConfigurations settings,
+  ) async {
+    postgresConfigurations = settings;
+    await _prefs.setString('PostgresSettings', settings.toJson());
   }
 
-  void settingsDialog(BuildContext context) async {
-    PostgresSettings settings = postgresSettings;
+  /// Dialog cấu hình server
+  Future<void> configuationsDialog(BuildContext context) async {
+    PostgresConfigurations settings = postgresConfigurations;
     final result = await boxWDialog(
       context: context,
       title: 'Cấu Hình Máy Chủ'.tr,
@@ -71,7 +80,7 @@ class AppController {
           ),
         ],
       ),
-      buttons: (ctx) {
+      buttons: (_) {
         return [
           Buttons(
             axis: Axis.horizontal,
@@ -101,7 +110,7 @@ class AppController {
     );
 
     if (result == true) {
-      postgresSettings = settings;
+      postgresConfigurations = settings;
       await getIt<Database>().initial();
     }
   }
