@@ -65,10 +65,11 @@ packages:
   boxw:
     dependency: "direct main"
     description:
-      path: "/Users/thanhnhan/Documents/Development/Projects/Flutter Plugin/boxw"
-      relative: false
-    source: path
-    version: "0.0.46"
+      name: boxw
+      sha256: f2e6c1914c2cb3df6c6dbff2c371e7c5df64248da6f049a3e3479f9d85e6f0c9
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.47"
   buffer:
     dependency: transitive
     description:

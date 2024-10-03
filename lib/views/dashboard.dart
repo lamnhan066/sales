@@ -156,6 +156,7 @@ class _DashboardViewState extends State<DashboardView> {
                                             .threeRecentOrders.$2[order]!
                                             .elementAt(i);
 
+                                        // TODO: Chỉnh sửa cách hiển thị đơn hàng để đẹp hơn
                                         return Text(
                                           '${product.name} - ${orderItem.quantity} - ${orderItem.totalPrice}',
                                         );

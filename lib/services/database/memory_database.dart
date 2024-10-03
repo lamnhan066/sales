@@ -208,7 +208,6 @@ class MemoryDatabase extends Database {
     int? orderId,
     int? productId,
   }) async {
-    print(_orderItems);
     return _orderItems.where((e) {
       if (e.deleted) return false;
 
