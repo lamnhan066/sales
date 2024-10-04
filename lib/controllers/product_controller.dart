@@ -1,3 +1,4 @@
+// ignore_for_file: function_lines_of_code, cyclomatic_complexity
 import 'dart:async';
 import 'dart:io';
 
@@ -562,7 +563,7 @@ extension PrivateProductController on ProductController {
     final formValidator = StreamController<bool>();
 
     void validateForm() {
-      formValidator.add(form.currentState!.validate());
+      formValidator.add(form.currentState?.validate() ?? false);
     }
 
     if (readOnly) formValidator.add(true);
@@ -571,14 +572,16 @@ extension PrivateProductController on ProductController {
       final result = await boxWDialog(
         context: context,
         title: title,
-        width: MediaQuery.sizeOf(context).width * 3 / 5,
+        width: MediaQuery.sizeOf(context).width * AppConfigs.dialogWidthRatio,
         constrains: BoxConstraints(
-          minWidth: 280,
-          maxWidth: MediaQuery.sizeOf(context).width * 3 / 5,
+          minWidth: AppConfigs.dialogMinWidth,
+          maxWidth:
+              MediaQuery.sizeOf(context).width * AppConfigs.dialogWidthRatio,
         ),
         content: ConstrainedBox(
           constraints: BoxConstraints(
-            maxHeight: MediaQuery.sizeOf(context).height * 3 / 5,
+            maxHeight:
+                MediaQuery.sizeOf(context).height * AppConfigs.dialogWidthRatio,
           ),
           child: Form(
             key: form,
@@ -613,6 +616,7 @@ extension PrivateProductController on ProductController {
                           return 'Vui lòng chỉ nhập số'.tr;
                         }
                       }
+
                       return null;
                     },
                     onChanged: (value) {
@@ -634,6 +638,7 @@ extension PrivateProductController on ProductController {
                           return 'Vui lòng chỉ nhập số'.tr;
                         }
                       }
+
                       return null;
                     },
                     onChanged: (value) {
@@ -716,6 +721,7 @@ extension PrivateProductController on ProductController {
                             ),
                           );
                         }).toList();
+
                         return Row(
                           children: [
                             Expanded(
@@ -723,7 +729,7 @@ extension PrivateProductController on ProductController {
                                 title: 'Loại hàng'.tr,
                                 items: dropdowItems,
                                 value: tempProduct.categoryId,
-                                selectedItemBuilder: (context) {
+                                selectedItemBuilder: (_) {
                                   return categories
                                       .map(
                                         (e) => DropdownMenuItem(
@@ -807,6 +813,7 @@ extension PrivateProductController on ProductController {
                                               final source = tempProduct
                                                   .imagePath
                                                   .elementAt(index);
+
                                               return Padding(
                                                 padding:
                                                     const EdgeInsets.symmetric(
@@ -817,11 +824,13 @@ extension PrivateProductController on ProductController {
                                                     // TODO: Mở trình xem ảnh khi nhấn vào ảnh
                                                   },
                                                   child: readOnly
-                                                      ? _resolveImage(source)
+                                                      ? _ResolveImage(
+                                                          source: source,
+                                                        )
                                                       : Stack(
                                                           children: [
-                                                            _resolveImage(
-                                                              source,
+                                                            _ResolveImage(
+                                                              source: source,
                                                             ),
                                                             Positioned.fill(
                                                               child: Align(
@@ -840,8 +849,7 @@ extension PrivateProductController on ProductController {
                                                                       validateForm,
                                                                     );
                                                                     listViewSetState(
-                                                                      () {},
-                                                                    );
+                                                                        () {});
                                                                   },
                                                                 ),
                                                               ),
@@ -1214,7 +1222,7 @@ extension PrivateProductController on ProductController {
             buttons: [
               StreamBuilder<String>(
                 stream: pathStreamController.stream,
-                builder: (context, snapshot) {
+                builder: (_, snapshot) {
                   return Padding(
                     padding: const EdgeInsets.only(right: 20),
                     child: FilledButton(
@@ -1251,12 +1259,18 @@ extension PrivateProductController on ProductController {
       validateForm();
     }
   }
+}
 
-  /// Kiểm tra `source` là URL hay Path để trả về ảnh.
-  Image _resolveImage(String source) {
-    if (source.startsWith('http')) {
-      return Image.network(source);
-    }
-    return Image.file(File(source));
+/// Kiểm tra `source` là URL hay Path để trả về ảnh.
+class _ResolveImage extends StatelessWidget {
+  const _ResolveImage({required this.source, super.key});
+
+  final String source;
+
+  @override
+  Widget build(BuildContext context) {
+    return source.startsWith('http')
+        ? Image.network(source)
+        : Image.file(File(source));
   }
 }

@@ -70,18 +70,17 @@ class OrderController {
   }
 
   /// Nhấn nút lọc.
-  void onFilterTapped(
-    BuildContext context,
-    SetState setState,
-  ) {}
+  void onFilterTapped(BuildContext context, SetState setState) {
+    // TODO: Thêm hành động khi nhấn nút lọc
+  }
 
   /// Hiển thị thông tin đơn hàng.
   Future<void> infoOrder(
     BuildContext context,
     SetState setState,
-    Order o,
+    Order order,
   ) async {
-    await _infoOrderDialog(context, setState, o);
+    await _infoOrderDialog(context, setState, order);
   }
 
   /// Thêm đơn hàng
@@ -101,12 +100,12 @@ class OrderController {
   Future<void> editOrder(
     BuildContext context,
     SetState setState,
-    Order o,
+    Order order,
   ) async {
-    final order = await _editOrderDialog(context, setState, o);
+    final result = await _editOrderDialog(context, setState, order);
 
-    if (order != null) {
-      await _database.updateOrder(order);
+    if (result != null) {
+      await _database.updateOrder(result);
       await _updateCurrentPage(setState);
     }
   }
@@ -115,12 +114,12 @@ class OrderController {
   Future<void> copyOrder(
     BuildContext context,
     SetState setState,
-    Order o,
+    Order order,
   ) async {
-    final order = await _copyOrderDialog(context, setState, o);
+    final result = await _copyOrderDialog(context, setState, order);
 
-    if (order != null) {
-      await _database.addOrder(order);
+    if (result != null) {
+      await _database.addOrder(result);
       await _updateCurrentPage(setState);
     }
   }
@@ -129,7 +128,7 @@ class OrderController {
   Future<void> removeOrder(
     BuildContext context,
     SetState setState,
-    Order o,
+    Order order,
   ) async {
     final result = await boxWConfirm(
       context: context,
@@ -140,7 +139,7 @@ class OrderController {
     );
 
     if (result == true) {
-      await _database.removeOrder(o);
+      await _database.removeOrder(order);
       await _updateCurrentPage(setState);
     }
   }
@@ -226,8 +225,8 @@ extension PrivateOrderController on OrderController {
     });
   }
 
-  void _updatePagesCountAndList(int totalCount, List<Order> o) {
-    orders = o;
+  void _updatePagesCountAndList(int totalCount, List<Order> order) {
+    orders = order;
 
     _totalPage = (totalCount / perpage).floor();
     // Nếu tồn tại số dư thì số trang được cộng thêm 1 vì tôn tại trang có
@@ -306,7 +305,9 @@ extension PrivateOrderController on OrderController {
                           )
                           .toList(),
                       value: tempOrder.status,
-                      onChanged: (value) {},
+                      onChanged: (value) {
+                        // TODO: Thay đổi trạng thái
+                      },
                     ),
                   ),
                 ],
