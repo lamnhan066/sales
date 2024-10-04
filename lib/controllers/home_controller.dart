@@ -2,6 +2,7 @@ import 'package:sales/di.dart';
 import 'package:sales/models/views_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// Controller cho màn hình Home.
 class HomeController {
   final _prefs = getIt<SharedPreferences>();
 

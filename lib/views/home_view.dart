@@ -94,7 +94,7 @@ class _HomeViewState extends State<HomeView> {
                           ViewsModel.orders => const OrdersView(),
                           ViewsModel.products => const ProductsView(),
                           ViewsModel.report => const ReportView(),
-                          ViewsModel.settings => const SettingView(),
+                          ViewsModel.settings => const SettingsView(),
                         },
                 ),
               ],

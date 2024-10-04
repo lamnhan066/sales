@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Nút tắt
 class CircleCloseButton extends StatelessWidget {
   /// Nút tắt
   const CircleCloseButton({

@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 
 /// Màn hình cài đặt.
-class SettingView extends StatefulWidget {
+class SettingsView extends StatefulWidget {
   /// Màn hình cài đặt.
-  const SettingView({super.key});
+  const SettingsView({super.key});
 
   @override
-  State<SettingView> createState() => _SettingViewState();
+  State<SettingsView> createState() => _SettingsViewState();
 }
 
-class _SettingViewState extends State<SettingView> {
+class _SettingsViewState extends State<SettingsView> {
   @override
   Widget build(BuildContext context) {
     return const Placeholder();
