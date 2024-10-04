@@ -66,10 +66,10 @@ packages:
     dependency: "direct main"
     description:
       name: boxw
-      sha256: f2e6c1914c2cb3df6c6dbff2c371e7c5df64248da6f049a3e3479f9d85e6f0c9
+      sha256: "88427592ce5becf2d18557c16f96749171bb3e0138c566a39f20029fdae7a9cc"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.47"
+    version: "0.0.49"
   buffer:
     dependency: transitive
     description:
@@ -302,10 +302,10 @@ packages:
     dependency: transitive
     description:
       name: language_code
-      sha256: "85395ed712c12d9b500d180926e86796e4cbac5972e8f07725d9d9b7504f9a67"
+      sha256: "3993948ea689ec3bc4d3d9286fade89a9f865da38d94d34b5d06d268d4f32fa5"
       url: "https://pub.dev"
     source: hosted
-    version: "0.5.4"
+    version: "0.5.5"
   language_helper:
     dependency: "direct main"
     description:
@@ -534,10 +534,10 @@ packages:
     dependency: transitive
     description:
       name: shared_preferences_foundation
-      sha256: c4b35f6cb8f63c147312c054ce7c2254c8066745125264f0c88739c417fc9d9f
+      sha256: "07e050c7cd39bad516f8d64c455f04508d09df104be326d8c02551590a0d513d"
       url: "https://pub.dev"
     source: hosted
-    version: "2.5.2"
+    version: "2.5.3"
   shared_preferences_linux:
     dependency: transitive
     description:
@@ -683,18 +683,18 @@ packages:
     dependency: transitive
     description:
       name: win32
-      sha256: "68d1e89a91ed61ad9c370f9f8b6effed9ae5e0ede22a270bdfa6daf79fc2290a"
+      sha256: "4d45dc9069dba4619dc0ebd93c7cec5e66d8482cb625a370ac806dcc8165f2ec"
       url: "https://pub.dev"
     source: hosted
-    version: "5.5.4"
+    version: "5.5.5"
   xdg_directories:
     dependency: transitive
     description:
       name: xdg_directories
-      sha256: faea9dee56b520b55a566385b84f2e8de55e7496104adada9962e0bd11bcff1d
+      sha256: "7a3f37b05d989967cdddcbb571f1ea834867ae2faa29725fd085180e0883aa15"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.4"
+    version: "1.1.0"
   xml:
     dependency: transitive
     description:

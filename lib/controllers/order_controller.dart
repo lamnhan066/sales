@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/app/app_configs.dart';
 import 'package:sales/components/common_dialogs.dart';
-import 'package:sales/components/number_field.dart';
 import 'package:sales/di.dart';
 import 'package:sales/models/order.dart';
 import 'package:sales/models/order_item.dart';
@@ -402,7 +401,8 @@ extension PrivateOrderController on OrderController {
                                         padding: const EdgeInsets.symmetric(
                                           vertical: 3,
                                         ),
-                                        child: NumberField(
+                                        child: BoxWNumberField(
+                                          readOnly: readOnly,
                                           initial: item.quantity,
                                           onChanged: (value) {
                                             if (value != null) {
