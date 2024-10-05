@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:language_helper/language_helper.dart';
 
 /// Utils
 class Utils {
@@ -43,5 +44,16 @@ class Utils {
   /// DateTime -> d/M/yyyy
   static String dateToSql(DateTime date) {
     return '${date.year}-${date.month}-${date.day}';
+  }
+
+  /// Chuyển khoảng giá sang dạng chữ.
+  ///
+  /// Với giá là infinity thì chữ sẽ trả về `Tối đa`.
+  static String getPriceRangeText(double price) {
+    if (price == double.infinity) {
+      return 'Tối đa'.tr;
+    }
+
+    return '${price.toInt()}';
   }
 }

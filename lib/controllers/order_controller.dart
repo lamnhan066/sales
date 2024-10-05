@@ -5,7 +5,9 @@ import 'package:boxw/boxw.dart';
 import 'package:flutter/material.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/app/app_configs.dart';
+import 'package:sales/components/common_components.dart';
 import 'package:sales/components/common_dialogs.dart';
+import 'package:sales/components/orders/order_form_dialog.dart';
 import 'package:sales/di.dart';
 import 'package:sales/models/order.dart';
 import 'package:sales/models/order_item.dart';
@@ -13,7 +15,6 @@ import 'package:sales/models/order_status.dart';
 import 'package:sales/models/product.dart';
 import 'package:sales/models/range_of_dates.dart';
 import 'package:sales/services/database/database.dart';
-import 'package:sales/utils/utils.dart';
 
 /// Controller cho màn hình Order.
 class OrderController {
@@ -288,228 +289,24 @@ extension PrivateOrderController on OrderController {
           minWidth: AppConfigs.dialogMinWidth,
           maxWidth: dialogWidth,
         ),
-        content: Form(
-          key: form,
-          onChanged: validateForm,
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  Flexible(
-                    child: BoxWInput(
-                      readOnly: true,
-                      initial: Utils.formatDateTime(tempOrder.date),
-                      title: 'Ngày Giờ'.tr,
-                    ),
-                  ),
-                  Flexible(
-                    child: readOnly
-                        ? BoxWInput(
-                            readOnly: true,
-                            title: 'Trạng thái'.tr,
-                            initial: tempOrder.status.text,
-                          )
-                        : BoxWDropdown(
-                            title: 'Trạng thái'.tr,
-                            items: OrderStatus.values
-                                .map(
-                                  (e) => DropdownMenuItem(
-                                    value: e,
-                                    child: Text(e.text),
-                                  ),
-                                )
-                                .toList(),
-                            value: tempOrder.status,
-                            onChanged: (value) {
-                              // TODO: Thay đổi trạng thái
-                            },
-                          ),
-                  ),
-                ],
-              ),
-              SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    StatefulBuilder(
-                      builder: (_, tableState) {
-                        int total = 0;
-                        for (final order in orderItems) {
-                          total += order.totalPrice;
-                        }
-                        return DataTable(
-                          columns: const [
-                            DataColumn(
-                              label: SizedBox(
-                                width: 180,
-                                child: Text(
-                                  'Tên Sản Phẩm',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            ),
-                            DataColumn(
-                              label: SizedBox(
-                                width: 120,
-                                child: Text(
-                                  'Số Lượng',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            ),
-                            DataColumn(
-                              label: SizedBox(
-                                width: 120,
-                                child: Text(
-                                  'Đơn Giá',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            ),
-                            DataColumn(
-                              label: SizedBox(
-                                width: 100,
-                                child: Text(
-                                  'Thành Tiền',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            ),
-                          ],
-                          rows: [
-                            for (final item in orderItems)
-                              DataRow(
-                                cells: [
-                                  DataCell(
-                                    SizedBox(
-                                      width: 180,
-                                      child: Text(
-                                        orderItemProductMap[item.id]?.name ??
-                                            '',
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ),
-                                  ),
-                                  DataCell(
-                                    SizedBox(
-                                      width: 120,
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 3,
-                                        ),
-                                        child: BoxWNumberField(
-                                          readOnly: readOnly,
-                                          initial: item.quantity,
-                                          onChanged: (value) {
-                                            if (value != null) {
-                                              final index =
-                                                  orderItems.indexOf(item);
-                                              tableState(() {
-                                                orderItems[index] =
-                                                    item.copyWith(
-                                                  quantity: value,
-                                                  totalPrice: (value *
-                                                          item.unitSalePrice)
-                                                      .toInt(),
-                                                );
-                                              });
-                                            }
-                                          },
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  DataCell(
-                                    SizedBox(
-                                      width: 120,
-                                      child: Text(
-                                        '${item.unitSalePrice}',
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ),
-                                  ),
-                                  DataCell(
-                                    SizedBox(
-                                      width: 100,
-                                      child: Text(
-                                        '${item.totalPrice}',
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            DataRow(cells: [
-                              const DataCell(SizedBox.shrink()),
-                              const DataCell(SizedBox.shrink()),
-                              const DataCell(
-                                SizedBox(
-                                  width: 120,
-                                  child: Text(
-                                    'Tổng',
-                                    textAlign: TextAlign.center,
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                              ),
-                              DataCell(
-                                SizedBox(
-                                  width: 100,
-                                  child: Text(
-                                    '$total',
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ),
-                            ]),
-                          ],
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+        content: OrderFormDialog(
+          controller: this,
+          form: form,
+          readOnly: readOnly,
+          tempOrder: tempOrder,
+          orderItems: orderItems,
+          orderItemProductMap: orderItemProductMap,
+          validateForm: validateForm,
         ),
         buttons: (context) {
           return [
-            Buttons(
-              axis: Axis.horizontal,
-              buttons: [
-                StreamBuilder<bool>(
-                  stream: formValidator.stream,
-                  builder: (context, snapshot) {
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 20),
-                      child: FilledButton(
-                        onPressed: !snapshot.hasData || snapshot.data != true
-                            ? null
-                            : () {
-                                Navigator.pop(context, true);
-                              },
-                        child: Text('OK'.tr),
-                      ),
-                    );
-                  },
-                ),
-                if (!readOnly)
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20),
-                    child: TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text('Huỷ'.tr),
-                    ),
-                  ),
-              ],
-            ),
+            confirmCancelButtons(
+              context: context,
+              enableConfirmStream: formValidator.stream,
+              confirmText: 'OK'.tr,
+              cancelText: 'Huỷ'.tr,
+              hideCancel: readOnly,
+            )
           ];
         },
       );

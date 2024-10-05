@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:boxw/boxw.dart';
 import 'package:flutter/material.dart';
 import 'package:language_helper/language_helper.dart';
+import 'package:sales/components/common_components.dart';
 
 /// Hiển thị dialog để chọn trang.
 ///
@@ -47,36 +48,12 @@ Future<int?> pageChooser({
     ),
     buttons: (context) {
       return [
-        Buttons(
-          axis: Axis.horizontal,
-          buttons: [
-            StreamBuilder<bool>(
-              stream: validatorController.stream,
-              builder: (context, snapshot) {
-                return Padding(
-                  padding: const EdgeInsets.only(right: 20),
-                  child: FilledButton(
-                    onPressed: !snapshot.hasData || snapshot.data != true
-                        ? null
-                        : () {
-                            Navigator.pop(context, true);
-                          },
-                    child: Text('OK'.tr),
-                  ),
-                );
-              },
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 20),
-              child: TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text('Huỷ'.tr),
-              ),
-            ),
-          ],
-        ),
+        confirmCancelButtons(
+          context: context,
+          enableConfirmStream: validatorController.stream,
+          confirmText: 'OK'.tr,
+          cancelText: 'Huỷ'.tr,
+        )
       ];
     },
   );

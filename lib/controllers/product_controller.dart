@@ -1,15 +1,15 @@
 // ignore_for_file: function_lines_of_code, cyclomatic_complexity
 import 'dart:async';
-import 'dart:io';
 
 import 'package:boxw/boxw.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/app/app_configs.dart';
-import 'package:sales/components/circle_close_button.dart';
+import 'package:sales/components/common_components.dart';
 import 'package:sales/components/common_dialogs.dart';
+import 'package:sales/components/products/add_image_dialog.dart';
+import 'package:sales/components/products/product_category_dialog.dart';
+import 'package:sales/components/products/product_form_dialog.dart';
 import 'package:sales/di.dart';
 import 'package:sales/models/category.dart';
 import 'package:sales/models/product.dart';
@@ -154,7 +154,7 @@ class ProductController {
 
       if (!isAccepted || !context.mounted) return;
 
-      final isAdded = await _addCategory(context, setState);
+      final isAdded = await addCategory(context, setState);
 
       if (!isAdded) return;
     }
@@ -244,155 +244,25 @@ class ProductController {
   ) async {
     var tempRangeValues = rangeValues;
     var tempCategoryIdFilter = categoryIdFilter;
-    final startController =
-        TextEditingController(text: _getPriceRangeText(tempRangeValues.start));
-    final endController =
-        TextEditingController(text: _getPriceRangeText(tempRangeValues.end));
     final result = await boxWDialog(
       context: context,
       title: 'Bộ lọc'.tr,
-      content: Column(
-        children: [
-          Column(
-            children: [
-              Text('Lọc theo mức giá'.tr),
-              Row(
-                children: [
-                  Expanded(
-                    child: BoxWInput(
-                      controller: startController,
-                      title: 'Từ'.tr,
-                      initial: _getPriceRangeText(tempRangeValues.start),
-                      validator: (value) {
-                        if (value == null) {
-                          return 'Không được bỏ trống'.tr;
-                        }
-                        final n = double.tryParse(value);
-                        if (n == null) {
-                          return 'Phải là số nguyên'.tr;
-                        }
-
-                        return null;
-                      },
-                      onChanged: (value) {
-                        final start = double.tryParse(value);
-                        if (start != null) {
-                          tempRangeValues =
-                              RangeValues(start, tempRangeValues.end);
-                        }
-                      },
-                      keyboardType: TextInputType.number,
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      startController.text = _getPriceRangeText(0);
-                      tempRangeValues = RangeValues(0, tempRangeValues.end);
-                    },
-                    child: const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text(
-                        '0',
-                        style: TextStyle(fontSize: 13),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: BoxWInput(
-                      controller: endController,
-                      title: 'Đến'.tr,
-                      validator: (value) {
-                        if (value == 'Tối đa'.tr) return null;
-                        if (value == null) {
-                          return 'Không được bỏ trống'.tr;
-                        }
-                        final n = double.tryParse(value);
-                        if (n == null) {
-                          return 'Phải là số nguyên'.tr;
-                        }
-
-                        return null;
-                      },
-                      onChanged: (value) {
-                        final end = double.tryParse(value);
-                        if (end != null) {
-                          tempRangeValues =
-                              RangeValues(tempRangeValues.start, end);
-                        }
-                      },
-                      keyboardType: TextInputType.number,
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      endController.text = _getPriceRangeText(double.infinity);
-                      tempRangeValues = RangeValues(
-                        tempRangeValues.start,
-                        double.infinity,
-                      );
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        _getPriceRangeText(double.infinity),
-                        style: const TextStyle(fontSize: 13),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              Text('Lọc theo loại hàng'.tr),
-              BoxWDropdown<int?>(
-                title: 'Loại hàng'.tr,
-                items: categories
-                    .map(
-                      (e) => DropdownMenuItem(
-                        value: e.id,
-                        child: Text(e.name),
-                      ),
-                    )
-                    .toList()
-                  ..insert(
-                    0,
-                    DropdownMenuItem(child: Text('Tất cả'.tr)),
-                  ),
-                value: tempCategoryIdFilter,
-                onChanged: (int? value) {
-                  tempCategoryIdFilter = value;
-                },
-              ),
-            ],
-          ),
-        ],
+      content: ProductFilterDialog(
+        initialRangeValues: tempRangeValues,
+        categories: categories,
+        onRangeValuesChanged: (values) {
+          tempRangeValues = values;
+        },
+        onCategoryIdChanged: (id) {
+          tempCategoryIdFilter = id;
+        },
       ),
       buttons: (context) {
         return [
-          Buttons(
-            axis: Axis.horizontal,
-            buttons: [
-              Padding(
-                padding: const EdgeInsets.only(right: 20),
-                child: FilledButton(
-                  onPressed: () {
-                    Navigator.pop(context, true);
-                  },
-                  child: Text('OK'.tr),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 20),
-                child: TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text('Huỷ'.tr),
-                ),
-              ),
-            ],
+          confirmCancelButtons(
+            context: context,
+            confirmText: 'OK'.tr,
+            cancelText: 'Huỷ'.tr,
           ),
         ];
       },
@@ -444,28 +314,10 @@ class ProductController {
       ),
       buttons: (context) {
         return [
-          Buttons(
-            axis: Axis.horizontal,
-            buttons: [
-              Padding(
-                padding: const EdgeInsets.only(right: 20),
-                child: FilledButton(
-                  onPressed: () {
-                    Navigator.pop(context, true);
-                  },
-                  child: Text('OK'.tr),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 20),
-                child: TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text('Huỷ'.tr),
-                ),
-              ),
-            ],
+          confirmCancelButtons(
+            context: context,
+            confirmText: 'OK'.tr,
+            cancelText: 'Huỷ'.tr,
           ),
         ];
       },
@@ -583,349 +435,26 @@ extension PrivateProductController on ProductController {
             maxHeight:
                 MediaQuery.sizeOf(context).height * AppConfigs.dialogWidthRatio,
           ),
-          child: Form(
-            key: form,
-            onChanged: validateForm,
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  BoxWInput(
-                    title: 'Mã sản phẩm'.tr,
-                    initial: tempProduct.sku,
-                    readOnly: readOnly,
-                    onChanged: (value) {
-                      tempProduct = tempProduct.copyWith(sku: value);
-                    },
-                  ),
-                  BoxWInput(
-                    title: 'Tên sản phẩm'.tr,
-                    initial: tempProduct.name,
-                    readOnly: readOnly,
-                    onChanged: (value) {
-                      tempProduct = tempProduct.copyWith(name: value);
-                    },
-                  ),
-                  BoxWInput(
-                    title: 'Giá nhập'.tr,
-                    initial: tempProduct.importPrice.toString(),
-                    readOnly: readOnly,
-                    validator: (value) {
-                      if (value != null) {
-                        final n = int.tryParse(value);
-                        if (n == null) {
-                          return 'Vui lòng chỉ nhập số'.tr;
-                        }
-                      }
-
-                      return null;
-                    },
-                    onChanged: (value) {
-                      final importPrice = int.tryParse(value);
-                      if (importPrice != null) {
-                        tempProduct =
-                            tempProduct.copyWith(importPrice: importPrice);
-                      }
-                    },
-                  ),
-                  BoxWInput(
-                    title: 'Số lượng'.tr,
-                    initial: tempProduct.count.toString(),
-                    readOnly: readOnly,
-                    validator: (value) {
-                      if (value != null) {
-                        final n = int.tryParse(value);
-                        if (n == null) {
-                          return 'Vui lòng chỉ nhập số'.tr;
-                        }
-                      }
-
-                      return null;
-                    },
-                    onChanged: (value) {
-                      final count = int.tryParse(value);
-                      if (count != null) {
-                        tempProduct = tempProduct.copyWith(count: count);
-                      }
-                    },
-                  ),
-                  if (readOnly)
-                    BoxWInput(
-                      title: 'Loại hàng'.tr,
-                      initial: categories
-                          .singleWhere((e) => e.id == tempProduct.categoryId)
-                          .name,
-                      readOnly: true,
-                    )
-                  else
-                    StatefulBuilder(
-                      builder: (context, dropdownSetState) {
-                        final dropdowItems = categories.map((e) {
-                          return DropdownMenuItem(
-                            value: e.id,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(e.name),
-                                Row(
-                                  children: [
-                                    IconButton(
-                                      onPressed: () {
-                                        _infoCategory(
-                                          context,
-                                          e,
-                                        );
-                                      },
-                                      icon: const Icon(
-                                        Icons.info_rounded,
-                                      ),
-                                    ),
-                                    IconButton(
-                                      onPressed: () async {
-                                        final result = await _editCategory(
-                                          context,
-                                          setState,
-                                          e,
-                                        );
-                                        if (result) {
-                                          dropdownSetState(() {});
-                                        }
-
-                                        if (context.mounted) {
-                                          Navigator.pop(context);
-                                        }
-                                      },
-                                      icon: const Icon(Icons.edit),
-                                    ),
-                                    IconButton(
-                                      onPressed: () async {
-                                        final result = await _removeCategory(
-                                          context,
-                                          setState,
-                                          e,
-                                        );
-                                        if (result) {
-                                          dropdownSetState(() {});
-                                        }
-                                        if (context.mounted) {
-                                          Navigator.pop(context);
-                                        }
-                                      },
-                                      icon: const Icon(
-                                        Icons.close_rounded,
-                                        color: Colors.red,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          );
-                        }).toList();
-
-                        return Row(
-                          children: [
-                            Expanded(
-                              child: BoxWDropdown(
-                                title: 'Loại hàng'.tr,
-                                items: dropdowItems,
-                                value: tempProduct.categoryId,
-                                selectedItemBuilder: (_) {
-                                  return categories
-                                      .map(
-                                        (e) => DropdownMenuItem(
-                                          value: e.id,
-                                          child: Text(e.name),
-                                        ),
-                                      )
-                                      .toList();
-                                },
-                                onChanged: (int? value) {
-                                  dropdownSetState(() {
-                                    tempProduct =
-                                        tempProduct.copyWith(categoryId: value);
-                                  });
-                                },
-                              ),
-                            ),
-                            IconButton(
-                              onPressed: readOnly
-                                  ? null
-                                  : () {
-                                      _addCategory(context, setState);
-                                    },
-                              icon: const Icon(Icons.add),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                  StatefulBuilder(
-                    builder: (context, listViewSetState) {
-                      return Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              margin:
-                                  const EdgeInsets.symmetric(horizontal: 12),
-                              height:
-                                  tempProduct.imagePath.isEmpty ? null : 300,
-                              width: double.infinity,
-                              child: InputDecorator(
-                                decoration: InputDecoration(
-                                  isDense: true,
-                                  border: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color:
-                                          Theme.of(context).colorScheme.outline,
-                                    ),
-                                    borderRadius: BorderRadius.circular(
-                                      BoxWConfig.radius,
-                                    ),
-                                  ),
-                                  label: Text('Hình ảnh'.tr),
-                                ),
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 6),
-                                  child: tempProduct.imagePath.isEmpty
-                                      ? Text(
-                                          'Chưa có hình ảnh'.tr,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .titleMedium
-                                              ?.copyWith(
-                                                fontWeight: FontWeight.w400,
-                                              ),
-                                        )
-                                      : ScrollConfiguration(
-                                          behavior:
-                                              ScrollConfiguration.of(context)
-                                                  .copyWith(
-                                            dragDevices: {
-                                              ...PointerDeviceKind.values,
-                                            },
-                                          ),
-                                          child: ListView.builder(
-                                            scrollDirection: Axis.horizontal,
-                                            itemCount:
-                                                tempProduct.imagePath.length,
-                                            itemBuilder: (context, index) {
-                                              final source = tempProduct
-                                                  .imagePath
-                                                  .elementAt(index);
-
-                                              return Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                  horizontal: 6,
-                                                ),
-                                                child: GestureDetector(
-                                                  onTap: () {
-                                                    // TODO: Mở trình xem ảnh khi nhấn vào ảnh
-                                                  },
-                                                  child: readOnly
-                                                      ? _ResolveImage(
-                                                          source: source,
-                                                        )
-                                                      : Stack(
-                                                          children: [
-                                                            _ResolveImage(
-                                                              source: source,
-                                                            ),
-                                                            Positioned.fill(
-                                                              child: Align(
-                                                                alignment:
-                                                                    Alignment
-                                                                        .topRight,
-                                                                child:
-                                                                    CircleCloseButton(
-                                                                  onPressed:
-                                                                      () async {
-                                                                    await _removeImage(
-                                                                      context,
-                                                                      tempProduct
-                                                                          .imagePath,
-                                                                      index,
-                                                                      validateForm,
-                                                                    );
-                                                                    listViewSetState(
-                                                                        () {});
-                                                                  },
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                        ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          if (!readOnly)
-                            IconButton(
-                              onPressed: () async {
-                                await _addImage(
-                                  context,
-                                  tempProduct.imagePath,
-                                  validateForm,
-                                );
-                                listViewSetState(() {});
-                              },
-                              icon: const Icon(Icons.add),
-                            ),
-                        ],
-                      );
-                    },
-                  ),
-                  BoxWInput(
-                    title: 'Mô tả'.tr,
-                    initial: tempProduct.description,
-                    readOnly: readOnly,
-                    onChanged: (value) {
-                      tempProduct = tempProduct.copyWith(description: value);
-                    },
-                  ),
-                ],
-              ),
-            ),
+          child: ProductFormDialog(
+            controller: this,
+            form: form,
+            tempProduct: tempProduct,
+            validateForm: validateForm,
+            categories: categories,
+            readOnly: readOnly,
+            onChanged: (product) {
+              tempProduct = product;
+            },
           ),
         ),
         buttons: (context) {
           return [
-            Buttons(
-              axis: Axis.horizontal,
-              buttons: [
-                StreamBuilder<bool>(
-                  stream: formValidator.stream,
-                  builder: (context, snapshot) {
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 20),
-                      child: FilledButton(
-                        onPressed: !snapshot.hasData || snapshot.data != true
-                            ? null
-                            : () {
-                                Navigator.pop(context, true);
-                              },
-                        child: Text('OK'.tr),
-                      ),
-                    );
-                  },
-                ),
-                if (!readOnly)
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20),
-                    child: TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text('Huỷ'.tr),
-                    ),
-                  ),
-              ],
+            confirmCancelButtons(
+              context: context,
+              enableConfirmStream: formValidator.stream,
+              confirmText: 'OK'.tr,
+              cancelText: 'Huỷ'.tr,
+              hideCancel: readOnly,
             ),
           ];
         },
@@ -989,19 +518,11 @@ extension PrivateProductController on ProductController {
     };
   }
 
-  String _getPriceRangeText(double price) {
-    if (price == double.infinity) {
-      return 'Tối đa'.tr;
-    }
-
-    return '${price.toInt()}';
-  }
-
-  Future<void> _infoCategory(
+  Future<void> infoCategory(
     BuildContext context,
     Category category,
   ) async {
-    await _categoryDialog(
+    await categoryDialog(
       context,
       'Chi Tiết Loại Hàng'.tr,
       category,
@@ -1009,7 +530,7 @@ extension PrivateProductController on ProductController {
     );
   }
 
-  Future<bool> _addCategory(
+  Future<bool> addCategory(
     BuildContext context,
     SetState setState,
   ) async {
@@ -1020,7 +541,7 @@ extension PrivateProductController on ProductController {
     );
 
     if (context.mounted) {
-      final category = await _categoryDialog(
+      final category = await categoryDialog(
         context,
         'Thêm Loại Hàng'.tr,
         tempCategory,
@@ -1038,12 +559,12 @@ extension PrivateProductController on ProductController {
   }
 
   /// Cập nhật category. Trả về `true` nếu có sự thay đổi.
-  Future<bool> _editCategory(
+  Future<bool> editCategory(
     BuildContext context,
     SetState setState,
     Category category,
   ) async {
-    final c = await _categoryDialog(
+    final c = await categoryDialog(
       context,
       'Sửa Loại Hàng'.tr,
       category,
@@ -1059,7 +580,7 @@ extension PrivateProductController on ProductController {
     return false;
   }
 
-  Future<bool> _removeCategory(
+  Future<bool> removeCategory(
     BuildContext context,
     SetState setState,
     Category category,
@@ -1083,7 +604,7 @@ extension PrivateProductController on ProductController {
     return false;
   }
 
-  Future<Category?> _categoryDialog(
+  Future<Category?> categoryDialog(
     BuildContext context,
     String title,
     Category category, [
@@ -1116,29 +637,11 @@ extension PrivateProductController on ProductController {
       ),
       buttons: (context) {
         return [
-          Buttons(
-            axis: Axis.horizontal,
-            buttons: [
-              Padding(
-                padding: const EdgeInsets.only(right: 20),
-                child: FilledButton(
-                  onPressed: () {
-                    Navigator.pop(context, true);
-                  },
-                  child: Text('OK'.tr),
-                ),
-              ),
-              if (!readOnly)
-                Padding(
-                  padding: const EdgeInsets.only(left: 20),
-                  child: TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text('Huỷ'.tr),
-                  ),
-                ),
-            ],
+          confirmCancelButtons(
+            context: context,
+            confirmText: 'OK'.tr,
+            cancelText: 'Huỷ'.tr,
+            hideCancel: readOnly,
           ),
         ];
       },
@@ -1151,7 +654,7 @@ extension PrivateProductController on ProductController {
     return null;
   }
 
-  Future<void> _removeImage(
+  Future<void> removeImage(
     BuildContext context,
     List<String> imagePath,
     int index,
@@ -1171,81 +674,32 @@ extension PrivateProductController on ProductController {
     }
   }
 
-  Future<void> _addImage(
+  Future<void> addImage(
     BuildContext context,
     List<String> imagePath,
     VoidCallback validateForm,
   ) async {
     String path = '';
-    final pathStreamController = StreamController<String>();
+    final pathStreamController = StreamController<bool>();
     final textController = TextEditingController();
     final isAccepted = await boxWDialog(
       context: context,
       title: 'Thêm Ảnh'.tr,
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            'Vui lòng chọn ảnh từ đường dẫn\ntừ máy hoặc internet'.tr,
-            textAlign: TextAlign.center,
-          ),
-          BoxWInput(
-            controller: textController,
-            title: 'Đường dẫn'.tr,
-            maxLines: 10,
-            onChanged: (value) {
-              path = value;
-              pathStreamController.add(value);
-            },
-          ),
-          TextButton(
-            onPressed: () async {
-              final picked = await FilePicker.platform.pickFiles(
-                dialogTitle: 'Chọn ảnh',
-                type: FileType.image,
-              );
-
-              if (picked != null && picked.count > 0) {
-                path = picked.files.first.path!;
-                pathStreamController.add(path);
-                textController.text = path;
-              }
-            },
-            child: Text('Chọn ảnh từ máy'.tr),
-          ),
-        ],
+      content: AddImageDialog(
+        pathController: textController,
+        onChanged: (value) {
+          path = value;
+          pathStreamController.add(value != '');
+          textController.text = path;
+        },
       ),
       buttons: (ctx) {
         return [
-          Buttons(
-            axis: Axis.horizontal,
-            buttons: [
-              StreamBuilder<String>(
-                stream: pathStreamController.stream,
-                builder: (_, snapshot) {
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 20),
-                    child: FilledButton(
-                      onPressed: !snapshot.hasData || snapshot.data == ''
-                          ? null
-                          : () {
-                              Navigator.pop(ctx, true);
-                            },
-                      child: Text('Thêm'.tr),
-                    ),
-                  );
-                },
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 20),
-                child: TextButton(
-                  onPressed: () {
-                    Navigator.pop(ctx);
-                  },
-                  child: Text('Huỷ'.tr),
-                ),
-              ),
-            ],
+          confirmCancelButtons(
+            context: context,
+            enableConfirmStream: pathStreamController.stream,
+            confirmText: 'Thêm'.tr,
+            cancelText: 'Huỷ'.tr,
           ),
         ];
       },
@@ -1258,19 +712,5 @@ extension PrivateProductController on ProductController {
 
       validateForm();
     }
-  }
-}
-
-/// Kiểm tra `source` là URL hay Path để trả về ảnh.
-class _ResolveImage extends StatelessWidget {
-  const _ResolveImage({required this.source, super.key});
-
-  final String source;
-
-  @override
-  Widget build(BuildContext context) {
-    return source.startsWith('http')
-        ? Image.network(source)
-        : Image.file(File(source));
   }
 }
