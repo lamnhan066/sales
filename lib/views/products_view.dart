@@ -4,6 +4,7 @@ import 'package:flutter/material.dart'
     hide DataTable, DataRow, DataColumn, DataCell;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:language_helper/language_helper.dart';
+import 'package:sales/app/app_configs.dart';
 import 'package:sales/components/data_table_plus.dart';
 import 'package:sales/controllers/product_controller.dart';
 import 'package:sales/di.dart';
@@ -34,50 +35,53 @@ class _ProductsViewState extends State<ProductsView> {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                FilledButton(
-                  onPressed: () {
-                    controller.addProduct(context, setState);
-                  },
-                  child: const Icon(Icons.add),
-                ),
-                Row(
-                  children: [
-                    IconButton(
-                      color: Theme.of(context).primaryColor,
-                      onPressed: () {
-                        controller.loadDataFromExcel(context, setState);
-                      },
-                      icon: const Icon(Icons.upload_rounded),
-                    ),
-                    SizedBox(
-                      width: 200,
-                      child: BoxWInput(
-                        onChanged: (value) {
-                          controller.onSearchChanged(setState, value);
+            child: SizedBox(
+              height: AppConfigs.toolbarHeight,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  FilledButton(
+                    onPressed: () {
+                      controller.addProduct(context, setState);
+                    },
+                    child: const Icon(Icons.add),
+                  ),
+                  Row(
+                    children: [
+                      IconButton(
+                        color: Theme.of(context).primaryColor,
+                        onPressed: () {
+                          controller.loadDataFromExcel(context, setState);
                         },
-                        suffixIcon: const Icon(Icons.search),
+                        icon: const Icon(Icons.upload_rounded),
                       ),
-                    ),
-                    IconButton(
-                      color: Theme.of(context).primaryColor,
-                      onPressed: () {
-                        controller.onFilterTapped(context, setState);
-                      },
-                      icon: const Icon(FontAwesomeIcons.filter),
-                    ),
-                    IconButton(
-                      color: Theme.of(context).primaryColor,
-                      onPressed: () {
-                        controller.onSortTapped(context, setState);
-                      },
-                      icon: const Icon(FontAwesomeIcons.arrowDownAZ),
-                    ),
-                  ],
-                ),
-              ],
+                      SizedBox(
+                        width: 200,
+                        child: BoxWInput(
+                          onChanged: (value) {
+                            controller.onSearchChanged(setState, value);
+                          },
+                          suffixIcon: const Icon(Icons.search),
+                        ),
+                      ),
+                      IconButton(
+                        color: Theme.of(context).primaryColor,
+                        onPressed: () {
+                          controller.onFilterTapped(context, setState);
+                        },
+                        icon: const Icon(FontAwesomeIcons.filter),
+                      ),
+                      IconButton(
+                        color: Theme.of(context).primaryColor,
+                        onPressed: () {
+                          controller.onSortTapped(context, setState);
+                        },
+                        icon: const Icon(FontAwesomeIcons.arrowDownAZ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
           Expanded(

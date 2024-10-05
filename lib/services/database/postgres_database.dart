@@ -378,4 +378,14 @@ class PostgresDatabase extends Database {
 
     return id;
   }
+
+  @override
+  Future<int> generateOrderId() async {
+    const sql = 'SELECT last_value FROM orders_sequence';
+    final result = await _connection.execute(sql);
+    final count = result.first.first as int? ?? 0;
+    final id = count + 1;
+
+    return id;
+  }
 }

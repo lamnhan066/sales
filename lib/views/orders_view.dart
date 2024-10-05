@@ -3,6 +3,7 @@ import 'package:flutter/material.dart'
     hide DataTable, DataRow, DataColumn, DataCell;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:language_helper/language_helper.dart';
+import 'package:sales/app/app_configs.dart';
 import 'package:sales/components/data_table_plus.dart';
 import 'package:sales/controllers/order_controller.dart';
 import 'package:sales/di.dart';
@@ -31,29 +32,32 @@ class _OrdersViewState extends State<OrdersView> {
     return Scaffold(
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                FilledButton(
-                  onPressed: () {
-                    controller.addOrder(context, setState);
-                  },
-                  child: const Icon(Icons.add),
-                ),
-                Row(
-                  children: [
-                    IconButton(
-                      color: Theme.of(context).primaryColor,
-                      onPressed: () {
-                        controller.onFilterTapped(context, setState);
-                      },
-                      icon: const Icon(FontAwesomeIcons.filter),
-                    ),
-                  ],
-                ),
-              ],
+          SizedBox(
+            height: AppConfigs.toolbarHeight,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  FilledButton(
+                    onPressed: () {
+                      controller.addOrder(context, setState);
+                    },
+                    child: const Icon(Icons.add),
+                  ),
+                  Row(
+                    children: [
+                      IconButton(
+                        color: Theme.of(context).primaryColor,
+                        onPressed: () {
+                          controller.onFilterTapped(context, setState);
+                        },
+                        icon: const Icon(FontAwesomeIcons.filter),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
           Expanded(

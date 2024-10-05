@@ -8,4 +8,7 @@ class AppConfigs {
 
   /// Tỉ lệ chiều rộng của Dialog so với màn hình.
   static const double dialogWidthRatio = 3 / 5;
+
+  /// Chiều cao của thanh tìm kiếm, lọc.
+  static const toolbarHeight = 56.0;
 }

@@ -4,6 +4,7 @@ import 'package:boxw/boxw.dart';
 import 'package:flutter/material.dart'
     hide DataTable, DataRow, DataColumn, DataCell;
 import 'package:language_helper/language_helper.dart';
+import 'package:sales/components/common_components.dart';
 import 'package:sales/components/data_table_plus.dart';
 import 'package:sales/controllers/order_controller.dart';
 import 'package:sales/models/order.dart';
@@ -12,7 +13,7 @@ import 'package:sales/models/order_status.dart';
 import 'package:sales/models/product.dart';
 import 'package:sales/utils/utils.dart';
 
-class OrderFormDialog extends StatelessWidget {
+class OrderFormDialog extends StatefulWidget {
   const OrderFormDialog({
     super.key,
     required this.controller,
@@ -21,9 +22,12 @@ class OrderFormDialog extends StatelessWidget {
     required this.tempOrder,
     required this.orderItems,
     required this.orderItemProductMap,
+    required this.products,
     required this.validateForm,
     required this.addProduct,
     required this.removeProduct,
+    required this.onStatusChanged,
+    required this.onQuantityChanged,
   });
 
   final OrderController controller;
@@ -32,16 +36,110 @@ class OrderFormDialog extends StatelessWidget {
   final Order tempOrder;
   final List<OrderItem> orderItems;
   final Map<int, Product> orderItemProductMap;
+  final List<Product> products;
   final VoidCallback validateForm;
-  final void Function(Product product) addProduct;
-  final void Function(Product product) removeProduct;
+  final Future<OrderItem> Function(Product product) addProduct;
+  final Future<void> Function(Product product) removeProduct;
+  final Future<void> Function(OrderStatus status) onStatusChanged;
+  final Future<void> Function(OrderItem orderItem) onQuantityChanged;
+
+  @override
+  State<OrderFormDialog> createState() => _OrderFormDialogState();
+}
+
+class _OrderFormDialogState extends State<OrderFormDialog> {
+  List<OrderItem> orderItems = [];
+  Map<int, Product> orderItemProductMap = {};
+  List<Product> products = [];
+
+  @override
+  void initState() {
+    orderItems = [...widget.orderItems];
+    orderItemProductMap = {...widget.orderItemProductMap};
+    products = [...widget.products];
+    super.initState();
+  }
+
+  void onAddPressed() async {
+    Product selected = products.first;
+    final result = await boxWDialog(
+      context: context,
+      title: 'Chọn sản phẩm'.tr,
+      width: 300,
+      content: SizedBox(
+        height: 300,
+        child: StatefulBuilder(builder: (context, listViewState) {
+          return Material(
+            child: ListView.builder(
+              itemCount: products.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  tileColor: selected == products[index]
+                      ? Theme.of(context).primaryColor
+                      : null,
+                  textColor: selected == products[index]
+                      ? Theme.of(context).colorScheme.onPrimary
+                      : null,
+                  title: Text(products[index].name),
+                  onTap: () {
+                    listViewState(() {
+                      selected = products[index];
+                    });
+                  },
+                );
+              },
+            ),
+          );
+        }),
+      ),
+      buttons: (context) {
+        return [
+          confirmCancelButtons(
+            context: context,
+            confirmText: 'Thêm'.tr,
+            cancelText: 'Huỷ'.tr,
+          ),
+        ];
+      },
+    );
+
+    if (result == true) {
+      final orderItem = await widget.addProduct(selected);
+
+      setState(() {
+        orderItems.add(orderItem);
+        orderItemProductMap[orderItem.id] = selected;
+      });
+    }
+  }
+
+  void onRemovePressed(int orderItemId, Product product) async {
+    await widget.removeProduct(product);
+    setState(() {
+      orderItems.removeWhere((item) => product.id == item.productId);
+    });
+    widget.validateForm();
+  }
+
+  void onQuantityChanged(int? value, OrderItem orderItem) {
+    if (value != null) {
+      final index = orderItems.indexOf(orderItem);
+      setState(() {
+        orderItems[index] = orderItem.copyWith(
+          quantity: value,
+          totalPrice: (value * orderItem.unitSalePrice).toInt(),
+        );
+        widget.onQuantityChanged(orderItems[index]);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return StatefulBuilder(builder: (context, setState) {
       return Form(
-        key: form,
-        onChanged: validateForm,
+        key: widget.form,
+        onChanged: widget.validateForm,
         child: Column(
           children: [
             Row(
@@ -49,16 +147,16 @@ class OrderFormDialog extends StatelessWidget {
                 Flexible(
                   child: BoxWInput(
                     readOnly: true,
-                    initial: Utils.formatDateTime(tempOrder.date),
+                    initial: Utils.formatDateTime(widget.tempOrder.date),
                     title: 'Ngày Giờ'.tr,
                   ),
                 ),
                 Flexible(
-                  child: readOnly
+                  child: widget.readOnly
                       ? BoxWInput(
                           readOnly: true,
                           title: 'Trạng thái'.tr,
-                          initial: tempOrder.status.text,
+                          initial: widget.tempOrder.status.text,
                         )
                       : BoxWDropdown(
                           title: 'Trạng thái'.tr,
@@ -70,9 +168,11 @@ class OrderFormDialog extends StatelessWidget {
                                 ),
                               )
                               .toList(),
-                          value: tempOrder.status,
+                          value: widget.tempOrder.status,
                           onChanged: (value) {
-                            // TODO: Thay đổi trạng thái
+                            if (value != null) {
+                              widget.onStatusChanged(value);
+                            }
                           },
                         ),
                 ),
@@ -82,8 +182,8 @@ class OrderFormDialog extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  StatefulBuilder(
-                    builder: (_, tableState) {
+                  Builder(
+                    builder: (_) {
                       int total = 0;
                       for (final order in orderItems) {
                         total += order.totalPrice;
@@ -148,7 +248,7 @@ class OrderFormDialog extends StatelessWidget {
                               textAlign: TextAlign.center,
                             ),
                           ),
-                          if (!readOnly)
+                          if (!widget.readOnly)
                             DataColumn(
                               headingRowAlignment: MainAxisAlignment.center,
                               label: Text(
@@ -167,7 +267,7 @@ class OrderFormDialog extends StatelessWidget {
                                 DataCell(
                                   Center(
                                     child: Text(
-                                      '${(controller.page - 1) * controller.perpage + orderItems.indexOf(item) + 1}',
+                                      '${(widget.controller.page - 1) * widget.controller.perpage + orderItems.indexOf(item) + 1}',
                                       textAlign: TextAlign.center,
                                     ),
                                   ),
@@ -187,21 +287,10 @@ class OrderFormDialog extends StatelessWidget {
                                         vertical: 3,
                                       ),
                                       child: BoxWNumberField(
-                                        readOnly: readOnly,
+                                        readOnly: widget.readOnly,
                                         initial: item.quantity,
                                         onChanged: (value) {
-                                          if (value != null) {
-                                            final index =
-                                                orderItems.indexOf(item);
-                                            tableState(() {
-                                              orderItems[index] = item.copyWith(
-                                                quantity: value,
-                                                totalPrice:
-                                                    (value * item.unitSalePrice)
-                                                        .toInt(),
-                                              );
-                                            });
-                                          }
+                                          onQuantityChanged(value, item);
                                         },
                                       ),
                                     ),
@@ -219,16 +308,16 @@ class OrderFormDialog extends StatelessWidget {
                                     textAlign: TextAlign.center,
                                   ),
                                 ),
-                                if (!readOnly)
+                                if (!widget.readOnly)
                                   DataCell(
                                     Center(
                                       child: IconButton(
                                         onPressed: () {
-                                          removeProduct(
-                                              orderItemProductMap[item.id]!);
-                                          setState(() {
-                                            orderItemProductMap.remove(item.id);
-                                          });
+                                          onRemovePressed(
+                                            item.id,
+                                            widget
+                                                .orderItemProductMap[item.id]!,
+                                          );
                                         },
                                         icon: const Icon(
                                           Icons.close_rounded,
@@ -260,12 +349,20 @@ class OrderFormDialog extends StatelessWidget {
                                   textAlign: TextAlign.center,
                                 ),
                               ),
-                              if (!readOnly) const DataCell(SizedBox.shrink()),
+                              if (!widget.readOnly)
+                                const DataCell(SizedBox.shrink()),
                             ],
                           ),
                         ],
                       );
                     },
+                  ),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: FilledButton(
+                      onPressed: onAddPressed,
+                      child: const Icon(Icons.add),
+                    ),
                   ),
                 ],
               ),

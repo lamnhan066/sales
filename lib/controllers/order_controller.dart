@@ -92,10 +92,13 @@ class OrderController {
     BuildContext context,
     SetState setState,
   ) async {
-    final order = await _addOrderDialog(context, setState);
+    final result = await _addOrderDialog(context, setState);
 
-    if (order != null) {
-      await _database.addOrder(order);
+    if (result != null) {
+      await _database.addOrder(result.order);
+      for (final orderItem in result.orderItems) {
+        await _database.addOrderItem(orderItem);
+      }
       await _updateCurrentPage(setState);
     }
   }
@@ -109,7 +112,10 @@ class OrderController {
     final result = await _editOrderDialog(context, setState, order);
 
     if (result != null) {
-      await _database.updateOrder(result);
+      await _database.updateOrder(result.order);
+      for (final orderItem in result.orderItems) {
+        await _database.updateOrderItem(orderItem);
+      }
       await _updateCurrentPage(setState);
     }
   }
@@ -123,7 +129,10 @@ class OrderController {
     final result = await _copyOrderDialog(context, setState, order);
 
     if (result != null) {
-      await _database.addOrder(result);
+      await _database.addOrder(result.order);
+      for (final orderItem in result.orderItems) {
+        await _database.addOrderItem(orderItem);
+      }
       await _updateCurrentPage(setState);
     }
   }
@@ -151,7 +160,7 @@ class OrderController {
 
 /// Các hàm private.
 extension PrivateOrderController on OrderController {
-  Future<Order?> _infoOrderDialog(
+  Future<({Order order, List<OrderItem> orderItems})?> _infoOrderDialog(
     BuildContext context,
     SetState setState,
     Order order,
@@ -161,22 +170,23 @@ extension PrivateOrderController on OrderController {
       setState: setState,
       title: 'Thông Tin Đơn'.tr,
       order: order,
-      generateId: false,
+      copy: false,
       readOnly: true,
     );
   }
 
-  Future<Order?> _addOrderDialog(BuildContext context, SetState setState) {
+  Future<({Order order, List<OrderItem> orderItems})?> _addOrderDialog(
+      BuildContext context, SetState setState) {
     return _orderDialog(
       context: context,
       setState: setState,
       title: 'Thêm Đơn'.tr,
       order: null,
-      generateId: true,
+      copy: true,
     );
   }
 
-  Future<Order?> _editOrderDialog(
+  Future<({Order order, List<OrderItem> orderItems})?> _editOrderDialog(
     BuildContext context,
     SetState setState,
     Order order,
@@ -186,11 +196,11 @@ extension PrivateOrderController on OrderController {
       setState: setState,
       title: 'Sửa Đơn'.tr,
       order: order,
-      generateId: false,
+      copy: false,
     );
   }
 
-  Future<Order?> _copyOrderDialog(
+  Future<({Order order, List<OrderItem> orderItems})?> _copyOrderDialog(
     BuildContext context,
     SetState setState,
     Order order,
@@ -200,7 +210,7 @@ extension PrivateOrderController on OrderController {
       setState: setState,
       title: 'Chép Đơn'.tr,
       order: order,
-      generateId: true,
+      copy: true,
     );
   }
 
@@ -240,15 +250,17 @@ extension PrivateOrderController on OrderController {
     }
   }
 
-  Future<Order?> _orderDialog({
+  Future<({Order order, List<OrderItem> orderItems})?> _orderDialog({
     required BuildContext context,
     required SetState setState,
     required String title,
     required Order? order,
-    required bool generateId,
+    required bool copy,
     bool readOnly = false,
   }) async {
-    int orderItemId = 0;
+    // Đếm id cho orderItem trong quá trình thêm, chỉnh sửa và sao chép đơn hàng.
+    int orderItemId = await _database.generateOrderItemId();
+
     Order tempOrder = order ??
         Order(
           id: 0,
@@ -258,31 +270,32 @@ extension PrivateOrderController on OrderController {
     final Map<int, Product> orderItemProductMap = {};
     final List<OrderItem> orderItems = [];
     final products = await _database.getAllProducts();
+    final isNewOrder = order == null || copy;
 
-    final List<OrderItem> tempOrderItems = await _database.getOrderItems(
-      orderId: tempOrder.id,
-    );
-    orderItems.addAll(tempOrderItems);
+    if (order != null) {
+      orderItems
+          .addAll(await _database.getAllOrderItems(orderId: tempOrder.id));
+    }
 
-    if (generateId || order == null) {
-      final id = await _database.generateCategoryId();
-      tempOrder = tempOrder.copyWith(id: id);
+    if (isNewOrder) {
+      final id = await _database.generateOrderId();
+      tempOrder = tempOrder.copyWith(id: id, date: DateTime.now());
+    }
 
-      if (generateId) {
-        tempOrder = tempOrder.copyWith(date: DateTime.now());
-
-        orderItemId = await _database.generateOrderItemId();
-        for (int i = 0; i < orderItems.length; i++) {
-          orderItems[i] = orderItems[i].copyWith(id: orderItemId);
-          orderItemId;
-        }
+    if (copy) {
+      tempOrder = tempOrder.copyWith(status: OrderStatus.created);
+      for (int i = 0; i < orderItems.length; i++) {
+        orderItems[i] =
+            orderItems[i].copyWith(orderId: tempOrder.id, id: orderItemId);
+        orderItemId++;
       }
     }
 
-    for (final item in orderItems) {
-      orderItemProductMap.addAll(
-        {item.id: products.singleWhere((e) => e.id == item.productId)},
-      );
+    if (order != null) {
+      for (final orderItem in orderItems) {
+        orderItemProductMap[orderItem.id] =
+            products.firstWhere((e) => e.id == orderItem.productId);
+      }
     }
 
     final form = GlobalKey<FormState>();
@@ -292,7 +305,20 @@ extension PrivateOrderController on OrderController {
       formValidator.add(form.currentState?.validate() ?? false);
     }
 
-    void addProduct(Product product) async {
+    /// Điều chỉnh lại `id` của order item để khớp với database, tránh tình
+    /// trạng khi xoá orderItem thì `id` sẽ bị lệch.
+    Future<void> regenerateOrderItemIds() async {
+      orderItemProductMap.clear();
+      orderItemId = await _database.generateOrderItemId();
+      for (int i = 0; i < orderItems.length; i++) {
+        orderItems[i] = orderItems[i].copyWith(id: orderItemId);
+        orderItemProductMap[orderItemId] =
+            products.firstWhere((e) => e.id == orderItems[i].productId);
+        orderItemId++;
+      }
+    }
+
+    Future<OrderItem> addProduct(Product product) async {
       final orderItem = OrderItem(
         id: orderItemId,
         quantity: 1,
@@ -307,10 +333,28 @@ extension PrivateOrderController on OrderController {
       );
       orderItemId++;
       orderItems.add(orderItem);
+
+      return orderItem;
     }
 
-    void removeProduct(Product product) async {
-      orderItems.removeWhere((orderItem) => orderItem.productId == product.id);
+    Future<void> statusChanged(OrderStatus status) async {
+      tempOrder = tempOrder.copyWith(status: status);
+    }
+
+    Future<void> removeProduct(Product product) async {
+      if (isNewOrder) {
+        orderItems
+            .removeWhere((orderItem) => orderItem.productId == product.id);
+        await regenerateOrderItemIds();
+      } else {
+        final index = orderItems.indexWhere((e) => e.productId == product.id);
+        orderItems[index] = orderItems[index].copyWith(deleted: true);
+      }
+    }
+
+    Future<void> quantityChanged(OrderItem item) async {
+      final index = orderItems.indexWhere((e) => e.id == item.id);
+      orderItems[index] = item;
     }
 
     if (context.mounted) {
@@ -331,9 +375,12 @@ extension PrivateOrderController on OrderController {
           tempOrder: tempOrder,
           orderItems: orderItems,
           orderItemProductMap: orderItemProductMap,
+          products: products,
           validateForm: validateForm,
           addProduct: addProduct,
           removeProduct: removeProduct,
+          onStatusChanged: statusChanged,
+          onQuantityChanged: quantityChanged,
         ),
         buttons: (context) {
           return [
@@ -351,7 +398,7 @@ extension PrivateOrderController on OrderController {
       await formValidator.close();
 
       if (result == true) {
-        return tempOrder;
+        return (order: tempOrder, orderItems: orderItems);
       }
     }
 

@@ -186,6 +186,15 @@ abstract class Database {
     int? categoryId,
   });
 
+  /// Trình tạo ra `id` cho loại hàng.
+  Future<int> generateOrderId() async {
+    final orders = await getAllOrders();
+    final count = orders.length;
+    final id = count + 1;
+
+    return id;
+  }
+
   /// Thêm đơn đặt hàng.
   Future<void> addOrder(Order order);
 
