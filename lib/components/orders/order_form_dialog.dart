@@ -56,7 +56,7 @@ class _OrderFormDialogState extends State<OrderFormDialog> {
   void initState() {
     orderItems = [...widget.orderItems];
     orderItemProductMap = {...widget.orderItemProductMap};
-    products = [...widget.products];
+    removeExistedProducts();
     super.initState();
   }
 
@@ -109,7 +109,10 @@ class _OrderFormDialogState extends State<OrderFormDialog> {
       setState(() {
         orderItems.add(orderItem);
         orderItemProductMap[orderItem.id] = selected;
+        removeExistedProducts();
       });
+
+      widget.validateForm();
     }
   }
 
@@ -117,6 +120,7 @@ class _OrderFormDialogState extends State<OrderFormDialog> {
     await widget.removeProduct(product);
     setState(() {
       orderItems.removeWhere((item) => product.id == item.productId);
+      removeExistedProducts();
     });
     widget.validateForm();
   }
@@ -131,7 +135,18 @@ class _OrderFormDialogState extends State<OrderFormDialog> {
         );
         widget.onQuantityChanged(orderItems[index]);
       });
+      widget.validateForm();
     }
+  }
+
+  void removeExistedProducts() {
+    products = [...widget.products];
+    products.removeWhere((product) {
+      for (final orderItem in orderItems) {
+        if (orderItem.productId == product.id) return true;
+      }
+      return false;
+    });
   }
 
   @override
@@ -188,181 +203,185 @@ class _OrderFormDialogState extends State<OrderFormDialog> {
                       for (final order in orderItems) {
                         total += order.totalPrice;
                       }
-                      return DataTable(
-                        dataRowMinHeight: 68,
-                        dataRowMaxHeight: 68,
-                        columnSpacing: 20,
-                        horizontalMargin: 10,
-                        columnWidthBuilder: (columnIndex) {
-                          if (columnIndex == 1) {
-                            return const IntrinsicColumnWidth(flex: 1);
-                          }
-                          return null;
-                        },
-                        columns: [
-                          DataColumn(
-                            headingRowAlignment: MainAxisAlignment.center,
-                            label: Text(
-                              'STT'.tr,
-                              textAlign: TextAlign.center,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          DataColumn(
-                            headingRowAlignment: MainAxisAlignment.center,
-                            label: Text(
-                              'Tên Sản Phẩm'.tr,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          DataColumn(
-                            headingRowAlignment: MainAxisAlignment.center,
-                            label: Text(
-                              'Số Lượng'.tr,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          DataColumn(
-                            headingRowAlignment: MainAxisAlignment.center,
-                            numeric: true,
-                            label: Text(
-                              'Đơn Giá'.tr,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          DataColumn(
-                            numeric: true,
-                            headingRowAlignment: MainAxisAlignment.center,
-                            label: Text(
-                              'Thành Tiền'.tr,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          if (!widget.readOnly)
+                      return SingleChildScrollView(
+                        child: DataTable(
+                          dataRowMinHeight: 68,
+                          dataRowMaxHeight: 68,
+                          columnSpacing: 20,
+                          horizontalMargin: 10,
+                          columnWidthBuilder: (columnIndex) {
+                            if (columnIndex == 1) {
+                              return const IntrinsicColumnWidth(flex: 1);
+                            }
+                            return null;
+                          },
+                          columns: [
                             DataColumn(
                               headingRowAlignment: MainAxisAlignment.center,
                               label: Text(
-                                'Hành Động'.tr,
+                                'STT'.tr,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            DataColumn(
+                              headingRowAlignment: MainAxisAlignment.center,
+                              label: Text(
+                                'Tên Sản Phẩm'.tr,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            DataColumn(
+                              headingRowAlignment: MainAxisAlignment.center,
+                              label: Text(
+                                'Số Lượng'.tr,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            DataColumn(
+                              headingRowAlignment: MainAxisAlignment.center,
+                              numeric: true,
+                              label: Text(
+                                'Đơn Giá'.tr,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            DataColumn(
+                              numeric: true,
+                              headingRowAlignment: MainAxisAlignment.center,
+                              label: Text(
+                                'Thành Tiền'.tr,
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                 ),
                                 textAlign: TextAlign.center,
                               ),
                             ),
-                        ],
-                        rows: [
-                          for (final item in orderItems)
+                            if (!widget.readOnly)
+                              DataColumn(
+                                headingRowAlignment: MainAxisAlignment.center,
+                                label: Text(
+                                  'Hành Động'.tr,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                          ],
+                          rows: [
+                            for (final item in orderItems)
+                              DataRow(
+                                cells: [
+                                  DataCell(
+                                    Center(
+                                      child: Text(
+                                        '${(widget.controller.page - 1) * widget.controller.perpage + orderItems.indexOf(item) + 1}',
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ),
+                                  DataCell(
+                                    Center(
+                                      child: Text(
+                                        orderItemProductMap[item.id]?.name ??
+                                            '',
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ),
+                                  DataCell(
+                                    Center(
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 3,
+                                        ),
+                                        child: BoxWNumberField(
+                                          readOnly: widget.readOnly,
+                                          initial: item.quantity,
+                                          onChanged: (value) {
+                                            onQuantityChanged(value, item);
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  DataCell(
+                                    Text(
+                                      '${item.unitSalePrice.toInt()}',
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                  DataCell(
+                                    Text(
+                                      '${item.totalPrice}',
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                  if (!widget.readOnly)
+                                    DataCell(
+                                      Center(
+                                        child: IconButton(
+                                          onPressed: () {
+                                            onRemovePressed(
+                                              item.id,
+                                              widget.orderItemProductMap[
+                                                  item.id]!,
+                                            );
+                                          },
+                                          icon: const Icon(
+                                            Icons.close_rounded,
+                                            color: Colors.red,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
                             DataRow(
                               cells: [
-                                DataCell(
+                                const DataCell(SizedBox.shrink()),
+                                const DataCell(SizedBox.shrink()),
+                                const DataCell(SizedBox.shrink()),
+                                const DataCell(
                                   Center(
                                     child: Text(
-                                      '${(widget.controller.page - 1) * widget.controller.perpage + orderItems.indexOf(item) + 1}',
+                                      'Tổng',
                                       textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                ),
-                                DataCell(
-                                  Center(
-                                    child: Text(
-                                      orderItemProductMap[item.id]?.name ?? '',
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                ),
-                                DataCell(
-                                  Center(
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 3,
-                                      ),
-                                      child: BoxWNumberField(
-                                        readOnly: widget.readOnly,
-                                        initial: item.quantity,
-                                        onChanged: (value) {
-                                          onQuantityChanged(value, item);
-                                        },
-                                      ),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
                                     ),
                                   ),
                                 ),
                                 DataCell(
                                   Text(
-                                    '${item.unitSalePrice.toInt()}',
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                                DataCell(
-                                  Text(
-                                    '${item.totalPrice}',
+                                    '$total',
                                     textAlign: TextAlign.center,
                                   ),
                                 ),
                                 if (!widget.readOnly)
                                   DataCell(
-                                    Center(
-                                      child: IconButton(
-                                        onPressed: () {
-                                          onRemovePressed(
-                                            item.id,
-                                            widget
-                                                .orderItemProductMap[item.id]!,
-                                          );
-                                        },
-                                        icon: const Icon(
-                                          Icons.close_rounded,
-                                          color: Colors.red,
-                                        ),
+                                    Align(
+                                      alignment: Alignment.centerRight,
+                                      child: FilledButton(
+                                        onPressed: onAddPressed,
+                                        child: const Icon(Icons.add),
                                       ),
                                     ),
                                   ),
                               ],
                             ),
-                          DataRow(
-                            cells: [
-                              const DataCell(SizedBox.shrink()),
-                              const DataCell(SizedBox.shrink()),
-                              const DataCell(SizedBox.shrink()),
-                              const DataCell(
-                                Center(
-                                  child: Text(
-                                    'Tổng',
-                                    textAlign: TextAlign.center,
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                              ),
-                              DataCell(
-                                Text(
-                                  '$total',
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                              if (!widget.readOnly)
-                                const DataCell(SizedBox.shrink()),
-                            ],
-                          ),
-                        ],
+                          ],
+                        ),
                       );
                     },
-                  ),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: FilledButton(
-                      onPressed: onAddPressed,
-                      child: const Icon(Icons.add),
-                    ),
                   ),
                 ],
               ),
