@@ -1,8 +1,10 @@
 // ignore_for_file: function_lines_of_code
 import 'package:boxw/boxw.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart'
+    hide DataTable, DataRow, DataColumn, DataCell;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:language_helper/language_helper.dart';
+import 'package:sales/components/data_table_plus.dart';
 import 'package:sales/controllers/product_controller.dart';
 import 'package:sales/di.dart';
 import 'package:sales/models/category.dart';
@@ -85,97 +87,71 @@ class _ProductsViewState extends State<ProductsView> {
                 child: DataTable(
                   dataRowMinHeight: 68,
                   dataRowMaxHeight: 68,
-                  columnSpacing: 20,
+                  columnSpacing: 30,
                   horizontalMargin: 10,
+                  columnWidthBuilder: (index) {
+                    if (index case 1) {
+                      return const IntrinsicColumnWidth(flex: 1);
+                    }
+                    return null;
+                  },
                   columns: [
                     DataColumn(
-                      label: ConstrainedBox(
-                        constraints: const BoxConstraints(
-                          minWidth: 30,
-                          maxWidth: 40,
-                        ),
-                        child: Text(
-                          'STT'.tr,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
+                      headingRowAlignment: MainAxisAlignment.center,
+                      label: Text(
+                        'STT'.tr,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
                     DataColumn(
-                      label: ConstrainedBox(
-                        constraints: const BoxConstraints(
-                          minWidth: 100,
-                          maxWidth: 120,
-                        ),
-                        child: Text(
-                          'ID'.tr,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
+                      headingRowAlignment: MainAxisAlignment.center,
+                      label: Text(
+                        'ID'.tr,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
                     DataColumn(
-                      label: ConstrainedBox(
-                        constraints: const BoxConstraints(
-                          minWidth: 220,
-                        ),
-                        child: Text(
-                          'Tên'.tr,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
+                      headingRowAlignment: MainAxisAlignment.center,
+                      label: Text(
+                        'Tên'.tr,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
                     DataColumn(
-                      label: ConstrainedBox(
-                        constraints: const BoxConstraints(
-                          minWidth: 80,
-                          maxWidth: 100,
-                        ),
-                        child: Text(
-                          'Giá nhập'.tr,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
+                      numeric: true,
+                      headingRowAlignment: MainAxisAlignment.center,
+                      label: Text(
+                        'Giá nhập'.tr,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
                     DataColumn(
-                      label: ConstrainedBox(
-                        constraints: const BoxConstraints(
-                          minWidth: 100,
-                          maxWidth: 120,
-                        ),
-                        child: Text(
-                          'Loại hàng'.tr,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
+                      headingRowAlignment: MainAxisAlignment.center,
+                      label: Text(
+                        'Loại hàng'.tr,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
                     DataColumn(
-                      label: ConstrainedBox(
-                        constraints: const BoxConstraints(
-                          minWidth: 70,
-                          maxWidth: 80,
-                        ),
-                        child: Text(
-                          'Số lượng'.tr,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
+                      numeric: true,
+                      headingRowAlignment: MainAxisAlignment.center,
+                      label: Text(
+                        'Số lượng'.tr,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
                     DataColumn(
-                      label: ConstrainedBox(
-                        constraints: const BoxConstraints(
-                          minWidth: 160,
-                          maxWidth: 160,
-                        ),
-                        child: Text(
-                          'Hành động'.tr,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
+                      headingRowAlignment: MainAxisAlignment.center,
+                      label: Text(
+                        'Hành động'.tr,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
                   ],
@@ -184,11 +160,7 @@ class _ProductsViewState extends State<ProductsView> {
                       DataRow(
                         cells: [
                           DataCell(
-                            ConstrainedBox(
-                              constraints: const BoxConstraints(
-                                minWidth: 30,
-                                maxWidth: 40,
-                              ),
+                            Center(
                               child: Text(
                                 '${(controller.page - 1) * controller.perpage + controller.products.indexOf(p) + 1}',
                                 textAlign: TextAlign.center,
@@ -196,21 +168,14 @@ class _ProductsViewState extends State<ProductsView> {
                             ),
                           ),
                           DataCell(
-                            ConstrainedBox(
-                              constraints: const BoxConstraints(
-                                minWidth: 100,
-                                maxWidth: 120,
-                              ),
+                            Center(
                               child: Text(p.sku, textAlign: TextAlign.center),
                             ),
                           ),
                           DataCell(
                             Tooltip(
                               message: p.name,
-                              child: ConstrainedBox(
-                                constraints: const BoxConstraints(
-                                  minWidth: 220,
-                                ),
+                              child: Center(
                                 child: Text(
                                   p.name,
                                   textAlign: TextAlign.center,
@@ -218,25 +183,15 @@ class _ProductsViewState extends State<ProductsView> {
                               ),
                             ),
                           ),
+                          // TODO: Giá nhập nên hiện theo dạng phân cách hàng ngàn bằng dấu phẩy
                           DataCell(
-                            ConstrainedBox(
-                              constraints: const BoxConstraints(
-                                minWidth: 80,
-                                maxWidth: 100,
-                              ),
-                              // TODO: Giá nhập nên hiện theo dạng phân cách hàng ngàn bằng dấu phẩy
-                              child: Text(
-                                '${p.importPrice}',
-                                textAlign: TextAlign.right,
-                              ),
+                            Text(
+                              '${p.importPrice}',
+                              textAlign: TextAlign.right,
                             ),
                           ),
                           DataCell(
-                            ConstrainedBox(
-                              constraints: const BoxConstraints(
-                                minWidth: 100,
-                                maxWidth: 120,
-                              ),
+                            Center(
                               child: Text(
                                 controller.categories.fromId(p.categoryId).name,
                                 textAlign: TextAlign.center,
@@ -244,23 +199,13 @@ class _ProductsViewState extends State<ProductsView> {
                             ),
                           ),
                           DataCell(
-                            ConstrainedBox(
-                              constraints: const BoxConstraints(
-                                minWidth: 60,
-                                maxWidth: 80,
-                              ),
-                              child: Text(
-                                '${p.count}',
-                                textAlign: TextAlign.center,
-                              ),
+                            Text(
+                              '${p.count}',
+                              textAlign: TextAlign.center,
                             ),
                           ),
                           DataCell(
-                            ConstrainedBox(
-                              constraints: const BoxConstraints(
-                                minWidth: 160,
-                                maxWidth: 160,
-                              ),
+                            Center(
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [

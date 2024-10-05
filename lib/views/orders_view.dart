@@ -1,7 +1,9 @@
 // ignore_for_file: function_lines_of_code
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart'
+    hide DataTable, DataRow, DataColumn, DataCell;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:language_helper/language_helper.dart';
+import 'package:sales/components/data_table_plus.dart';
 import 'package:sales/controllers/order_controller.dart';
 import 'package:sales/di.dart';
 import 'package:sales/utils/utils.dart';
@@ -61,57 +63,46 @@ class _OrdersViewState extends State<OrdersView> {
                 child: DataTable(
                   dataRowMinHeight: 68,
                   dataRowMaxHeight: 68,
-                  columnSpacing: 20,
+                  columnSpacing: 30,
                   horizontalMargin: 10,
+                  columnWidthBuilder: (index) {
+                    return switch (index) {
+                      1 => const IntrinsicColumnWidth(flex: 2),
+                      2 => const IntrinsicColumnWidth(flex: 1),
+                      _ => null,
+                    };
+                  },
                   columns: [
                     DataColumn(
-                      label: ConstrainedBox(
-                        constraints: const BoxConstraints(
-                          minWidth: 30,
-                          maxWidth: 40,
-                        ),
-                        child: Text(
-                          'STT'.tr,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
+                      headingRowAlignment: MainAxisAlignment.center,
+                      label: Text(
+                        'STT'.tr,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
                     DataColumn(
-                      label: ConstrainedBox(
-                        constraints: const BoxConstraints(
-                          minWidth: 150,
-                        ),
-                        child: Text(
-                          'Ngày Giờ'.tr,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
+                      headingRowAlignment: MainAxisAlignment.center,
+                      label: Text(
+                        'Ngày Giờ'.tr,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
                     DataColumn(
-                      label: ConstrainedBox(
-                        constraints: const BoxConstraints(
-                          minWidth: 220,
-                        ),
-                        child: Text(
-                          'Trạng Thái'.tr,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
+                      headingRowAlignment: MainAxisAlignment.center,
+                      label: Text(
+                        'Trạng Thái'.tr,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
                     DataColumn(
-                      label: ConstrainedBox(
-                        constraints: const BoxConstraints(
-                          minWidth: 160,
-                          maxWidth: 160,
-                        ),
-                        child: Text(
-                          'Hành động'.tr,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
+                      headingRowAlignment: MainAxisAlignment.center,
+                      label: Text(
+                        'Hành động'.tr,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
                   ],
@@ -120,11 +111,7 @@ class _OrdersViewState extends State<OrdersView> {
                       DataRow(
                         cells: [
                           DataCell(
-                            ConstrainedBox(
-                              constraints: const BoxConstraints(
-                                minWidth: 30,
-                                maxWidth: 40,
-                              ),
+                            Center(
                               child: Text(
                                 '${(controller.page - 1) * controller.perpage + controller.orders.indexOf(o) + 1}',
                                 textAlign: TextAlign.center,
@@ -132,10 +119,7 @@ class _OrdersViewState extends State<OrdersView> {
                             ),
                           ),
                           DataCell(
-                            ConstrainedBox(
-                              constraints: const BoxConstraints(
-                                minWidth: 150,
-                              ),
+                            Center(
                               child: Text(
                                 Utils.formatDateTime(o.date),
                                 textAlign: TextAlign.center,
@@ -143,10 +127,7 @@ class _OrdersViewState extends State<OrdersView> {
                             ),
                           ),
                           DataCell(
-                            ConstrainedBox(
-                              constraints: const BoxConstraints(
-                                minWidth: 220,
-                              ),
+                            Center(
                               child: Text(
                                 o.status.text,
                                 textAlign: TextAlign.center,
@@ -154,11 +135,7 @@ class _OrdersViewState extends State<OrdersView> {
                             ),
                           ),
                           DataCell(
-                            ConstrainedBox(
-                              constraints: const BoxConstraints(
-                                minWidth: 160,
-                                maxWidth: 160,
-                              ),
+                            Center(
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
