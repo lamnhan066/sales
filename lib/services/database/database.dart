@@ -220,6 +220,15 @@ abstract class Database {
   /// Lưu tất cả các đơn đặt đặt hàng.
   Future<void> saveAllOrders(List<Order> orders);
 
+  /// Trình tạo ra `id` cho chi tiết đơn hàng.
+  Future<int> generateOrderItemId() async {
+    final orderItems = await getAllOrderItems();
+    final count = orderItems.length;
+    final id = count + 1;
+
+    return id;
+  }
+
   /// Thêm sản phẩm đã đặt hàng.
   Future<void> addOrderItem(OrderItem orderItem);
 

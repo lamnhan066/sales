@@ -15,6 +15,7 @@ import 'package:sales/models/order_status.dart';
 import 'package:sales/models/product.dart';
 import 'package:sales/models/range_of_dates.dart';
 import 'package:sales/services/database/database.dart';
+import 'package:sales/utils/utils.dart';
 
 /// Controller cho màn hình Order.
 class OrderController {
@@ -247,6 +248,7 @@ extension PrivateOrderController on OrderController {
     required bool generateId,
     bool readOnly = false,
   }) async {
+    int orderItemId = 0;
     Order tempOrder = order ??
         Order(
           id: 0,
@@ -256,19 +258,31 @@ extension PrivateOrderController on OrderController {
     final Map<int, Product> orderItemProductMap = {};
     final List<OrderItem> orderItems = [];
     final products = await _database.getAllProducts();
+
+    final List<OrderItem> tempOrderItems = await _database.getOrderItems(
+      orderId: tempOrder.id,
+    );
+    orderItems.addAll(tempOrderItems);
+
     if (generateId || order == null) {
       final id = await _database.generateCategoryId();
       tempOrder = tempOrder.copyWith(id: id);
-    } else {
-      final List<OrderItem> tempOrderItems = await _database.getOrderItems(
-        orderId: tempOrder.id,
-      );
-      orderItems.addAll(tempOrderItems);
-      for (final item in orderItems) {
-        orderItemProductMap.addAll(
-          {item.id: products.singleWhere((e) => e.id == item.productId)},
-        );
+
+      if (generateId) {
+        tempOrder = tempOrder.copyWith(date: DateTime.now());
+
+        orderItemId = await _database.generateOrderItemId();
+        for (int i = 0; i < orderItems.length; i++) {
+          orderItems[i] = orderItems[i].copyWith(id: orderItemId);
+          orderItemId;
+        }
       }
+    }
+
+    for (final item in orderItems) {
+      orderItemProductMap.addAll(
+        {item.id: products.singleWhere((e) => e.id == item.productId)},
+      );
     }
 
     final form = GlobalKey<FormState>();
@@ -276,6 +290,27 @@ extension PrivateOrderController on OrderController {
 
     void validateForm() {
       formValidator.add(form.currentState?.validate() ?? false);
+    }
+
+    void addProduct(Product product) async {
+      final orderItem = OrderItem(
+        id: orderItemId,
+        quantity: 1,
+        unitSalePrice: product.importPrice.toDouble(),
+        totalPrice: Utils.calcTotalPrice(
+          product.importPrice,
+          product.importPrice,
+          1,
+        ),
+        productId: product.id,
+        orderId: tempOrder.id,
+      );
+      orderItemId++;
+      orderItems.add(orderItem);
+    }
+
+    void removeProduct(Product product) async {
+      orderItems.removeWhere((orderItem) => orderItem.productId == product.id);
     }
 
     if (context.mounted) {
@@ -297,12 +332,14 @@ extension PrivateOrderController on OrderController {
           orderItems: orderItems,
           orderItemProductMap: orderItemProductMap,
           validateForm: validateForm,
+          addProduct: addProduct,
+          removeProduct: removeProduct,
         ),
         buttons: (context) {
           return [
             confirmCancelButtons(
               context: context,
-              enableConfirmStream: formValidator.stream,
+              enableConfirmStream: readOnly ? null : formValidator.stream,
               confirmText: 'OK'.tr,
               cancelText: 'Huỷ'.tr,
               hideCancel: readOnly,

@@ -56,4 +56,8 @@ class Utils {
 
     return '${price.toInt()}';
   }
+
+  static calcTotalPrice(int importPrice, int unitSalePrice, int quantity) {
+    return importPrice * quantity;
+  }
 }

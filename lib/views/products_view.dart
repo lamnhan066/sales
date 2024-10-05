@@ -90,7 +90,7 @@ class _ProductsViewState extends State<ProductsView> {
                   columnSpacing: 30,
                   horizontalMargin: 10,
                   columnWidthBuilder: (index) {
-                    if (index case 1) {
+                    if (index == 2) {
                       return const IntrinsicColumnWidth(flex: 1);
                     }
                     return null;
