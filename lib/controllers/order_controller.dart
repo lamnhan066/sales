@@ -113,8 +113,14 @@ class OrderController {
 
     if (result != null) {
       await _database.updateOrder(result.order);
+      final orderItems = await _database.getOrderItems(orderId: order.id);
       for (final orderItem in result.orderItems) {
-        await _database.updateOrderItem(orderItem);
+        final index = orderItems.indexWhere((e) => e.id == orderItem.id);
+        if (index == -1) {
+          await _database.addOrderItem(orderItem);
+        } else {
+          await _database.updateOrderItem(orderItem);
+        }
       }
       await _updateCurrentPage(setState);
     }
