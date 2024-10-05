@@ -212,15 +212,8 @@ class MemoryDatabase extends Database {
   }) async {
     return _orderItems.where((e) {
       if (e.deleted) return false;
-
-      if (orderId != null && e.orderId != orderId) {
-        return false;
-      }
-
-      if (productId != null && e.productId != productId) {
-        return false;
-      }
-
+      if (orderId != null && e.orderId != orderId) return false;
+      if (productId != null && e.productId != productId) return false;
       return true;
     }).toList();
   }
