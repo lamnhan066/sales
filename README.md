@@ -61,8 +61,8 @@
 
 4. Trang Orders:
 
-    - TODO: Tạo ra các đơn hàng.
-    - TODO: Cho phép xóa một đơn hàng, cập nhật một đơn hàng.
+    - Tạo ra các đơn hàng.
+    - Cho phép xóa một đơn hàng, cập nhật một đơn hàng.
     - Cho phép xem danh sách các đơn hàng có phân trang, xem chi tiết một đơn hàng.
     - TODO: Tìm kiếm các đơn hàng từ ngày đến ngày.
 
@@ -87,4 +87,3 @@
     - TODO: Hỗ trợ onboarding (0.5 điểm)
     - TODO: Tạo ra các test case kiểm thử chức năng và giao diện (0.5 điểm)
     - TODO: In đơn hàng (0.5 điểm)
-    - TODO: Hỗ trợ onboarding (0.5 điểm)
