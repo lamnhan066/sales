@@ -1,6 +1,13 @@
 // ignore_for_file: number_of_parameters
 import 'dart:convert';
 
+extension ProductExtension on List<Product> {
+  /// Lấy sản phẩm từ trong danh sách bằng ID.
+  Product byId(int id) {
+    return firstWhere((e) => e.id == id);
+  }
+}
+
 /// Sản phẩm.
 class Product {
   /// Id.

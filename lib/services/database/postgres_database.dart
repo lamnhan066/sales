@@ -204,6 +204,18 @@ class PostgresDatabase extends Database {
   }
 
   @override
+  Future<Product> getProductById(int id) async {
+    const sql = 'SELECT DISTINCT ON (p_id) FROM products WHERE p_id = @id';
+    final result = await _connection.execute(
+      Sql.named(sql),
+      parameters: {
+        'id': id,
+      },
+    );
+    return Product.fromSqlMap(result.first.toColumnMap());
+  }
+
+  @override
   Future<List<Category>> getAllCategories() async {
     const sql = 'SELECT * FROM categories WHERE c_deleted=FALSE';
     final result = await _connection.execute(sql);

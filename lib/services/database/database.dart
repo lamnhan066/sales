@@ -153,6 +153,12 @@ abstract class Database {
   /// Lưu tất cả sản phẩm vào CSDL.
   Future<void> saveAllProducts(List<Product> products);
 
+  /// Lấy sản phẩm thông qua ID.
+  Future<Product> getProductById(int id) async {
+    final products = await getAllProducts();
+    return products.firstWhere((e) => e.id == id);
+  }
+
   /// Lấy danh sách sản phẩm.
   ///
   /// Lấy danh sách sản phẩm theo điều kiện và trả về (tổng số trang, danh sách
@@ -238,19 +244,19 @@ abstract class Database {
     return id;
   }
 
-  /// Thêm sản phẩm đã đặt hàng.
+  /// Thêm chi tiết sản phẩm đã đặt hàng.
   Future<void> addOrderItem(OrderItem orderItem);
 
-  /// Cập nhật sản phẩm đã đặt hàng.
+  /// Cập nhật chi tiết sản phẩm đã đặt hàng.
   Future<void> updateOrderItem(OrderItem orderItem);
 
-  /// Xoá sản phẩm đã đặt hàng.
+  /// Xoá chi tiết sản phẩm đã đặt hàng.
   Future<void> removeOrderItem(OrderItem orderItem) async {
     final tempOrderItem = orderItem.copyWith(deleted: true);
     await updateOrderItem(tempOrderItem);
   }
 
-  /// Lấy danh sách sản phẩm đã đặt theo mã đơn và mã sản phẩm.
+  /// Lấy danh sách chi tiết sản phẩm đã đặt theo mã đơn và mã sản phẩm.
   Future<List<OrderItem>> getOrderItems({
     int? orderId,
     int? productId,
@@ -271,6 +277,68 @@ abstract class Database {
     final products = await getAllProducts();
 
     return products.length;
+  }
+
+  /// Thêm Order cùng với OrderItems
+  Future<void> addOrderWithOrderItems(
+    Order order,
+    List<OrderItem> orderItems,
+  ) async {
+    await addOrder(order);
+    for (final orderItem in orderItems) {
+      await addOrderItem(orderItem);
+
+      // Cập nhật lại số lượng của sản phẩm.
+      var product = await getProductById(orderItem.productId);
+      product = product.copyWith(count: product.count - orderItem.quantity);
+      await updateProduct(product);
+    }
+  }
+
+  /// Cập nhật Order cùng với OrderItems
+  Future<void> updateOrderWithOrderItems(
+    Order order,
+    List<OrderItem> orderItems,
+  ) async {
+    await updateOrder(order);
+    final orderItemsFromDatabase = await getOrderItems(orderId: order.id);
+    for (final orderItem in orderItems) {
+      final index =
+          orderItemsFromDatabase.indexWhere((e) => e.id == orderItem.id);
+      if (index == -1) {
+        await addOrderItem(orderItem);
+
+        // Cập nhật lại số lượng sản phẩm.
+        var product = await getProductById(orderItem.productId);
+        product = product.copyWith(count: product.count - orderItem.quantity);
+        await updateProduct(product);
+      } else {
+        await updateOrderItem(orderItem);
+
+        // Cập nhật lại số lượng sản phẩm.
+        final databaseCount = orderItemsFromDatabase[index].quantity;
+        final newCount = orderItem.quantity;
+        final differentCount = databaseCount - newCount;
+        var product = await getProductById(orderItem.productId);
+        product = product.copyWith(count: product.count + differentCount);
+        await updateProduct(product);
+      }
+    }
+  }
+
+  /// Xoá Order cùng với OrderItems
+  Future<void> removeOrderWithOrderItems(Order order) async {
+    final orderItems = await getAllOrderItems(orderId: order.id);
+    for (final orderItem in orderItems) {
+      final tempOrderItems = orderItem.copyWith(deleted: true);
+      await updateOrderItem(tempOrderItems);
+
+      // Cập nhật lại số lượng sản phẩm.
+      var product = await getProductById(orderItem.productId);
+      product = product.copyWith(count: product.count + orderItem.quantity);
+      await updateProduct(product);
+    }
+    await removeOrder(order);
   }
 
   /// Lấy danh sách 5 sản phẩm có số lượng ít hơn 5 trong kho.

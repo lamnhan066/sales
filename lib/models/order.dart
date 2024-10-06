@@ -85,4 +85,9 @@ class Order {
 
   /// Order -> JSON
   String toJson() => json.encode(toMap());
+
+  @override
+  String toString() {
+    return 'Order(id: $id, status: $status, date: $date, deleted: $deleted)';
+  }
 }

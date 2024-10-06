@@ -95,10 +95,7 @@ class OrderController {
     final result = await _addOrderDialog(context, setState);
 
     if (result != null) {
-      await _database.addOrder(result.order);
-      for (final orderItem in result.orderItems) {
-        await _database.addOrderItem(orderItem);
-      }
+      await _database.addOrderWithOrderItems(result.order, result.orderItems);
       await _updateCurrentPage(setState);
     }
   }
@@ -112,16 +109,10 @@ class OrderController {
     final result = await _editOrderDialog(context, setState, order);
 
     if (result != null) {
-      await _database.updateOrder(result.order);
-      final orderItems = await _database.getOrderItems(orderId: order.id);
-      for (final orderItem in result.orderItems) {
-        final index = orderItems.indexWhere((e) => e.id == orderItem.id);
-        if (index == -1) {
-          await _database.addOrderItem(orderItem);
-        } else {
-          await _database.updateOrderItem(orderItem);
-        }
-      }
+      await _database.updateOrderWithOrderItems(
+        result.order,
+        result.orderItems,
+      );
       await _updateCurrentPage(setState);
     }
   }
@@ -135,10 +126,7 @@ class OrderController {
     final result = await _copyOrderDialog(context, setState, order);
 
     if (result != null) {
-      await _database.addOrder(result.order);
-      for (final orderItem in result.orderItems) {
-        await _database.addOrderItem(orderItem);
-      }
+      await _database.addOrderWithOrderItems(result.order, result.orderItems);
       await _updateCurrentPage(setState);
     }
   }
@@ -158,7 +146,7 @@ class OrderController {
     );
 
     if (result == true) {
-      await _database.removeOrder(order);
+      await _database.removeOrderWithOrderItems(order);
       await _updateCurrentPage(setState);
     }
   }
@@ -273,9 +261,8 @@ extension PrivateOrderController on OrderController {
           status: OrderStatus.created,
           date: DateTime.now(),
         );
-    final Map<int, Product> orderItemProductMap = {};
     final List<OrderItem> orderItems = [];
-    final products = await _database.getAllProducts();
+    var products = await _database.getAllProducts();
     final isNewOrder = order == null || copy;
 
     if (order != null) {
@@ -297,13 +284,6 @@ extension PrivateOrderController on OrderController {
       }
     }
 
-    if (order != null) {
-      for (final orderItem in orderItems) {
-        orderItemProductMap[orderItem.id] =
-            products.firstWhere((e) => e.id == orderItem.productId);
-      }
-    }
-
     final form = GlobalKey<FormState>();
     final formValidator = StreamController<bool>();
 
@@ -314,12 +294,9 @@ extension PrivateOrderController on OrderController {
     /// Điều chỉnh lại `id` của order item để khớp với database, tránh tình
     /// trạng khi xoá orderItem thì `id` sẽ bị lệch.
     Future<void> regenerateOrderItemIds() async {
-      orderItemProductMap.clear();
       orderItemId = await _database.generateOrderItemId();
       for (int i = 0; i < orderItems.length; i++) {
         orderItems[i] = orderItems[i].copyWith(id: orderItemId);
-        orderItemProductMap[orderItemId] =
-            products.firstWhere((e) => e.id == orderItems[i].productId);
         orderItemId++;
       }
     }
@@ -369,7 +346,6 @@ extension PrivateOrderController on OrderController {
       final result = await boxWDialog(
         context: context,
         title: title,
-        width: dialogWidth,
         constrains: BoxConstraints(
           minWidth: AppConfigs.dialogMinWidth,
           maxWidth: dialogWidth,
@@ -377,10 +353,10 @@ extension PrivateOrderController on OrderController {
         content: OrderFormDialog(
           controller: this,
           form: form,
+          copy: copy,
           readOnly: readOnly,
           tempOrder: tempOrder,
           orderItems: orderItems,
-          orderItemProductMap: orderItemProductMap,
           products: products,
           validateForm: validateForm,
           addProduct: addProduct,
