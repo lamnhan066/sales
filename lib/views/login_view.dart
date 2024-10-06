@@ -21,9 +21,11 @@ class _LoginViewState extends State<LoginView> {
   @override
   void initState() {
     super.initState();
-    controller.initial(context, setState).then((_) {
-      usernameEdittingController.text = controller.username;
-      passwordEdittingController.text = controller.password;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.initial(context, setState).then((_) {
+        usernameEdittingController.text = controller.username;
+        passwordEdittingController.text = controller.password;
+      });
     });
   }
 
