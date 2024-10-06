@@ -75,40 +75,37 @@ class _HomeViewState extends State<HomeView> {
       ),
     );
 
-    return AnimatedSize(
-      duration: const Duration(milliseconds: 500),
-      child: LayoutBuilder(builder: (context, constraints) {
-        final isBigScreen = constraints.maxWidth > 1000;
-        return Scaffold(
-          drawer: tab,
-          body: Row(
-            children: [
-              SizedBox(width: isBigScreen ? null : 0, child: tab),
-              Expanded(
-                child: Column(
-                  children: [
-                    AppBar(
-                      title: Text(title(controller.view)),
-                      automaticallyImplyLeading: !isBigScreen,
-                    ),
-                    Expanded(
-                      child: loading
-                          ? const Center(child: CircularProgressIndicator())
-                          : switch (controller.view) {
-                              ViewsModel.dashboard => const DashboardView(),
-                              ViewsModel.orders => const OrdersView(),
-                              ViewsModel.products => const ProductsView(),
-                              ViewsModel.report => const ReportView(),
-                              ViewsModel.settings => const SettingsView(),
-                            },
-                    ),
-                  ],
-                ),
+    return LayoutBuilder(builder: (context, constraints) {
+      final isBigScreen = constraints.maxWidth > 1000;
+      return Scaffold(
+        drawer: tab,
+        body: Row(
+          children: [
+            if (isBigScreen) tab,
+            Expanded(
+              child: Column(
+                children: [
+                  AppBar(
+                    title: Text(title(controller.view)),
+                    automaticallyImplyLeading: !isBigScreen,
+                  ),
+                  Expanded(
+                    child: loading
+                        ? const Center(child: CircularProgressIndicator())
+                        : switch (controller.view) {
+                            ViewsModel.dashboard => const DashboardView(),
+                            ViewsModel.orders => const OrdersView(),
+                            ViewsModel.products => const ProductsView(),
+                            ViewsModel.report => const ReportView(),
+                            ViewsModel.settings => const SettingsView(),
+                          },
+                  ),
+                ],
               ),
-            ],
-          ),
-        );
-      }),
-    );
+            ),
+          ],
+        ),
+      );
+    });
   }
 }

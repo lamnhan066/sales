@@ -76,7 +76,7 @@
 ### Các Chức Năng Tự Chọn
 
     - TODO: Auto save khi tạo đơn hàng, thêm mới sản phẩm (0.25)
-    - TODO: Tự động thay đổi sắp xếp hợp lí các thành phần theo độ rộng màn hình (responsive layout) (0.5 điểm)
+    - Tự động thay đổi sắp xếp hợp lí các thành phần theo độ rộng màn hình (responsive layout) (0.5 điểm)
     - TODO: Chương trình có khả năng mở rộng động theo kiến trúc plugin (1 điểm)
     - TODO: Bổ sung khuyến mãi giảm giá (1 điểm)
     - TODO: Thêm chế độ dùng thử - cho phép xài full phần mềm trong 15 ngày. Hết 15 ngày bắt đăng kí (mã code hay cách kích hoạt nào đó) (0.5 điểm)
