@@ -57,7 +57,9 @@ class LoginNotifier extends StateNotifier<LoginState> {
     required this.loginUseCase,
     required this.autoLoginUseCase,
     required this.getAppVersionUseCase,
-  }) : super(LoginState(username: '', password: ''));
+  }) : super(LoginState(username: '', password: '')) {
+    intitial();
+  }
 
   void intitial() {
     state = state.copyWith(rememberMe: loginUseCase.isRememberMe());

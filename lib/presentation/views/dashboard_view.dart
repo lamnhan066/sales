@@ -1,30 +1,27 @@
 import 'package:chart_sparkline/chart_sparkline.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:language_helper/language_helper.dart';
-import 'package:sales/controllers/dashboard_controller.dart';
 import 'package:sales/core/utils/utils.dart';
-import 'package:sales/di.dart';
+import 'package:sales/presentation/providers/dashboard_provider.dart';
 
 /// Màn hình tổng quan.
-class DashboardView extends StatefulWidget {
+class DashboardView extends ConsumerWidget {
   /// Màn hình tổng quan.
   const DashboardView({super.key});
 
   @override
-  State<DashboardView> createState() => _DashboardViewState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final dashboardState = ref.watch(dashboardNotifierProvider);
 
-class _DashboardViewState extends State<DashboardView> {
-  final controller = getIt<DashboardController>();
+    if (dashboardState.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
-  @override
-  void initState() {
-    super.initState();
-    controller.initial(setState);
-  }
+    if (dashboardState.error.isNotEmpty) {
+      return Center(child: Text('Error: ${dashboardState.error}'));
+    }
 
-  @override
-  Widget build(BuildContext context) {
     const Widget divider = SizedBox(width: 100, child: Divider());
 
     return Scaffold(
@@ -44,7 +41,7 @@ class _DashboardViewState extends State<DashboardView> {
                           divider,
                           Text(
                             '@{count} sản phẩm'.trP({
-                              'count': controller.totalProductCount,
+                              'count': dashboardState.totalProductCount,
                             }),
                             style: const TextStyle(fontSize: 18),
                           ),
@@ -61,7 +58,7 @@ class _DashboardViewState extends State<DashboardView> {
                           divider,
                           Text(
                             '@{count} đơn'.trP({
-                              'count': controller.dailyOrderCount,
+                              'count': dashboardState.dailyOrderCount,
                             }),
                             style: const TextStyle(fontSize: 18),
                           ),
@@ -78,7 +75,7 @@ class _DashboardViewState extends State<DashboardView> {
                           divider,
                           Text(
                             '@{dailyRevenue} đồng'.trP({
-                              'dailyRevenue': controller.dailyRevenue,
+                              'dailyRevenue': dashboardState.dailyRevenue,
                             }),
                             style: const TextStyle(fontSize: 18),
                           ),
@@ -100,8 +97,7 @@ class _DashboardViewState extends State<DashboardView> {
                         children: [
                           Text('Top 5 sản phẩm bán chạy'.tr),
                           divider,
-                          for (final product
-                              in controller.fiveHighestSalesProducts)
+                          for (final product in dashboardState.fiveHighestSalesProducts)
                             Text(
                               '${product.name}: ${product.count}',
                               style: const TextStyle(fontSize: 16),
@@ -117,7 +113,7 @@ class _DashboardViewState extends State<DashboardView> {
                         children: [
                           Text('Top 5 sản phẩm sắp hết hàng (số lượng < 5)'.tr),
                           divider,
-                          for (final product in controller.fiveLowStockProducts)
+                          for (final product in dashboardState.fiveLowStockProducts)
                             Text('${product.name}: ${product.count}'),
                         ],
                       ),
@@ -137,8 +133,7 @@ class _DashboardViewState extends State<DashboardView> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          for (final order
-                              in controller.threeRecentOrders.orderItems.keys)
+                          for (final order in dashboardState.threeRecentOrders.orderItems.keys)
                             Card(
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
@@ -146,21 +141,13 @@ class _DashboardViewState extends State<DashboardView> {
                                   children: [
                                     Text(Utils.formatDateTime(order.date)),
                                     divider,
-                                    for (int i = 0;
-                                        i <
-                                            controller.threeRecentOrders
-                                                .orderItems[order]!.length;
-                                        i++)
+                                    for (int i = 0; i < dashboardState.threeRecentOrders.orderItems[order]!.length; i++)
                                       Builder(
                                         builder: (_) {
-                                          final orderItem = controller
-                                              .threeRecentOrders
-                                              .orderItems[order]!
-                                              .elementAt(i);
-                                          final product = controller
-                                              .threeRecentOrders
-                                              .products[order]!
-                                              .elementAt(i);
+                                          final orderItem =
+                                              dashboardState.threeRecentOrders.orderItems[order]!.elementAt(i);
+                                          final product =
+                                              dashboardState.threeRecentOrders.products[order]!.elementAt(i);
 
                                           // TODO: Chỉnh sửa cách hiển thị đơn hàng để đẹp hơn
                                           return Text(
@@ -188,18 +175,13 @@ class _DashboardViewState extends State<DashboardView> {
                         child: SizedBox(
                           width: 600,
                           child: Sparkline(
-                            data: controller.monthlyRevenues
-                                .map((e) => e.toDouble())
-                                .toList(),
+                            data: dashboardState.monthlyRevenues.map((e) => e.toDouble()).toList(),
                             gridLinesEnable: true,
                             gridLinelabel: (gridLineValue) {
                               return '${(gridLineValue / 1000).round()}k';
                             },
                             xLabels: [
-                              for (int i = 1;
-                                  i <= controller.monthlyRevenues.length;
-                                  i++)
-                                '$i',
+                              for (int i = 1; i <= dashboardState.monthlyRevenues.length; i++) '$i',
                             ],
                           ),
                         ),

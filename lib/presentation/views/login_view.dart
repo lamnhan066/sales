@@ -9,29 +9,15 @@ import 'package:sales/presentation/providers/configuration_provider.dart';
 import 'package:sales/presentation/providers/login_provider.dart';
 import 'package:sales/views/home_view.dart';
 
-class LoginView extends ConsumerStatefulWidget {
+class LoginView extends ConsumerWidget {
   const LoginView({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _LoginViewState();
-}
-
-class _LoginViewState extends ConsumerState<LoginView> {
-  @override
-  void initState() {
-    super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(loginProvider.notifier).intitial();
-      _handleDialogs(ref);
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final loginState = ref.watch(loginProvider);
     final loginNotifier = ref.read(loginProvider.notifier);
     final configureServerNotifier = ref.read(postgresConfigurationsProvider.notifier);
+    final configureServerState = ref.watch(postgresConfigurationsProvider);
 
     if (loginState.isLoggedIn) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -39,6 +25,18 @@ class _LoginViewState extends ConsumerState<LoginView> {
           context,
           MaterialPageRoute(builder: (_) => const HomeView()),
         );
+      });
+    }
+
+    if (configureServerState.showDialog) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _showConfigurationDialog(context, configureServerNotifier, configureServerState.configurations);
+      });
+    }
+
+    if (loginState.showAutoLoginDialog && loginState.rememberMe) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _checkAndLoginAutomatically(context, loginNotifier);
       });
     }
 
@@ -141,22 +139,6 @@ class _LoginViewState extends ConsumerState<LoginView> {
         ],
       ),
     );
-  }
-
-  /// Handles the logic to show dialogs based on the state
-  void _handleDialogs(WidgetRef ref) {
-    final configureServerState = ref.watch(postgresConfigurationsProvider);
-    final configureServerNotifier = ref.read(postgresConfigurationsProvider.notifier);
-    final loginState = ref.watch(loginProvider);
-    final loginNotifier = ref.read(loginProvider.notifier);
-
-    if (configureServerState.showDialog) {
-      _showConfigurationDialog(context, configureServerNotifier, configureServerState.configurations);
-    }
-
-    if (loginState.showAutoLoginDialog && loginState.rememberMe) {
-      _checkAndLoginAutomatically(context, loginNotifier);
-    }
   }
 
   Future<void> _showConfigurationDialog(

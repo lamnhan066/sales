@@ -1,0 +1,498 @@
+import 'dart:math';
+
+import 'package:flutter/material.dart';
+import 'package:sales/domain/entities/recent_orders_result.dart';
+import 'package:sales/models/category.dart';
+import 'package:sales/models/order.dart';
+import 'package:sales/models/order_item.dart';
+import 'package:sales/models/product.dart';
+import 'package:sales/models/product_order_by.dart';
+import 'package:sales/models/range_of_dates.dart';
+import 'package:string_normalizer/string_normalizer.dart';
+
+import 'database.dart';
+
+class MemoryDatatabaseImpl implements Database {
+  final _categories = <Category>[];
+  final _products = <Product>[];
+  final _orderItems = <OrderItem>[];
+  final _orders = <Order>[];
+
+  @override
+  Future<void> initial() async {}
+
+  @override
+  Future<void> dispose() async {}
+
+  @override
+  Future<void> clear() async {
+    _products.clear();
+    _categories.clear();
+    _orders.clear();
+    _orderItems.clear();
+  }
+
+  @override
+  Future<void> addCategory(Category category) async {
+    _categories.add(category);
+  }
+
+  @override
+  Future<void> updateCategory(Category category) async {
+    final i = _categories.indexWhere((item) => item.id == category.id);
+    _categories[i] = category;
+  }
+
+  @override
+  Future<List<Category>> getAllCategories() async => _categories;
+
+  @override
+  Future<void> saveAllCategories(List<Category> categories) async {
+    _categories.clear();
+    _categories.addAll(categories);
+  }
+
+  @override
+  Future<({int id, String sku})> generateProductIdSku() async {
+    final count = await getTotalProductCount();
+    final id = count + 1;
+
+    return (id: id, sku: 'P${id.toString().padLeft(8, '0')}');
+  }
+
+  @override
+  Future<void> addProduct(Product product) async {
+    _products.add(product);
+  }
+
+  @override
+  Future<void> updateProduct(Product product) async {
+    final i = _products.indexWhere((item) => item.id == product.id);
+    _products[i] = product;
+  }
+
+  @override
+  Future<void> saveAllProducts(List<Product> products) async {
+    _products.clear();
+    _products.addAll(products);
+  }
+
+  @override
+  Future<({int totalCount, List<Product> products})> getProducts({
+    int page = 1,
+    int perpage = 10,
+    ProductOrderBy orderBy = ProductOrderBy.none,
+    String searchText = '',
+    RangeValues? rangeValues,
+    int? categoryId,
+  }) async {
+    final List<Product> result = await getAllProducts(
+      orderBy: orderBy,
+      searchText: searchText,
+      rangeValues: rangeValues,
+      categoryId: categoryId,
+    );
+
+    return (
+      totalCount: result.length,
+      products: result.skip((page - 1) * perpage).take(perpage).toList(),
+    );
+  }
+
+  @override
+  Future<List<Product>> getAllProducts({
+    ProductOrderBy orderBy = ProductOrderBy.none,
+    String searchText = '',
+    RangeValues? rangeValues,
+    int? categoryId,
+  }) async {
+    final result = _products.where((product) {
+      // Sản phẩm đã bị xoá.
+      if (product.deleted) return false;
+
+      // Lọc theo loại hàng.
+      if (categoryId != null && product.categoryId != categoryId) {
+        return false;
+      }
+
+      // Lọc theo mức giá.
+      bool priceFilter = true;
+      if (rangeValues != null) {
+        priceFilter = product.importPrice >= rangeValues.start && product.importPrice <= rangeValues.end;
+      }
+
+      // Tìm kiếm.
+      bool search = true;
+      if (searchText.isNotEmpty) {
+        search = product.name.normalize().toLowerCase().contains(searchText);
+      }
+
+      return priceFilter && search;
+    }).toList();
+
+    switch (orderBy) {
+      case ProductOrderBy.none:
+        break;
+      case ProductOrderBy.nameAsc:
+        result.sort((a, b) => a.name.compareTo(b.name));
+      case ProductOrderBy.nameDesc:
+        result.sort((a, b) => b.name.compareTo(a.name));
+      case ProductOrderBy.importPriceAsc:
+        result.sort((a, b) => a.importPrice.compareTo(b.importPrice));
+      case ProductOrderBy.importPriceDesc:
+        result.sort((a, b) => b.importPrice.compareTo(a.importPrice));
+      case ProductOrderBy.countAsc:
+        result.sort((a, b) => a.count.compareTo(b.count));
+      case ProductOrderBy.countDesc:
+        result.sort((a, b) => b.count.compareTo(a.count));
+    }
+
+    return result;
+  }
+
+  @override
+  Future<void> addOrder(Order order) async {
+    _orders.add(order);
+  }
+
+  @override
+  Future<void> updateOrder(Order order) async {
+    final i = _orders.indexWhere((item) => item.id == order.id);
+    _orders[i] = order;
+  }
+
+  @override
+  Future<void> removeOrder(Order order) async {
+    final tempOrder = order.copyWith(deleted: true);
+    await updateOrder(tempOrder);
+  }
+
+  @override
+  Future<List<Order>> getAllOrders({RangeOfDates? dateRange}) async {
+    final orders = _orders.where((o) {
+      if (o.deleted) return false;
+
+      // Lọc theo ngày
+      if (dateRange != null && (o.date.isBefore(dateRange.from) || o.date.isAfter(dateRange.to))) {
+        return false;
+      }
+
+      return true;
+    });
+
+    return orders.toList();
+  }
+
+  @override
+  Future<void> saveAllOrders(List<Order> orders) async {
+    _orders.clear();
+    _orders.addAll(orders);
+  }
+
+  @override
+  Future<void> addOrderItem(OrderItem orderItem) async {
+    _orderItems.add(orderItem);
+  }
+
+  @override
+  Future<void> updateOrderItem(OrderItem orderItem) async {
+    final i = _orderItems.indexWhere((item) => item.id == orderItem.id);
+    _orderItems[i] = orderItem;
+  }
+
+  @override
+  Future<void> removeOrderItem(OrderItem orderItem) async {
+    final tempOrderItem = orderItem.copyWith(deleted: true);
+    await updateOrderItem(tempOrderItem);
+  }
+
+  @override
+  Future<List<OrderItem>> getAllOrderItems({
+    int? orderId,
+    int? productId,
+  }) async {
+    return _orderItems.where((e) {
+      if (e.deleted) return false;
+      if (orderId != null && e.orderId != orderId) return false;
+      if (productId != null && e.productId != productId) return false;
+      return true;
+    }).toList();
+  }
+
+  @override
+  Future<void> saveAllOrderItems(List<OrderItem> orderItems) async {
+    _orderItems.clear();
+    _orderItems.addAll(orderItems);
+  }
+
+  @override
+  Future<void> addOrderWithOrderItems(Order order, List<OrderItem> orderItems) async {
+    await addOrder(order);
+    for (final orderItem in orderItems) {
+      await addOrderItem(orderItem);
+
+      // Cập nhật lại số lượng của sản phẩm.
+      var product = await getProductById(orderItem.productId);
+      product = product.copyWith(count: product.count - orderItem.quantity);
+      await updateProduct(product);
+    }
+  }
+
+  @override
+  Future<int> generateCategoryId() async {
+    final categories = await getAllCategories();
+    final count = categories.length;
+    final id = count + 1;
+
+    return id;
+  }
+
+  @override
+  Future<int> generateOrderId() async {
+    final orders = await getAllOrders();
+    final count = orders.length;
+    final id = count + 1;
+
+    return id;
+  }
+
+  @override
+  Future<int> generateOrderItemId() async {
+    final orderItems = await getAllOrderItems();
+    final count = orderItems.length;
+    final id = count + 1;
+
+    return id;
+  }
+
+  @override
+  Future<int> getDailyOrderCount(DateTime dateTime) async {
+    final orders = await getAllOrders();
+    final dailyOrders = orders.where(
+      (o) => o.date.year == dateTime.year && o.date.month == dateTime.month && o.date.day == dateTime.day,
+    );
+
+    return dailyOrders.length;
+  }
+
+  @override
+  Future<int> getDailyRevenue(DateTime dateTime) async {
+    final orders = await getAllOrders();
+    final dailyOrders = orders.where(
+      (o) => o.date.year == dateTime.year && o.date.month == dateTime.month && o.date.day == dateTime.day,
+    );
+    final orderItems = await getAllOrderItems();
+    int revenue = 0;
+    for (final item in orderItems) {
+      for (final order in dailyOrders) {
+        if (item.orderId == order.id) {
+          revenue += item.totalPrice;
+        }
+      }
+    }
+
+    return revenue;
+  }
+
+  @override
+  Future<List<Product>> getFiveHighestSalesProducts() async {
+    final products = await getAllProducts();
+    final orderItems = await getAllOrderItems();
+    final orderedProductQuantities = <Product, int>{};
+    for (final p in products) {
+      for (final orderItem in orderItems) {
+        if (orderItem.productId == p.id) {
+          orderedProductQuantities.putIfAbsent(p, () => 0);
+          orderedProductQuantities[p] = orderedProductQuantities[p]! + orderItem.quantity;
+        }
+      }
+    }
+    final entries = orderedProductQuantities.entries.toList();
+    entries.sort(
+      (MapEntry<Product, int> a, MapEntry<Product, int> b) => a.value.compareTo(b.value),
+    );
+
+    return Map<Product, int>.fromEntries(entries).keys.toList();
+  }
+
+  @override
+  Future<List<Product>> getFiveLowStockProducts() async {
+    final products = await getAllProducts();
+    final lowStockProducts = products.where((p) => p.count < 5).toList();
+
+    return lowStockProducts.sublist(0, min(lowStockProducts.length, 5));
+  }
+
+  @override
+  Future<List<int>> getMonthlyRevenues(DateTime dateTime) async {
+    final orders = await getAllOrders();
+    final monthlyOrders = orders.where(
+      (o) => o.date.year == dateTime.year && o.date.month == dateTime.month,
+    );
+    final orderItems = await getAllOrderItems();
+    final revenues = <int>[];
+
+    final now = DateTime.now();
+    for (int i = 1; i <= 31; i++) {
+      if (DateTime(dateTime.year, dateTime.month, i).isAfter(now)) {
+        break;
+      }
+
+      int revenue = 0;
+      final dailyOrders = monthlyOrders.where((order) => order.date.day == i);
+      for (final order in dailyOrders) {
+        for (final item in orderItems) {
+          if (item.orderId == order.id) {
+            revenue += item.totalPrice;
+          }
+        }
+      }
+      revenues.add(revenue);
+    }
+
+    return revenues;
+  }
+
+  @override
+  Future<List<OrderItem>> getOrderItems({int? orderId, int? productId}) {
+    return getAllOrderItems(orderId: orderId, productId: productId);
+  }
+
+  @override
+  Future<({List<Order> orders, int totalCount})> getOrders({
+    int page = 1,
+    int perpage = 10,
+    RangeOfDates? dateRange,
+  }) async {
+    final result = await getAllOrders(dateRange: dateRange);
+
+    return (totalCount: result.length, orders: result.skip((page - 1) * perpage).take(perpage).toList());
+  }
+
+  @override
+  Future<Product> getProductById(int id) async {
+    final products = await getAllProducts();
+    return products.firstWhere((e) => e.id == id);
+  }
+
+  @override
+  Future<RecentOrdersResult> getThreeRecentOrders() async {
+    final orders = await getAllOrders();
+    orders.sort((a, b) => a.date.compareTo(b.date));
+    final orderItemMap = <Order, List<OrderItem>>{};
+    final orderItems = await getAllOrderItems();
+    for (final order in orders.sublist(0, min(orders.length, 3))) {
+      orderItemMap.putIfAbsent(order, () => []);
+      for (final item in orderItems) {
+        if (item.orderId == order.id) {
+          orderItemMap[order]!.add(item);
+        }
+      }
+    }
+
+    final productMap = <Order, List<Product>>{};
+    final products = await getAllProducts();
+    for (final order in orders.sublist(0, min(orders.length, 3))) {
+      productMap.putIfAbsent(order, () => []);
+      for (final orderItem in orderItemMap[order]!) {
+        for (final product in products) {
+          if (orderItem.productId == product.id) {
+            productMap[order]!.add(product);
+          }
+        }
+      }
+    }
+
+    return RecentOrdersResult(orderItems: orderItemMap, products: productMap);
+  }
+
+  @override
+  Future<int> getTotalProductCount() async {
+    final products = await getAllProducts();
+
+    return products.length;
+  }
+
+  @override
+  Future<void> merge(List<Category> categories, List<Product> products) async {
+    final tempCategories = await getAllCategories();
+    final cIndex = tempCategories.length;
+    for (int i = 0; i < categories.length; i++) {
+      final c = categories.elementAt(i).copyWith(id: cIndex + i);
+      tempCategories.add(c);
+    }
+    await saveAllCategories(tempCategories);
+
+    final tempProducts = await getAllProducts();
+    final pIndex = tempProducts.length;
+    for (int i = 0; i < products.length; i++) {
+      final newIndex = pIndex + i;
+      final p = products.elementAt(i).copyWith(
+            id: newIndex,
+            sku: 'P${newIndex.toString().padLeft(8, '0')}',
+          );
+      tempProducts.add(p);
+    }
+    await saveAllProducts(tempProducts);
+  }
+
+  @override
+  Future<void> removeCategory(Category category) async {
+    final tempCategory = category.copyWith(deleted: true);
+    await updateCategory(tempCategory);
+  }
+
+  @override
+  Future<void> removeOrderWithOrderItems(Order order) async {
+    final orderItems = await getAllOrderItems(orderId: order.id);
+    for (final orderItem in orderItems) {
+      final tempOrderItems = orderItem.copyWith(deleted: true);
+      await updateOrderItem(tempOrderItems);
+
+      // Cập nhật lại số lượng sản phẩm.
+      var product = await getProductById(orderItem.productId);
+      product = product.copyWith(count: product.count + orderItem.quantity);
+      await updateProduct(product);
+    }
+    await removeOrder(order);
+  }
+
+  @override
+  Future<void> removeProduct(Product product) async {
+    final tempProduct = product.copyWith(deleted: true);
+    await updateProduct(tempProduct);
+  }
+
+  @override
+  Future<void> replace(List<Category> categories, List<Product> products) async {
+    await saveAllCategories(categories);
+    await saveAllProducts(products);
+  }
+
+  @override
+  Future<void> updateOrderWithOrderItems(Order order, List<OrderItem> orderItems) async {
+    await updateOrder(order);
+    final orderItemsFromDatabase = await getOrderItems(orderId: order.id);
+    for (final orderItem in orderItems) {
+      final index = orderItemsFromDatabase.indexWhere((e) => e.id == orderItem.id);
+      if (index == -1) {
+        await addOrderItem(orderItem);
+
+        // Cập nhật lại số lượng sản phẩm.
+        var product = await getProductById(orderItem.productId);
+        product = product.copyWith(count: product.count - orderItem.quantity);
+        await updateProduct(product);
+      } else {
+        await updateOrderItem(orderItem);
+
+        // Cập nhật lại số lượng sản phẩm.
+        final databaseCount = orderItemsFromDatabase[index].quantity;
+        final newCount = orderItem.quantity;
+        final differentCount = databaseCount - newCount;
+        var product = await getProductById(orderItem.productId);
+        product = product.copyWith(count: product.count + differentCount);
+        await updateProduct(product);
+      }
+    }
+  }
+}
