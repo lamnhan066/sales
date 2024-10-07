@@ -2,20 +2,19 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:sales/infrastucture/utils/excel_picker.dart';
 import 'package:sales/models/category.dart';
 import 'package:sales/models/order.dart';
 import 'package:sales/models/order_item.dart';
 import 'package:sales/models/product.dart';
 import 'package:sales/models/product_order_by.dart';
 import 'package:sales/models/range_of_dates.dart';
-import 'package:sales/utils/utils.dart';
 
 /// Database abstract.
 abstract class Database {
   /// Load dữ liệu từ Excel.
-  static Future<({List<Category> categories, List<Product> products})?>
-      loadDataFromExcel() async {
-    final excel = await Utils.getExcelFile();
+  static Future<({List<Category> categories, List<Product> products})?> loadDataFromExcel() async {
+    final excel = await ExcelPicker.getExcelFile();
     if (excel == null) {
       return null;
     }
@@ -42,8 +41,7 @@ abstract class Database {
           id: i,
           sku: '${row.first?.value}',
           name: '${row.elementAt(1)?.value}',
-          imagePath: (jsonDecode('${row.elementAt(2)?.value}') as List<dynamic>)
-              .cast<String>(),
+          imagePath: (jsonDecode('${row.elementAt(2)?.value}') as List<dynamic>).cast<String>(),
           importPrice: int.parse('${row.elementAt(3)?.value}'),
           count: int.parse('${row.elementAt(4)?.value}'),
           description: '${row.elementAt(5)?.value}',
@@ -178,10 +176,7 @@ abstract class Database {
       categoryId: categoryId,
     );
 
-    return (
-      totalCount: result.length,
-      products: result.skip((page - 1) * perpage).take(perpage).toList()
-    );
+    return (totalCount: result.length, products: result.skip((page - 1) * perpage).take(perpage).toList());
   }
 
   /// Lấy toàn bộ danh sách sản phẩm.
@@ -226,10 +221,7 @@ abstract class Database {
   }) async {
     final result = await getAllOrders(dateRange: dateRange);
 
-    return (
-      totalCount: result.length,
-      orders: result.skip((page - 1) * perpage).take(perpage).toList()
-    );
+    return (totalCount: result.length, orders: result.skip((page - 1) * perpage).take(perpage).toList());
   }
 
   /// Lưu tất cả các đơn đặt đặt hàng.
@@ -303,8 +295,7 @@ abstract class Database {
     await updateOrder(order);
     final orderItemsFromDatabase = await getOrderItems(orderId: order.id);
     for (final orderItem in orderItems) {
-      final index =
-          orderItemsFromDatabase.indexWhere((e) => e.id == orderItem.id);
+      final index = orderItemsFromDatabase.indexWhere((e) => e.id == orderItem.id);
       if (index == -1) {
         await addOrderItem(orderItem);
 
@@ -358,15 +349,13 @@ abstract class Database {
       for (final orderItem in orderItems) {
         if (orderItem.productId == p.id) {
           orderedProductQuantities.putIfAbsent(p, () => 0);
-          orderedProductQuantities[p] =
-              orderedProductQuantities[p]! + orderItem.quantity;
+          orderedProductQuantities[p] = orderedProductQuantities[p]! + orderItem.quantity;
         }
       }
     }
     final entries = orderedProductQuantities.entries.toList();
     entries.sort(
-      (MapEntry<Product, int> a, MapEntry<Product, int> b) =>
-          a.value.compareTo(b.value),
+      (MapEntry<Product, int> a, MapEntry<Product, int> b) => a.value.compareTo(b.value),
     );
 
     return Map<Product, int>.fromEntries(entries).keys.toList();
@@ -376,10 +365,7 @@ abstract class Database {
   Future<int> getDailyOrderCount(DateTime date) async {
     final orders = await getAllOrders();
     final dailyOrders = orders.where(
-      (o) =>
-          o.date.year == date.year &&
-          o.date.month == date.month &&
-          o.date.day == date.day,
+      (o) => o.date.year == date.year && o.date.month == date.month && o.date.day == date.day,
     );
 
     return dailyOrders.length;
@@ -389,10 +375,7 @@ abstract class Database {
   Future<int> getDailyRevenue(DateTime date) async {
     final orders = await getAllOrders();
     final dailyOrders = orders.where(
-      (o) =>
-          o.date.year == date.year &&
-          o.date.month == date.month &&
-          o.date.day == date.day,
+      (o) => o.date.year == date.year && o.date.month == date.month && o.date.day == date.day,
     );
     final orderItems = await getAllOrderItems();
     int revenue = 0;
@@ -443,11 +426,7 @@ abstract class Database {
   /// Lấy danh sách 3 đơn đặt hàng gần đây nhất.
   ///
   /// Trả về danh sách sản phẩm đã đặt hàng và thông tin của đơn đặt hàng.
-  Future<
-      ({
-        Map<Order, List<OrderItem>> orderItems,
-        Map<Order, List<Product>> products
-      })> getThreeRecentOrders() async {
+  Future<({Map<Order, List<OrderItem>> orderItems, Map<Order, List<Product>> products})> getThreeRecentOrders() async {
     final orders = await getAllOrders();
     orders.sort((a, b) => a.date.compareTo(b.date));
     final orderItemMap = <Order, List<OrderItem>>{};

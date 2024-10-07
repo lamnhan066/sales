@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/controllers/home_controller.dart';
 import 'package:sales/di.dart';
@@ -46,32 +47,44 @@ class _HomeViewState extends State<HomeView> {
 
     final tab = SizedBox(
       width: 220,
-      child: NavigationDrawer(
-        children: [
-          AppBar(
-            automaticallyImplyLeading: false,
-          ),
-          for (final view in ViewsModel.values)
-            ListTile(
-              tileColor: controller.view == view
-                  ? Theme.of(context).primaryColor
-                  : null,
-              textColor: controller.view == view
-                  ? Theme.of(context).colorScheme.onPrimary
-                  : null,
-              title: Text(title(view)),
-              trailing: Icon(
-                Icons.arrow_forward_ios_outlined,
-                size: 12,
-                color: controller.view == view
-                    ? Theme.of(context).colorScheme.onPrimary
-                    : null,
-              ),
-              onTap: () {
-                controller.setView(view, setState);
-              },
+      child: Drawer(
+        child: Column(
+          children: [
+            AppBar(
+              automaticallyImplyLeading: false,
             ),
-        ],
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    for (final view in ViewsModel.values)
+                      ListTile(
+                        tileColor: controller.view == view ? Theme.of(context).primaryColor : null,
+                        textColor: controller.view == view ? Theme.of(context).colorScheme.onPrimary : null,
+                        title: Text(title(view)),
+                        trailing: Icon(
+                          Icons.arrow_forward_ios_outlined,
+                          size: 12,
+                          color: controller.view == view ? Theme.of(context).colorScheme.onPrimary : null,
+                        ),
+                        onTap: () {
+                          controller.setView(view, setState);
+                        },
+                      ),
+                  ],
+                ),
+              ),
+            ),
+            Consumer(
+              builder: (context, ref, child) => ListTile(
+                title: Text('Đăng Xuất'.tr),
+                onTap: () {
+                  controller.logout(context, ref);
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
 

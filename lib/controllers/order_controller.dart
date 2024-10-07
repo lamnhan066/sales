@@ -4,10 +4,11 @@ import 'dart:async';
 import 'package:boxw/boxw.dart';
 import 'package:flutter/material.dart';
 import 'package:language_helper/language_helper.dart';
-import 'package:sales/app/app_configs.dart';
 import 'package:sales/components/common_components.dart';
 import 'package:sales/components/common_dialogs.dart';
 import 'package:sales/components/orders/order_form_dialog.dart';
+import 'package:sales/core/constants/app_configs.dart';
+import 'package:sales/core/utils/utils.dart';
 import 'package:sales/di.dart';
 import 'package:sales/models/order.dart';
 import 'package:sales/models/order_item.dart';
@@ -15,7 +16,6 @@ import 'package:sales/models/order_status.dart';
 import 'package:sales/models/product.dart';
 import 'package:sales/models/range_of_dates.dart';
 import 'package:sales/services/database/database.dart';
-import 'package:sales/utils/utils.dart';
 
 /// Controller cho màn hình Order.
 class OrderController {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/app/app_controller.dart';
 import 'package:sales/di.dart';
-import 'package:sales/views/login_view.dart';
+import 'package:sales/presentation/views/login_view.dart';
 
 /// Ứng dụng
 class App extends StatefulWidget {

@@ -5,8 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:sales/app/app_controller.dart';
+import 'package:sales/core/utils/password_cryptor.dart';
 import 'package:sales/di.dart';
-import 'package:sales/utils/password_cryptor.dart';
+import 'package:sales/domain/entities/login_credentials.dart';
 import 'package:sales/views/home_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -136,7 +137,9 @@ class LoginController {
     }
     final username = prefs.getString('Login.Username') ?? '';
     final encryptedPassword = prefs.getString('Login.Password') ?? '';
-    final password = PasswordCryptor.decrypt(username, encryptedPassword);
+    final password = PasswordCryptor.decryptPassword(
+      LoginCredentials(username: username, password: encryptedPassword),
+    );
 
     return (username, password);
   }
@@ -146,7 +149,9 @@ class LoginController {
     prefs.setString('Login.Username', username);
     prefs.setString(
       'Login.Password',
-      PasswordCryptor.encrypt(username, password),
+      PasswordCryptor.encryptPassword(
+        LoginCredentials(username: username, password: password),
+      ),
     );
   }
 

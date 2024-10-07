@@ -2,8 +2,8 @@ import 'package:chart_sparkline/chart_sparkline.dart';
 import 'package:flutter/material.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/controllers/dashboard_controller.dart';
+import 'package:sales/core/utils/utils.dart';
 import 'package:sales/di.dart';
-import 'package:sales/utils/utils.dart';
 
 /// Màn hình tổng quan.
 class DashboardView extends StatefulWidget {

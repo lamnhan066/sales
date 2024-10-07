@@ -4,9 +4,9 @@ import 'package:flutter/material.dart'
     hide DataTable, DataRow, DataColumn, DataCell;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:language_helper/language_helper.dart';
-import 'package:sales/app/app_configs.dart';
 import 'package:sales/components/data_table_plus.dart';
 import 'package:sales/controllers/product_controller.dart';
+import 'package:sales/core/constants/app_configs.dart';
 import 'package:sales/di.dart';
 import 'package:sales/models/category.dart';
 

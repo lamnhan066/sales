@@ -1,7 +1,3 @@
-import 'dart:typed_data';
-
-import 'package:excel/excel.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:language_helper/language_helper.dart';
 
 /// Utils
@@ -18,27 +14,6 @@ class Utils {
     final month = padLeft2(date.month);
 
     return '${hour}h$minute $day/$month/${date.year}';
-  }
-
-  /// Tải dữ liệu Excel.
-  static Future<Excel?> getExcelFile() async {
-    try {
-      final FilePickerResult? file = await FilePicker.platform.pickFiles(
-        withData: true,
-        type: FileType.custom,
-        allowedExtensions: ['xlsx'],
-      );
-
-      if (file != null && file.files.isNotEmpty) {
-        final Uint8List bytes = file.files.first.bytes!;
-
-        return Excel.decodeBytes(bytes);
-      } else {
-        return null;
-      }
-    } on Exception {
-      rethrow;
-    }
   }
 
   /// DateTime -> d/M/yyyy

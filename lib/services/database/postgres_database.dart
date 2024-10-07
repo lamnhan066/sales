@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:postgres/postgres.dart';
 import 'package:sales/app/app_controller.dart';
+import 'package:sales/core/utils/utils.dart';
 import 'package:sales/di.dart';
 import 'package:sales/models/category.dart';
 import 'package:sales/models/order.dart';
@@ -9,7 +10,6 @@ import 'package:sales/models/product.dart';
 import 'package:sales/models/product_order_by.dart';
 import 'package:sales/models/range_of_dates.dart';
 import 'package:sales/services/database/database.dart';
-import 'package:sales/utils/utils.dart';
 
 /// Database using Postgres
 class PostgresDatabase extends Database {
