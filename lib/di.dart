@@ -7,7 +7,6 @@ import 'package:sales/application/usecases/login_usecase.dart';
 import 'package:sales/application/usecases/save_server_configuration_usecase.dart';
 import 'package:sales/controllers/dashboard_controller.dart';
 import 'package:sales/controllers/home_controller.dart';
-import 'package:sales/controllers/login_controller.dart';
 import 'package:sales/controllers/order_controller.dart';
 import 'package:sales/controllers/product_controller.dart';
 import 'package:sales/domain/repositories/app_version_repository.dart';
@@ -30,7 +29,6 @@ Future<void> setup() async {
   getIt.registerSingleton<AppController>(AppController());
   getIt.registerSingleton<HomeController>(HomeController());
   getIt.registerSingleton<Database>(SampleMemoryDatabase());
-  getIt.registerSingleton<LoginController>(LoginController());
   getIt.registerSingleton<ProductController>(ProductController());
   getIt.registerSingleton<DashboardController>(DashboardController());
   getIt.registerSingleton<OrderController>(OrderController());
