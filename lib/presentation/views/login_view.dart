@@ -7,7 +7,7 @@ import 'package:language_helper/language_helper.dart';
 import 'package:sales/domain/entities/server_configurations.dart';
 import 'package:sales/presentation/providers/configuration_provider.dart';
 import 'package:sales/presentation/providers/login_provider.dart';
-import 'package:sales/views/home_view.dart';
+import 'package:sales/presentation/views/home_view.dart';
 
 class LoginView extends ConsumerWidget {
   const LoginView({super.key});

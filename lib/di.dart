@@ -24,7 +24,6 @@ import 'package:sales/application/usecases/replace_database_usecase.dart';
 import 'package:sales/application/usecases/save_server_configuration_usecase.dart';
 import 'package:sales/application/usecases/update_category_usecase.dart';
 import 'package:sales/application/usecases/update_product_usecase.dart';
-import 'package:sales/controllers/home_controller.dart';
 import 'package:sales/controllers/order_controller.dart';
 import 'package:sales/domain/repositories/app_version_repository.dart';
 import 'package:sales/domain/repositories/auth_repository.dart';
@@ -56,13 +55,12 @@ Future<void> setup() async {
   final preferences = await SharedPreferences.getInstance();
   getIt.registerSingleton<SharedPreferences>(preferences);
   getIt.registerSingleton<AppController>(AppController());
-  getIt.registerSingleton<HomeController>(HomeController());
   getIt.registerSingleton<d.Database>(SampleMemoryDatabase());
   getIt.registerSingleton<OrderController>(OrderController());
 }
 
 Future<void> setupDependencies() async {
-  // Register Repositories
+  // Repositories
   getIt.registerLazySingleton<AuthRepository>(() => LocalAuthRepositoryImpl(getIt()));
   getIt.registerLazySingleton<ServerConfigurationsRepository>(() => PostgresConfigurationsRepositoryImpl(getIt()));
   getIt.registerLazySingleton<AppVersionRepository>(() => AppVersionRepositoryImpl());
@@ -73,7 +71,7 @@ Future<void> setupDependencies() async {
   getIt.registerLazySingleton<DatabaseService>(() => DatabaseServiceImpl(getIt()));
   getIt.registerLazySingleton<DataImporter>(() => ExcelDataImporter());
 
-  // Register Use Cases
+  // Use Case
   getIt.registerLazySingleton<AutoLoginUseCase>(() => AutoLoginUseCase(getIt()));
   getIt.registerLazySingleton<LoginUseCase>(() => LoginUseCase(getIt()));
 
@@ -88,7 +86,6 @@ Future<void> setupDependencies() async {
   getIt.registerLazySingleton<GetFiveLowStockProductsUseCase>(() => GetFiveLowStockProductsUseCase(getIt()));
   getIt.registerLazySingleton<GetMonthlyRevenuesUseCase>(() => GetMonthlyRevenuesUseCase(getIt()));
   getIt.registerLazySingleton<GetThreeRecentOrdersUseCase>(() => GetThreeRecentOrdersUseCase(getIt()));
-  getIt.registerLazySingleton<GetTotalProductCountUseCase>(() => GetTotalProductCountUseCase(getIt()));
 
   getIt.registerLazySingleton<AddCategoryUseCase>(() => AddCategoryUseCase(getIt()));
   getIt.registerLazySingleton<RemoveCategoryUseCase>(() => RemoveCategoryUseCase(getIt()));
@@ -96,6 +93,7 @@ Future<void> setupDependencies() async {
   getIt.registerLazySingleton<GetAllCategoriesUsecCase>(() => GetAllCategoriesUsecCase(getIt()));
   getIt.registerLazySingleton<GetNextCategoryIdUseCase>(() => GetNextCategoryIdUseCase(getIt()));
 
+  getIt.registerLazySingleton<GetTotalProductCountUseCase>(() => GetTotalProductCountUseCase(getIt()));
   getIt.registerLazySingleton<GetProductsUseCase>(() => GetProductsUseCase(getIt()));
   getIt.registerLazySingleton<AddProductUseCase>(() => AddProductUseCase(getIt()));
   getIt.registerLazySingleton<UpdateProductUseCase>(() => UpdateProductUseCase(getIt()));
