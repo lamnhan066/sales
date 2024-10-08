@@ -16,4 +16,6 @@ abstract class ProductRepository {
 
   Future<void> addAllProducts(List<Product> products);
   Future<void> removeAllProducts();
+
+  Future<List<Product>> getAllProducts();
 }

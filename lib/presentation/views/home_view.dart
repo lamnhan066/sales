@@ -5,8 +5,8 @@ import 'package:sales/models/views_model.dart';
 import 'package:sales/presentation/providers/home_provider.dart';
 import 'package:sales/presentation/views/dashboard_view.dart';
 import 'package:sales/presentation/views/login_view.dart';
+import 'package:sales/presentation/views/orders_view.dart';
 import 'package:sales/presentation/views/products_view.dart';
-import 'package:sales/views/orders_view.dart';
 import 'package:sales/views/report_view.dart';
 import 'package:sales/views/settings_view.dart';
 

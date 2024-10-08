@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sales/application/usecases/get_daily_order_count_usecase.dart';
 import 'package:sales/application/usecases/get_daily_revenues_usecase.dart';
@@ -11,7 +12,7 @@ import 'package:sales/di.dart';
 import 'package:sales/domain/entities/product.dart';
 import 'package:sales/domain/entities/recent_orders_result.dart';
 
-class DashboardState {
+class DashboardState with EquatableMixin {
   /// Tổng tất cả sản phẩm.
   int totalProductCount = 0;
 
@@ -73,6 +74,21 @@ class DashboardState {
       isLoading: isLoading ?? this.isLoading,
       error: error ?? this.error,
     );
+  }
+
+  @override
+  List<Object> get props {
+    return [
+      totalProductCount,
+      fiveLowStockProducts,
+      fiveHighestSalesProducts,
+      dailyOrderCount,
+      dailyRevenue,
+      threeRecentOrders,
+      monthlyRevenues,
+      isLoading,
+      error
+    ];
   }
 }
 

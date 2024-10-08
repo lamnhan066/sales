@@ -9,7 +9,7 @@ class GetProductsUseCase implements UseCase<({List<Product> products, int totalC
   const GetProductsUseCase(this._repository);
 
   @override
-  Future<({List<Product> products, int totalCount})> call(GetProductParams params) {
+  Future<({List<Product> products, int totalCount})> call([GetProductParams params = const GetProductParams()]) {
     return _repository.getProducts(params);
   }
 }

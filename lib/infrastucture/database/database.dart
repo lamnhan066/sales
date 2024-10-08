@@ -1,13 +1,16 @@
 import 'dart:convert';
 
+import 'package:sales/domain/entities/get_order_items_params.dart';
+import 'package:sales/domain/entities/get_order_params.dart';
 import 'package:sales/domain/entities/get_product_params.dart';
+import 'package:sales/domain/entities/order_with_items_params.dart';
 import 'package:sales/domain/entities/product.dart';
+import 'package:sales/domain/entities/ranges.dart';
 import 'package:sales/domain/entities/recent_orders_result.dart';
 import 'package:sales/infrastucture/utils/excel_picker.dart';
 import 'package:sales/models/category.dart';
 import 'package:sales/models/order.dart';
 import 'package:sales/models/order_item.dart';
-import 'package:sales/models/range_of_dates.dart';
 
 /// Database abstract.
 abstract interface class Database {
@@ -93,7 +96,7 @@ abstract interface class Database {
   Future<void> removeAllCategories();
 
   /// Trình tạo ra `id` và `sku` cho sản phẩm.
-  Future<({int id, String sku})> generateProductIdSku();
+  Future<({int id, String sku})> getNextProductIdSku();
 
   /// Trình tạo ra `id` cho loại hàng.
   Future<int> getNextCategoryId();
@@ -123,10 +126,10 @@ abstract interface class Database {
   Future<({int totalCount, List<Product> products})> getProducts([GetProductParams params = const GetProductParams()]);
 
   /// Lấy toàn bộ danh sách sản phẩm.
-  Future<List<Product>> getAllProducts([GetProductParams params = const GetProductParams()]);
+  Future<List<Product>> getAllProducts();
 
   /// Trình tạo ra `id` cho loại hàng.
-  Future<int> generateOrderId();
+  Future<int> getNextOrderId();
 
   /// Thêm đơn đặt hàng.
   Future<void> addOrder(Order order);
@@ -138,20 +141,16 @@ abstract interface class Database {
   Future<void> removeOrder(Order order);
 
   /// Lấy danh sách tất cả các đơn hàng.
-  Future<List<Order>> getAllOrders({RangeOfDates? dateRange});
+  Future<List<Order>> getAllOrders({Ranges<DateTime>? dateRange});
 
   /// Lấy danh sách đơn hàng theo điều kiện.
-  Future<({int totalCount, List<Order> orders})> getOrders({
-    int page = 1,
-    int perpage = 10,
-    RangeOfDates? dateRange,
-  });
+  Future<({int totalCount, List<Order> orders})> getOrders([GetOrderParams params]);
 
   /// Lưu tất cả các đơn đặt đặt hàng.
   Future<void> saveAllOrders(List<Order> orders);
 
   /// Trình tạo ra `id` cho chi tiết đơn hàng.
-  Future<int> generateOrderItemId();
+  Future<int> getNextOrderItemId();
 
   /// Thêm chi tiết sản phẩm đã đặt hàng.
   Future<void> addOrderItem(OrderItem orderItem);
@@ -166,7 +165,7 @@ abstract interface class Database {
   Future<List<OrderItem>> getOrderItems({int? orderId, int? productId});
 
   /// Lấy tất tất cả sản phẩm đã đặt hàng.
-  Future<List<OrderItem>> getAllOrderItems({int? orderId, int? productId});
+  Future<List<OrderItem>> getAllOrderItems([GetOrderItemsParams? params]);
 
   /// Lưu tất cả sản phẩm đã đặt hàng.
   Future<void> saveAllOrderItems(List<OrderItem> orderItems);
@@ -175,16 +174,16 @@ abstract interface class Database {
   Future<int> getTotalProductCount();
 
   /// Thêm Order cùng với OrderItems
-  Future<void> addOrderWithOrderItems(Order order, List<OrderItem> orderItems);
+  Future<void> addOrderWithOrderItems(OrderWithItemsParams params);
 
   /// Cập nhật Order cùng với OrderItems
-  Future<void> updateOrderWithOrderItems(Order order, List<OrderItem> orderItems);
+  Future<void> updateOrderWithItems(OrderWithItemsParams params);
 
   /// Xoá Order cùng với OrderItems
-  Future<void> removeOrderWithOrderItems(Order order);
+  Future<void> removeOrderWithItems(Order order);
 
   /// Xoá tất cả đơn đặt hàng cùng với chi tiết đơn hàng tương ứng.
-  Future<void> removeAllOrdersWithOrderItems();
+  Future<void> removeAllOrdersWithItems();
 
   /// Lấy danh sách 5 sản phẩm có số lượng ít hơn 5 trong kho.
   Future<List<Product>> getFiveLowStockProducts();

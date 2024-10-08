@@ -1,13 +1,16 @@
 import 'dart:math';
 
+import 'package:sales/domain/entities/get_order_items_params.dart';
+import 'package:sales/domain/entities/get_order_params.dart';
 import 'package:sales/domain/entities/get_product_params.dart';
+import 'package:sales/domain/entities/order_with_items_params.dart';
 import 'package:sales/domain/entities/product.dart';
 import 'package:sales/domain/entities/product_order_by.dart';
+import 'package:sales/domain/entities/ranges.dart';
 import 'package:sales/domain/entities/recent_orders_result.dart';
 import 'package:sales/models/category.dart';
 import 'package:sales/models/order.dart';
 import 'package:sales/models/order_item.dart';
-import 'package:sales/models/range_of_dates.dart';
 import 'package:string_normalizer/string_normalizer.dart';
 
 import 'database.dart';
@@ -53,7 +56,7 @@ class MemoryDatatabaseImpl implements Database {
   }
 
   @override
-  Future<({int id, String sku})> generateProductIdSku() async {
+  Future<({int id, String sku})> getNextProductIdSku() async {
     final count = await getTotalProductCount();
     final id = count + 1;
 
@@ -153,12 +156,12 @@ class MemoryDatatabaseImpl implements Database {
   }
 
   @override
-  Future<List<Order>> getAllOrders({RangeOfDates? dateRange}) async {
+  Future<List<Order>> getAllOrders({Ranges<DateTime>? dateRange}) async {
     final orders = _orders.where((o) {
       if (o.deleted) return false;
 
       // Lọc theo ngày
-      if (dateRange != null && (o.date.isBefore(dateRange.from) || o.date.isAfter(dateRange.to))) {
+      if (dateRange != null && (o.date.isBefore(dateRange.start) || o.date.isAfter(dateRange.end))) {
         return false;
       }
 
@@ -192,14 +195,11 @@ class MemoryDatatabaseImpl implements Database {
   }
 
   @override
-  Future<List<OrderItem>> getAllOrderItems({
-    int? orderId,
-    int? productId,
-  }) async {
+  Future<List<OrderItem>> getAllOrderItems([GetOrderItemsParams? params]) async {
     return _orderItems.where((e) {
       if (e.deleted) return false;
-      if (orderId != null && e.orderId != orderId) return false;
-      if (productId != null && e.productId != productId) return false;
+      if (params?.orderId != null && e.orderId != params?.orderId) return false;
+      if (params?.productId != null && e.productId != params?.productId) return false;
       return true;
     }).toList();
   }
@@ -211,9 +211,9 @@ class MemoryDatatabaseImpl implements Database {
   }
 
   @override
-  Future<void> addOrderWithOrderItems(Order order, List<OrderItem> orderItems) async {
-    await addOrder(order);
-    for (final orderItem in orderItems) {
+  Future<void> addOrderWithOrderItems(OrderWithItemsParams params) async {
+    await addOrder(params.order);
+    for (final orderItem in params.orderItems) {
       await addOrderItem(orderItem);
 
       // Cập nhật lại số lượng của sản phẩm.
@@ -233,7 +233,7 @@ class MemoryDatatabaseImpl implements Database {
   }
 
   @override
-  Future<int> generateOrderId() async {
+  Future<int> getNextOrderId() async {
     final orders = await getAllOrders();
     final count = orders.length;
     final id = count + 1;
@@ -242,7 +242,7 @@ class MemoryDatatabaseImpl implements Database {
   }
 
   @override
-  Future<int> generateOrderItemId() async {
+  Future<int> getNextOrderItemId() async {
     final orderItems = await getAllOrderItems();
     final count = orderItems.length;
     final id = count + 1;
@@ -340,18 +340,17 @@ class MemoryDatatabaseImpl implements Database {
 
   @override
   Future<List<OrderItem>> getOrderItems({int? orderId, int? productId}) {
-    return getAllOrderItems(orderId: orderId, productId: productId);
+    return getAllOrderItems(GetOrderItemsParams(orderId: orderId, productId: productId));
   }
 
   @override
-  Future<({List<Order> orders, int totalCount})> getOrders({
-    int page = 1,
-    int perpage = 10,
-    RangeOfDates? dateRange,
-  }) async {
-    final result = await getAllOrders(dateRange: dateRange);
+  Future<({List<Order> orders, int totalCount})> getOrders([GetOrderParams params = const GetOrderParams()]) async {
+    final result = await getAllOrders(dateRange: params.dateRange);
 
-    return (totalCount: result.length, orders: result.skip((page - 1) * perpage).take(perpage).toList());
+    return (
+      totalCount: result.length,
+      orders: result.skip((params.page - 1) * params.perpage).take(params.perpage).toList(),
+    );
   }
 
   @override
@@ -428,8 +427,8 @@ class MemoryDatatabaseImpl implements Database {
   }
 
   @override
-  Future<void> removeOrderWithOrderItems(Order order) async {
-    final orderItems = await getAllOrderItems(orderId: order.id);
+  Future<void> removeOrderWithItems(Order order) async {
+    final orderItems = await getAllOrderItems(GetOrderItemsParams(orderId: order.id));
     for (final orderItem in orderItems) {
       final tempOrderItems = orderItem.copyWith(deleted: true);
       await updateOrderItem(tempOrderItems);
@@ -455,10 +454,10 @@ class MemoryDatatabaseImpl implements Database {
   }
 
   @override
-  Future<void> updateOrderWithOrderItems(Order order, List<OrderItem> orderItems) async {
-    await updateOrder(order);
-    final orderItemsFromDatabase = await getOrderItems(orderId: order.id);
-    for (final orderItem in orderItems) {
+  Future<void> updateOrderWithItems(OrderWithItemsParams params) async {
+    await updateOrder(params.order);
+    final orderItemsFromDatabase = await getOrderItems(orderId: params.order.id);
+    for (final orderItem in params.orderItems) {
       final index = orderItemsFromDatabase.indexWhere((e) => e.id == orderItem.id);
       if (index == -1) {
         await addOrderItem(orderItem);
@@ -492,7 +491,7 @@ class MemoryDatatabaseImpl implements Database {
   }
 
   @override
-  Future<void> removeAllOrdersWithOrderItems() async {
+  Future<void> removeAllOrdersWithItems() async {
     _orders.clear();
     _orderItems.clear();
   }

@@ -1,9 +1,11 @@
 import 'package:get_it/get_it.dart';
 import 'package:sales/app/app_controller.dart';
 import 'package:sales/application/usecases/add_category_usecase.dart';
+import 'package:sales/application/usecases/add_order_with_items_usecase.dart';
 import 'package:sales/application/usecases/add_product_usecase.dart';
 import 'package:sales/application/usecases/auto_login_usecase.dart';
 import 'package:sales/application/usecases/get_all_categories.dart';
+import 'package:sales/application/usecases/get_all_products_usecase.dart';
 import 'package:sales/application/usecases/get_app_version_usecase.dart';
 import 'package:sales/application/usecases/get_daily_order_count_usecase.dart';
 import 'package:sales/application/usecases/get_daily_revenues_usecase.dart';
@@ -11,7 +13,11 @@ import 'package:sales/application/usecases/get_five_highest_sales_products_useca
 import 'package:sales/application/usecases/get_five_low_stock_products_usecase.dart';
 import 'package:sales/application/usecases/get_monthly_revenues_usecase.dart';
 import 'package:sales/application/usecases/get_next_category_id_usecase.dart';
+import 'package:sales/application/usecases/get_next_order_id_usecase.dart';
+import 'package:sales/application/usecases/get_next_order_item_id_usecase.dart';
 import 'package:sales/application/usecases/get_next_product_id_and_sku_usecase.dart';
+import 'package:sales/application/usecases/get_order_items_usecase.dart';
+import 'package:sales/application/usecases/get_orders_usecase.dart';
 import 'package:sales/application/usecases/get_products_usecase.dart';
 import 'package:sales/application/usecases/get_three_recent_orders_usecase.dart';
 import 'package:sales/application/usecases/get_total_product_count_usecase.dart';
@@ -19,12 +25,13 @@ import 'package:sales/application/usecases/import_data_usecase.dart';
 import 'package:sales/application/usecases/load_server_configuration_usecase.dart';
 import 'package:sales/application/usecases/login_usecase.dart';
 import 'package:sales/application/usecases/remove_category_usecase.dart';
+import 'package:sales/application/usecases/remove_order_with_items_usecase.dart';
 import 'package:sales/application/usecases/remove_product_usecase.dart';
 import 'package:sales/application/usecases/replace_database_usecase.dart';
 import 'package:sales/application/usecases/save_server_configuration_usecase.dart';
 import 'package:sales/application/usecases/update_category_usecase.dart';
+import 'package:sales/application/usecases/update_order_with_items_usecase.dart';
 import 'package:sales/application/usecases/update_product_usecase.dart';
-import 'package:sales/controllers/order_controller.dart';
 import 'package:sales/domain/repositories/app_version_repository.dart';
 import 'package:sales/domain/repositories/auth_repository.dart';
 import 'package:sales/domain/repositories/category_repository.dart';
@@ -56,7 +63,6 @@ Future<void> setup() async {
   getIt.registerSingleton<SharedPreferences>(preferences);
   getIt.registerSingleton<AppController>(AppController());
   getIt.registerSingleton<d.Database>(SampleMemoryDatabase());
-  getIt.registerSingleton<OrderController>(OrderController());
 }
 
 Future<void> setupDependencies() async {
@@ -99,6 +105,15 @@ Future<void> setupDependencies() async {
   getIt.registerLazySingleton<UpdateProductUseCase>(() => UpdateProductUseCase(getIt()));
   getIt.registerLazySingleton<RemoveProductUseCase>(() => RemoveProductUseCase(getIt()));
   getIt.registerLazySingleton<GetNextProductIdAndSkuUseCase>(() => GetNextProductIdAndSkuUseCase(getIt()));
+
+  getIt.registerLazySingleton<GetOrdersUseCase>(() => GetOrdersUseCase(getIt()));
+  getIt.registerLazySingleton<GetOrderItemsUseCase>(() => GetOrderItemsUseCase(getIt()));
+  getIt.registerLazySingleton<GetAllProductsUseCase>(() => GetAllProductsUseCase(getIt()));
+  getIt.registerLazySingleton<GetNextOrderIdUseCase>(() => GetNextOrderIdUseCase(getIt()));
+  getIt.registerLazySingleton<GetNextOrderItemIdUseCase>(() => GetNextOrderItemIdUseCase(getIt()));
+  getIt.registerLazySingleton<AddOrderWithItemsUseCase>(() => AddOrderWithItemsUseCase(getIt()));
+  getIt.registerLazySingleton<UpdateOrderWithItemsUseCase>(() => UpdateOrderWithItemsUseCase(getIt()));
+  getIt.registerLazySingleton<RemoveOrderWithItemsUseCase>(() => RemoveOrderWithItemsUseCase(getIt()));
 
   getIt.registerLazySingleton<ReplaceDatabaseUsecase>(() => ReplaceDatabaseUsecase(getIt()));
   getIt.registerLazySingleton<ImportDataUseCase>(() => ImportDataUseCase(getIt()));

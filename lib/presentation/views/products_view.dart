@@ -183,15 +183,15 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
         ),
         IconButton(
           onPressed: () => updateProduct(product),
-          icon: const Icon(Icons.edit),
+          icon: const Icon(Icons.edit_rounded),
         ),
         IconButton(
           onPressed: () => copyProduct(product),
-          icon: const Icon(Icons.copy),
+          icon: const Icon(Icons.copy_rounded),
         ),
         IconButton(
           onPressed: () => removeProduct(product),
-          icon: const Icon(Icons.delete, color: Colors.red),
+          icon: const Icon(Icons.close_rounded, color: Colors.red),
         ),
       ],
     );

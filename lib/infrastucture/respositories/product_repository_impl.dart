@@ -35,7 +35,7 @@ class ProductRepositoryImpl implements ProductRepository {
 
   @override
   Future<({int id, String sku})> getNextProductIdAndSku() {
-    return _database.generateProductIdSku();
+    return _database.getNextProductIdSku();
   }
 
   @override
@@ -61,5 +61,10 @@ class ProductRepositoryImpl implements ProductRepository {
   @override
   Future<void> removeAllProducts() {
     return _database.removeAllProducts();
+  }
+
+  @override
+  Future<List<Product>> getAllProducts() {
+    return _database.getAllProducts();
   }
 }
