@@ -232,9 +232,7 @@ class DataRow {
   ///  * [WidgetStateMouseCursor], which can be used to create a [MouseCursor].
   final WidgetStateProperty<MouseCursor?>? mouseCursor;
 
-  bool get _debugInteractive =>
-      onSelectChanged != null ||
-      cells.any((DataCell cell) => cell._debugInteractive);
+  bool get _debugInteractive => onSelectChanged != null || cells.any((DataCell cell) => cell._debugInteractive);
 }
 
 /// The data for a cell of a [DataTable].
@@ -334,11 +332,7 @@ class DataCell {
   final GestureTapCancelCallback? onTapCancel;
 
   bool get _debugInteractive =>
-      onTap != null ||
-      onDoubleTap != null ||
-      onLongPress != null ||
-      onTapDown != null ||
-      onTapCancel != null;
+      onTap != null || onDoubleTap != null || onLongPress != null || onTapDown != null || onTapCancel != null;
 }
 
 /// A Material Design data table.
@@ -450,17 +444,12 @@ class DataTable extends StatelessWidget {
     this.border,
     this.clipBehavior = Clip.none,
   })  : assert(columns.isNotEmpty),
-        assert(sortColumnIndex == null ||
-            (sortColumnIndex >= 0 && sortColumnIndex < columns.length)),
+        assert(sortColumnIndex == null || (sortColumnIndex >= 0 && sortColumnIndex < columns.length)),
         assert(!rows.any((DataRow row) => row.cells.length != columns.length),
             'All rows must have the same number of cells as there are header cells (${columns.length})'),
         assert(dividerThickness == null || dividerThickness >= 0),
-        assert(dataRowMinHeight == null ||
-            dataRowMaxHeight == null ||
-            dataRowMaxHeight >= dataRowMinHeight),
-        assert(
-            dataRowHeight == null ||
-                (dataRowMinHeight == null && dataRowMaxHeight == null),
+        assert(dataRowMinHeight == null || dataRowMaxHeight == null || dataRowMaxHeight >= dataRowMinHeight),
+        assert(dataRowHeight == null || (dataRowMinHeight == null && dataRowMaxHeight == null),
             'dataRowHeight ($dataRowHeight) must not be set if dataRowMinHeight ($dataRowMinHeight) or dataRowMaxHeight ($dataRowMaxHeight) are set.'),
         dataRowMinHeight = dataRowHeight ?? dataRowMinHeight,
         dataRowMaxHeight = dataRowHeight ?? dataRowMaxHeight,
@@ -569,8 +558,7 @@ class DataTable extends StatelessWidget {
     'Migrate to use dataRowMinHeight and dataRowMaxHeight instead. '
     'This feature was deprecated after v3.7.0-5.0.pre.',
   )
-  double? get dataRowHeight =>
-      dataRowMinHeight == dataRowMaxHeight ? dataRowMinHeight : null;
+  double? get dataRowHeight => dataRowMinHeight == dataRowMaxHeight ? dataRowMinHeight : null;
 
   /// {@template flutter.material.dataTable.dataRowMinHeight}
   /// The minimum height of each row (excluding the row that contains column headings).
@@ -782,8 +770,7 @@ class DataTable extends StatelessWidget {
   /// The default divider thickness.
   static const double _dividerThickness = 1.0;
 
-  static const Duration _sortArrowAnimationDuration =
-      Duration(milliseconds: 150);
+  static const Duration _sortArrowAnimationDuration = Duration(milliseconds: 150);
 
   Widget _buildCheckbox({
     required BuildContext context,
@@ -795,17 +782,13 @@ class DataTable extends StatelessWidget {
     MouseCursor? rowMouseCursor,
   }) {
     final ThemeData themeData = Theme.of(context);
-    final double effectiveHorizontalMargin = horizontalMargin ??
-        themeData.dataTableTheme.horizontalMargin ??
-        _horizontalMargin;
+    final double effectiveHorizontalMargin =
+        horizontalMargin ?? themeData.dataTableTheme.horizontalMargin ?? _horizontalMargin;
     final double effectiveCheckboxHorizontalMarginStart =
-        checkboxHorizontalMargin ??
-            themeData.dataTableTheme.checkboxHorizontalMargin ??
-            effectiveHorizontalMargin;
-    final double effectiveCheckboxHorizontalMarginEnd =
-        checkboxHorizontalMargin ??
-            themeData.dataTableTheme.checkboxHorizontalMargin ??
-            effectiveHorizontalMargin / 2.0;
+        checkboxHorizontalMargin ?? themeData.dataTableTheme.checkboxHorizontalMargin ?? effectiveHorizontalMargin;
+    final double effectiveCheckboxHorizontalMarginEnd = checkboxHorizontalMargin ??
+        themeData.dataTableTheme.checkboxHorizontalMargin ??
+        effectiveHorizontalMargin / 2.0;
     Widget contents = Semantics(
       container: true,
       child: Padding(
@@ -856,8 +839,7 @@ class DataTable extends StatelessWidget {
       mainAxisAlignment: headingRowAlignment,
       children: <Widget>[
         if (headingRowAlignment == MainAxisAlignment.center && onSort != null)
-          const SizedBox(
-              width: _SortArrowState._arrowIconSize + _sortArrowPadding),
+          const SizedBox(width: _SortArrowState._arrowIconSize + _sortArrowPadding),
         label,
         if (onSort != null) ...<Widget>[
           _SortArrow(
@@ -881,11 +863,9 @@ class DataTable extends StatelessWidget {
     label = Container(
       padding: padding,
       height: effectiveHeadingRowHeight,
-      alignment:
-          numeric ? Alignment.centerRight : AlignmentDirectional.centerStart,
+      alignment: numeric ? Alignment.centerRight : AlignmentDirectional.centerStart,
       child: AnimatedDefaultTextStyle(
-        style:
-            DefaultTextStyle.of(context).style.merge(effectiveHeadingTextStyle),
+        style: DefaultTextStyle.of(context).style.merge(effectiveHeadingTextStyle),
         softWrap: false,
         duration: _sortArrowAnimationDuration,
         child: label,
@@ -951,27 +931,17 @@ class DataTable extends StatelessWidget {
         kMinInteractiveDimension;
     label = Container(
       padding: padding,
-      constraints: BoxConstraints(
-          minHeight: effectiveDataRowMinHeight,
-          maxHeight: effectiveDataRowMaxHeight),
-      alignment:
-          numeric ? Alignment.centerRight : AlignmentDirectional.centerStart,
+      constraints: BoxConstraints(minHeight: effectiveDataRowMinHeight, maxHeight: effectiveDataRowMaxHeight),
+      alignment: numeric ? Alignment.centerRight : AlignmentDirectional.centerStart,
       child: DefaultTextStyle(
         style: DefaultTextStyle.of(context)
             .style
             .merge(effectiveDataTextStyle)
-            .copyWith(
-                color: placeholder
-                    ? effectiveDataTextStyle.color!.withOpacity(0.6)
-                    : null),
+            .copyWith(color: placeholder ? effectiveDataTextStyle.color!.withOpacity(0.6) : null),
         child: DropdownButtonHideUnderline(child: label),
       ),
     );
-    if (onTap != null ||
-        onDoubleTap != null ||
-        onLongPress != null ||
-        onTapDown != null ||
-        onTapCancel != null) {
+    if (onTap != null || onDoubleTap != null || onLongPress != null || onTapDown != null || onTapCancel != null) {
       label = InkWell(
         onTap: onTap,
         onDoubleTap: onDoubleTap,
@@ -1000,14 +970,10 @@ class DataTable extends StatelessWidget {
     final ThemeData theme = Theme.of(context);
     final DataTableThemeData dataTableTheme = DataTableTheme.of(context);
     final WidgetStateProperty<Color?>? effectiveHeadingRowColor =
-        headingRowColor ??
-            dataTableTheme.headingRowColor ??
-            theme.dataTableTheme.headingRowColor;
-    final WidgetStateProperty<Color?>? effectiveDataRowColor = dataRowColor ??
-        dataTableTheme.dataRowColor ??
-        theme.dataTableTheme.dataRowColor;
-    final WidgetStateProperty<Color?> defaultRowColor =
-        WidgetStateProperty.resolveWith(
+        headingRowColor ?? dataTableTheme.headingRowColor ?? theme.dataTableTheme.headingRowColor;
+    final WidgetStateProperty<Color?>? effectiveDataRowColor =
+        dataRowColor ?? dataTableTheme.dataRowColor ?? theme.dataTableTheme.dataRowColor;
+    final WidgetStateProperty<Color?> defaultRowColor = WidgetStateProperty.resolveWith(
       (Set<WidgetState> states) {
         if (states.contains(WidgetState.selected)) {
           return theme.colorScheme.primary.withOpacity(0.08);
@@ -1015,58 +981,44 @@ class DataTable extends StatelessWidget {
         return null;
       },
     );
-    final bool anyRowSelectable =
-        rows.any((DataRow row) => row.onSelectChanged != null);
+    final bool anyRowSelectable = rows.any((DataRow row) => row.onSelectChanged != null);
     final bool displayCheckboxColumn = showCheckboxColumn && anyRowSelectable;
-    final Iterable<DataRow> rowsWithCheckbox = displayCheckboxColumn
-        ? rows.where((DataRow row) => row.onSelectChanged != null)
-        : <DataRow>[];
-    final Iterable<DataRow> rowsChecked =
-        rowsWithCheckbox.where((DataRow row) => row.selected);
-    final bool allChecked =
-        displayCheckboxColumn && rowsChecked.length == rowsWithCheckbox.length;
+    final Iterable<DataRow> rowsWithCheckbox =
+        displayCheckboxColumn ? rows.where((DataRow row) => row.onSelectChanged != null) : <DataRow>[];
+    final Iterable<DataRow> rowsChecked = rowsWithCheckbox.where((DataRow row) => row.selected);
+    final bool allChecked = displayCheckboxColumn && rowsChecked.length == rowsWithCheckbox.length;
     final bool anyChecked = displayCheckboxColumn && rowsChecked.isNotEmpty;
     final bool someChecked = anyChecked && !allChecked;
     final double effectiveHorizontalMargin = horizontalMargin ??
         dataTableTheme.horizontalMargin ??
         theme.dataTableTheme.horizontalMargin ??
         _horizontalMargin;
-    final double effectiveCheckboxHorizontalMarginStart =
-        checkboxHorizontalMargin ??
-            dataTableTheme.checkboxHorizontalMargin ??
-            theme.dataTableTheme.checkboxHorizontalMargin ??
-            effectiveHorizontalMargin;
-    final double effectiveCheckboxHorizontalMarginEnd =
-        checkboxHorizontalMargin ??
-            dataTableTheme.checkboxHorizontalMargin ??
-            theme.dataTableTheme.checkboxHorizontalMargin ??
-            effectiveHorizontalMargin / 2.0;
-    final double effectiveColumnSpacing = columnSpacing ??
-        dataTableTheme.columnSpacing ??
-        theme.dataTableTheme.columnSpacing ??
-        _columnSpacing;
+    final double effectiveCheckboxHorizontalMarginStart = checkboxHorizontalMargin ??
+        dataTableTheme.checkboxHorizontalMargin ??
+        theme.dataTableTheme.checkboxHorizontalMargin ??
+        effectiveHorizontalMargin;
+    final double effectiveCheckboxHorizontalMarginEnd = checkboxHorizontalMargin ??
+        dataTableTheme.checkboxHorizontalMargin ??
+        theme.dataTableTheme.checkboxHorizontalMargin ??
+        effectiveHorizontalMargin / 2.0;
+    final double effectiveColumnSpacing =
+        columnSpacing ?? dataTableTheme.columnSpacing ?? theme.dataTableTheme.columnSpacing ?? _columnSpacing;
 
-    final List<TableColumnWidth> tableColumns = List<TableColumnWidth>.filled(
-        columns.length + (displayCheckboxColumn ? 1 : 0),
-        const _NullTableColumnWidth());
+    final List<TableColumnWidth> tableColumns =
+        List<TableColumnWidth>.filled(columns.length + (displayCheckboxColumn ? 1 : 0), const _NullTableColumnWidth());
     final List<TableRow> tableRows = List<TableRow>.generate(
       rows.length + 1, // the +1 is for the header row
       (int index) {
         final bool isSelected = index > 0 && rows[index - 1].selected;
-        final bool isDisabled = index > 0 &&
-            anyRowSelectable &&
-            rows[index - 1].onSelectChanged == null;
+        final bool isDisabled = index > 0 && anyRowSelectable && rows[index - 1].onSelectChanged == null;
         final Set<WidgetState> states = <WidgetState>{
           if (isSelected) WidgetState.selected,
           if (isDisabled) WidgetState.disabled,
         };
-        final Color? resolvedDataRowColor = index > 0
-            ? (rows[index - 1].color ?? effectiveDataRowColor)?.resolve(states)
-            : null;
-        final Color? resolvedHeadingRowColor =
-            effectiveHeadingRowColor?.resolve(<WidgetState>{});
-        final Color? rowColor =
-            index > 0 ? resolvedDataRowColor : resolvedHeadingRowColor;
+        final Color? resolvedDataRowColor =
+            index > 0 ? (rows[index - 1].color ?? effectiveDataRowColor)?.resolve(states) : null;
+        final Color? resolvedHeadingRowColor = effectiveHeadingRowColor?.resolve(<WidgetState>{});
+        final Color? rowColor = index > 0 ? resolvedDataRowColor : resolvedHeadingRowColor;
         final BorderSide borderSide = Divider.createBorderSide(
           context,
           width: dividerThickness ??
@@ -1085,8 +1037,7 @@ class DataTable extends StatelessWidget {
             border: border,
             color: rowColor ?? defaultRowColor.resolve(states),
           ),
-          children:
-              List<Widget>.filled(tableColumns.length, const _NullWidget()),
+          children: List<Widget>.filled(tableColumns.length, const _NullWidget()),
         );
       },
     );
@@ -1096,15 +1047,12 @@ class DataTable extends StatelessWidget {
     int displayColumnIndex = 0;
     if (displayCheckboxColumn) {
       tableColumns[0] = FixedColumnWidth(
-          effectiveCheckboxHorizontalMarginStart +
-              Checkbox.width +
-              effectiveCheckboxHorizontalMarginEnd);
+          effectiveCheckboxHorizontalMarginStart + Checkbox.width + effectiveCheckboxHorizontalMarginEnd);
       tableRows[0].children[0] = _buildCheckbox(
         context: context,
         checked: someChecked ? null : allChecked,
         onRowTap: null,
-        onCheckboxChanged: (bool? checked) =>
-            _handleSelectAll(checked, someChecked),
+        onCheckboxChanged: (bool? checked) => _handleSelectAll(checked, someChecked),
         overlayColor: null,
         tristate: true,
       );
@@ -1116,13 +1064,10 @@ class DataTable extends StatelessWidget {
         tableRows[rowIndex].children[0] = _buildCheckbox(
           context: context,
           checked: row.selected,
-          onRowTap: row.onSelectChanged == null
-              ? null
-              : () => row.onSelectChanged?.call(!row.selected),
+          onRowTap: row.onSelectChanged == null ? null : () => row.onSelectChanged?.call(!row.selected),
           onCheckboxChanged: row.onSelectChanged,
           overlayColor: row.color ?? effectiveDataRowColor,
-          rowMouseCursor: row.mouseCursor?.resolve(states) ??
-              dataTableTheme.dataRowCursor?.resolve(states),
+          rowMouseCursor: row.mouseCursor?.resolve(states) ?? dataTableTheme.dataRowCursor?.resolve(states),
           tristate: false,
         );
         rowIndex += 1;
@@ -1130,14 +1075,11 @@ class DataTable extends StatelessWidget {
       displayColumnIndex += 1;
     }
 
-    for (int dataColumnIndex = 0;
-        dataColumnIndex < columns.length;
-        dataColumnIndex += 1) {
+    for (int dataColumnIndex = 0; dataColumnIndex < columns.length; dataColumnIndex += 1) {
       final DataColumn column = columns[dataColumnIndex];
 
       final double paddingStart = switch (dataColumnIndex) {
-        0 when displayCheckboxColumn && checkboxHorizontalMargin == null =>
-          effectiveHorizontalMargin / 2.0,
+        0 when displayCheckboxColumn && checkboxHorizontalMargin == null => effectiveHorizontalMargin / 2.0,
         0 => effectiveHorizontalMargin,
         _ => effectiveColumnSpacing / 2.0,
       };
@@ -1154,14 +1096,12 @@ class DataTable extends StatelessWidget {
         end: paddingEnd,
       );
 
-      final TableColumnWidth? tableColumnWidth =
-          columnWidthBuilder?.call(displayColumnIndex);
+      final TableColumnWidth? tableColumnWidth = columnWidthBuilder?.call(displayColumnIndex);
       if (tableColumnWidth != null) {
         tableColumns[displayColumnIndex] = tableColumnWidth;
       } else {
         if (dataColumnIndex == _onlyTextColumn) {
-          tableColumns[displayColumnIndex] =
-              const IntrinsicColumnWidth(flex: 1.0);
+          tableColumns[displayColumnIndex] = const IntrinsicColumnWidth(flex: 1.0);
         } else {
           tableColumns[displayColumnIndex] = const IntrinsicColumnWidth();
         }
@@ -1176,17 +1116,15 @@ class DataTable extends StatelessWidget {
         tooltip: column.tooltip,
         numeric: column.numeric,
         onSort: column.onSort != null
-            ? () => column.onSort!(dataColumnIndex,
-                sortColumnIndex != dataColumnIndex || !sortAscending)
+            ? () => column.onSort!(dataColumnIndex, sortColumnIndex != dataColumnIndex || !sortAscending)
             : null,
         sorted: dataColumnIndex == sortColumnIndex,
         ascending: sortAscending,
         overlayColor: effectiveHeadingRowColor,
-        mouseCursor: column.mouseCursor?.resolve(headerStates) ??
-            dataTableTheme.headingCellCursor?.resolve(headerStates),
-        headingRowAlignment: column.headingRowAlignment ??
-            dataTableTheme.headingRowAlignment ??
-            MainAxisAlignment.start,
+        mouseCursor:
+            column.mouseCursor?.resolve(headerStates) ?? dataTableTheme.headingCellCursor?.resolve(headerStates),
+        headingRowAlignment:
+            column.headingRowAlignment ?? dataTableTheme.headingRowAlignment ?? MainAxisAlignment.start,
       );
       rowIndex = 1;
       for (final DataRow row in rows) {
@@ -1206,13 +1144,10 @@ class DataTable extends StatelessWidget {
           onLongPress: cell.onLongPress,
           onTapCancel: cell.onTapCancel,
           onTapDown: cell.onTapDown,
-          onSelectChanged: row.onSelectChanged == null
-              ? null
-              : () => row.onSelectChanged?.call(!row.selected),
+          onSelectChanged: row.onSelectChanged == null ? null : () => row.onSelectChanged?.call(!row.selected),
           overlayColor: row.color ?? effectiveDataRowColor,
           onRowLongPress: row.onLongPress,
-          mouseCursor: row.mouseCursor?.resolve(states) ??
-              dataTableTheme.dataRowCursor?.resolve(states),
+          mouseCursor: row.mouseCursor?.resolve(states) ?? dataTableTheme.dataRowCursor?.resolve(states),
         );
         rowIndex += 1;
       }
@@ -1220,9 +1155,7 @@ class DataTable extends StatelessWidget {
     }
 
     return Container(
-      decoration: decoration ??
-          dataTableTheme.decoration ??
-          theme.dataTableTheme.decoration,
+      decoration: decoration ?? dataTableTheme.decoration ?? theme.dataTableTheme.decoration,
       child: Material(
         type: MaterialType.transparency,
         borderRadius: border?.borderRadius,
@@ -1288,8 +1221,7 @@ class TableRowInkWell extends InkResponse {
         table = table.parent;
       }
       if (table is RenderTable) {
-        final TableCellParentData cellParentData =
-            cell.parentData! as TableCellParentData;
+        final TableCellParentData cellParentData = cell.parentData! as TableCellParentData;
         assert(cellParentData.y != null);
         final Rect rect = table.getRowBox(cellParentData.y!);
         // The rect is in the table's coordinate space. We need to change it to the
@@ -1339,8 +1271,7 @@ class _SortArrowState extends State<_SortArrow> with TickerProviderStateMixin {
   bool? _up;
 
   static final Animatable<double> _turnTween =
-      Tween<double>(begin: 0.0, end: math.pi)
-          .chain(CurveTween(curve: Curves.easeIn));
+      Tween<double>(begin: 0.0, end: math.pi).chain(CurveTween(curve: Curves.easeIn));
 
   @override
   void initState() {
@@ -1376,8 +1307,7 @@ class _SortArrowState extends State<_SortArrow> with TickerProviderStateMixin {
     if (status.isCompleted) {
       assert(_orientationAnimation.value == math.pi);
       _orientationOffset += math.pi;
-      _orientationController.value =
-          0.0; // TODO(ianh): This triggers a pointless rebuild.
+      _orientationController.value = 0.0; // TODO(ianh): This triggers a pointless rebuild.
     }
   }
 
@@ -1425,9 +1355,8 @@ class _SortArrowState extends State<_SortArrow> with TickerProviderStateMixin {
     return FadeTransition(
       opacity: _opacityAnimation,
       child: Transform(
-        transform:
-            Matrix4.rotationZ(_orientationOffset + _orientationAnimation.value)
-              ..setTranslationRaw(0.0, _arrowIconBaselineOffset, 0.0),
+        transform: Matrix4.rotationZ(_orientationOffset + _orientationAnimation.value)
+          ..setTranslationRaw(0.0, _arrowIconBaselineOffset, 0.0),
         alignment: Alignment.center,
         child: const Icon(
           Icons.arrow_upward,
@@ -1442,12 +1371,10 @@ class _NullTableColumnWidth extends TableColumnWidth {
   const _NullTableColumnWidth();
 
   @override
-  double maxIntrinsicWidth(Iterable<RenderBox> cells, double containerWidth) =>
-      throw UnimplementedError();
+  double maxIntrinsicWidth(Iterable<RenderBox> cells, double containerWidth) => throw UnimplementedError();
 
   @override
-  double minIntrinsicWidth(Iterable<RenderBox> cells, double containerWidth) =>
-      throw UnimplementedError();
+  double minIntrinsicWidth(Iterable<RenderBox> cells, double containerWidth) => throw UnimplementedError();
 }
 
 class _NullWidget extends Widget {

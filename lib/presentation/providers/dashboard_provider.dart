@@ -8,8 +8,8 @@ import 'package:sales/application/usecases/get_three_recent_orders_usecase.dart'
 import 'package:sales/application/usecases/get_total_product_count_usecase.dart';
 import 'package:sales/core/usecases/usecase.dart';
 import 'package:sales/di.dart';
+import 'package:sales/domain/entities/product.dart';
 import 'package:sales/domain/entities/recent_orders_result.dart';
-import 'package:sales/models/product.dart';
 
 class DashboardState {
   /// Tổng tất cả sản phẩm.

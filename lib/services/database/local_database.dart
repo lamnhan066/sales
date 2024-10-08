@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:sales/di.dart';
+import 'package:sales/domain/entities/product.dart';
+import 'package:sales/domain/entities/product_order_by.dart';
+import 'package:sales/domain/entities/ranges.dart';
 import 'package:sales/models/category.dart';
 import 'package:sales/models/order.dart';
 import 'package:sales/models/order_item.dart';
-import 'package:sales/models/product.dart';
-import 'package:sales/models/product_order_by.dart';
 import 'package:sales/models/range_of_dates.dart';
 import 'package:sales/services/database/database.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -129,8 +129,7 @@ class LocalDatabase extends Database {
       if (o.deleted) return false;
 
       // Lọc theo ngày
-      if (dateRange != null &&
-          (o.date.isBefore(dateRange.from) || o.date.isAfter(dateRange.to))) {
+      if (dateRange != null && (o.date.isBefore(dateRange.from) || o.date.isAfter(dateRange.to))) {
         return false;
       }
 
@@ -144,7 +143,7 @@ class LocalDatabase extends Database {
   Future<List<Product>> getAllProducts({
     ProductOrderBy orderBy = ProductOrderBy.none,
     String searchText = '',
-    RangeValues? rangeValues,
+    Ranges<double>? rangeValues,
     int? categoryId,
   }) async {
     // Lấy tất cả dữ liệu từ CSDL.
@@ -161,8 +160,7 @@ class LocalDatabase extends Database {
       // Lọc theo mức giá.
       bool priceFilter = true;
       if (rangeValues != null) {
-        priceFilter = product.importPrice >= rangeValues.start &&
-            product.importPrice <= rangeValues.end;
+        priceFilter = product.importPrice >= rangeValues.start && product.importPrice <= rangeValues.end;
       }
 
       // Tìm kiếm.

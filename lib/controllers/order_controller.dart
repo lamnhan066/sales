@@ -10,10 +10,10 @@ import 'package:sales/components/orders/order_form_dialog.dart';
 import 'package:sales/core/constants/app_configs.dart';
 import 'package:sales/core/utils/utils.dart';
 import 'package:sales/di.dart';
+import 'package:sales/domain/entities/product.dart';
 import 'package:sales/models/order.dart';
 import 'package:sales/models/order_item.dart';
 import 'package:sales/models/order_status.dart';
-import 'package:sales/models/product.dart';
 import 'package:sales/models/range_of_dates.dart';
 import 'package:sales/services/database/database.dart';
 
@@ -64,8 +64,7 @@ class OrderController {
     BuildContext context,
     SetState setState,
   ) async {
-    final newPage =
-        await pageChooser(context: context, page: page, totalPage: totalPage);
+    final newPage = await pageChooser(context: context, page: page, totalPage: totalPage);
 
     if (newPage != null) {
       page = newPage;
@@ -169,8 +168,7 @@ extension PrivateOrderController on OrderController {
     );
   }
 
-  Future<({Order order, List<OrderItem> orderItems})?> _addOrderDialog(
-      BuildContext context, SetState setState) {
+  Future<({Order order, List<OrderItem> orderItems})?> _addOrderDialog(BuildContext context, SetState setState) {
     return _orderDialog(
       context: context,
       setState: setState,
@@ -266,8 +264,7 @@ extension PrivateOrderController on OrderController {
     final isNewOrder = order == null || copy;
 
     if (order != null) {
-      orderItems
-          .addAll(await _database.getAllOrderItems(orderId: tempOrder.id));
+      orderItems.addAll(await _database.getAllOrderItems(orderId: tempOrder.id));
     }
 
     if (isNewOrder) {
@@ -278,8 +275,7 @@ extension PrivateOrderController on OrderController {
     if (copy) {
       tempOrder = tempOrder.copyWith(status: OrderStatus.created);
       for (int i = 0; i < orderItems.length; i++) {
-        orderItems[i] =
-            orderItems[i].copyWith(orderId: tempOrder.id, id: orderItemId);
+        orderItems[i] = orderItems[i].copyWith(orderId: tempOrder.id, id: orderItemId);
         orderItemId++;
       }
     }
@@ -326,8 +322,7 @@ extension PrivateOrderController on OrderController {
 
     Future<void> removeProduct(Product product) async {
       if (isNewOrder) {
-        orderItems
-            .removeWhere((orderItem) => orderItem.productId == product.id);
+        orderItems.removeWhere((orderItem) => orderItem.productId == product.id);
         await regenerateOrderItemIds();
       } else {
         final index = orderItems.indexWhere((e) => e.productId == product.id);
@@ -341,8 +336,7 @@ extension PrivateOrderController on OrderController {
     }
 
     if (context.mounted) {
-      final dialogWidth =
-          MediaQuery.sizeOf(context).width * AppConfigs.dialogWidthRatio;
+      final dialogWidth = MediaQuery.sizeOf(context).width * AppConfigs.dialogWidthRatio;
       final result = await boxWDialog(
         context: context,
         title: title,

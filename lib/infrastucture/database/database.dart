@@ -1,13 +1,12 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
+import 'package:sales/domain/entities/get_product_params.dart';
+import 'package:sales/domain/entities/product.dart';
 import 'package:sales/domain/entities/recent_orders_result.dart';
 import 'package:sales/infrastucture/utils/excel_picker.dart';
 import 'package:sales/models/category.dart';
 import 'package:sales/models/order.dart';
 import 'package:sales/models/order_item.dart';
-import 'package:sales/models/product.dart';
-import 'package:sales/models/product_order_by.dart';
 import 'package:sales/models/range_of_dates.dart';
 
 /// Database abstract.
@@ -88,13 +87,16 @@ abstract interface class Database {
   Future<List<Category>> getAllCategories();
 
   /// Lưu tất cả loại hàng vào CSDL.
-  Future<void> saveAllCategories(List<Category> categories);
+  Future<void> addAllCategories(List<Category> categories);
+
+  /// Xoá tất cả loại hàng.
+  Future<void> removeAllCategories();
 
   /// Trình tạo ra `id` và `sku` cho sản phẩm.
   Future<({int id, String sku})> generateProductIdSku();
 
   /// Trình tạo ra `id` cho loại hàng.
-  Future<int> generateCategoryId();
+  Future<int> getNextCategoryId();
 
   /// Thêm sản phẩm mới.
   Future<void> addProduct(Product product);
@@ -106,7 +108,10 @@ abstract interface class Database {
   Future<void> removeProduct(Product product);
 
   /// Lưu tất cả sản phẩm vào CSDL.
-  Future<void> saveAllProducts(List<Product> products);
+  Future<void> addAllProducts(List<Product> products);
+
+  /// Xoá tất cả sản phẩm.
+  Future<void> removeAllProducts();
 
   /// Lấy sản phẩm thông qua ID.
   Future<Product> getProductById(int id);
@@ -115,22 +120,10 @@ abstract interface class Database {
   ///
   /// Lấy danh sách sản phẩm theo điều kiện và trả về (tổng số trang, danh sách
   /// sản phẩm trang hiện tại).
-  Future<({int totalCount, List<Product> products})> getProducts({
-    int page = 1,
-    int perpage = 10,
-    ProductOrderBy orderBy = ProductOrderBy.none,
-    String searchText = '',
-    RangeValues? rangeValues,
-    int? categoryId,
-  });
+  Future<({int totalCount, List<Product> products})> getProducts([GetProductParams params = const GetProductParams()]);
 
   /// Lấy toàn bộ danh sách sản phẩm.
-  Future<List<Product>> getAllProducts({
-    ProductOrderBy orderBy = ProductOrderBy.none,
-    String searchText = '',
-    RangeValues? rangeValues,
-    int? categoryId,
-  });
+  Future<List<Product>> getAllProducts([GetProductParams params = const GetProductParams()]);
 
   /// Trình tạo ra `id` cho loại hàng.
   Future<int> generateOrderId();
@@ -189,6 +182,9 @@ abstract interface class Database {
 
   /// Xoá Order cùng với OrderItems
   Future<void> removeOrderWithOrderItems(Order order);
+
+  /// Xoá tất cả đơn đặt hàng cùng với chi tiết đơn hàng tương ứng.
+  Future<void> removeAllOrdersWithOrderItems();
 
   /// Lấy danh sách 5 sản phẩm có số lượng ít hơn 5 trong kho.
   Future<List<Product>> getFiveLowStockProducts();

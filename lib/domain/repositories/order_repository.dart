@@ -5,4 +5,5 @@ abstract class OrderRepository {
   Future<int> getDailyOrderCount(DateTime dateTime);
   Future<RecentOrdersResult> getThreeRecentOrders();
   Future<List<int>> getMonthlyRevenues(DateTime dateTime);
+  Future<void> removeAllOrdersWithOrderItems();
 }

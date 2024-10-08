@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:flutter/material.dart';
+import 'package:sales/domain/entities/product.dart';
+import 'package:sales/domain/entities/product_order_by.dart';
+import 'package:sales/domain/entities/ranges.dart';
 import 'package:sales/infrastucture/utils/excel_picker.dart';
 import 'package:sales/models/category.dart';
 import 'package:sales/models/order.dart';
 import 'package:sales/models/order_item.dart';
-import 'package:sales/models/product.dart';
-import 'package:sales/models/product_order_by.dart';
 import 'package:sales/models/range_of_dates.dart';
 
 /// Database abstract.
@@ -166,7 +166,7 @@ abstract class Database {
     int perpage = 10,
     ProductOrderBy orderBy = ProductOrderBy.none,
     String searchText = '',
-    RangeValues? rangeValues,
+    Ranges<double>? rangeValues,
     int? categoryId,
   }) async {
     final List<Product> result = await getAllProducts(
@@ -183,7 +183,7 @@ abstract class Database {
   Future<List<Product>> getAllProducts({
     ProductOrderBy orderBy = ProductOrderBy.none,
     String searchText = '',
-    RangeValues? rangeValues,
+    Ranges<double>? rangeValues,
     int? categoryId,
   });
 

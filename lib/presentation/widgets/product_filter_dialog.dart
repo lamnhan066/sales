@@ -2,22 +2,23 @@ import 'package:boxw/boxw.dart';
 import 'package:flutter/material.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/core/utils/utils.dart';
+import 'package:sales/domain/entities/ranges.dart';
 import 'package:sales/models/category.dart';
 
 class ProductFilterDialog extends StatefulWidget {
   const ProductFilterDialog({
     super.key,
-    required this.initialRangeValues,
+    required this.initialPriceRange,
     this.intialCategoryId,
     required this.categories,
-    required this.onRangeValuesChanged,
+    required this.onPriceRangeChanged,
     required this.onCategoryIdChanged,
   });
 
-  final RangeValues initialRangeValues;
+  final Ranges<double> initialPriceRange;
   final int? intialCategoryId;
   final List<Category> categories;
-  final void Function(RangeValues values) onRangeValuesChanged;
+  final void Function(Ranges<double> values) onPriceRangeChanged;
   final void Function(int? value) onCategoryIdChanged;
 
   @override
@@ -27,12 +28,12 @@ class ProductFilterDialog extends StatefulWidget {
 class _ProductFilterDialogState extends State<ProductFilterDialog> {
   final startController = TextEditingController();
   final endController = TextEditingController();
-  late RangeValues values;
+  late Ranges<double> values;
   late int? categoryId;
 
   @override
   void initState() {
-    values = widget.initialRangeValues;
+    values = widget.initialPriceRange;
     startController.text = Utils.getPriceRangeText(values.start);
     endController.text = Utils.getPriceRangeText(values.end);
     categoryId = widget.intialCategoryId;
@@ -67,7 +68,7 @@ class _ProductFilterDialogState extends State<ProductFilterDialog> {
                     onChanged: (value) {
                       final start = double.tryParse(value);
                       if (start != null) {
-                        values = RangeValues(start, values.end);
+                        values = Ranges(start, values.end);
                       }
                     },
                     keyboardType: TextInputType.number,
@@ -76,7 +77,7 @@ class _ProductFilterDialogState extends State<ProductFilterDialog> {
                 InkWell(
                   onTap: () {
                     startController.text = Utils.getPriceRangeText(0);
-                    values = RangeValues(0, values.end);
+                    values = Ranges(0, values.end);
                   },
                   child: const Padding(
                     padding: EdgeInsets.all(8.0),
@@ -109,7 +110,7 @@ class _ProductFilterDialogState extends State<ProductFilterDialog> {
                     onChanged: (value) {
                       final end = double.tryParse(value);
                       if (end != null) {
-                        values = RangeValues(values.start, end);
+                        values = Ranges(values.start, end);
                       }
                     },
                     keyboardType: TextInputType.number,
@@ -117,12 +118,8 @@ class _ProductFilterDialogState extends State<ProductFilterDialog> {
                 ),
                 InkWell(
                   onTap: () {
-                    endController.text =
-                        Utils.getPriceRangeText(double.infinity);
-                    values = RangeValues(
-                      values.start,
-                      double.infinity,
-                    );
+                    endController.text = Utils.getPriceRangeText(double.infinity);
+                    values = Ranges(values.start, double.infinity);
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),

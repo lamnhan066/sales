@@ -118,9 +118,5 @@ class LoginNotifier extends StateNotifier<LoginState> {
 }
 
 final loginProvider = StateNotifierProvider<LoginNotifier, LoginState>((ref) {
-  return LoginNotifier(
-    loginUseCase: getIt<LoginUseCase>(),
-    autoLoginUseCase: getIt<AutoLoginUseCase>(),
-    getAppVersionUseCase: getIt<GetAppVersionUseCase>(),
-  );
+  return LoginNotifier(loginUseCase: getIt(), autoLoginUseCase: getIt(), getAppVersionUseCase: getIt());
 });

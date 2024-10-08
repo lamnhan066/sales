@@ -1,20 +1,20 @@
+import 'package:sales/domain/entities/product.dart';
 import 'package:sales/infrastucture/database/memory_datatabase_impl.dart';
 import 'package:sales/models/category.dart';
 import 'package:sales/models/order.dart';
 import 'package:sales/models/order_item.dart';
 import 'package:sales/models/order_status.dart';
-import 'package:sales/models/product.dart';
 
 /// Database in the memory with sample data.
 class SampleMemoryDatabaseImpl extends MemoryDatatabaseImpl {
   @override
   Future<void> initial() async {
-    await saveAllCategories([
+    await addAllCategories([
       Category(id: 0, name: 'Thức uống', description: 'Thức uống'),
       Category(id: 1, name: 'Thức ăn', description: 'Thức ăn'),
       Category(id: 2, name: 'Gia dụng', description: 'Gia dụng'),
     ]);
-    await saveAllProducts([
+    await addAllProducts([
       Product(
         id: 0,
         sku: 'P00000000',

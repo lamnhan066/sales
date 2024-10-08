@@ -1,8 +1,8 @@
+import 'package:sales/domain/entities/product.dart';
 import 'package:sales/models/category.dart';
 import 'package:sales/models/order.dart';
 import 'package:sales/models/order_item.dart';
 import 'package:sales/models/order_status.dart';
-import 'package:sales/models/product.dart';
 import 'package:sales/services/database/memory_database.dart';
 
 /// Database in the memory with sample data.

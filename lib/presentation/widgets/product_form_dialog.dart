@@ -5,14 +5,16 @@ import 'package:boxw/boxw.dart';
 import 'package:flutter/material.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/components/common_components.dart';
-import 'package:sales/controllers/product_controller.dart';
+import 'package:sales/domain/entities/product.dart';
 import 'package:sales/models/category.dart';
-import 'package:sales/models/product.dart';
+import 'package:sales/presentation/providers/products_provider.dart';
+import 'package:sales/presentation/widgets/category_dialog.dart';
+import 'package:sales/presentation/widgets/image_dialog.dart';
 
 class ProductFormDialog extends StatefulWidget {
   const ProductFormDialog({
     super.key,
-    required this.controller,
+    required this.notifier,
     required this.form,
     required this.categories,
     required this.validateForm,
@@ -21,7 +23,7 @@ class ProductFormDialog extends StatefulWidget {
     required this.onChanged,
   });
 
-  final ProductController controller;
+  final ProductsNotifier notifier;
   final GlobalKey<FormState> form;
   final List<Category> categories;
   final VoidCallback validateForm;
@@ -48,7 +50,7 @@ class _ProductFormDialogState extends State<ProductFormDialog> {
               children: [
                 IconButton(
                   onPressed: () {
-                    widget.controller.infoCategory(context, e);
+                    viewCategoryDialog(context, e);
                   },
                   icon: const Icon(
                     Icons.info_rounded,
@@ -56,9 +58,9 @@ class _ProductFormDialogState extends State<ProductFormDialog> {
                 ),
                 IconButton(
                   onPressed: () async {
-                    final result = await widget.controller.editCategory(
+                    final result = await updateCategoryDialog(
                       context,
-                      setState,
+                      widget.notifier,
                       e,
                     );
                     if (result) {
@@ -73,9 +75,9 @@ class _ProductFormDialogState extends State<ProductFormDialog> {
                 ),
                 IconButton(
                   onPressed: () async {
-                    final result = await widget.controller.removeCategory(
+                    final result = await removeCategoryDialog(
                       context,
-                      setState,
+                      widget.notifier,
                       e,
                     );
                     if (result) {
@@ -177,9 +179,7 @@ class _ProductFormDialogState extends State<ProductFormDialog> {
             if (widget.readOnly)
               BoxWInput(
                 title: 'Loại hàng'.tr,
-                initial: widget.categories
-                    .singleWhere((e) => e.id == tempProduct.categoryId)
-                    .name,
+                initial: widget.categories.singleWhere((e) => e.id == tempProduct.categoryId).name,
                 readOnly: true,
               )
             else
@@ -204,8 +204,7 @@ class _ProductFormDialogState extends State<ProductFormDialog> {
                           },
                           onChanged: (int? value) {
                             setState(() {
-                              tempProduct =
-                                  tempProduct.copyWith(categoryId: value);
+                              tempProduct = tempProduct.copyWith(categoryId: value);
                               widget.onChanged(tempProduct);
                             });
                           },
@@ -214,9 +213,16 @@ class _ProductFormDialogState extends State<ProductFormDialog> {
                       IconButton(
                         onPressed: widget.readOnly
                             ? null
-                            : () {
-                                widget.controller
-                                    .addCategory(context, setState);
+                            : () async {
+                                final nextId = await widget.notifier.getNextCategoryId();
+                                if (context.mounted) {
+                                  final category = await addCategoryDialog(context, nextId);
+                                  if (category != null) {
+                                    widget.categories.add(category);
+                                    widget.validateForm();
+                                    setState(() {});
+                                  }
+                                }
                               },
                         icon: const Icon(Icons.add),
                       ),
@@ -250,29 +256,23 @@ class _ProductFormDialogState extends State<ProductFormDialog> {
                       child: widget.tempProduct.imagePath.isEmpty
                           ? Text(
                               'Chưa có hình ảnh'.tr,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium
-                                  ?.copyWith(
+                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                     fontWeight: FontWeight.w400,
                                   ),
                             )
                           : Padding(
                               padding: const EdgeInsets.symmetric(vertical: 6),
                               child: ScrollConfiguration(
-                                behavior:
-                                    ScrollConfiguration.of(context).copyWith(
+                                behavior: ScrollConfiguration.of(context).copyWith(
                                   dragDevices: {
                                     ...PointerDeviceKind.values,
                                   },
                                 ),
                                 child: ListView.builder(
                                   scrollDirection: Axis.horizontal,
-                                  itemCount:
-                                      widget.tempProduct.imagePath.length,
+                                  itemCount: widget.tempProduct.imagePath.length,
                                   itemBuilder: (context, index) {
-                                    final source = widget.tempProduct.imagePath
-                                        .elementAt(index);
+                                    final source = widget.tempProduct.imagePath.elementAt(index);
 
                                     return Padding(
                                       padding: const EdgeInsets.symmetric(
@@ -289,20 +289,16 @@ class _ProductFormDialogState extends State<ProductFormDialog> {
                                                   _ResolveImage(source: source),
                                                   Positioned.fill(
                                                     child: Align(
-                                                      alignment:
-                                                          Alignment.topRight,
+                                                      alignment: Alignment.topRight,
                                                       child: CircleCloseButton(
                                                         onPressed: () async {
-                                                          await widget
-                                                              .controller
-                                                              .removeImage(
-                                                            context,
-                                                            tempProduct
-                                                                .imagePath,
-                                                            index,
-                                                            widget.validateForm,
-                                                          );
-                                                          setState(() {});
+                                                          final isRemoved = await removeImageDialog(context);
+                                                          if (isRemoved) {
+                                                            setState(() {
+                                                              tempProduct.imagePath.removeAt(index);
+                                                            });
+                                                            widget.validateForm();
+                                                          }
                                                         },
                                                       ),
                                                     ),
@@ -321,12 +317,13 @@ class _ProductFormDialogState extends State<ProductFormDialog> {
                 if (!widget.readOnly)
                   IconButton(
                     onPressed: () async {
-                      await widget.controller.addImage(
-                        context,
-                        widget.tempProduct.imagePath,
-                        widget.validateForm,
-                      );
-                      setState(() {});
+                      final newImage = await addImageDialog(context);
+                      if (newImage.isNotEmpty) {
+                        tempProduct.imagePath.add(newImage);
+                        widget.onChanged(tempProduct);
+                        widget.validateForm();
+                        setState(() {});
+                      }
                     },
                     icon: const Icon(Icons.add),
                   ),
@@ -356,8 +353,6 @@ class _ResolveImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return source.startsWith('http')
-        ? Image.network(source)
-        : Image.file(File(source));
+    return source.startsWith('http') ? Image.network(source) : Image.file(File(source));
   }
 }

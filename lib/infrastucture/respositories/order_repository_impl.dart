@@ -26,4 +26,9 @@ class OrderRepositoryImpl implements OrderRepository {
   Future<RecentOrdersResult> getThreeRecentOrders() {
     return _database.getThreeRecentOrders();
   }
+
+  @override
+  Future<void> removeAllOrdersWithOrderItems() {
+    return _database.removeAllOrdersWithOrderItems();
+  }
 }

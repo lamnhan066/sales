@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:sales/domain/entities/product.dart';
 import 'package:sales/models/order.dart';
 import 'package:sales/models/order_item.dart';
-import 'package:sales/models/product.dart';
 
 class RecentOrdersResult {
   final Map<Order, List<OrderItem>> orderItems;

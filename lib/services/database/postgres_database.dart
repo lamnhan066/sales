@@ -1,13 +1,13 @@
-import 'package:flutter/material.dart';
 import 'package:postgres/postgres.dart';
 import 'package:sales/app/app_controller.dart';
 import 'package:sales/core/utils/utils.dart';
 import 'package:sales/di.dart';
+import 'package:sales/domain/entities/product.dart';
+import 'package:sales/domain/entities/product_order_by.dart';
+import 'package:sales/domain/entities/ranges.dart';
 import 'package:sales/models/category.dart';
 import 'package:sales/models/order.dart';
 import 'package:sales/models/order_item.dart';
-import 'package:sales/models/product.dart';
-import 'package:sales/models/product_order_by.dart';
 import 'package:sales/models/range_of_dates.dart';
 import 'package:sales/services/database/database.dart';
 
@@ -28,8 +28,7 @@ class PostgresDatabase extends Database {
         username: postgresSettings.username,
         password: postgresSettings.password,
       ),
-      settings: postgresSettings.host == 'localhost' ||
-              postgresSettings.host == '127.0.0.1'
+      settings: postgresSettings.host == 'localhost' || postgresSettings.host == '127.0.0.1'
           ? const ConnectionSettings(sslMode: SslMode.disable)
           : null,
     );
@@ -58,8 +57,7 @@ class PostgresDatabase extends Database {
 
   @override
   Future<void> addCategory(Category category) async {
-    const sql =
-        'INSERT INTO categories (c_name, c_description) VALUES (@name, @description)';
+    const sql = 'INSERT INTO categories (c_name, c_description) VALUES (@name, @description)';
     await _connection.execute(
       Sql.named(sql),
       parameters: {
@@ -256,7 +254,7 @@ class PostgresDatabase extends Database {
   Future<List<Product>> getAllProducts({
     ProductOrderBy orderBy = ProductOrderBy.none,
     String searchText = '',
-    RangeValues? rangeValues,
+    Ranges<double>? rangeValues,
     int? categoryId,
   }) async {
     String sql = 'SELECT * FROM products WHERE p_deleted=FALSE';
@@ -291,8 +289,7 @@ class PostgresDatabase extends Database {
 
     sql += ' ORDER BY ${orderBy.sql}';
 
-    final result =
-        await _connection.execute(Sql.named(sql), parameters: parameters);
+    final result = await _connection.execute(Sql.named(sql), parameters: parameters);
 
     return result.map((e) => Product.fromSqlMap(e.toColumnMap())).toList();
   }
@@ -301,8 +298,7 @@ class PostgresDatabase extends Database {
   Future<void> saveAllCategories(List<Category> categories) async {
     const sql = 'SELECT * FROM categories WHERE c_id = @id';
     for (final category in categories) {
-      final result = await _connection
-          .execute(Sql.named(sql), parameters: {'id': category.id});
+      final result = await _connection.execute(Sql.named(sql), parameters: {'id': category.id});
       if (result.isEmpty) {
         await addCategory(category);
       } else {
@@ -315,8 +311,7 @@ class PostgresDatabase extends Database {
   Future<void> saveAllOrderItems(List<OrderItem> orderItems) async {
     const sql = 'SELECT * FROM order_items WHERE oi_id = @id';
     for (final orderItem in orderItems) {
-      final result = await _connection
-          .execute(Sql.named(sql), parameters: {'id': orderItem.id});
+      final result = await _connection.execute(Sql.named(sql), parameters: {'id': orderItem.id});
       if (result.isEmpty) {
         await addOrderItem(orderItem);
       } else {
@@ -329,8 +324,7 @@ class PostgresDatabase extends Database {
   Future<void> saveAllOrders(List<Order> orders) async {
     const sql = 'SELECT * FROM orders WHERE o_id = @id';
     for (final order in orders) {
-      final result = await _connection
-          .execute(Sql.named(sql), parameters: {'id': order.id});
+      final result = await _connection.execute(Sql.named(sql), parameters: {'id': order.id});
       if (result.isEmpty) {
         await addOrder(order);
       } else {
@@ -343,8 +337,7 @@ class PostgresDatabase extends Database {
   Future<void> saveAllProducts(List<Product> products) async {
     const sql = 'SELECT * FROM products WHERE p_id = @id';
     for (final product in products) {
-      final result = await _connection
-          .execute(Sql.named(sql), parameters: {'id': product.id});
+      final result = await _connection.execute(Sql.named(sql), parameters: {'id': product.id});
       if (result.isEmpty) {
         await addProduct(product);
       } else {

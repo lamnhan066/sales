@@ -1,17 +1,16 @@
 // ignore_for_file: function_lines_of_code, cyclomatic_complexity
 
 import 'package:boxw/boxw.dart';
-import 'package:flutter/material.dart'
-    hide DataTable, DataRow, DataColumn, DataCell;
+import 'package:flutter/material.dart' hide DataTable, DataRow, DataColumn, DataCell;
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/components/common_components.dart';
 import 'package:sales/components/data_table_plus.dart';
 import 'package:sales/controllers/order_controller.dart';
 import 'package:sales/core/utils/utils.dart';
+import 'package:sales/domain/entities/product.dart';
 import 'package:sales/models/order.dart';
 import 'package:sales/models/order_item.dart';
 import 'package:sales/models/order_status.dart';
-import 'package:sales/models/product.dart';
 
 class OrderFormDialog extends StatefulWidget {
   const OrderFormDialog({
@@ -75,11 +74,9 @@ class _OrderFormDialogState extends State<OrderFormDialog> {
       final index = orderItems.indexWhere((e) => e.productId == product.id);
       final isOrderedProduct = index != -1;
       if (isOrderedProduct) {
-        isNotEnoughQuantityInStock =
-            widget.copy && orderItems[index].quantity > product.count;
+        isNotEnoughQuantityInStock = widget.copy && orderItems[index].quantity > product.count;
 
-        maxProductQuantity[product.id] =
-            product.count + orderItems[index].quantity;
+        maxProductQuantity[product.id] = product.count + orderItems[index].quantity;
       } else {
         maxProductQuantity[product.id] = product.count;
       }
@@ -102,12 +99,8 @@ class _OrderFormDialogState extends State<OrderFormDialog> {
               itemCount: availableProducts.length,
               itemBuilder: (context, index) {
                 return ListTile(
-                  tileColor: selected == availableProducts[index]
-                      ? Theme.of(context).primaryColor
-                      : null,
-                  textColor: selected == availableProducts[index]
-                      ? Theme.of(context).colorScheme.onPrimary
-                      : null,
+                  tileColor: selected == availableProducts[index] ? Theme.of(context).primaryColor : null,
+                  textColor: selected == availableProducts[index] ? Theme.of(context).colorScheme.onPrimary : null,
                   title: Text(availableProducts[index].name),
                   onTap: () {
                     listViewState(() {
@@ -180,10 +173,9 @@ class _OrderFormDialogState extends State<OrderFormDialog> {
   @override
   Widget build(BuildContext context) {
     return isNotEnoughQuantityInStock
-        ? Text(
-            'Có sản phẩm không đủ số lượng trong kho nên không thể Sao chép.\n'
-                    'Vui lòng cập nhật thêm sản phẩm để tiếp tục!'
-                .tr)
+        ? Text('Có sản phẩm không đủ số lượng trong kho nên không thể Sao chép.\n'
+                'Vui lòng cập nhật thêm sản phẩm để tiếp tục!'
+            .tr)
         : StatefulBuilder(builder: (context, setState) {
             return Form(
               key: widget.form,
@@ -250,18 +242,15 @@ class _OrderFormDialogState extends State<OrderFormDialog> {
                                 },
                                 columns: [
                                   DataColumn(
-                                    headingRowAlignment:
-                                        MainAxisAlignment.center,
+                                    headingRowAlignment: MainAxisAlignment.center,
                                     label: Text(
                                       'STT'.tr,
                                       textAlign: TextAlign.center,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold),
+                                      style: const TextStyle(fontWeight: FontWeight.bold),
                                     ),
                                   ),
                                   DataColumn(
-                                    headingRowAlignment:
-                                        MainAxisAlignment.center,
+                                    headingRowAlignment: MainAxisAlignment.center,
                                     label: Text(
                                       'Tên Sản Phẩm'.tr,
                                       style: const TextStyle(
@@ -270,30 +259,25 @@ class _OrderFormDialogState extends State<OrderFormDialog> {
                                     ),
                                   ),
                                   DataColumn(
-                                    headingRowAlignment:
-                                        MainAxisAlignment.center,
+                                    headingRowAlignment: MainAxisAlignment.center,
                                     label: Text(
                                       'Số Lượng'.tr,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold),
+                                      style: const TextStyle(fontWeight: FontWeight.bold),
                                       textAlign: TextAlign.center,
                                     ),
                                   ),
                                   DataColumn(
-                                    headingRowAlignment:
-                                        MainAxisAlignment.center,
+                                    headingRowAlignment: MainAxisAlignment.center,
                                     numeric: true,
                                     label: Text(
                                       'Đơn Giá'.tr,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold),
+                                      style: const TextStyle(fontWeight: FontWeight.bold),
                                       textAlign: TextAlign.center,
                                     ),
                                   ),
                                   DataColumn(
                                     numeric: true,
-                                    headingRowAlignment:
-                                        MainAxisAlignment.center,
+                                    headingRowAlignment: MainAxisAlignment.center,
                                     label: Text(
                                       'Thành Tiền'.tr,
                                       style: const TextStyle(
@@ -304,8 +288,7 @@ class _OrderFormDialogState extends State<OrderFormDialog> {
                                   ),
                                   if (!widget.readOnly)
                                     DataColumn(
-                                      headingRowAlignment:
-                                          MainAxisAlignment.center,
+                                      headingRowAlignment: MainAxisAlignment.center,
                                       label: Text(
                                         'Hành Động'.tr,
                                         style: const TextStyle(
@@ -330,9 +313,7 @@ class _OrderFormDialogState extends State<OrderFormDialog> {
                                         DataCell(
                                           Center(
                                             child: Text(
-                                              widget.products
-                                                  .byId(item.productId)
-                                                  .name,
+                                              widget.products.byId(item.productId).name,
                                               textAlign: TextAlign.center,
                                             ),
                                           ),
@@ -340,19 +321,16 @@ class _OrderFormDialogState extends State<OrderFormDialog> {
                                         DataCell(
                                           Center(
                                             child: Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
+                                              padding: const EdgeInsets.symmetric(
                                                 vertical: 3,
                                               ),
                                               child: BoxWNumberField(
                                                 readOnly: widget.readOnly,
                                                 initial: item.quantity,
                                                 min: 1,
-                                                max: maxProductQuantity[
-                                                    item.productId]!,
+                                                max: maxProductQuantity[item.productId]!,
                                                 onChanged: (value) {
-                                                  onQuantityChanged(
-                                                      value, item);
+                                                  onQuantityChanged(value, item);
                                                 },
                                               ),
                                             ),
@@ -377,8 +355,7 @@ class _OrderFormDialogState extends State<OrderFormDialog> {
                                                 onPressed: () {
                                                   onRemovePressed(
                                                     item.id,
-                                                    widget.products
-                                                        .byId(item.productId),
+                                                    widget.products.byId(item.productId),
                                                   );
                                                 },
                                                 icon: const Icon(
@@ -400,8 +377,7 @@ class _OrderFormDialogState extends State<OrderFormDialog> {
                                           child: Text(
                                             'Tổng',
                                             textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold),
+                                            style: TextStyle(fontWeight: FontWeight.bold),
                                           ),
                                         ),
                                       ),
@@ -416,10 +392,7 @@ class _OrderFormDialogState extends State<OrderFormDialog> {
                                           Align(
                                             alignment: Alignment.centerRight,
                                             child: FilledButton(
-                                              onPressed:
-                                                  availableProducts.isEmpty
-                                                      ? null
-                                                      : onAddPressed,
+                                              onPressed: availableProducts.isEmpty ? null : onAddPressed,
                                               child: const Icon(Icons.add),
                                             ),
                                           ),

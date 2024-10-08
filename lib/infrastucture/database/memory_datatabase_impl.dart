@@ -1,12 +1,12 @@
 import 'dart:math';
 
-import 'package:flutter/material.dart';
+import 'package:sales/domain/entities/get_product_params.dart';
+import 'package:sales/domain/entities/product.dart';
+import 'package:sales/domain/entities/product_order_by.dart';
 import 'package:sales/domain/entities/recent_orders_result.dart';
 import 'package:sales/models/category.dart';
 import 'package:sales/models/order.dart';
 import 'package:sales/models/order_item.dart';
-import 'package:sales/models/product.dart';
-import 'package:sales/models/product_order_by.dart';
 import 'package:sales/models/range_of_dates.dart';
 import 'package:string_normalizer/string_normalizer.dart';
 
@@ -47,7 +47,7 @@ class MemoryDatatabaseImpl implements Database {
   Future<List<Category>> getAllCategories() async => _categories;
 
   @override
-  Future<void> saveAllCategories(List<Category> categories) async {
+  Future<void> addAllCategories(List<Category> categories) async {
     _categories.clear();
     _categories.addAll(categories);
   }
@@ -72,65 +72,50 @@ class MemoryDatatabaseImpl implements Database {
   }
 
   @override
-  Future<void> saveAllProducts(List<Product> products) async {
+  Future<void> addAllProducts(List<Product> products) async {
     _products.clear();
     _products.addAll(products);
   }
 
   @override
-  Future<({int totalCount, List<Product> products})> getProducts({
-    int page = 1,
-    int perpage = 10,
-    ProductOrderBy orderBy = ProductOrderBy.none,
-    String searchText = '',
-    RangeValues? rangeValues,
-    int? categoryId,
-  }) async {
-    final List<Product> result = await getAllProducts(
-      orderBy: orderBy,
-      searchText: searchText,
-      rangeValues: rangeValues,
-      categoryId: categoryId,
-    );
+  Future<({int totalCount, List<Product> products})> getProducts([
+    GetProductParams params = const GetProductParams(),
+  ]) async {
+    final List<Product> result = await getAllProducts(params);
 
     return (
       totalCount: result.length,
-      products: result.skip((page - 1) * perpage).take(perpage).toList(),
+      products: result.skip((params.page - 1) * params.perPage).take(params.perPage).toList(),
     );
   }
 
   @override
-  Future<List<Product>> getAllProducts({
-    ProductOrderBy orderBy = ProductOrderBy.none,
-    String searchText = '',
-    RangeValues? rangeValues,
-    int? categoryId,
-  }) async {
+  Future<List<Product>> getAllProducts([GetProductParams params = const GetProductParams()]) async {
     final result = _products.where((product) {
       // Sản phẩm đã bị xoá.
       if (product.deleted) return false;
 
       // Lọc theo loại hàng.
-      if (categoryId != null && product.categoryId != categoryId) {
+      if (params.categoryIdFilter != null && product.categoryId != params.categoryIdFilter) {
         return false;
       }
 
       // Lọc theo mức giá.
       bool priceFilter = true;
-      if (rangeValues != null) {
-        priceFilter = product.importPrice >= rangeValues.start && product.importPrice <= rangeValues.end;
+      if (params.priceRange != null) {
+        priceFilter = product.importPrice >= params.priceRange!.start && product.importPrice <= params.priceRange!.end;
       }
 
       // Tìm kiếm.
       bool search = true;
-      if (searchText.isNotEmpty) {
-        search = product.name.normalize().toLowerCase().contains(searchText);
+      if (params.searchText.isNotEmpty) {
+        search = product.name.normalize().toLowerCase().contains(params.searchText);
       }
 
       return priceFilter && search;
     }).toList();
 
-    switch (orderBy) {
+    switch (params.orderBy) {
       case ProductOrderBy.none:
         break;
       case ProductOrderBy.nameAsc:
@@ -239,7 +224,7 @@ class MemoryDatatabaseImpl implements Database {
   }
 
   @override
-  Future<int> generateCategoryId() async {
+  Future<int> getNextCategoryId() async {
     final categories = await getAllCategories();
     final count = categories.length;
     final id = count + 1;
@@ -421,7 +406,7 @@ class MemoryDatatabaseImpl implements Database {
       final c = categories.elementAt(i).copyWith(id: cIndex + i);
       tempCategories.add(c);
     }
-    await saveAllCategories(tempCategories);
+    await addAllCategories(tempCategories);
 
     final tempProducts = await getAllProducts();
     final pIndex = tempProducts.length;
@@ -433,7 +418,7 @@ class MemoryDatatabaseImpl implements Database {
           );
       tempProducts.add(p);
     }
-    await saveAllProducts(tempProducts);
+    await addAllProducts(tempProducts);
   }
 
   @override
@@ -465,8 +450,8 @@ class MemoryDatatabaseImpl implements Database {
 
   @override
   Future<void> replace(List<Category> categories, List<Product> products) async {
-    await saveAllCategories(categories);
-    await saveAllProducts(products);
+    await addAllCategories(categories);
+    await addAllProducts(products);
   }
 
   @override
@@ -494,5 +479,21 @@ class MemoryDatatabaseImpl implements Database {
         await updateProduct(product);
       }
     }
+  }
+
+  @override
+  Future<void> removeAllCategories() async {
+    _categories.clear();
+  }
+
+  @override
+  Future<void> removeAllProducts() async {
+    _products.clear();
+  }
+
+  @override
+  Future<void> removeAllOrdersWithOrderItems() async {
+    _orders.clear();
+    _orderItems.clear();
   }
 }

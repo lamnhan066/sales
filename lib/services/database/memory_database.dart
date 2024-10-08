@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
+import 'package:sales/domain/entities/product.dart';
+import 'package:sales/domain/entities/product_order_by.dart';
+import 'package:sales/domain/entities/ranges.dart';
 import 'package:sales/models/category.dart';
 import 'package:sales/models/order.dart';
 import 'package:sales/models/order_item.dart';
-import 'package:sales/models/product.dart';
-import 'package:sales/models/product_order_by.dart';
 import 'package:sales/models/range_of_dates.dart';
 import 'package:sales/services/database/database.dart';
 import 'package:string_normalizer/string_normalizer.dart';
@@ -80,7 +80,7 @@ class MemoryDatabase extends Database {
     int perpage = 10,
     ProductOrderBy orderBy = ProductOrderBy.none,
     String searchText = '',
-    RangeValues? rangeValues,
+    Ranges<double>? rangeValues,
     int? categoryId,
   }) async {
     final List<Product> result = await getAllProducts(
@@ -90,17 +90,14 @@ class MemoryDatabase extends Database {
       categoryId: categoryId,
     );
 
-    return (
-      totalCount: result.length,
-      products: result.skip((page - 1) * perpage).take(perpage).toList()
-    );
+    return (totalCount: result.length, products: result.skip((page - 1) * perpage).take(perpage).toList());
   }
 
   @override
   Future<List<Product>> getAllProducts({
     ProductOrderBy orderBy = ProductOrderBy.none,
     String searchText = '',
-    RangeValues? rangeValues,
+    Ranges<double>? rangeValues,
     int? categoryId,
   }) async {
     final result = _products.where((product) {
@@ -115,8 +112,7 @@ class MemoryDatabase extends Database {
       // Lọc theo mức giá.
       bool priceFilter = true;
       if (rangeValues != null) {
-        priceFilter = product.importPrice >= rangeValues.start &&
-            product.importPrice <= rangeValues.end;
+        priceFilter = product.importPrice >= rangeValues.start && product.importPrice <= rangeValues.end;
       }
 
       // Tìm kiếm.
@@ -171,8 +167,7 @@ class MemoryDatabase extends Database {
       if (o.deleted) return false;
 
       // Lọc theo ngày
-      if (dateRange != null &&
-          (o.date.isBefore(dateRange.from) || o.date.isAfter(dateRange.to))) {
+      if (dateRange != null && (o.date.isBefore(dateRange.from) || o.date.isAfter(dateRange.to))) {
         return false;
       }
 
