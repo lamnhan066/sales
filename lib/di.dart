@@ -1,37 +1,6 @@
 import 'package:get_it/get_it.dart';
-import 'package:sales/app/app_controller.dart';
-import 'package:sales/application/usecases/add_category_usecase.dart';
-import 'package:sales/application/usecases/add_order_with_items_usecase.dart';
-import 'package:sales/application/usecases/add_product_usecase.dart';
-import 'package:sales/application/usecases/auto_login_usecase.dart';
-import 'package:sales/application/usecases/get_all_categories.dart';
-import 'package:sales/application/usecases/get_all_products_usecase.dart';
-import 'package:sales/application/usecases/get_app_version_usecase.dart';
-import 'package:sales/application/usecases/get_daily_order_count_usecase.dart';
-import 'package:sales/application/usecases/get_daily_revenues_usecase.dart';
-import 'package:sales/application/usecases/get_five_highest_sales_products_usecase.dart';
-import 'package:sales/application/usecases/get_five_low_stock_products_usecase.dart';
-import 'package:sales/application/usecases/get_monthly_revenues_usecase.dart';
-import 'package:sales/application/usecases/get_next_category_id_usecase.dart';
-import 'package:sales/application/usecases/get_next_order_id_usecase.dart';
-import 'package:sales/application/usecases/get_next_order_item_id_usecase.dart';
-import 'package:sales/application/usecases/get_next_product_id_and_sku_usecase.dart';
-import 'package:sales/application/usecases/get_order_items_usecase.dart';
-import 'package:sales/application/usecases/get_orders_usecase.dart';
-import 'package:sales/application/usecases/get_products_usecase.dart';
-import 'package:sales/application/usecases/get_three_recent_orders_usecase.dart';
-import 'package:sales/application/usecases/get_total_product_count_usecase.dart';
-import 'package:sales/application/usecases/import_data_usecase.dart';
-import 'package:sales/application/usecases/load_server_configuration_usecase.dart';
-import 'package:sales/application/usecases/login_usecase.dart';
-import 'package:sales/application/usecases/remove_category_usecase.dart';
-import 'package:sales/application/usecases/remove_order_with_items_usecase.dart';
-import 'package:sales/application/usecases/remove_product_usecase.dart';
-import 'package:sales/application/usecases/replace_database_usecase.dart';
-import 'package:sales/application/usecases/save_server_configuration_usecase.dart';
-import 'package:sales/application/usecases/update_category_usecase.dart';
-import 'package:sales/application/usecases/update_order_with_items_usecase.dart';
-import 'package:sales/application/usecases/update_product_usecase.dart';
+import 'package:sales/data/local/sample_memory_database_impl.dart';
+import 'package:sales/data/repositories/database.dart';
 import 'package:sales/domain/repositories/app_version_repository.dart';
 import 'package:sales/domain/repositories/auth_repository.dart';
 import 'package:sales/domain/repositories/category_repository.dart';
@@ -40,29 +9,58 @@ import 'package:sales/domain/repositories/order_repository.dart';
 import 'package:sales/domain/repositories/product_repository.dart';
 import 'package:sales/domain/repositories/server_configurations_repository.dart';
 import 'package:sales/domain/services/database_service.dart';
-import 'package:sales/infrastucture/data_import/excel_data_importer.dart';
-import 'package:sales/infrastucture/database/database.dart';
-import 'package:sales/infrastucture/database/sample_memory_database_impl.dart';
-import 'package:sales/infrastucture/respositories/app_version_repository_impl.dart';
-import 'package:sales/infrastucture/respositories/category_repository_impl.dart';
-import 'package:sales/infrastucture/respositories/local_auth_repository_impl.dart';
-import 'package:sales/infrastucture/respositories/order_repository_impl.dart';
-import 'package:sales/infrastucture/respositories/postgres_configurations_repository_impl.dart';
-import 'package:sales/infrastucture/respositories/product_repository_impl.dart';
-import 'package:sales/infrastucture/services/database_service_impl.dart';
+import 'package:sales/domain/usecases/add_category_usecase.dart';
+import 'package:sales/domain/usecases/add_order_with_items_usecase.dart';
+import 'package:sales/domain/usecases/add_product_usecase.dart';
+import 'package:sales/domain/usecases/auto_login_usecase.dart';
+import 'package:sales/domain/usecases/get_all_categories.dart';
+import 'package:sales/domain/usecases/get_all_products_usecase.dart';
+import 'package:sales/domain/usecases/get_app_version_usecase.dart';
+import 'package:sales/domain/usecases/get_daily_order_count_usecase.dart';
+import 'package:sales/domain/usecases/get_daily_revenues_usecase.dart';
+import 'package:sales/domain/usecases/get_five_highest_sales_products_usecase.dart';
+import 'package:sales/domain/usecases/get_five_low_stock_products_usecase.dart';
+import 'package:sales/domain/usecases/get_login_state_usecase.dart';
+import 'package:sales/domain/usecases/get_monthly_revenues_usecase.dart';
+import 'package:sales/domain/usecases/get_next_category_id_usecase.dart';
+import 'package:sales/domain/usecases/get_next_order_id_usecase.dart';
+import 'package:sales/domain/usecases/get_next_order_item_id_usecase.dart';
+import 'package:sales/domain/usecases/get_next_product_id_and_sku_usecase.dart';
+import 'package:sales/domain/usecases/get_order_items_usecase.dart';
+import 'package:sales/domain/usecases/get_orders_usecase.dart';
+import 'package:sales/domain/usecases/get_products_usecase.dart';
+import 'package:sales/domain/usecases/get_remember_login_usecase.dart';
+import 'package:sales/domain/usecases/get_three_recent_orders_usecase.dart';
+import 'package:sales/domain/usecases/get_total_product_count_usecase.dart';
+import 'package:sales/domain/usecases/import_data_usecase.dart';
+import 'package:sales/domain/usecases/load_server_configuration_usecase.dart';
+import 'package:sales/domain/usecases/login_usecase.dart';
+import 'package:sales/domain/usecases/logout_usecase.dart';
+import 'package:sales/domain/usecases/remove_category_usecase.dart';
+import 'package:sales/domain/usecases/remove_order_with_items_usecase.dart';
+import 'package:sales/domain/usecases/remove_product_usecase.dart';
+import 'package:sales/domain/usecases/replace_database_usecase.dart';
+import 'package:sales/domain/usecases/save_server_configuration_usecase.dart';
+import 'package:sales/domain/usecases/update_category_usecase.dart';
+import 'package:sales/domain/usecases/update_order_with_items_usecase.dart';
+import 'package:sales/domain/usecases/update_product_usecase.dart';
+import 'package:sales/infrastructure/data_import/excel_data_importer.dart';
+import 'package:sales/infrastructure/respositories/app_version_repository_impl.dart';
+import 'package:sales/infrastructure/respositories/category_repository_impl.dart';
+import 'package:sales/infrastructure/respositories/local_auth_repository_impl.dart';
+import 'package:sales/infrastructure/respositories/order_repository_impl.dart';
+import 'package:sales/infrastructure/respositories/postgres_configurations_repository_impl.dart';
+import 'package:sales/infrastructure/respositories/product_repository_impl.dart';
+import 'package:sales/infrastructure/services/database_service_impl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Service locator.
 final getIt = GetIt.instance;
 
-/// Setup for the service locator.
-Future<void> setup() async {
+Future<void> setupDependencies() async {
   final preferences = await SharedPreferences.getInstance();
   getIt.registerSingleton<SharedPreferences>(preferences);
-  getIt.registerSingleton<AppController>(AppController());
-}
 
-Future<void> setupDependencies() async {
   // Repositories
   getIt.registerLazySingleton<AuthRepository>(() => LocalAuthRepositoryImpl(getIt()));
   getIt.registerLazySingleton<ServerConfigurationsRepository>(() => PostgresConfigurationsRepositoryImpl(getIt()));
@@ -77,6 +75,10 @@ Future<void> setupDependencies() async {
   // Use Case
   getIt.registerLazySingleton<AutoLoginUseCase>(() => AutoLoginUseCase(getIt()));
   getIt.registerLazySingleton<LoginUseCase>(() => LoginUseCase(getIt()));
+  getIt.registerLazySingleton<LogoutUseCase>(() => LogoutUseCase(getIt()));
+  getIt.registerLazySingleton<GetLoginStateUseCase>(() => GetLoginStateUseCase(getIt()));
+  getIt.registerLazySingleton<GetCachedLoginCredentialsLoginUseCase>(
+      () => GetCachedLoginCredentialsLoginUseCase(getIt()));
 
   getIt.registerLazySingleton<GetAppVersionUseCase>(() => GetAppVersionUseCase(getIt()));
 

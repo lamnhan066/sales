@@ -5,39 +5,40 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/domain/entities/server_configurations.dart';
-import 'package:sales/presentation/providers/configuration_provider.dart';
-import 'package:sales/presentation/providers/login_provider.dart';
+import 'package:sales/presentation/riverpod/login_provider.dart';
 import 'package:sales/presentation/views/home_view.dart';
 
-class LoginView extends ConsumerWidget {
+class LoginView extends ConsumerStatefulWidget {
   const LoginView({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ConsumerStatefulWidget> createState() => _LoginViewState();
+}
+
+class _LoginViewState extends ConsumerState<LoginView> {
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final loginState = ref.watch(loginProvider);
+      final loginNotifier = ref.read(loginProvider.notifier);
+
+      if (loginState.showAutoLoginDialog && loginState.rememberMe) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _checkAndLoginAutomatically(context, loginNotifier);
+        });
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final loginState = ref.watch(loginProvider);
     final loginNotifier = ref.read(loginProvider.notifier);
-    final configureServerNotifier = ref.read(postgresConfigurationsProvider.notifier);
-    final configureServerState = ref.watch(postgresConfigurationsProvider);
 
-    if (loginState.isLoggedIn) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const HomeView()),
-        );
-      });
-    }
-
-    if (configureServerState.showDialog) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _showConfigurationDialog(context, configureServerNotifier, configureServerState.configurations);
-      });
-    }
-
-    if (loginState.showAutoLoginDialog && loginState.rememberMe) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _checkAndLoginAutomatically(context, loginNotifier);
-      });
+    if (loginState.isLoading) {
+      return const Center(child: CircularProgressIndicator());
     }
 
     return Scaffold(
@@ -99,8 +100,11 @@ class LoginView extends ConsumerWidget {
                   child: SizedBox(
                     width: double.infinity,
                     child: FilledButton(
-                      onPressed: () {
-                        loginNotifier.login();
+                      onPressed: () async {
+                        try {
+                          await loginNotifier.login();
+                          _navigateToHomeView();
+                        } catch (e) {}
                       },
                       child: Text('Đăng Nhập'.tr),
                     ),
@@ -112,7 +116,7 @@ class LoginView extends ConsumerWidget {
                   children: [
                     TextButton(
                       onPressed: () {
-                        configureServerNotifier.requestServerConfigurationDialog();
+                        _showConfigurationDialog(context, loginNotifier, loginState.serverConfigurations);
                       },
                       child: Row(
                         children: [
@@ -143,7 +147,7 @@ class LoginView extends ConsumerWidget {
 
   Future<void> _showConfigurationDialog(
     BuildContext context,
-    ServerConfigurationNotifier configureServerNotifier,
+    LoginNotifier configureServerNotifier,
     ServerConfigurations settings,
   ) async {
     ServerConfigurations newSettings = settings;
@@ -213,9 +217,7 @@ class LoginView extends ConsumerWidget {
     );
 
     if (result == true) {
-      await configureServerNotifier.saveConfigurations(newSettings);
-    } else {
-      configureServerNotifier.closeDialog();
+      await configureServerNotifier.saveServerConfigurations(newSettings);
     }
   }
 
@@ -252,7 +254,18 @@ class LoginView extends ConsumerWidget {
     loginNotifier.closeAutoLoginDialog();
 
     if (isAutomaticallyLogin == true) {
-      loginNotifier.autoLogin();
+      try {
+        await loginNotifier.autoLogin();
+
+        _navigateToHomeView();
+      } catch (e) {}
     }
+  }
+
+  void _navigateToHomeView() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const HomeView()),
+    );
   }
 }

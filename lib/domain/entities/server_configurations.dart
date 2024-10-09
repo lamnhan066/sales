@@ -17,11 +17,11 @@ class ServerConfigurations with EquatableMixin {
   final String password;
 
   /// Cấu hình cho Postgres
-  ServerConfigurations({
-    required this.host,
-    required this.database,
-    required this.username,
-    required this.password,
+  const ServerConfigurations({
+    this.host = '',
+    this.database = '',
+    this.username = '',
+    this.password = '',
   });
 
   /// Map -> PostgresConfigurations

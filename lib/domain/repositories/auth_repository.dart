@@ -7,4 +7,6 @@ abstract class AuthRepository {
   Future<User> autoLogin();
   Future<void> logout();
   bool isRememberMe();
+  Future<bool> getLoginState();
+  Future<LoginCredentials?> getCachedLoginCredentialsInfomation();
 }

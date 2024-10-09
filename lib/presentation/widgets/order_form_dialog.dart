@@ -4,14 +4,14 @@ import 'package:boxw/boxw.dart';
 import 'package:flutter/material.dart' hide DataTable, DataRow, DataColumn, DataCell;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:language_helper/language_helper.dart';
-import 'package:sales/components/common_components.dart';
-import 'package:sales/components/data_table_plus.dart';
 import 'package:sales/core/utils/utils.dart';
 import 'package:sales/domain/entities/order.dart';
 import 'package:sales/domain/entities/order_item.dart';
 import 'package:sales/domain/entities/order_status.dart';
 import 'package:sales/domain/entities/product.dart';
-import 'package:sales/presentation/providers/orders_provider.dart';
+import 'package:sales/presentation/riverpod/orders_provider.dart';
+import 'package:sales/presentation/widgets/common_components.dart';
+import 'package:sales/presentation/widgets/data_table_plus.dart';
 
 class OrderFormDialog extends StatefulWidget {
   const OrderFormDialog({

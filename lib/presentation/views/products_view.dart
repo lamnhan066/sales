@@ -5,14 +5,14 @@ import 'package:boxw/boxw.dart';
 import 'package:flutter/material.dart' hide DataTable, DataRow, DataColumn, DataCell;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:language_helper/language_helper.dart';
-import 'package:sales/components/common_components.dart';
-import 'package:sales/components/common_dialogs.dart';
-import 'package:sales/components/data_table_plus.dart';
 import 'package:sales/core/constants/app_configs.dart';
 import 'package:sales/domain/entities/product.dart';
 import 'package:sales/domain/entities/product_order_by.dart';
-import 'package:sales/presentation/providers/products_provider.dart';
+import 'package:sales/presentation/riverpod/products_provider.dart';
 import 'package:sales/presentation/widgets/category_dialog.dart';
+import 'package:sales/presentation/widgets/common_components.dart';
+import 'package:sales/presentation/widgets/data_table_plus.dart';
+import 'package:sales/presentation/widgets/page_chooser_dialog.dart';
 import 'package:sales/presentation/widgets/product_dialog.dart';
 import 'package:sales/presentation/widgets/product_filter_dialog.dart';
 

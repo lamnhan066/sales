@@ -6,7 +6,7 @@ import 'package:boxw/boxw.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:language_helper/language_helper.dart';
-import 'package:sales/components/common_components.dart';
+import 'package:sales/presentation/widgets/common_components.dart';
 
 Future<String> addImageDialog(BuildContext context) async {
   String path = '';
