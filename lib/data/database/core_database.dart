@@ -1,4 +1,4 @@
-abstract interface class BaseDatabase {
+abstract interface class CoreDatabase {
   /// Khởi tạo.
   Future<void> initial();
 

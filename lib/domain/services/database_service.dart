@@ -1,6 +1,12 @@
 import 'package:sales/domain/entities/data_import_result.dart';
 
 abstract class DatabaseService {
+  /// Khởi tạo.
+  Future<void> initial();
+
+  /// Giải phóng.
+  Future<void> dispose();
+
   /// Nhập dữ liệu với vào dữ liệu hiện tại.
   ///
   /// Việc nhập này sẽ tiến hành tạo `id` và `sku` mới, do đó dữ liệu đã nhập
@@ -13,6 +19,9 @@ abstract class DatabaseService {
   /// và được thay thế mới.
   Future<void> replaceDatabase(DataImportResult data);
 
+  /// Sao lưu database.
   Future<void> backupDatabase(String backupPath);
+
+  /// Khôi phục database.
   Future<void> restoreDatabase(String backupPath);
 }

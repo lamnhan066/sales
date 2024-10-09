@@ -1,7 +1,7 @@
 import 'dart:math';
 
-import 'package:sales/data/database/base_database.dart';
 import 'package:sales/data/database/category_database.dart';
+import 'package:sales/data/database/core_database.dart';
 import 'package:sales/data/database/data_sync_database.dart';
 import 'package:sales/data/database/order_database.dart';
 import 'package:sales/data/database/order_item_database.dart';
@@ -23,7 +23,7 @@ import 'package:string_normalizer/string_normalizer.dart';
 
 class MemoryDatatabaseImpl
     implements
-        BaseDatabase,
+        CoreDatabase,
         DataSyncDatabase,
         ProductDatabase,
         CategoryDatabase,
