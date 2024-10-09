@@ -1,6 +1,6 @@
 import 'package:get_it/get_it.dart';
-import 'package:sales/data/database/base_database.dart';
 import 'package:sales/data/database/category_database.dart';
+import 'package:sales/data/database/core_database.dart';
 import 'package:sales/data/database/data_sync_database.dart';
 import 'package:sales/data/database/order_database.dart';
 import 'package:sales/data/database/order_item_database.dart';
@@ -42,6 +42,7 @@ import 'package:sales/domain/usecases/get_three_recent_orders_usecase.dart';
 import 'package:sales/domain/usecases/get_total_product_count_usecase.dart';
 import 'package:sales/domain/usecases/import_data_usecase.dart';
 import 'package:sales/domain/usecases/load_server_configuration_usecase.dart';
+import 'package:sales/domain/usecases/load_server_connection_usecase.dart';
 import 'package:sales/domain/usecases/login_usecase.dart';
 import 'package:sales/domain/usecases/logout_usecase.dart';
 import 'package:sales/domain/usecases/remove_category_usecase.dart';
@@ -64,7 +65,6 @@ import 'package:sales/infrastructure/respositories/product_repository_impl.dart'
 import 'package:sales/infrastructure/services/database_service_impl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Service locator.
 final getIt = GetIt.instance;
 
 Future<void> setupDependencies() async {
@@ -75,8 +75,6 @@ Future<void> setupDependencies() async {
   _registerDatabase();
   _registerUseCases();
   _registerServices();
-
-  await getIt<BaseDatabase>().initial();
 }
 
 void _registerUseCases() {
@@ -88,10 +86,22 @@ void _registerUseCases() {
   _registerProductUseCases();
 }
 
+void _registerRepositories() {
+  getIt.registerLazySingleton<AuthRepository>(() => LocalAuthRepositoryImpl(getIt()));
+  getIt.registerLazySingleton<ServerConfigurationsRepository>(() => PostgresConfigurationsRepositoryImpl(getIt()));
+  getIt.registerLazySingleton<AppVersionRepository>(() => AppVersionRepositoryImpl());
+  getIt.registerLazySingleton<ProductRepository>(() => ProductRepositoryImpl(getIt()));
+  getIt.registerLazySingleton<OrderRepository>(() => OrderRepositoryImpl(getIt()));
+  getIt.registerLazySingleton<OrderItemRepository>(() => OrderItemRepositoryImpl(getIt()));
+  getIt.registerLazySingleton<OrderWithItemsRepository>(() => OrderWithItemsRepositoryImpl(getIt()));
+  getIt.registerLazySingleton<CategoryRepository>(() => CategoryRepositoryImpl(getIt()));
+  getIt.registerLazySingleton<DataImporterRepository>(() => ExcelDataImporterImpl());
+}
+
 void _registerDatabase() {
   final postgresDatabase = PostgresDatabaseImpl(getIt());
 
-  getIt.registerLazySingleton<BaseDatabase>(() => postgresDatabase);
+  getIt.registerLazySingleton<CoreDatabase>(() => postgresDatabase);
   getIt.registerLazySingleton<CategoryDatabase>(() => postgresDatabase);
   getIt.registerLazySingleton<DataSyncDatabase>(() => postgresDatabase);
   getIt.registerLazySingleton<ProductDatabase>(() => postgresDatabase);
@@ -140,6 +150,7 @@ void _registerCategoryUseCases() {
 void _registerDatabaseUseCases() {
   getIt.registerLazySingleton<LoadServerConfigurationUseCase>(() => LoadServerConfigurationUseCase(getIt()));
   getIt.registerLazySingleton<SaveServerConfigurationUseCase>(() => SaveServerConfigurationUseCase(getIt()));
+  getIt.registerLazySingleton<LoadServerConnectionUsecase>(() => LoadServerConnectionUsecase(getIt()));
   getIt.registerLazySingleton<ReplaceDatabaseUsecase>(() => ReplaceDatabaseUsecase(getIt()));
   getIt.registerLazySingleton<ImportDataUseCase>(() => ImportDataUseCase(getIt()));
 }
@@ -153,18 +164,8 @@ void _registerDashboardUseCases() {
   getIt.registerLazySingleton<GetThreeRecentOrdersUseCase>(() => GetThreeRecentOrdersUseCase(getIt()));
 }
 
-void _registerRepositories() {
-  getIt.registerLazySingleton<AuthRepository>(() => LocalAuthRepositoryImpl(getIt()));
-  getIt.registerLazySingleton<ServerConfigurationsRepository>(() => PostgresConfigurationsRepositoryImpl(getIt()));
-  getIt.registerLazySingleton<AppVersionRepository>(() => AppVersionRepositoryImpl());
-  getIt.registerLazySingleton<ProductRepository>(() => ProductRepositoryImpl(getIt()));
-  getIt.registerLazySingleton<OrderRepository>(() => OrderRepositoryImpl(getIt()));
-  getIt.registerLazySingleton<OrderItemRepository>(() => OrderItemRepositoryImpl(getIt()));
-  getIt.registerLazySingleton<OrderWithItemsRepository>(() => OrderWithItemsRepositoryImpl(getIt()));
-  getIt.registerLazySingleton<CategoryRepository>(() => CategoryRepositoryImpl(getIt()));
-  getIt.registerLazySingleton<DataImporterRepository>(() => ExcelDataImporterImpl());
-}
-
 void _registerServices() {
-  getIt.registerLazySingleton<DatabaseService>(() => DatabaseServiceImpl(getIt()));
+  getIt.registerLazySingleton<DatabaseService>(
+    () => DatabaseServiceImpl(coreDatabase: getIt(), dataSyncDatabase: getIt()),
+  );
 }

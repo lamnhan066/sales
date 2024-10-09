@@ -11,6 +11,7 @@ import 'package:sales/domain/usecases/get_app_version_usecase.dart';
 import 'package:sales/domain/usecases/get_cached_credentials_usecase.dart';
 import 'package:sales/domain/usecases/get_login_state_usecase.dart';
 import 'package:sales/domain/usecases/load_server_configuration_usecase.dart';
+import 'package:sales/domain/usecases/load_server_connection_usecase.dart';
 import 'package:sales/domain/usecases/login_usecase.dart';
 import 'package:sales/domain/usecases/save_server_configuration_usecase.dart';
 
@@ -85,6 +86,7 @@ class LoginNotifier extends StateNotifier<LoginState> {
   final SaveServerConfigurationUseCase _saveServerConfigurationUseCase;
   final GetLoginStateUseCase _checkLoginStateUseCase;
   final GetCachedCredentialsUseCase _getCachedLoginCredentialsLoginUseCase;
+  final LoadServerConnectionUsecase _loadServerConnectionUsecase;
 
   LoginNotifier({
     required LoginUseCase loginUseCase,
@@ -94,6 +96,7 @@ class LoginNotifier extends StateNotifier<LoginState> {
     required SaveServerConfigurationUseCase saveServerConfigurationUseCase,
     required GetLoginStateUseCase checkLoginStateUseCase,
     required GetCachedCredentialsUseCase getCachedLoginCredentialsLoginUseCase,
+    required LoadServerConnectionUsecase loadServerConnectionUsecase,
   })  : _getAppVersionUseCase = getAppVersionUseCase,
         _autoLoginUseCase = autoLoginUseCase,
         _loginUseCase = loginUseCase,
@@ -101,6 +104,7 @@ class LoginNotifier extends StateNotifier<LoginState> {
         _saveServerConfigurationUseCase = saveServerConfigurationUseCase,
         _checkLoginStateUseCase = checkLoginStateUseCase,
         _getCachedLoginCredentialsLoginUseCase = getCachedLoginCredentialsLoginUseCase,
+        _loadServerConnectionUsecase = loadServerConnectionUsecase,
         super(LoginState(username: '', password: '')) {
     intitial();
   }
@@ -129,7 +133,7 @@ class LoginNotifier extends StateNotifier<LoginState> {
         rememberMe: state.rememberMe,
       );
       await _loginUseCase.call(credentials);
-
+      await reloadServer();
       state = state.copyWith(username: '', password: '', isLoggedIn: true);
     } on Failure catch (e) {
       state = state.copyWith(error: e.message);
@@ -140,11 +144,17 @@ class LoginNotifier extends StateNotifier<LoginState> {
 
   Future<void> autoLogin() async {
     try {
-      final user = await _autoLoginUseCase.call(NoParams());
-      state = state.copyWith(username: user.username, password: user.password, isLoggedIn: true);
+      await _autoLoginUseCase.call(NoParams());
+      await reloadServer();
+      state = state.copyWith(username: '', password: '', isLoggedIn: true);
     } on Failure catch (e) {
       state = state.copyWith(error: e.message);
     }
+  }
+
+  Future<void> reloadServer() async {
+    await loadServerConfigurations();
+    await _loadServerConnectionUsecase(NoParams());
   }
 
   void updateUsername(String username) {
@@ -188,5 +198,6 @@ final loginProvider = StateNotifierProvider<LoginNotifier, LoginState>((ref) {
     saveServerConfigurationUseCase: getIt(),
     checkLoginStateUseCase: getIt(),
     getCachedLoginCredentialsLoginUseCase: getIt(),
+    loadServerConnectionUsecase: getIt(),
   );
 });
