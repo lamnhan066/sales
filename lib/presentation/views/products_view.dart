@@ -39,7 +39,7 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
     final productNotifier = ref.read(productsProvider.notifier);
 
     if (productState.isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const SizedBox.shrink();
     }
 
     if (productState.error.isNotEmpty) {

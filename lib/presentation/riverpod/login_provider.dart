@@ -8,8 +8,8 @@ import 'package:sales/domain/entities/login_credentials.dart';
 import 'package:sales/domain/entities/server_configurations.dart';
 import 'package:sales/domain/usecases/auto_login_usecase.dart';
 import 'package:sales/domain/usecases/get_app_version_usecase.dart';
+import 'package:sales/domain/usecases/get_cached_credentials_usecase.dart';
 import 'package:sales/domain/usecases/get_login_state_usecase.dart';
-import 'package:sales/domain/usecases/get_remember_login_usecase.dart';
 import 'package:sales/domain/usecases/load_server_configuration_usecase.dart';
 import 'package:sales/domain/usecases/login_usecase.dart';
 import 'package:sales/domain/usecases/save_server_configuration_usecase.dart';
@@ -84,7 +84,7 @@ class LoginNotifier extends StateNotifier<LoginState> {
   final LoadServerConfigurationUseCase _loadServerConfigurationUseCase;
   final SaveServerConfigurationUseCase _saveServerConfigurationUseCase;
   final GetLoginStateUseCase _checkLoginStateUseCase;
-  final GetCachedLoginCredentialsLoginUseCase _getCachedLoginCredentialsLoginUseCase;
+  final GetCachedCredentialsUseCase _getCachedLoginCredentialsLoginUseCase;
 
   LoginNotifier({
     required LoginUseCase loginUseCase,
@@ -93,7 +93,7 @@ class LoginNotifier extends StateNotifier<LoginState> {
     required LoadServerConfigurationUseCase loadServerConfigurationUseCase,
     required SaveServerConfigurationUseCase saveServerConfigurationUseCase,
     required GetLoginStateUseCase checkLoginStateUseCase,
-    required GetCachedLoginCredentialsLoginUseCase getCachedLoginCredentialsLoginUseCase,
+    required GetCachedCredentialsUseCase getCachedLoginCredentialsLoginUseCase,
   })  : _getAppVersionUseCase = getAppVersionUseCase,
         _autoLoginUseCase = autoLoginUseCase,
         _loginUseCase = loginUseCase,

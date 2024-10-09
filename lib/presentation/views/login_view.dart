@@ -124,7 +124,11 @@ class _LoginViewState extends ConsumerState<LoginView> {
                   children: [
                     TextButton(
                       onPressed: () {
-                        _showConfigurationDialog(context, loginNotifier, loginState.serverConfigurations);
+                        _showConfigurationDialog(
+                          context,
+                          loginNotifier,
+                          loginState.serverConfigurations,
+                        );
                       },
                       child: Row(
                         children: [
@@ -153,6 +157,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
     );
   }
 
+  // TODO: Hàm này chưa hoạt động được đúng như mong đợi vì `settings` trống.
   Future<void> _showConfigurationDialog(
     BuildContext context,
     LoginNotifier configureServerNotifier,
@@ -231,11 +236,12 @@ class _LoginViewState extends ConsumerState<LoginView> {
 
   /// Tự động kiểm tra và đăng nhập.
   Future<void> _checkAndLoginAutomatically(BuildContext context, LoginNotifier loginNotifier) async {
+    Timer? timer;
     final isAutomaticallyLogin = await boxWDialog<bool>(
       context: context,
       content: Builder(
         builder: (context) {
-          final timer = Timer(const Duration(seconds: 3), () {
+          timer = Timer(const Duration(seconds: 3), () {
             Navigator.pop(context, true);
           });
 
@@ -248,7 +254,6 @@ class _LoginViewState extends ConsumerState<LoginView> {
               ),
               FilledButton(
                 onPressed: () {
-                  timer.cancel();
                   Navigator.pop(context, false);
                 },
                 child: Text('Huỷ'.tr),
@@ -258,7 +263,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
         },
       ),
     );
-
+    timer?.cancel();
     loginNotifier.closeAutoLoginDialog();
 
     if (isAutomaticallyLogin == true) {

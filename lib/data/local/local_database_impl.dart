@@ -1,4 +1,4 @@
-import 'package:sales/data/local/base_database.dart';
+import 'package:sales/data/local/database.dart';
 import 'package:sales/data/models/category_model.dart';
 import 'package:sales/data/models/order_item_model.dart';
 import 'package:sales/data/models/order_model.dart';
@@ -13,7 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:string_normalizer/string_normalizer.dart';
 
 /// Local database.
-class LocalDatabaseImpl extends BaseDatabase {
+class LocalDatabaseImpl extends Database {
   final _pref = getIt<SharedPreferences>();
 
   @override
@@ -233,5 +233,17 @@ class LocalDatabaseImpl extends BaseDatabase {
       totalCount: orders.length,
       items: orders.skip((params.page - 1) * params.perpage).take(params.perpage).toList(),
     );
+  }
+
+  @override
+  Future<void> backup(String backupPath) {
+    // TODO: implement backup
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> restore(String backupPath) {
+    // TODO: implement restore
+    throw UnimplementedError();
   }
 }

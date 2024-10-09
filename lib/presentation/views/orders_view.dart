@@ -31,6 +31,10 @@ class _OrdersViewState extends ConsumerState<OrdersView> {
     final ordersState = ref.watch(ordersProvider);
     final ordersNotifier = ref.read(ordersProvider.notifier);
 
+    if (ordersState.isLoading) {
+      return const SizedBox.shrink();
+    }
+
     return Scaffold(
       body: Column(
         children: [
@@ -281,7 +285,11 @@ class _OrdersViewState extends ConsumerState<OrdersView> {
     }
   }
 
-  void choosePage() {}
+  void choosePage() {
+    // TODO:
+  }
 
-  void filter() {}
+  void filter() {
+    // TODO:
+  }
 }

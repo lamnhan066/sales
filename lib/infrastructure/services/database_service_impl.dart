@@ -1,11 +1,11 @@
+import 'package:sales/data/database/data_sync_database.dart';
 import 'package:sales/data/mappers/category_mapper_extension.dart';
 import 'package:sales/data/mappers/product_mapper_extension.dart';
-import 'package:sales/data/repositories/database.dart';
 import 'package:sales/domain/entities/data_import_result.dart';
 import 'package:sales/domain/services/database_service.dart';
 
 class DatabaseServiceImpl implements DatabaseService {
-  final Database _database;
+  final DataSyncDatabase _database;
 
   const DatabaseServiceImpl(this._database);
 

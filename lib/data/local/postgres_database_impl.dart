@@ -1,6 +1,6 @@
 import 'package:postgres/postgres.dart';
 import 'package:sales/core/utils/utils.dart';
-import 'package:sales/data/local/base_database.dart';
+import 'package:sales/data/local/database.dart';
 import 'package:sales/data/models/category_model.dart';
 import 'package:sales/data/models/get_orders_result_model.dart';
 import 'package:sales/data/models/order_item_model.dart';
@@ -16,7 +16,7 @@ import 'package:sales/domain/entities/ranges.dart';
 import 'package:sales/domain/repositories/server_configurations_repository.dart';
 
 /// Database using Postgres
-class PostgresDatabaseImpl implements BaseDatabase {
+class PostgresDatabaseImpl implements Database {
   final ServerConfigurationsRepository _serverConfigurationRepository;
   late Connection _connection;
 
@@ -629,5 +629,17 @@ class PostgresDatabaseImpl implements BaseDatabase {
         }
       }
     });
+  }
+
+  @override
+  Future<void> backup(String backupPath) {
+    // TODO: implement backup
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> restore(String backupPath) {
+    // TODO: implement restore
+    throw UnimplementedError();
   }
 }

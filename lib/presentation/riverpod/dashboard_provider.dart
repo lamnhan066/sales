@@ -109,9 +109,7 @@ class DashboardNotifier extends StateNotifier<DashboardState> {
     required this.getMonthlyRevenuesUseCase,
     required this.getThreeRecentOrdersUseCase,
     required this.getTotalProductCountUseCase,
-  }) : super(DashboardState()) {
-    loadDashboardData();
-  }
+  }) : super(DashboardState());
 
   Future<void> loadDashboardData() async {
     state = state.copyWith(isLoading: true, error: '');

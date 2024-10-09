@@ -1,5 +1,12 @@
 import 'dart:math';
 
+import 'package:sales/data/database/base_database.dart';
+import 'package:sales/data/database/category_database.dart';
+import 'package:sales/data/database/data_sync_database.dart';
+import 'package:sales/data/database/order_database.dart';
+import 'package:sales/data/database/order_item_database.dart';
+import 'package:sales/data/database/order_with_items_database.dart';
+import 'package:sales/data/database/product_database.dart';
 import 'package:sales/data/models/category_model.dart';
 import 'package:sales/data/models/get_orders_result_model.dart';
 import 'package:sales/data/models/order_item_model.dart';
@@ -8,10 +15,16 @@ import 'package:sales/data/models/product_model.dart';
 import 'package:sales/domain/entities/get_order_items_params.dart';
 import 'package:sales/domain/entities/order_with_items_params.dart';
 
-import '../repositories/database.dart';
-
 /// Database abstract.
-abstract class BaseDatabase implements Database {
+abstract class Database
+    implements
+        BaseDatabase,
+        DataSyncDatabase,
+        ProductDatabase,
+        CategoryDatabase,
+        OrderDatabase,
+        OrderItemDatabase,
+        OrderWithItemsDatabase {
   /// Nhập dữ liệu với vào dữ liệu hiện tại.
   ///
   /// Việc nhập này sẽ tiến hành tạo `id` và `sku` mới, do đó dữ liệu đã nhập

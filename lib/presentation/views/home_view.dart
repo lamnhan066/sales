@@ -81,7 +81,7 @@ class HomeView extends ConsumerWidget {
 
     Widget buildContent() {
       if (homeState.isLoading) {
-        return const Center(child: CircularProgressIndicator());
+        return const SizedBox.shrink();
       }
 
       return switch (homeState.currentView) {

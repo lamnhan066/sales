@@ -6,16 +6,29 @@ import 'package:sales/core/utils/utils.dart';
 import 'package:sales/presentation/riverpod/dashboard_provider.dart';
 
 /// Màn hình tổng quan.
-class DashboardView extends ConsumerWidget {
-  /// Màn hình tổng quan.
+class DashboardView extends ConsumerStatefulWidget {
   const DashboardView({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ConsumerStatefulWidget> createState() => _DashboardViewState();
+}
+
+class _DashboardViewState extends ConsumerState<DashboardView> {
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(dashboardNotifierProvider.notifier).loadDashboardData();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final dashboardState = ref.watch(dashboardNotifierProvider);
 
     if (dashboardState.isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const SizedBox.shrink();
     }
 
     if (dashboardState.error.isNotEmpty) {

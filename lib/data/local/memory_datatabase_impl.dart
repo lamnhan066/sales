@@ -1,5 +1,12 @@
 import 'dart:math';
 
+import 'package:sales/data/database/base_database.dart';
+import 'package:sales/data/database/category_database.dart';
+import 'package:sales/data/database/data_sync_database.dart';
+import 'package:sales/data/database/order_database.dart';
+import 'package:sales/data/database/order_item_database.dart';
+import 'package:sales/data/database/order_with_items_database.dart';
+import 'package:sales/data/database/product_database.dart';
 import 'package:sales/data/models/category_model.dart';
 import 'package:sales/data/models/get_orders_result_model.dart';
 import 'package:sales/data/models/order_item_model.dart';
@@ -14,9 +21,15 @@ import 'package:sales/domain/entities/product_order_by.dart';
 import 'package:sales/domain/entities/ranges.dart';
 import 'package:string_normalizer/string_normalizer.dart';
 
-import '../repositories/database.dart';
-
-class MemoryDatatabaseImpl implements Database {
+class MemoryDatatabaseImpl
+    implements
+        BaseDatabase,
+        DataSyncDatabase,
+        ProductDatabase,
+        CategoryDatabase,
+        OrderDatabase,
+        OrderItemDatabase,
+        OrderWithItemsDatabase {
   final _categories = <CategoryModel>[];
   final _products = <ProductModel>[];
   final _orderItems = <OrderItemModel>[];
@@ -467,5 +480,17 @@ class MemoryDatatabaseImpl implements Database {
         await updateProduct(product);
       }
     }
+  }
+
+  @override
+  Future<void> backup(String backupPath) {
+    // TODO: implement backup
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> restore(String backupPath) {
+    // TODO: implement restore
+    throw UnimplementedError();
   }
 }
