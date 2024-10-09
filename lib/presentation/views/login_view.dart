@@ -107,11 +107,9 @@ class _LoginViewState extends ConsumerState<LoginView> {
                     width: double.infinity,
                     child: FilledButton(
                       onPressed: () async {
-                        try {
-                          await loginNotifier.login();
+                        final isLoggedIn = await loginNotifier.login();
+                        if (isLoggedIn) {
                           _navigateToHomeView();
-                        } catch (_) {
-                          // TODO: Catch error when press login
                         }
                       },
                       child: Text('Đăng Nhập'.tr),
@@ -183,21 +181,6 @@ class _LoginViewState extends ConsumerState<LoginView> {
               newSettings = newSettings.copyWith(database: value);
             },
           ),
-          BoxWInput(
-            title: 'username',
-            initial: newSettings.username,
-            onChanged: (value) {
-              newSettings = newSettings.copyWith(username: value);
-            },
-          ),
-          BoxWInput(
-            title: 'password',
-            initial: newSettings.password,
-            obscureText: true,
-            onChanged: (value) {
-              newSettings = newSettings.copyWith(password: value);
-            },
-          ),
         ],
       ),
       buttons: (_) {
@@ -267,12 +250,9 @@ class _LoginViewState extends ConsumerState<LoginView> {
     loginNotifier.closeAutoLoginDialog();
 
     if (isAutomaticallyLogin == true) {
-      try {
-        await loginNotifier.autoLogin();
-
+      final isLoggedIn = await loginNotifier.autoLogin();
+      if (isLoggedIn) {
         _navigateToHomeView();
-      } catch (_) {
-        // TODO: Catch error when press login
       }
     }
   }

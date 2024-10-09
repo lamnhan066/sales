@@ -9,6 +9,7 @@ class LoadServerConfigurationUseCase implements UseCase<ServerConfigurations, No
 
   @override
   Future<ServerConfigurations> call(NoParams _) async {
-    return await _repository.loadConfigurations();
+    final configurations = await _repository.loadConfigurations();
+    return configurations;
   }
 }

@@ -1,8 +1,10 @@
+import 'package:language_helper/language_helper.dart';
 import 'package:sales/data/database/core_database.dart';
 import 'package:sales/data/database/data_sync_database.dart';
 import 'package:sales/data/mappers/category_mapper_extension.dart';
 import 'package:sales/data/mappers/product_mapper_extension.dart';
 import 'package:sales/domain/entities/data_import_result.dart';
+import 'package:sales/domain/exceptions/server_connection_exception.dart';
 import 'package:sales/domain/services/database_service.dart';
 
 class DatabaseServiceImpl implements DatabaseService {
@@ -17,7 +19,11 @@ class DatabaseServiceImpl implements DatabaseService {
 
   @override
   Future<void> initial() async {
-    await _coreDatabase.initial();
+    try {
+      await _coreDatabase.initial();
+    } catch (e) {
+      throw InvalidServerConnectionException('Không thể kết nối được với máy chủ'.tr);
+    }
   }
 
   @override

@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:language_helper/language_helper.dart';
 import 'package:sales/core/errors/failure.dart';
 import 'package:sales/core/usecases/usecase.dart';
 import 'package:sales/di.dart';
@@ -112,6 +113,7 @@ class LoginNotifier extends StateNotifier<LoginState> {
   void intitial() async {
     final credentials = await _getCachedLoginCredentialsLoginUseCase(NoParams());
     final isLoggedIn = await _checkLoginStateUseCase(NoParams());
+    await loadServerConfigurations();
     final rememberMe = _loginUseCase.isRememberMe();
     if (rememberMe) {
       state = state.copyWith(
@@ -125,7 +127,8 @@ class LoginNotifier extends StateNotifier<LoginState> {
     }
   }
 
-  Future<void> login() async {
+  Future<bool> login() async {
+    state = state.copyWith(error: '');
     try {
       final credentials = LoginCredentials(
         username: state.username,
@@ -135,24 +138,38 @@ class LoginNotifier extends StateNotifier<LoginState> {
       await _loginUseCase.call(credentials);
       await reloadServer();
       state = state.copyWith(username: '', password: '', isLoggedIn: true);
+
+      return true;
     } on Failure catch (e) {
       state = state.copyWith(error: e.message);
     } catch (_) {
-      state = state.copyWith(error: "An unexpected error occurred");
+      state = state.copyWith(error: 'Đã có lỗi không xác định!'.tr);
     }
+
+    return false;
   }
 
-  Future<void> autoLogin() async {
+  Future<bool> autoLogin() async {
     try {
       await _autoLoginUseCase.call(NoParams());
       await reloadServer();
       state = state.copyWith(username: '', password: '', isLoggedIn: true);
+
+      return true;
     } on Failure catch (e) {
       state = state.copyWith(error: e.message);
+    } catch (_) {
+      state = state.copyWith(error: 'Đã có lỗi không xác định!'.tr);
     }
+
+    return false;
   }
 
   Future<void> reloadServer() async {
+    var configurations = await _loadServerConfigurationUseCase.call(NoParams());
+    configurations = configurations.copyWith(username: state.username, password: state.password);
+    state = state.copyWith(serverConfigurations: configurations);
+    await _saveServerConfigurationUseCase.call(configurations);
     await loadServerConfigurations();
     await _loadServerConnectionUsecase(NoParams());
   }
@@ -184,8 +201,9 @@ class LoginNotifier extends StateNotifier<LoginState> {
   }
 
   Future<void> saveServerConfigurations(ServerConfigurations configurations) async {
-    await _saveServerConfigurationUseCase.call(configurations);
-    state = state.copyWith(serverConfigurations: configurations);
+    final configs = configurations.copyWith(username: state.username, password: state.password);
+    state = state.copyWith(serverConfigurations: configs);
+    await _saveServerConfigurationUseCase.call(configs);
   }
 }
 
