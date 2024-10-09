@@ -29,7 +29,7 @@ class Order with EquatableMixin {
   factory Order.fromMap(Map<String, dynamic> map) {
     return Order(
       id: (map['id'] as num?)?.toInt() ?? 0,
-      status: OrderStatus.values.byName(map['status'] as String),
+      status: OrderStatus.values.byName((map['status'] as String).trim()),
       date: DateTime.fromMillisecondsSinceEpoch(map['date'] as int),
       deleted: map['deleted'] as bool,
     );

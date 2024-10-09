@@ -16,6 +16,9 @@ class LoginView extends ConsumerStatefulWidget {
 }
 
 class _LoginViewState extends ConsumerState<LoginView> {
+  final usernameTextController = TextEditingController();
+  final passwordTextController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -41,6 +44,9 @@ class _LoginViewState extends ConsumerState<LoginView> {
       return const Center(child: CircularProgressIndicator());
     }
 
+    usernameTextController.text = loginState.username;
+    passwordTextController.text = loginState.password;
+
     return Scaffold(
       body: Row(
         children: [
@@ -63,13 +69,13 @@ class _LoginViewState extends ConsumerState<LoginView> {
                   'Chào mừng bạn đã trở lại! Vui lòng đăng nhập để tiếp tục'.tr,
                 ),
                 BoxWInput(
-                  initial: loginState.username,
+                  controller: usernameTextController,
                   onChanged: (value) => loginNotifier.updateUsername(value),
                   title: 'Tên tài khoản'.tr,
                 ),
                 BoxWInput(
                   obscureText: true,
-                  initial: loginState.password,
+                  controller: passwordTextController,
                   onChanged: (value) => loginNotifier.updatePassword(value),
                   title: 'Mật khẩu'.tr,
                 ),
@@ -104,7 +110,9 @@ class _LoginViewState extends ConsumerState<LoginView> {
                         try {
                           await loginNotifier.login();
                           _navigateToHomeView();
-                        } catch (e) {}
+                        } catch (_) {
+                          // TODO: Catch error when press login
+                        }
                       },
                       child: Text('Đăng Nhập'.tr),
                     ),
@@ -258,7 +266,9 @@ class _LoginViewState extends ConsumerState<LoginView> {
         await loginNotifier.autoLogin();
 
         _navigateToHomeView();
-      } catch (e) {}
+      } catch (_) {
+        // TODO: Catch error when press login
+      }
     }
   }
 

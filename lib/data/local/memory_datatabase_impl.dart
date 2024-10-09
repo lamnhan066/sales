@@ -53,7 +53,7 @@ class MemoryDatatabaseImpl implements Database {
     final count = await getTotalProductCount();
     final id = count + 1;
 
-    return (id: id, sku: 'P${id.toString().padLeft(8, '0')}');
+    return (id: id, sku: 'P${(id - 1).toString().padLeft(8, '0')}');
   }
 
   @override
@@ -80,14 +80,14 @@ class MemoryDatatabaseImpl implements Database {
       if (product.deleted) return false;
 
       // Lọc theo loại hàng.
-      if (params.categoryIdFilter != null && product.categoryId != params.categoryIdFilter) {
+      if (params.isUseCategoryFilter && product.categoryId != params.categoryIdFilter) {
         return false;
       }
 
       // Lọc theo mức giá.
       bool priceFilter = true;
-      if (params.priceRange != null) {
-        priceFilter = product.importPrice >= params.priceRange!.start && product.importPrice <= params.priceRange!.end;
+      if (params.isUsePriceRangeFilter) {
+        priceFilter = product.importPrice >= params.priceRange.start && product.importPrice <= params.priceRange.end;
       }
 
       // Tìm kiếm.

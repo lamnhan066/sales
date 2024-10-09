@@ -9,16 +9,21 @@ class GetProductParams with EquatableMixin {
   final int perPage;
   final ProductOrderBy orderBy;
   final String searchText;
-  final Ranges<double>? priceRange;
-  final int? categoryIdFilter;
+  final Ranges<double> priceRange;
+
+  /// Lọc theo loại hàng. Nếu giá trị này là -1 thì không lọc theo loại hàng.
+  final int categoryIdFilter;
+
+  bool get isUseCategoryFilter => categoryIdFilter != -1;
+  bool get isUsePriceRangeFilter => !priceRange.isAllPrices;
 
   const GetProductParams({
     this.page = 1,
     this.perPage = 10,
     this.orderBy = ProductOrderBy.none,
     this.searchText = '',
-    this.priceRange,
-    this.categoryIdFilter,
+    this.priceRange = const Ranges(0, double.infinity),
+    this.categoryIdFilter = -1,
   });
 
   GetProductParams copyWith({
@@ -45,7 +50,7 @@ class GetProductParams with EquatableMixin {
       'perPage': perPage,
       'orderBy': orderBy.name,
       'searchText': searchText,
-      'priceRange': priceRange?.toMap(),
+      'priceRange': priceRange.toMap(),
       'categoryIdFilter': categoryIdFilter,
     };
   }
@@ -54,9 +59,9 @@ class GetProductParams with EquatableMixin {
     return GetProductParams(
       page: map['page']?.toInt() ?? 0,
       perPage: map['perPage']?.toInt() ?? 0,
-      orderBy: ProductOrderBy.values.byName(map['orderBy']),
+      orderBy: ProductOrderBy.values.byName(map['orderBy'].trim()),
       searchText: map['searchText'] ?? '',
-      priceRange: map['priceRange'] != null ? Ranges<double>.fromMap(map['priceRange']) : null,
+      priceRange: Ranges<double>.fromMap(map['priceRange']),
       categoryIdFilter: map['categoryIdFilter']?.toInt(),
     );
   }

@@ -1,5 +1,5 @@
 import 'package:get_it/get_it.dart';
-import 'package:sales/data/local/sample_memory_database_impl.dart';
+import 'package:sales/data/local/postgres_database_impl.dart';
 import 'package:sales/data/repositories/database.dart';
 import 'package:sales/domain/repositories/app_version_repository.dart';
 import 'package:sales/domain/repositories/auth_repository.dart';
@@ -65,7 +65,7 @@ Future<void> setupDependencies() async {
   getIt.registerLazySingleton<AuthRepository>(() => LocalAuthRepositoryImpl(getIt()));
   getIt.registerLazySingleton<ServerConfigurationsRepository>(() => PostgresConfigurationsRepositoryImpl(getIt()));
   getIt.registerLazySingleton<AppVersionRepository>(() => AppVersionRepositoryImpl());
-  getIt.registerLazySingleton<Database>(() => SampleMemoryDatabaseImpl());
+  getIt.registerLazySingleton<Database>(() => PostgresDatabaseImpl(getIt()));
   getIt.registerLazySingleton<ProductRepository>(() => ProductRepositoryImpl(getIt()));
   getIt.registerLazySingleton<OrderRepository>(() => OrderRepositoryImpl(getIt()));
   getIt.registerLazySingleton<CategoryRepository>(() => CategoryRepositoryImpl(getIt()));

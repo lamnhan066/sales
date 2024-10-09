@@ -17,8 +17,8 @@ class OrderModel extends Order {
   factory OrderModel.fromMap(Map<String, dynamic> map) {
     return OrderModel(
       id: (map['o_id'] as num).toInt(),
-      status: OrderStatus.values.byName(map['o_status'] as String),
-      date: DateTime.parse(map['o_date'] as String),
+      status: OrderStatus.values.byName((map['o_status'] as String).trim()),
+      date: map['o_date'],
       deleted: map['o_deleted'] as bool,
     );
   }

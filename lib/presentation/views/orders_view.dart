@@ -1,5 +1,5 @@
 import 'package:boxw/boxw.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide DataTable, DataRow, DataColumn, DataCell;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:language_helper/language_helper.dart';
@@ -7,6 +7,7 @@ import 'package:sales/core/constants/app_configs.dart';
 import 'package:sales/core/utils/utils.dart';
 import 'package:sales/domain/entities/order.dart';
 import 'package:sales/presentation/riverpod/orders_provider.dart';
+import 'package:sales/presentation/widgets/data_table_plus.dart';
 import 'package:sales/presentation/widgets/order_dialog.dart';
 
 class OrdersView extends ConsumerStatefulWidget {
@@ -71,6 +72,12 @@ class _OrdersViewState extends ConsumerState<OrdersView> {
                     dataRowMaxHeight: 68,
                     columnSpacing: 30,
                     horizontalMargin: 10,
+                    columnWidthBuilder: (index) {
+                      if (index == 1) {
+                        return const IntrinsicColumnWidth(flex: 1);
+                      }
+                      return null;
+                    },
                     columns: _buildColumns(),
                     rows: _buildRows(ordersState, ordersNotifier),
                   ),
@@ -115,15 +122,19 @@ class _OrdersViewState extends ConsumerState<OrdersView> {
   List<DataColumn> _buildColumns() {
     return [
       DataColumn(
+        headingRowAlignment: MainAxisAlignment.center,
         label: Text('STT'.tr, textAlign: TextAlign.center),
       ),
       DataColumn(
+        headingRowAlignment: MainAxisAlignment.center,
         label: Text('Ngày Giờ'.tr, textAlign: TextAlign.center),
       ),
       DataColumn(
+        headingRowAlignment: MainAxisAlignment.center,
         label: Text('Trạng Thái'.tr, textAlign: TextAlign.center),
       ),
       DataColumn(
+        headingRowAlignment: MainAxisAlignment.center,
         label: Text('Hành động'.tr, textAlign: TextAlign.center),
       ),
     ];

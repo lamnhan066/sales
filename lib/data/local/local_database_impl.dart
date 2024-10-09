@@ -13,7 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:string_normalizer/string_normalizer.dart';
 
 /// Local database.
-class LocalDatabase extends BaseDatabase {
+class LocalDatabaseImpl extends BaseDatabase {
   final _pref = getIt<SharedPreferences>();
 
   @override
@@ -126,14 +126,14 @@ class LocalDatabase extends BaseDatabase {
       if (product.deleted) return false;
 
       // Lọc theo loại hàng.
-      if (params.categoryIdFilter != null && product.categoryId != params.categoryIdFilter) {
+      if (params.isUseCategoryFilter && product.categoryId != params.categoryIdFilter) {
         return false;
       }
 
       // Lọc theo mức giá.
       bool priceFilter = true;
-      if (params.priceRange != null) {
-        priceFilter = product.importPrice >= params.priceRange!.start && product.importPrice <= params.priceRange!.end;
+      if (params.isUsePriceRangeFilter) {
+        priceFilter = product.importPrice >= params.priceRange.start && product.importPrice <= params.priceRange.end;
       }
 
       // Tìm kiếm.

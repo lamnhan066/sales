@@ -11,21 +11,21 @@ import 'package:sales/domain/entities/get_order_params.dart';
 import 'package:sales/domain/entities/get_product_params.dart';
 import 'package:sales/domain/entities/get_result.dart';
 import 'package:sales/domain/entities/order_with_items_params.dart';
-import 'package:sales/domain/entities/product_order_by.dart';
 import 'package:sales/domain/entities/range_of_dates.dart';
 import 'package:sales/domain/entities/ranges.dart';
-import 'package:sales/domain/entities/server_configurations.dart';
+import 'package:sales/domain/repositories/server_configurations_repository.dart';
 
 /// Database using Postgres
-class PostgresDatabase implements BaseDatabase {
-  final ServerConfigurations configurations;
+class PostgresDatabaseImpl implements BaseDatabase {
+  final ServerConfigurationsRepository _serverConfigurationRepository;
   late Connection _connection;
 
   /// Database using Postgres
-  PostgresDatabase(this.configurations);
+  PostgresDatabaseImpl(this._serverConfigurationRepository);
 
   @override
   Future<void> initial() async {
+    final configurations = await _serverConfigurationRepository.loadConfigurations();
     _connection = await Connection.open(
       Endpoint(
         host: configurations.host,
@@ -63,7 +63,7 @@ class PostgresDatabase implements BaseDatabase {
 
   @override
   Future<void> addCategory(CategoryModel category, [Session? session]) async {
-    const sql = 'INSERT INTO categories (c_name, c_description) VALUES (@name, @description)';
+    const sql = 'INSERT INTO categories (c_name, c_description, c_deleted) VALUES (@name, @description, FALSE)';
     await (session ?? _connection).execute(
       Sql.named(sql),
       parameters: {
@@ -76,7 +76,7 @@ class PostgresDatabase implements BaseDatabase {
   @override
   Future<void> updateCategory(CategoryModel category, [Session? session]) async {
     const sql =
-        'UPDATE categories SET c_id = @id, c_name = @name, c_description = @description, c_deleted = @deleted WHERE c_id=@id';
+        'UPDATE categories SET c_name = @name, c_description = @description, c_deleted = @deleted WHERE c_id=@id';
     await (session ?? _connection).execute(
       Sql.named(sql),
       parameters: {
@@ -94,21 +94,22 @@ class PostgresDatabase implements BaseDatabase {
   }
 
   @override
-  Future<void> addOrder(OrderModel order, [Session? connection]) async {
-    const sql = 'INSERT INTO orders (c_status, c_date) VALUES (@status, @date)';
-    await (connection ?? _connection).execute(
+  Future<int> addOrder(OrderModel order, [Session? connection]) async {
+    const sql = 'INSERT INTO orders (o_status, o_date, o_deleted) VALUES (@status, @date, FALSE) RETURNING o_id';
+    final result = await (connection ?? _connection).execute(
       Sql.named(sql),
       parameters: {
         'status': order.status.name,
         'date': TypedValue(Type.date, order.date),
       },
     );
+
+    return result.first.first as int;
   }
 
   @override
   Future<void> updateOrder(OrderModel order, [Session? session]) async {
-    const sql =
-        'UPDATE orders SET o_id = @id,  o_status = @status, o_date = @date, o_deleted = @deleted WHERE o_id=@id';
+    const sql = 'UPDATE orders SET o_status = @status, o_date = @date, o_deleted = @deleted WHERE o_id=@id';
     await (session ?? _connection).execute(
       Sql.named(sql),
       parameters: {
@@ -128,7 +129,7 @@ class PostgresDatabase implements BaseDatabase {
   @override
   Future<void> addOrderItem(OrderItemModel orderItem, [Session? connection]) async {
     const sql =
-        'INSERT INTO orders (oi_quantity, oi_unit_sale_price, oi_total_price, oi_product_id, oi_order_id) VALUES (@quantity, @unitSalePrice, @totalPrice, @productId, @orderId)';
+        'INSERT INTO order_items (oi_quantity, oi_unit_sale_price, oi_total_price, oi_product_id, oi_order_id, oi_deleted) VALUES (@quantity, @unitSalePrice, @totalPrice, @productId, @orderId, FALSE)';
     await (connection ?? _connection).execute(
       Sql.named(sql),
       parameters: {
@@ -142,22 +143,30 @@ class PostgresDatabase implements BaseDatabase {
   }
 
   @override
-  Future<void> updateOrderItem(OrderItemModel orderItem) async {
+  Future<void> updateOrderItem(OrderItemModel orderItem, [Session? session]) async {
     const sql =
-        'UPDATE orders SET oi_id = @id,  oi_quantity = @quantity, oi_unit_sale_price = @unitSalePrice, oi_total_price = @totalPrice, oi_product_id = @productId, oi_order_id = @orderId WHERE oi_id = @id';
-    await _connection.execute(Sql.named(sql), parameters: orderItem.toMap());
+        'UPDATE order_items SET oi_quantity = @quantity, oi_unit_sale_price = @unitSalePrice, oi_total_price = @totalPrice, oi_product_id = @productId, oi_order_id = @orderId, oi_deleted = @deleted WHERE oi_id = @id';
+    await (session ?? _connection).execute(Sql.named(sql), parameters: {
+      'id': orderItem.id,
+      'quantity': orderItem.quantity,
+      'unitSalePrice': orderItem.unitSalePrice,
+      'totalPrice': orderItem.totalPrice,
+      'productId': orderItem.productId,
+      'orderId': orderItem.orderId,
+      'deleted': orderItem.deleted,
+    });
   }
 
   @override
-  Future<void> removeOrderItem(OrderItemModel orderItem) async {
-    await updateOrderItem(orderItem.copyWith(deleted: true));
+  Future<void> removeOrderItem(OrderItemModel orderItem, [Session? session]) async {
+    await updateOrderItem(orderItem.copyWith(deleted: true), session);
   }
 
   @override
-  Future<void> addProduct(ProductModel product) async {
+  Future<void> addProduct(ProductModel product, [Session? session]) async {
     const sql =
-        'INSERT INTO products (p_sku, p_name, p_image_path, p_import_price, p_count, p_description, p_category_id) VALUES (@sku, @name, @imagePath, @importPrice, @count, @description, @categoryId)';
-    await _connection.execute(
+        'INSERT INTO products (p_sku, p_name, p_image_path, p_import_price, p_count, p_description, p_category_id, p_deleted) VALUES (@sku, @name, @imagePath, @importPrice, @count, @description, @categoryId, @deleted)';
+    await (session ?? _connection).execute(
       Sql.named(sql),
       parameters: {
         'sku': product.sku,
@@ -167,79 +176,80 @@ class PostgresDatabase implements BaseDatabase {
         'count': product.count,
         'description': product.description,
         'categoryId': product.categoryId,
+        'deleted': product.deleted,
       },
     );
   }
 
   @override
-  Future<void> updateProduct(ProductModel product) async {
+  Future<void> updateProduct(ProductModel product, [Session? session]) async {
     const sql =
-        'UPDATE products SET p_id = @id,  p_sku = @sku, p_name = @name, p_image_path = @imagePath, p_import_price = @importPrice, p_count = @count, p_description = @description, p_category_id = @categoryId, p_deleted = @deleted WHERE p_id=@id';
-    await _connection.execute(Sql.named(sql), parameters: product.toMap());
+        'UPDATE products SET p_sku = @sku, p_name = @name, p_image_path = @imagePath, p_import_price = @importPrice, p_count = @count, p_description = @description, p_category_id = @categoryId, p_deleted = @deleted WHERE p_id=@id';
+    await (session ?? _connection).execute(Sql.named(sql), parameters: {
+      'id': product.id,
+      'sku': product.sku,
+      'name': product.name,
+      'imagePath': TypedValue(Type.varCharArray, product.imagePath),
+      'importPrice': product.importPrice,
+      'count': product.count,
+      'description': product.description,
+      'categoryId': product.categoryId,
+      'deleted': product.deleted,
+    });
   }
 
   @override
-  Future<void> removeProduct(ProductModel product) async {
-    await updateProduct(product.copyWith(deleted: true));
+  Future<void> removeProduct(ProductModel product, [Session? session]) async {
+    await updateProduct(product.copyWith(deleted: true), session);
   }
 
   @override
-  Future<ProductModel> getProductById(int id) async {
-    const sql = 'SELECT DISTINCT ON (p_id) FROM products WHERE p_id = @id';
-    final result = await _connection.execute(
+  Future<ProductModel> getProductById(int id, [Session? session]) async {
+    const sql = 'SELECT * FROM products WHERE p_id = @id';
+    final result = await (session ?? _connection).execute(
       Sql.named(sql),
-      parameters: {
-        'id': id,
-      },
+      parameters: {'id': id},
     );
     return ProductModel.fromMap(result.first.toColumnMap());
   }
 
   @override
-  Future<List<CategoryModel>> getAllCategories() async {
+  Future<List<CategoryModel>> getAllCategories([Session? session]) async {
     const sql = 'SELECT * FROM categories WHERE c_deleted=FALSE';
-    final result = await _connection.execute(sql);
+    final result = await (session ?? _connection).execute(sql);
 
     return result.map((e) => CategoryModel.fromMap(e.toColumnMap())).toList();
   }
 
   @override
-  Future<List<OrderItemModel>> getAllOrderItems({
-    int? orderId,
-    int? productId,
-  }) async {
+  Future<List<OrderItemModel>> getAllOrderItems([GetOrderItemsParams? params, Session? session]) async {
     var sql = 'SELECT * FROM order_items WHERE oi_deleted=FALSE';
-    if (orderId != null) {
-      sql += ' AND oi_order_id = $orderId';
+    if (params?.orderId != null) {
+      sql += ' AND oi_order_id = ${params?.orderId}';
     }
-    if (productId != null) {
-      sql += ' AND oi_product_id = $orderId';
+    if (params?.productId != null) {
+      sql += ' AND oi_product_id = ${params?.orderId}';
     }
-    final result = await _connection.execute(sql);
+    final result = await (session ?? _connection).execute(sql);
 
     return result.map((e) => OrderItemModel.fromMap(e.toColumnMap())).toList();
   }
 
   @override
-  Future<List<OrderModel>> getAllOrders({RangeOfDates? dateRange}) async {
+  Future<List<OrderModel>> getAllOrders({RangeOfDates? dateRange, Session? session}) async {
     String sql = 'SELECT * FROM orders WHERE o_deleted=FALSE';
     if (dateRange != null) {
       sql += " AND o_date >= '${Utils.dateToSql(dateRange.start)}'";
       sql += " AND o_date <= '${Utils.dateToSql(dateRange.end)}'";
     }
-    final result = await _connection.execute(sql);
+    final result = await (session ?? _connection).execute(sql);
 
     return result.map((e) => OrderModel.fromMap(e.toColumnMap())).toList();
   }
 
   @override
-  Future<List<ProductModel>> getAllProducts({
-    ProductOrderBy orderBy = ProductOrderBy.none,
-    String searchText = '',
-    Ranges<double>? rangeValues,
-    int? categoryId,
-  }) async {
-    String sql = 'SELECT * FROM products WHERE p_deleted=FALSE';
+  Future<List<ProductModel>> getAllProducts() async {
+    String sql = 'SELECT * FROM products WHERE p_deleted = FALSE';
     final result = await _connection.execute(Sql.named(sql));
 
     return result.map((e) => ProductModel.fromMap(e.toColumnMap())).toList();
@@ -247,10 +257,10 @@ class PostgresDatabase implements BaseDatabase {
 
   @override
   Future<void> addAllCategories(List<CategoryModel> categories) async {
-    const sql = 'SELECT * FROM categories WHERE c_id = @id';
+    const sql = 'SELECT 1 FROM categories WHERE c_id = @id';
     await _connection.runTx((session) async {
       for (final category in categories) {
-        final result = await _connection.execute(Sql.named(sql), parameters: {'id': category.id});
+        final result = await session.execute(Sql.named(sql), parameters: {'id': category.id});
         if (result.isEmpty) {
           await addCategory(category, session);
         } else {
@@ -262,7 +272,7 @@ class PostgresDatabase implements BaseDatabase {
 
   @override
   Future<void> addAllProducts(List<ProductModel> products) async {
-    const sql = 'SELECT * FROM products WHERE p_id = @id';
+    const sql = 'SELECT 1 FROM products WHERE p_id = @id';
     for (final product in products) {
       final result = await _connection.execute(Sql.named(sql), parameters: {'id': product.id});
       if (result.isEmpty) {
@@ -324,9 +334,15 @@ class PostgresDatabase implements BaseDatabase {
   @override
   Future<void> addOrderWithOrderItems(OrderWithItemsParams<OrderModel, OrderItemModel> params) async {
     await _connection.runTx((session) async {
-      await addOrder(params.order, session);
-      for (final item in params.orderItems) {
-        await addOrderItem(item, session);
+      final orderId = await addOrder(params.order, session);
+      for (var orderItem in params.orderItems) {
+        orderItem = orderItem.copyWith(orderId: orderId);
+        await addOrderItem(orderItem, session);
+
+        // Cập nhật lại số lượng của sản phẩm.
+        var product = await getProductById(orderItem.productId, session);
+        product = product.copyWith(count: product.count - orderItem.quantity);
+        await updateProduct(product, session);
       }
     });
   }
@@ -357,7 +373,7 @@ class PostgresDatabase implements BaseDatabase {
         p_id, p_sku, p_name, p_image_path, p_import_price, p_count, p_description, p_category_id, p_deleted, SUM(oi_quantity) AS total_quantity
       FROM 
         products
-      LEFT JOIN
+      JOIN
         order_items ON p_id = oi_product_id
       WHERE
         p_deleted = FALSE
@@ -379,7 +395,7 @@ class PostgresDatabase implements BaseDatabase {
 
   @override
   Future<List<ProductModel>> getFiveLowStockProducts() async {
-    const sql = 'SELECT * FROM products WHERE p_deleted = FALSE AND p_quantity < 5 LIMIT 5';
+    const sql = 'SELECT * FROM products WHERE p_deleted = FALSE AND p_count < 5 LIMIT 5';
     final result = await _connection.execute(sql);
     return result.map((e) => ProductModel.fromMap(e.toColumnMap())).toList();
   }
@@ -397,7 +413,7 @@ class PostgresDatabase implements BaseDatabase {
       JOIN 
           products ON oi_product_id = p_id
       WHERE 
-          DATE_TRUNC('month', o_date) = DATE_TRUNC('month', @currentDate)
+          DATE_TRUNC('month', o_date::timestamp) = DATE_TRUNC('month', @currentDate::timestamp)
       GROUP BY 
           TO_CHAR(o_date, 'DD')
       ORDER BY 
@@ -408,7 +424,7 @@ class PostgresDatabase implements BaseDatabase {
   }
 
   @override
-  Future<List<OrderItemModel>> getOrderItems([GetOrderItemsParams? params]) async {
+  Future<List<OrderItemModel>> getOrderItems([GetOrderItemsParams? params, Session? session]) async {
     String sql = 'SELECT * FROM order_items WHERE oi_deleted = FALSE';
     Map<String, dynamic> parameters = {};
     if (params != null) {
@@ -447,23 +463,23 @@ class PostgresDatabase implements BaseDatabase {
     String sql = 'SELECT * FROM products WHERE p_deleted=FALSE';
     final Map<String, Object> parameters = {};
 
-    if (params.categoryIdFilter != null) {
+    if (params.isUseCategoryFilter) {
       sql += ' AND p_category_id = @categoryId';
-      parameters.addAll({'categoryId': params.categoryIdFilter!});
+      parameters.addAll({'categoryId': params.categoryIdFilter});
     }
 
-    if (params.priceRange != null) {
-      if (params.priceRange!.start > 0 && params.priceRange!.start != double.infinity) {
+    if (params.isUsePriceRangeFilter) {
+      if (params.priceRange.start > 0 && params.priceRange.start != double.infinity) {
         sql += ' AND p_import_price >= @minValue';
         parameters.addAll({
-          'minValue': params.priceRange!.start.toInt(),
+          'minValue': params.priceRange.start.toInt(),
         });
       }
 
-      if (params.priceRange!.end > 0 && params.priceRange!.end != double.infinity) {
+      if (params.priceRange.end > 0 && params.priceRange.end != double.infinity) {
         sql += ' AND p_import_price <= @maxValue';
         parameters.addAll({
-          'maxValue': params.priceRange!.end.toInt(),
+          'maxValue': params.priceRange.end.toInt(),
         });
       }
     }
@@ -553,10 +569,17 @@ class PostgresDatabase implements BaseDatabase {
 
   @override
   Future<void> removeOrderWithItems(OrderModel order) async {
-    const orderItemsSql = 'UPDATE order_items SET oi_deleted = TRUE WHERE oi_order_id = @orderId';
-    final params = {'orderId': order.id};
     await _connection.runTx((session) async {
-      await session.execute(Sql.named(orderItemsSql), parameters: params);
+      final orderItems = await getAllOrderItems(GetOrderItemsParams(orderId: order.id), session);
+      for (final orderItem in orderItems) {
+        final tempOrderItems = orderItem.copyWith(deleted: true);
+        await updateOrderItem(tempOrderItems, session);
+
+        // Cập nhật lại số lượng sản phẩm.
+        var product = await getProductById(orderItem.productId, session);
+        product = product.copyWith(count: product.count + orderItem.quantity);
+        await updateProduct(product, session);
+      }
       await removeOrder(order, session);
     });
   }
@@ -583,6 +606,28 @@ class PostgresDatabase implements BaseDatabase {
   Future<void> updateOrderWithItems(OrderWithItemsParams<OrderModel, OrderItemModel> params) async {
     await _connection.runTx((session) async {
       await updateOrder(params.order, session);
+      final orderItemsFromDatabase = await getOrderItems(GetOrderItemsParams(orderId: params.order.id), session);
+      for (final orderItem in params.orderItems) {
+        final index = orderItemsFromDatabase.indexWhere((e) => e.id == orderItem.id);
+        if (index == -1) {
+          await addOrderItem(orderItem, session);
+
+          // Cập nhật lại số lượng sản phẩm.
+          var product = await getProductById(orderItem.productId, session);
+          product = product.copyWith(count: product.count - orderItem.quantity);
+          await updateProduct(product, session);
+        } else {
+          await updateOrderItem(orderItem, session);
+
+          // Cập nhật lại số lượng sản phẩm.
+          final databaseCount = orderItemsFromDatabase[index].quantity;
+          final newCount = orderItem.quantity;
+          final differentCount = databaseCount - newCount;
+          var product = await getProductById(orderItem.productId, session);
+          product = product.copyWith(count: product.count + differentCount);
+          await updateProduct(product, session);
+        }
+      }
     });
   }
 }

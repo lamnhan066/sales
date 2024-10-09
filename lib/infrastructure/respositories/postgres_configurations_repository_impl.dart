@@ -13,7 +13,6 @@ class PostgresConfigurationsRepositoryImpl implements ServerConfigurationsReposi
     if (postgresSettingsJson != null) {
       return ServerConfigurations.fromJson(postgresSettingsJson);
     }
-    // Return default configuration if not found
     return const ServerConfigurations(
       host: 'localhost',
       database: 'postgres',

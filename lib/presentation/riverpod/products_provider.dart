@@ -45,7 +45,7 @@ class ProductsState with EquatableMixin {
   final Ranges<double> priceRange;
 
   /// Lọc sản phẩm theo Loại hàng.
-  final int? categoryIdFilter;
+  final int categoryIdFilter;
 
   /// Danh sách loại hàng.
   final List<Category> categories;
@@ -62,7 +62,7 @@ class ProductsState with EquatableMixin {
     this.orderBy = ProductOrderBy.none,
     this.searchText = '',
     this.priceRange = const Ranges(0, double.infinity),
-    this.categoryIdFilter,
+    this.categoryIdFilter = -1,
     this.isLoading = false,
     this.error = '',
   });

@@ -66,11 +66,7 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             FilledButton(
-              onPressed: () => addProductDialog(
-                context: context,
-                notifier: notifier,
-                categories: state.categories,
-              ),
+              onPressed: () => addProduct(),
               child: const Icon(Icons.add),
             ),
             Row(
@@ -144,6 +140,7 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
 
   DataColumn _headerTextColumn(String text, {bool numeric = false}) {
     return DataColumn(
+      numeric: numeric,
       headingRowAlignment: MainAxisAlignment.center,
       label: Text(
         text,
@@ -331,19 +328,24 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
     final notifier = ref.read(productsProvider.notifier);
     final state = ref.watch(productsProvider);
 
-    var tempRangeValues = state.priceRange;
+    var tempPriceRange = state.priceRange;
     var tempCategoryIdFilter = state.categoryIdFilter;
     final result = await boxWDialog(
       context: context,
       title: 'Bộ lọc'.tr,
       content: ProductFilterDialog(
-        initialPriceRange: tempRangeValues,
+        initialPriceRange: tempPriceRange,
+        intialCategoryId: tempCategoryIdFilter,
         categories: state.categories,
         onPriceRangeChanged: (values) {
-          tempRangeValues = values;
+          tempPriceRange = values;
         },
         onCategoryIdChanged: (id) {
-          tempCategoryIdFilter = id;
+          if (id == null) {
+            tempCategoryIdFilter = -1;
+          } else {
+            tempCategoryIdFilter = id;
+          }
         },
       ),
       buttons: (context) {
@@ -358,8 +360,8 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
     );
 
     // Chỉ tải lại dữ liệu khi có sự thay đổi.
-    if (result == true && (state.priceRange != tempRangeValues || state.categoryIdFilter != tempCategoryIdFilter)) {
-      notifier.updateFilters(priceRange: tempRangeValues, categoryIdFilter: tempCategoryIdFilter);
+    if (result == true && (state.priceRange != tempPriceRange || state.categoryIdFilter != tempCategoryIdFilter)) {
+      notifier.updateFilters(priceRange: tempPriceRange, categoryIdFilter: tempCategoryIdFilter);
     }
   }
 
@@ -443,6 +445,7 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
         content: 'Có @{count} sản phẩm trong dữ liệu cần nhập. '
                 'Dữ liệu mới sẽ thay thế dữ liệu cũ và không thể hoàn tác.\n\n'
                 'Bạn có muốn tiếp tục không?'
+            .tr
             .trP({'count': data.products.length}),
         confirmText: 'Đồng ý'.tr,
         cancelText: 'Huỷ'.tr,

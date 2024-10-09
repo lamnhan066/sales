@@ -9,14 +9,14 @@ class ProductFilterDialog extends StatefulWidget {
   const ProductFilterDialog({
     super.key,
     required this.initialPriceRange,
-    this.intialCategoryId,
+    required this.intialCategoryId,
     required this.categories,
     required this.onPriceRangeChanged,
     required this.onCategoryIdChanged,
   });
 
   final Ranges<double> initialPriceRange;
-  final int? intialCategoryId;
+  final int intialCategoryId;
   final List<Category> categories;
   final void Function(Ranges<double> values) onPriceRangeChanged;
   final void Function(int? value) onCategoryIdChanged;
@@ -29,7 +29,7 @@ class _ProductFilterDialogState extends State<ProductFilterDialog> {
   final startController = TextEditingController();
   final endController = TextEditingController();
   late Ranges<double> values;
-  late int? categoryId;
+  late int categoryId;
 
   @override
   void initState() {
@@ -132,7 +132,7 @@ class _ProductFilterDialogState extends State<ProductFilterDialog> {
               ],
             ),
             Text('Lọc theo loại hàng'.tr),
-            BoxWDropdown<int?>(
+            BoxWDropdown<int>(
               title: 'Loại hàng'.tr,
               items: widget.categories
                   .map(
@@ -144,12 +144,14 @@ class _ProductFilterDialogState extends State<ProductFilterDialog> {
                   .toList()
                 ..insert(
                   0,
-                  DropdownMenuItem(child: Text('Tất cả'.tr)),
+                  DropdownMenuItem(value: -1, child: Text('Tất cả'.tr)),
                 ),
               value: categoryId,
               onChanged: (int? value) {
-                categoryId = value;
-                widget.onCategoryIdChanged(value);
+                if (value != null) {
+                  categoryId = value;
+                  widget.onCategoryIdChanged(value);
+                }
               },
             ),
           ],
