@@ -1,21 +1,21 @@
-import 'package:sales/domain/entities/product.dart';
+import 'package:sales/domain/entities/order_status.dart';
 import 'package:sales/infrastucture/database/memory_datatabase_impl.dart';
-import 'package:sales/models/category.dart';
-import 'package:sales/models/order.dart';
-import 'package:sales/models/order_item.dart';
-import 'package:sales/models/order_status.dart';
+import 'package:sales/infrastucture/database/models/category_model.dart';
+import 'package:sales/infrastucture/database/models/order_item_model.dart';
+import 'package:sales/infrastucture/database/models/order_model.dart';
+import 'package:sales/infrastucture/database/models/product_model.dart';
 
 /// Database in the memory with sample data.
 class SampleMemoryDatabaseImpl extends MemoryDatatabaseImpl {
   @override
   Future<void> initial() async {
     await addAllCategories([
-      Category(id: 0, name: 'Thức uống', description: 'Thức uống'),
-      Category(id: 1, name: 'Thức ăn', description: 'Thức ăn'),
-      Category(id: 2, name: 'Gia dụng', description: 'Gia dụng'),
+      CategoryModel(id: 0, name: 'Thức uống', description: 'Thức uống'),
+      CategoryModel(id: 1, name: 'Thức ăn', description: 'Thức ăn'),
+      CategoryModel(id: 2, name: 'Gia dụng', description: 'Gia dụng'),
     ]);
     await addAllProducts([
-      Product(
+      ProductModel(
         id: 0,
         sku: 'P00000000',
         name: 'Cafe',
@@ -25,7 +25,7 @@ class SampleMemoryDatabaseImpl extends MemoryDatatabaseImpl {
         description: 'Cafe Cafe',
         categoryId: 0,
       ),
-      Product(
+      ProductModel(
         id: 1,
         sku: 'P00000001',
         name: 'Trà',
@@ -35,7 +35,7 @@ class SampleMemoryDatabaseImpl extends MemoryDatatabaseImpl {
         description: 'Trà Trà',
         categoryId: 0,
       ),
-      Product(
+      ProductModel(
         id: 2,
         sku: 'P00000002',
         name: 'Cơm',
@@ -45,7 +45,7 @@ class SampleMemoryDatabaseImpl extends MemoryDatatabaseImpl {
         description: 'Cơm Cơm',
         categoryId: 1,
       ),
-      Product(
+      ProductModel(
         id: 3,
         sku: 'P00000003',
         name: 'Chổi',
@@ -56,8 +56,8 @@ class SampleMemoryDatabaseImpl extends MemoryDatatabaseImpl {
         categoryId: 2,
       ),
     ]);
-    await saveAllOrderItems([
-      OrderItem(
+    await addAllOrderItems([
+      OrderItemModel(
         id: 0,
         quantity: 10,
         unitSalePrice: 10000,
@@ -65,7 +65,7 @@ class SampleMemoryDatabaseImpl extends MemoryDatatabaseImpl {
         productId: 0,
         orderId: 0,
       ),
-      OrderItem(
+      OrderItemModel(
         id: 1,
         quantity: 10,
         unitSalePrice: 10000,
@@ -73,7 +73,7 @@ class SampleMemoryDatabaseImpl extends MemoryDatatabaseImpl {
         productId: 1,
         orderId: 0,
       ),
-      OrderItem(
+      OrderItemModel(
         id: 2,
         quantity: 10,
         unitSalePrice: 10000,
@@ -81,7 +81,7 @@ class SampleMemoryDatabaseImpl extends MemoryDatatabaseImpl {
         productId: 2,
         orderId: 0,
       ),
-      OrderItem(
+      OrderItemModel(
         id: 3,
         quantity: 10,
         unitSalePrice: 10000,
@@ -89,7 +89,7 @@ class SampleMemoryDatabaseImpl extends MemoryDatatabaseImpl {
         productId: 1,
         orderId: 1,
       ),
-      OrderItem(
+      OrderItemModel(
         id: 4,
         quantity: 10,
         unitSalePrice: 10000,
@@ -98,13 +98,13 @@ class SampleMemoryDatabaseImpl extends MemoryDatatabaseImpl {
         orderId: 1,
       ),
     ]);
-    await saveAllOrders([
-      Order(
+    await addAllOrders([
+      OrderModel(
         id: 0,
         status: OrderStatus.paid,
         date: DateTime.now(),
       ),
-      Order(
+      OrderModel(
         id: 1,
         status: OrderStatus.paid,
         date: DateTime.now().subtract(const Duration(days: 1)),

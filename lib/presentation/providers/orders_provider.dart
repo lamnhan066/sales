@@ -12,11 +12,11 @@ import 'package:sales/core/usecases/usecase.dart';
 import 'package:sales/di.dart';
 import 'package:sales/domain/entities/get_order_items_params.dart';
 import 'package:sales/domain/entities/get_order_params.dart';
+import 'package:sales/domain/entities/order.dart';
+import 'package:sales/domain/entities/order_item.dart';
 import 'package:sales/domain/entities/order_with_items_params.dart';
 import 'package:sales/domain/entities/product.dart';
 import 'package:sales/domain/entities/ranges.dart';
-import 'package:sales/models/order.dart';
-import 'package:sales/models/order_item.dart';
 import 'package:sales/presentation/common/pagination.dart';
 
 class OrdersState with EquatableMixin {
@@ -118,7 +118,7 @@ class OrdersNotifier extends StateNotifier<OrdersState> implements Pagination {
         GetOrderParams(page: state.page, perpage: 10, dateRange: state.dateRange),
       );
       state = state.copyWith(
-        orders: result.orders,
+        orders: result.items,
         totalPage: (result.totalCount / 10).ceil(),
         isLoading: false,
       );

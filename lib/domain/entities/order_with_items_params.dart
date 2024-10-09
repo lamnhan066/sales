@@ -1,12 +1,14 @@
-import 'package:sales/models/order.dart';
-import 'package:sales/models/order_item.dart';
+import 'package:equatable/equatable.dart';
 
-class OrderWithItemsParams {
-  final Order order;
-  final List<OrderItem> orderItems;
+class OrderWithItemsParams<O extends Object, T> with EquatableMixin {
+  final O order;
+  final List<T> orderItems;
 
   OrderWithItemsParams({
     required this.order,
     required this.orderItems,
   });
+
+  @override
+  List<Object> get props => [order, orderItems];
 }

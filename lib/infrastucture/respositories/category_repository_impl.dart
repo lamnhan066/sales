@@ -1,6 +1,7 @@
+import 'package:sales/domain/entities/category.dart';
 import 'package:sales/domain/repositories/category_repository.dart';
 import 'package:sales/infrastucture/database/database.dart';
-import 'package:sales/models/category.dart';
+import 'package:sales/infrastucture/database/mappers/category_mapper_extension.dart';
 
 class CategoryRepositoryImpl implements CategoryRepository {
   final Database _database;
@@ -9,12 +10,13 @@ class CategoryRepositoryImpl implements CategoryRepository {
 
   @override
   Future<void> addCategory(Category category) {
-    return _database.addCategory(category);
+    return _database.addCategory(category.toCategoryModel());
   }
 
   @override
-  Future<List<Category>> getAllCategories() {
-    return _database.getAllCategories();
+  Future<List<Category>> getAllCategories() async {
+    final categories = await _database.getAllCategories();
+    return categories.map((e) => e.toCategory()).toList();
   }
 
   @override
@@ -24,21 +26,16 @@ class CategoryRepositoryImpl implements CategoryRepository {
 
   @override
   Future<void> removeCategory(Category category) {
-    return _database.removeCategory(category);
+    return _database.removeCategory(category.toCategoryModel());
   }
 
   @override
   Future<void> updateCategory(Category category) {
-    return _database.updateCategory(category);
+    return _database.updateCategory(category.toCategoryModel());
   }
 
   @override
-  Future<void> addAllCategories(List<Category> categories) {
-    return _database.addAllCategories(categories);
-  }
-
-  @override
-  Future<void> removeAllCategories() {
-    return _database.removeAllCategories();
+  Future<void> addAllCategories(List<Category> categories) async {
+    return _database.addAllCategories(categories.map((e) => e.toCategoryModel()).toList());
   }
 }

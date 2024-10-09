@@ -1,80 +1,30 @@
-import 'dart:convert';
 import 'dart:math';
 
-import 'package:sales/domain/entities/product.dart';
-import 'package:sales/domain/entities/product_order_by.dart';
-import 'package:sales/domain/entities/ranges.dart';
-import 'package:sales/infrastucture/utils/excel_picker.dart';
-import 'package:sales/models/category.dart';
-import 'package:sales/models/order.dart';
-import 'package:sales/models/order_item.dart';
-import 'package:sales/models/range_of_dates.dart';
+import 'package:sales/domain/entities/get_order_items_params.dart';
+import 'package:sales/domain/entities/order_with_items_params.dart';
+import 'package:sales/infrastucture/database/models/category_model.dart';
+import 'package:sales/infrastucture/database/models/get_orders_result_model.dart';
+import 'package:sales/infrastucture/database/models/order_item_model.dart';
+import 'package:sales/infrastucture/database/models/order_model.dart';
+import 'package:sales/infrastucture/database/models/product_model.dart';
+
+import 'database.dart';
 
 /// Database abstract.
-abstract class Database {
-  /// Load dữ liệu từ Excel.
-  static Future<({List<Category> categories, List<Product> products})?> loadDataFromExcel() async {
-    final excel = await ExcelPicker.getExcelFile();
-    if (excel == null) {
-      return null;
-    }
-
-    final firstSheet = excel.tables.entries.first.value;
-    final products = <Product>[];
-    final categories = <Category>[];
-    for (int i = 1; i < firstSheet.maxRows; i++) {
-      final row = firstSheet.rows.elementAt(i);
-      final categoryName = '${row.elementAt(6)?.value}';
-      Category category;
-      try {
-        category = categories.singleWhere((e) => e.name == categoryName);
-      } catch (_) {
-        category = Category(
-          id: categories.length,
-          name: categoryName,
-          description: '',
-        );
-        categories.add(category);
-      }
-      products.add(
-        Product(
-          id: i,
-          sku: '${row.first?.value}',
-          name: '${row.elementAt(1)?.value}',
-          imagePath: (jsonDecode('${row.elementAt(2)?.value}') as List<dynamic>).cast<String>(),
-          importPrice: int.parse('${row.elementAt(3)?.value}'),
-          count: int.parse('${row.elementAt(4)?.value}'),
-          description: '${row.elementAt(5)?.value}',
-          categoryId: category.id,
-          deleted: bool.parse('${row.elementAt(7)?.value}'),
-        ),
-      );
-    }
-
-    return (categories: categories, products: products);
-  }
-
-  /// Khởi tạo.
-  Future<void> initial();
-
-  /// Giải phóng.
-  Future<void> dispose();
-
-  /// Xoá tất cả các dữ liệu.
-  Future<void> clear();
-
+abstract class BaseDatabase implements Database {
   /// Nhập dữ liệu với vào dữ liệu hiện tại.
   ///
   /// Việc nhập này sẽ tiến hành tạo `id` và `sku` mới, do đó dữ liệu đã nhập
   /// vào sẽ có các trường này khác với thông tin ở [categories] và [products].
-  Future<void> merge(List<Category> categories, List<Product> products) async {
+  @override
+  Future<void> merge(List<CategoryModel> categories, List<ProductModel> products) async {
     final tempCategories = await getAllCategories();
     final cIndex = tempCategories.length;
     for (int i = 0; i < categories.length; i++) {
       final c = categories.elementAt(i).copyWith(id: cIndex + i);
       tempCategories.add(c);
     }
-    await saveAllCategories(tempCategories);
+    await addAllCategories(tempCategories);
 
     final tempProducts = await getAllProducts();
     final pIndex = tempProducts.length;
@@ -86,41 +36,32 @@ abstract class Database {
           );
       tempProducts.add(p);
     }
-    await saveAllProducts(tempProducts);
+    await addAllProducts(tempProducts);
   }
 
   /// Thay thế dữ liệu đang có với dữ liệu mới.
   ///
   /// Việc thay thế này sẽ dẫn đến dữ liệu ở database bị xoá hoàn toàn
   /// và được thay thế mới.
+  @override
   Future<void> replace(
-    List<Category> categories,
-    List<Product> products,
+    List<CategoryModel> categories,
+    List<ProductModel> products,
   ) async {
-    await saveAllCategories(categories);
-    await saveAllProducts(products);
+    await addAllCategories(categories);
+    await addAllProducts(products);
   }
 
-  /// Thêm loại hàng mới.
-  Future<void> addCategory(Category category);
-
-  /// Sửa và cập nhật loại hàng,
-  Future<void> updateCategory(Category category);
-
   /// Xoá loại hàng.
-  Future<void> removeCategory(Category category) async {
+  @override
+  Future<void> removeCategory(CategoryModel category) async {
     final tempCategory = category.copyWith(deleted: true);
     await updateCategory(tempCategory);
   }
 
-  /// Lấy danh sách tất cả các loại hàng.
-  Future<List<Category>> getAllCategories();
-
-  /// Lưu tất cả loại hàng vào CSDL.
-  Future<void> saveAllCategories(List<Category> categories);
-
   /// Trình tạo ra `id` và `sku` cho sản phẩm.
-  Future<({int id, String sku})> generateProductIdSku() async {
+  @override
+  Future<({int id, String sku})> getNextProductIdSku() async {
     final count = await getTotalProductCount();
     final id = count + 1;
 
@@ -128,7 +69,8 @@ abstract class Database {
   }
 
   /// Trình tạo ra `id` cho loại hàng.
-  Future<int> generateCategoryId() async {
+  @override
+  Future<int> getNextCategoryId() async {
     final categories = await getAllCategories();
     final count = categories.length;
     final id = count + 1;
@@ -136,59 +78,23 @@ abstract class Database {
     return id;
   }
 
-  /// Thêm sản phẩm mới.
-  Future<void> addProduct(Product product);
-
-  /// Cập nhật sản phẩm.
-  Future<void> updateProduct(Product product);
-
   /// Xoá sản phẩm.
-  Future<void> removeProduct(Product product) async {
+  @override
+  Future<void> removeProduct(ProductModel product) async {
     final tempProduct = product.copyWith(deleted: true);
     await updateProduct(tempProduct);
   }
 
-  /// Lưu tất cả sản phẩm vào CSDL.
-  Future<void> saveAllProducts(List<Product> products);
-
   /// Lấy sản phẩm thông qua ID.
-  Future<Product> getProductById(int id) async {
+  @override
+  Future<ProductModel> getProductById(int id) async {
     final products = await getAllProducts();
     return products.firstWhere((e) => e.id == id);
   }
 
-  /// Lấy danh sách sản phẩm.
-  ///
-  /// Lấy danh sách sản phẩm theo điều kiện và trả về (tổng số trang, danh sách
-  /// sản phẩm trang hiện tại).
-  Future<({int totalCount, List<Product> products})> getProducts({
-    int page = 1,
-    int perpage = 10,
-    ProductOrderBy orderBy = ProductOrderBy.none,
-    String searchText = '',
-    Ranges<double>? rangeValues,
-    int? categoryId,
-  }) async {
-    final List<Product> result = await getAllProducts(
-      orderBy: orderBy,
-      searchText: searchText,
-      rangeValues: rangeValues,
-      categoryId: categoryId,
-    );
-
-    return (totalCount: result.length, products: result.skip((page - 1) * perpage).take(perpage).toList());
-  }
-
-  /// Lấy toàn bộ danh sách sản phẩm.
-  Future<List<Product>> getAllProducts({
-    ProductOrderBy orderBy = ProductOrderBy.none,
-    String searchText = '',
-    Ranges<double>? rangeValues,
-    int? categoryId,
-  });
-
   /// Trình tạo ra `id` cho loại hàng.
-  Future<int> generateOrderId() async {
+  @override
+  Future<int> getNextOrderId() async {
     final orders = await getAllOrders();
     final count = orders.length;
     final id = count + 1;
@@ -196,39 +102,16 @@ abstract class Database {
     return id;
   }
 
-  /// Thêm đơn đặt hàng.
-  Future<void> addOrder(Order order);
-
-  /// Cập nhật đơn đặt hàng.
-  Future<void> updateOrder(Order order);
-
   /// Xoá đơn đặt hàng.
-  Future<void> removeOrder(Order order) async {
+  @override
+  Future<void> removeOrder(OrderModel order) async {
     final tempOrder = order.copyWith(deleted: true);
     await updateOrder(tempOrder);
   }
 
-  /// Lấy danh sách tất cả các đơn hàng.
-  Future<List<Order>> getAllOrders({
-    RangeOfDates? dateRange,
-  });
-
-  /// Lấy danh sách đơn hàng theo điều kiện.
-  Future<({int totalCount, List<Order> orders})> getOrders({
-    int page = 1,
-    int perpage = 10,
-    RangeOfDates? dateRange,
-  }) async {
-    final result = await getAllOrders(dateRange: dateRange);
-
-    return (totalCount: result.length, orders: result.skip((page - 1) * perpage).take(perpage).toList());
-  }
-
-  /// Lưu tất cả các đơn đặt đặt hàng.
-  Future<void> saveAllOrders(List<Order> orders);
-
   /// Trình tạo ra `id` cho chi tiết đơn hàng.
-  Future<int> generateOrderItemId() async {
+  @override
+  Future<int> getNextOrderItemId() async {
     final orderItems = await getAllOrderItems();
     final count = orderItems.length;
     final id = count + 1;
@@ -236,48 +119,30 @@ abstract class Database {
     return id;
   }
 
-  /// Thêm chi tiết sản phẩm đã đặt hàng.
-  Future<void> addOrderItem(OrderItem orderItem);
-
-  /// Cập nhật chi tiết sản phẩm đã đặt hàng.
-  Future<void> updateOrderItem(OrderItem orderItem);
-
   /// Xoá chi tiết sản phẩm đã đặt hàng.
-  Future<void> removeOrderItem(OrderItem orderItem) async {
+  @override
+  Future<void> removeOrderItem(OrderItemModel orderItem) async {
     final tempOrderItem = orderItem.copyWith(deleted: true);
     await updateOrderItem(tempOrderItem);
   }
 
   /// Lấy danh sách chi tiết sản phẩm đã đặt theo mã đơn và mã sản phẩm.
-  Future<List<OrderItem>> getOrderItems({
-    int? orderId,
-    int? productId,
-  }) =>
-      getAllOrderItems(orderId: orderId, productId: productId);
-
-  /// Lấy tất tất cả sản phẩm đã đặt hàng.
-  Future<List<OrderItem>> getAllOrderItems({
-    int? orderId,
-    int? productId,
-  });
-
-  /// Lưu tất cả sản phẩm đã đặt hàng.
-  Future<void> saveAllOrderItems(List<OrderItem> orderItems);
+  @override
+  Future<List<OrderItemModel>> getOrderItems([GetOrderItemsParams? params]) => getAllOrderItems();
 
   /// Lấy tổng số lượng sản phẩm có trong CSDL.
+  @override
   Future<int> getTotalProductCount() async {
     final products = await getAllProducts();
 
     return products.length;
   }
 
-  /// Thêm Order cùng với OrderItems
-  Future<void> addOrderWithOrderItems(
-    Order order,
-    List<OrderItem> orderItems,
-  ) async {
-    await addOrder(order);
-    for (final orderItem in orderItems) {
+  /// Thêm OrderModel cùng với OrderItems
+  @override
+  Future<void> addOrderWithOrderItems(OrderWithItemsParams<OrderModel, OrderItemModel> params) async {
+    await addOrder(params.order);
+    for (final orderItem in params.orderItems) {
       await addOrderItem(orderItem);
 
       // Cập nhật lại số lượng của sản phẩm.
@@ -287,14 +152,12 @@ abstract class Database {
     }
   }
 
-  /// Cập nhật Order cùng với OrderItems
-  Future<void> updateOrderWithOrderItems(
-    Order order,
-    List<OrderItem> orderItems,
-  ) async {
-    await updateOrder(order);
-    final orderItemsFromDatabase = await getOrderItems(orderId: order.id);
-    for (final orderItem in orderItems) {
+  /// Cập nhật OrderModel cùng với OrderItems
+  @override
+  Future<void> updateOrderWithItems(OrderWithItemsParams<OrderModel, OrderItemModel> params) async {
+    await updateOrder(params.order);
+    final orderItemsFromDatabase = await getOrderItems(GetOrderItemsParams(orderId: params.order.id));
+    for (final orderItem in params.orderItems) {
       final index = orderItemsFromDatabase.indexWhere((e) => e.id == orderItem.id);
       if (index == -1) {
         await addOrderItem(orderItem);
@@ -317,9 +180,10 @@ abstract class Database {
     }
   }
 
-  /// Xoá Order cùng với OrderItems
-  Future<void> removeOrderWithOrderItems(Order order) async {
-    final orderItems = await getAllOrderItems(orderId: order.id);
+  /// Xoá OrderModel cùng với OrderItems
+  @override
+  Future<void> removeOrderWithItems(OrderModel order) async {
+    final orderItems = await getOrderItems(GetOrderItemsParams(orderId: order.id));
     for (final orderItem in orderItems) {
       final tempOrderItems = orderItem.copyWith(deleted: true);
       await updateOrderItem(tempOrderItems);
@@ -333,7 +197,8 @@ abstract class Database {
   }
 
   /// Lấy danh sách 5 sản phẩm có số lượng ít hơn 5 trong kho.
-  Future<List<Product>> getFiveLowStockProducts() async {
+  @override
+  Future<List<ProductModel>> getFiveLowStockProducts() async {
     final products = await getAllProducts();
     final lowStockProducts = products.where((p) => p.count < 5).toList();
 
@@ -341,10 +206,11 @@ abstract class Database {
   }
 
   /// Lấy danh sách 5 sản phẩm bán chạy nhất.
-  Future<List<Product>> getFiveHighestSalesProducts() async {
+  @override
+  Future<Map<ProductModel, int>> getFiveHighestSalesProducts() async {
     final products = await getAllProducts();
     final orderItems = await getAllOrderItems();
-    final orderedProductQuantities = <Product, int>{};
+    final orderedProductQuantities = <ProductModel, int>{};
     for (final p in products) {
       for (final orderItem in orderItems) {
         if (orderItem.productId == p.id) {
@@ -355,13 +221,14 @@ abstract class Database {
     }
     final entries = orderedProductQuantities.entries.toList();
     entries.sort(
-      (MapEntry<Product, int> a, MapEntry<Product, int> b) => a.value.compareTo(b.value),
+      (MapEntry<ProductModel, int> a, MapEntry<ProductModel, int> b) => a.value.compareTo(b.value),
     );
 
-    return Map<Product, int>.fromEntries(entries).keys.toList();
+    return Map<ProductModel, int>.fromEntries(entries);
   }
 
   /// Lấy số lượng đơn đặt hàng hằng ngày.
+  @override
   Future<int> getDailyOrderCount(DateTime date) async {
     final orders = await getAllOrders();
     final dailyOrders = orders.where(
@@ -372,6 +239,7 @@ abstract class Database {
   }
 
   /// Lấy tổng doanh thu hằng ngày.
+  @override
   Future<int> getDailyRevenue(DateTime date) async {
     final orders = await getAllOrders();
     final dailyOrders = orders.where(
@@ -394,7 +262,8 @@ abstract class Database {
   ///
   /// Trả về danh sách doanh thu theo ngày từ ngày 1 đến cuối tháng (hoặc đến
   /// ngày hiện tại đối với tháng hiện tại).
-  Future<List<int>> getMonthlyRevenues(DateTime date) async {
+  @override
+  Future<List<int>> getDailyRevenueForMonth(DateTime date) async {
     final orders = await getAllOrders();
     final monthlyOrders = orders.where(
       (o) => o.date.year == date.year && o.date.month == date.month,
@@ -426,10 +295,11 @@ abstract class Database {
   /// Lấy danh sách 3 đơn đặt hàng gần đây nhất.
   ///
   /// Trả về danh sách sản phẩm đã đặt hàng và thông tin của đơn đặt hàng.
-  Future<({Map<Order, List<OrderItem>> orderItems, Map<Order, List<Product>> products})> getThreeRecentOrders() async {
+  @override
+  Future<RecentOrdersResultModel> getThreeRecentOrders() async {
     final orders = await getAllOrders();
     orders.sort((a, b) => a.date.compareTo(b.date));
-    final orderItemMap = <Order, List<OrderItem>>{};
+    final orderItemMap = <OrderModel, List<OrderItemModel>>{};
     final orderItems = await getAllOrderItems();
     for (final order in orders.sublist(0, min(orders.length, 3))) {
       orderItemMap.putIfAbsent(order, () => []);
@@ -440,7 +310,7 @@ abstract class Database {
       }
     }
 
-    final productMap = <Order, List<Product>>{};
+    final productMap = <OrderModel, List<ProductModel>>{};
     final products = await getAllProducts();
     for (final order in orders.sublist(0, min(orders.length, 3))) {
       productMap.putIfAbsent(order, () => []);
@@ -453,6 +323,9 @@ abstract class Database {
       }
     }
 
-    return (orderItems: orderItemMap, products: productMap);
+    return RecentOrdersResultModel(
+      orderItems: orderItemMap,
+      products: productMap,
+    );
   }
 }

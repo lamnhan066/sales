@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:language_helper/language_helper.dart';
-import 'package:sales/models/views_model.dart';
+import 'package:sales/domain/entities/views_model.dart';
 import 'package:sales/presentation/providers/home_provider.dart';
 import 'package:sales/presentation/views/dashboard_view.dart';
 import 'package:sales/presentation/views/login_view.dart';

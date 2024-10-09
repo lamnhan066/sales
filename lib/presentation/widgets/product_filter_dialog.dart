@@ -2,8 +2,8 @@ import 'package:boxw/boxw.dart';
 import 'package:flutter/material.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/core/utils/utils.dart';
+import 'package:sales/domain/entities/category.dart';
 import 'package:sales/domain/entities/ranges.dart';
-import 'package:sales/models/category.dart';
 
 class ProductFilterDialog extends StatefulWidget {
   const ProductFilterDialog({

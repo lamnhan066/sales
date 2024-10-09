@@ -1,7 +1,9 @@
 import 'dart:convert';
 
+import 'package:equatable/equatable.dart';
+
 /// Cấu hình cho Postgres
-class PostgresConfigurations {
+class PostgresConfigurations with EquatableMixin {
   /// Host.
   final String host;
 
@@ -33,8 +35,7 @@ class PostgresConfigurations {
   }
 
   /// JSON -> PostgresConfigurations
-  factory PostgresConfigurations.fromJson(String source) =>
-      PostgresConfigurations.fromMap(
+  factory PostgresConfigurations.fromJson(String source) => PostgresConfigurations.fromMap(
         json.decode(source) as Map<String, dynamic>,
       );
 
@@ -65,4 +66,7 @@ class PostgresConfigurations {
 
   /// Order -> Map
   String toJson() => json.encode(toMap());
+
+  @override
+  List<Object> get props => [host, database, username, password];
 }

@@ -1,7 +1,9 @@
 import 'dart:convert';
 
+import 'package:equatable/equatable.dart';
+
 /// Loại hàng.
-class Category {
+class Category with EquatableMixin {
   /// Id.
   final int id;
 
@@ -32,19 +34,8 @@ class Category {
     );
   }
 
-  /// Chuyển từ SQL Map sang Category.
-  factory Category.fromSqlMap(Map<String, dynamic> map) {
-    return Category(
-      id: (map['c_id'] as num?)?.toInt() ?? 0,
-      name: (map['c_name'] as String?) ?? '',
-      description: (map['c_description'] as String?) ?? '',
-      deleted: (map['c_deleted'] as bool?) ?? false,
-    );
-  }
-
   /// Chuyển từ json sang Category.
-  factory Category.fromJson(String source) =>
-      Category.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory Category.fromJson(String source) => Category.fromMap(json.decode(source) as Map<String, dynamic>);
 
   /// Sao chép.
   Category copyWith({
@@ -71,16 +62,6 @@ class Category {
     };
   }
 
-  /// Chuyển sang dạng Map với key của SQL.
-  Map<String, dynamic> toSqlMap() {
-    return {
-      'c_id': id,
-      'c_name': name,
-      'c_description': description,
-      'c_deleted': deleted,
-    };
-  }
-
   /// Chuyển sang Json.
   String toJson() => json.encode(toMap());
 
@@ -88,6 +69,9 @@ class Category {
   String toString() {
     return 'Category(id: $id, name: $name, description: $description, deleted: $deleted)';
   }
+
+  @override
+  List<Object> get props => [id, name, description, deleted];
 }
 
 /// Extension của List<Category>.

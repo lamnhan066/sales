@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:sales/models/order_status.dart';
+import 'package:sales/domain/entities/order_status.dart';
 
 /// Đơn hàng.
-class Order {
+class OrderModel {
   /// Id.
   final int id;
 
@@ -17,26 +17,16 @@ class Order {
   final bool deleted;
 
   /// Đơn hàng.
-  Order({
+  OrderModel({
     required this.id,
     required this.status,
     required this.date,
     this.deleted = false,
   });
 
-  /// Map -> Order.
-  factory Order.fromMap(Map<String, dynamic> map) {
-    return Order(
-      id: (map['id'] as num?)?.toInt() ?? 0,
-      status: OrderStatus.values.byName(map['status'] as String),
-      date: DateTime.fromMillisecondsSinceEpoch(map['date'] as int),
-      deleted: map['deleted'] as bool,
-    );
-  }
-
   /// SQL Map -> Order.
-  factory Order.fromSqlMap(Map<String, dynamic> map) {
-    return Order(
+  factory OrderModel.fromMap(Map<String, dynamic> map) {
+    return OrderModel(
       id: (map['o_id'] as num).toInt(),
       status: OrderStatus.values.byName(map['o_status'] as String),
       date: DateTime.parse(map['o_date'] as String),
@@ -45,17 +35,16 @@ class Order {
   }
 
   /// JSON -> Order
-  factory Order.fromJson(String source) =>
-      Order.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory OrderModel.fromJson(String source) => OrderModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   /// Sao chép.
-  Order copyWith({
+  OrderModel copyWith({
     int? id,
     OrderStatus? status,
     DateTime? date,
     bool? deleted,
   }) {
-    return Order(
+    return OrderModel(
       id: id ?? this.id,
       status: status ?? this.status,
       date: date ?? this.date,
@@ -63,18 +52,8 @@ class Order {
     );
   }
 
-  /// Order -> Map
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'status': status.name,
-      'date': date.millisecondsSinceEpoch,
-      'deleted': deleted,
-    };
-  }
-
   /// Order -> SQL Map
-  Map<String, dynamic> toSqlMap() {
+  Map<String, dynamic> toMap() {
     return {
       'o_id': id,
       'o_status': status.name,

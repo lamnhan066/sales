@@ -1,7 +1,9 @@
 import 'dart:convert';
 
+import 'package:equatable/equatable.dart';
+
 /// Cấu hình cho Postgres
-class ServerConfigurations {
+class ServerConfigurations with EquatableMixin {
   /// Host.
   final String host;
 
@@ -64,4 +66,7 @@ class ServerConfigurations {
 
   /// Order -> Map
   String toJson() => json.encode(toMap());
+
+  @override
+  List<Object> get props => [host, database, username, password];
 }

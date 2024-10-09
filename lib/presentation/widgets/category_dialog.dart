@@ -2,7 +2,7 @@ import 'package:boxw/boxw.dart';
 import 'package:flutter/material.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/components/common_components.dart';
-import 'package:sales/models/category.dart';
+import 'package:sales/domain/entities/category.dart';
 import 'package:sales/presentation/providers/products_provider.dart';
 
 Future<void> viewCategoryDialog(

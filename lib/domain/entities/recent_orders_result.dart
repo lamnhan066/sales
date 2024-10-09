@@ -1,17 +1,17 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
+import 'package:equatable/equatable.dart';
+import 'package:sales/domain/entities/order.dart';
+import 'package:sales/domain/entities/order_item.dart';
 import 'package:sales/domain/entities/product.dart';
-import 'package:sales/models/order.dart';
-import 'package:sales/models/order_item.dart';
 
-class RecentOrdersResult {
+class RecentOrdersResult with EquatableMixin {
   final Map<Order, List<OrderItem>> orderItems;
   final Map<Order, List<Product>> products;
 
   const RecentOrdersResult({
-    required this.orderItems,
-    required this.products,
+    this.orderItems = const {},
+    this.products = const {},
   });
 
   RecentOrdersResult copyWith({
@@ -46,14 +46,5 @@ class RecentOrdersResult {
   String toString() => 'RecentOrdersResult(orderItems: $orderItems, products: $products)';
 
   @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-
-    return other is RecentOrdersResult &&
-        mapEquals(other.orderItems, orderItems) &&
-        mapEquals(other.products, products);
-  }
-
-  @override
-  int get hashCode => orderItems.hashCode ^ products.hashCode;
+  List<Object> get props => [orderItems, products];
 }

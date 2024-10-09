@@ -50,8 +50,6 @@ import 'package:sales/infrastucture/respositories/order_repository_impl.dart';
 import 'package:sales/infrastucture/respositories/postgres_configurations_repository_impl.dart';
 import 'package:sales/infrastucture/respositories/product_repository_impl.dart';
 import 'package:sales/infrastucture/services/database_service_impl.dart';
-import 'package:sales/services/database/database.dart' as d;
-import 'package:sales/services/database/sample_memory_database.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Service locator.
@@ -62,7 +60,6 @@ Future<void> setup() async {
   final preferences = await SharedPreferences.getInstance();
   getIt.registerSingleton<SharedPreferences>(preferences);
   getIt.registerSingleton<AppController>(AppController());
-  getIt.registerSingleton<d.Database>(SampleMemoryDatabase());
 }
 
 Future<void> setupDependencies() async {

@@ -1,6 +1,8 @@
 // ignore_for_file: number_of_parameters
 import 'dart:convert';
 
+import 'package:equatable/equatable.dart';
+
 extension ProductExtension on List<Product> {
   /// Lấy sản phẩm từ trong danh sách bằng ID.
   Product byId(int id) {
@@ -9,7 +11,7 @@ extension ProductExtension on List<Product> {
 }
 
 /// Sản phẩm.
-class Product {
+class Product with EquatableMixin {
   /// Id.
   final int id;
 
@@ -65,24 +67,8 @@ class Product {
     );
   }
 
-  /// SQL Map -> Product
-  factory Product.fromSqlMap(Map<String, dynamic> map) {
-    return Product(
-      id: (map['p_id'] as num).toInt(),
-      sku: map['p_sku'] as String,
-      name: map['p_name'] as String,
-      imagePath: List<String>.from(map['p_image_path'] as List<dynamic>),
-      importPrice: (map['p_import_price'] as num).toInt(),
-      count: (map['p_count'] as num).toInt(),
-      description: map['p_description'] as String,
-      categoryId: (map['p_category_id'] as num).toInt(),
-      deleted: map['p_deleted'] as bool,
-    );
-  }
-
   /// JSON -> Product
-  factory Product.fromJson(String source) =>
-      Product.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory Product.fromJson(String source) => Product.fromMap(json.decode(source) as Map<String, dynamic>);
 
   /// Sao chép.
   Product copyWith({
@@ -131,21 +117,21 @@ class Product {
     };
   }
 
-  /// Product -> SQL Map.
-  Map<String, dynamic> toSqlMap() {
-    return {
-      'p_id': id,
-      'p_sku': sku,
-      'p_name': name,
-      'p_image_path': imagePath,
-      'p_import_price': importPrice,
-      'p_count': count,
-      'p_description': description,
-      'p_category_id': categoryId,
-      'p_deleted': deleted,
-    };
-  }
-
   /// Product -> JSON.
   String toJson() => json.encode(toMap());
+
+  @override
+  List<Object> get props {
+    return [
+      id,
+      sku,
+      name,
+      imagePath,
+      importPrice,
+      count,
+      description,
+      categoryId,
+      deleted,
+    ];
+  }
 }

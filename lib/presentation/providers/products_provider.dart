@@ -15,12 +15,12 @@ import 'package:sales/application/usecases/update_product_usecase.dart';
 import 'package:sales/core/errors/failure.dart';
 import 'package:sales/core/usecases/usecase.dart';
 import 'package:sales/di.dart';
+import 'package:sales/domain/entities/category.dart';
 import 'package:sales/domain/entities/data_import_result.dart';
 import 'package:sales/domain/entities/get_product_params.dart';
 import 'package:sales/domain/entities/product.dart';
 import 'package:sales/domain/entities/product_order_by.dart';
 import 'package:sales/domain/entities/ranges.dart';
-import 'package:sales/models/category.dart';
 
 class ProductsState with EquatableMixin {
   /// Danh sách sản phẩm.
@@ -239,7 +239,7 @@ class ProductsNotifier extends StateNotifier<ProductsState> {
       ));
 
       state = state.copyWith(
-        products: productsResult.products,
+        products: productsResult.items,
         totalPage: (productsResult.totalCount / state.perPage).ceil(),
         isLoading: false,
       );

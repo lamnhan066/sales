@@ -7,10 +7,10 @@ import 'package:language_helper/language_helper.dart';
 import 'package:sales/components/common_components.dart';
 import 'package:sales/components/data_table_plus.dart';
 import 'package:sales/core/utils/utils.dart';
+import 'package:sales/domain/entities/order.dart';
+import 'package:sales/domain/entities/order_item.dart';
+import 'package:sales/domain/entities/order_status.dart';
 import 'package:sales/domain/entities/product.dart';
-import 'package:sales/models/order.dart';
-import 'package:sales/models/order_item.dart';
-import 'package:sales/models/order_status.dart';
 import 'package:sales/presentation/providers/orders_provider.dart';
 
 class OrderFormDialog extends StatefulWidget {

@@ -19,8 +19,8 @@ class DashboardState with EquatableMixin {
   /// Năm sản phẩm có số lượng trong kho thấp (< 5).
   List<Product> fiveLowStockProducts;
 
-  /// Năm sản phẩm bán chạy nhất.
-  List<Product> fiveHighestSalesProducts;
+  /// Năm sản phẩm bán chạy nhất và số lượng tương ứng.
+  Map<Product, int> fiveHighestSalesProducts;
 
   /// Số đơn hàng bán hằng ngày.
   int dailyOrderCount = 0;
@@ -43,7 +43,7 @@ class DashboardState with EquatableMixin {
   DashboardState({
     this.totalProductCount = 0,
     this.fiveLowStockProducts = const [],
-    this.fiveHighestSalesProducts = const [],
+    this.fiveHighestSalesProducts = const {},
     this.dailyOrderCount = 0,
     this.dailyRevenue = 0,
     this.threeRecentOrders = const RecentOrdersResult(orderItems: {}, products: {}),
@@ -55,7 +55,7 @@ class DashboardState with EquatableMixin {
   DashboardState copyWith({
     int? totalProductCount,
     List<Product>? fiveLowStockProducts,
-    List<Product>? fiveHighestSalesProducts,
+    Map<Product, int>? fiveHighestSalesProducts,
     int? dailyOrderCount,
     int? dailyRevenue,
     RecentOrdersResult? threeRecentOrders,
@@ -138,7 +138,7 @@ class DashboardNotifier extends StateNotifier<DashboardState> {
       state = state.copyWith(
         totalProductCount: results[0] as int,
         fiveLowStockProducts: results[1] as List<Product>,
-        fiveHighestSalesProducts: results[2] as List<Product>,
+        fiveHighestSalesProducts: results[2] as Map<Product, int>,
         dailyOrderCount: results[3] as int,
         dailyRevenue: results[4] as int,
         threeRecentOrders: results[5] as RecentOrdersResult,

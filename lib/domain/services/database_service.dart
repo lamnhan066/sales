@@ -1,9 +1,6 @@
 import 'package:sales/domain/entities/data_import_result.dart';
 
 abstract class DatabaseService {
-  /// Xoá tất cả các dữ liệu.
-  Future<void> clearDatabase();
-
   /// Nhập dữ liệu với vào dữ liệu hiện tại.
   ///
   /// Việc nhập này sẽ tiến hành tạo `id` và `sku` mới, do đó dữ liệu đã nhập

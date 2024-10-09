@@ -1,7 +1,9 @@
 import 'package:sales/domain/entities/get_product_params.dart';
+import 'package:sales/domain/entities/get_result.dart';
 import 'package:sales/domain/entities/product.dart';
 import 'package:sales/domain/repositories/product_repository.dart';
 import 'package:sales/infrastucture/database/database.dart';
+import 'package:sales/infrastucture/database/mappers/product_mapper_extension.dart';
 
 class ProductRepositoryImpl implements ProductRepository {
   final Database _database;
@@ -9,18 +11,21 @@ class ProductRepositoryImpl implements ProductRepository {
   const ProductRepositoryImpl(this._database);
 
   @override
-  Future<List<Product>> getFiveHighestSalesProducts() {
-    return _database.getFiveHighestSalesProducts();
+  Future<Map<Product, int>> getFiveHighestSalesProducts() async {
+    final result = await _database.getFiveHighestSalesProducts();
+    return result.map((k, v) => MapEntry(k.toDomain(), v));
   }
 
   @override
   Future<List<Product>> getFiveLowStockProducts() async {
-    return _database.getFiveLowStockProducts();
+    final result = await _database.getFiveLowStockProducts();
+    return result.map((e) => e.toDomain()).toList();
   }
 
   @override
-  Future<Product> getProductById(int id) {
-    return _database.getProductById(id);
+  Future<Product> getProductById(int id) async {
+    final result = await _database.getProductById(id);
+    return result.toDomain();
   }
 
   @override
@@ -30,7 +35,7 @@ class ProductRepositoryImpl implements ProductRepository {
 
   @override
   Future<void> addProduct(Product product) {
-    return _database.addProduct(product);
+    return _database.addProduct(product.toData());
   }
 
   @override
@@ -40,31 +45,28 @@ class ProductRepositoryImpl implements ProductRepository {
 
   @override
   Future<void> removeProduct(Product product) {
-    return _database.removeProduct(product);
+    return _database.removeProduct(product.toData());
   }
 
   @override
   Future<void> updateProduct(Product product) {
-    return _database.updateProduct(product);
+    return _database.updateProduct(product.toData());
   }
 
   @override
-  Future<({List<Product> products, int totalCount})> getProducts(GetProductParams params) {
-    return _database.getProducts(params);
+  Future<GetResult<Product>> getProducts(GetProductParams params) async {
+    final result = await _database.getProducts(params);
+    return GetResult(totalCount: result.totalCount, items: result.items.map((e) => e.toDomain()).toList());
   }
 
   @override
   Future<void> addAllProducts(List<Product> products) {
-    return _database.addAllProducts(products);
+    return _database.addAllProducts(products.map((e) => e.toData()).toList());
   }
 
   @override
-  Future<void> removeAllProducts() {
-    return _database.removeAllProducts();
-  }
-
-  @override
-  Future<List<Product>> getAllProducts() {
-    return _database.getAllProducts();
+  Future<List<Product>> getAllProducts() async {
+    final result = await _database.getAllProducts();
+    return result.map((e) => e.toDomain()).toList();
   }
 }

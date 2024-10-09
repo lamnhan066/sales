@@ -1,4 +1,6 @@
-class User {
+import 'package:equatable/equatable.dart';
+
+class User with EquatableMixin {
   final String username;
   final String password;
   User({
@@ -15,4 +17,7 @@ class User {
       password: password ?? this.password,
     );
   }
+
+  @override
+  List<Object> get props => [username, password];
 }

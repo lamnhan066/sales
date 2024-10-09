@@ -2,8 +2,8 @@ import 'package:boxw/boxw.dart';
 import 'package:flutter/material.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/di.dart';
-import 'package:sales/models/postgres_configurations.dart';
-import 'package:sales/services/database/database.dart';
+import 'package:sales/domain/entities/postgres_configurations.dart';
+import 'package:sales/infrastucture/database/database.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Controller của App
@@ -20,18 +20,14 @@ class AppController {
 
   /// Khởi tạo
   Future<void> initial() async {
-    await getIt<Database>().initial();
     final postgresSettingsJson = _prefs.getString('PostgresSettings');
     if (postgresSettingsJson != null) {
-      postgresConfigurations =
-          PostgresConfigurations.fromJson(postgresSettingsJson);
+      postgresConfigurations = PostgresConfigurations.fromJson(postgresSettingsJson);
     }
   }
 
   /// Giải phóng
-  Future<void> dispose() async {
-    await getIt<Database>().dispose();
-  }
+  Future<void> dispose() async {}
 
   /// Thay đổi cấu hình Postgres
   Future<void> changePostgresConfigurations(

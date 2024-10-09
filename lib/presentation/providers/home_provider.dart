@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sales/di.dart';
-import 'package:sales/models/views_model.dart';
+import 'package:sales/domain/entities/views_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeState with EquatableMixin {

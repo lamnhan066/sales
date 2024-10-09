@@ -1,10 +1,10 @@
 import 'dart:convert';
 
+import 'package:sales/domain/entities/category.dart';
 import 'package:sales/domain/entities/data_import_result.dart';
 import 'package:sales/domain/entities/product.dart';
 import 'package:sales/domain/repositories/data_importer.dart';
 import 'package:sales/infrastucture/utils/excel_picker.dart';
-import 'package:sales/models/category.dart';
 
 class ExcelDataImporter implements DataImporter {
   // TODO: Hiển thị dialog để người dùng có thể tải xuống mẫu hoặc dữ liệu hiện tại

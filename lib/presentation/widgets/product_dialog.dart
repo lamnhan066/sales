@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/components/common_components.dart';
 import 'package:sales/core/constants/app_configs.dart';
+import 'package:sales/domain/entities/category.dart';
 import 'package:sales/domain/entities/product.dart';
-import 'package:sales/models/category.dart';
 import 'package:sales/presentation/providers/products_provider.dart';
 import 'package:sales/presentation/widgets/product_form_dialog.dart';
 

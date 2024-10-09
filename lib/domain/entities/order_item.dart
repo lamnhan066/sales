@@ -1,6 +1,8 @@
 import 'dart:convert';
 
-class OrderItem {
+import 'package:equatable/equatable.dart';
+
+class OrderItem with EquatableMixin {
   /// Id.
   final int id;
 
@@ -46,22 +48,8 @@ class OrderItem {
     );
   }
 
-  /// SQL Map -> OrderItem.
-  factory OrderItem.fromSqlMap(Map<String, dynamic> map) {
-    return OrderItem(
-      id: (map['oi_id'] as num?)?.toInt() ?? 0,
-      quantity: (map['oi_quantity'] as num?)?.toInt() ?? 0,
-      unitSalePrice: (map['oi_unit_sale_price'] as num?)?.toDouble() ?? 0.0,
-      totalPrice: (map['oi_total_price'] as num?)?.toInt() ?? 0,
-      productId: (map['oi_productI_i'] as num?)?.toInt() ?? 0,
-      orderId: (map['oi_order_id'] as num?)?.toInt() ?? 0,
-      deleted: (map['oi_deleted'] as bool?) ?? false,
-    );
-  }
-
   /// JSON -> OrderItem.
-  factory OrderItem.fromJson(String source) =>
-      OrderItem.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory OrderItem.fromJson(String source) => OrderItem.fromMap(json.decode(source) as Map<String, dynamic>);
 
   /// Sao chép.
   OrderItem copyWith({
@@ -97,24 +85,24 @@ class OrderItem {
     };
   }
 
-  /// OrderItem -> SQL Map.
-  Map<String, dynamic> toSqlMap() {
-    return {
-      'oi_id': id,
-      'oi_quantity': quantity,
-      'oi_unit_sale_price': unitSalePrice,
-      'oi_total_price': totalPrice,
-      'oi_product_id': productId,
-      'oi_order_id': orderId,
-      'oi_deleted': deleted,
-    };
-  }
-
   /// OrderItem  -> JSON
   String toJson() => json.encode(toMap());
 
   @override
   String toString() {
     return 'OrderItem(id: $id, quantity: $quantity, unitSalePrice: $unitSalePrice, totalPrice: $totalPrice, productId: $productId, orderId: $orderId, deleted: $deleted)';
+  }
+
+  @override
+  List<Object> get props {
+    return [
+      id,
+      quantity,
+      unitSalePrice,
+      totalPrice,
+      productId,
+      orderId,
+      deleted,
+    ];
   }
 }

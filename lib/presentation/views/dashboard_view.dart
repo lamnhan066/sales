@@ -97,9 +97,9 @@ class DashboardView extends ConsumerWidget {
                         children: [
                           Text('Top 5 sản phẩm bán chạy'.tr),
                           divider,
-                          for (final product in dashboardState.fiveHighestSalesProducts)
+                          for (final product in dashboardState.fiveHighestSalesProducts.entries)
                             Text(
-                              '${product.name}: ${product.count}',
+                              '${product.key.name}: ${product.value}',
                               style: const TextStyle(fontSize: 16),
                             ),
                         ],

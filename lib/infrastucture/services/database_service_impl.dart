@@ -1,6 +1,8 @@
 import 'package:sales/domain/entities/data_import_result.dart';
 import 'package:sales/domain/services/database_service.dart';
 import 'package:sales/infrastucture/database/database.dart';
+import 'package:sales/infrastucture/database/mappers/category_mapper_extension.dart';
+import 'package:sales/infrastucture/database/mappers/product_mapper_extension.dart';
 
 class DatabaseServiceImpl implements DatabaseService {
   final Database _database;
@@ -14,11 +16,6 @@ class DatabaseServiceImpl implements DatabaseService {
   }
 
   @override
-  Future<void> clearDatabase() {
-    return _database.clear();
-  }
-
-  @override
   Future<void> restoreDatabase(String backupPath) {
     // TODO: implement restoreDatabase
     throw UnimplementedError();
@@ -26,11 +23,15 @@ class DatabaseServiceImpl implements DatabaseService {
 
   @override
   Future<void> mergeDatabase(DataImportResult data) {
-    return _database.merge(data.categories, data.products);
+    final categories = data.categories.map((e) => e.toCategoryModel()).toList();
+    final products = data.products.map((e) => e.toData()).toList();
+    return _database.merge(categories, products);
   }
 
   @override
   Future<void> replaceDatabase(DataImportResult data) {
-    return _database.replace(data.categories, data.products);
+    final categories = data.categories.map((e) => e.toCategoryModel()).toList();
+    final products = data.products.map((e) => e.toData()).toList();
+    return _database.replace(categories, products);
   }
 }
