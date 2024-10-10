@@ -7,13 +7,13 @@ import 'package:sales/di.dart';
 import 'package:sales/domain/entities/app_version.dart';
 import 'package:sales/domain/entities/login_credentials.dart';
 import 'package:sales/domain/entities/server_configurations.dart';
-import 'package:sales/domain/usecases/auto_login_usecase.dart';
+import 'package:sales/domain/usecases/auth/auto_login_usecase.dart';
+import 'package:sales/domain/usecases/auth/get_cached_credentials_usecase.dart';
+import 'package:sales/domain/usecases/auth/get_login_state_usecase.dart';
+import 'package:sales/domain/usecases/auth/login_usecase.dart';
 import 'package:sales/domain/usecases/get_app_version_usecase.dart';
-import 'package:sales/domain/usecases/get_cached_credentials_usecase.dart';
-import 'package:sales/domain/usecases/get_login_state_usecase.dart';
 import 'package:sales/domain/usecases/load_server_configuration_usecase.dart';
 import 'package:sales/domain/usecases/load_server_connection_usecase.dart';
-import 'package:sales/domain/usecases/login_usecase.dart';
 import 'package:sales/domain/usecases/save_server_configuration_usecase.dart';
 
 class LoginState with EquatableMixin {

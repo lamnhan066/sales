@@ -9,14 +9,14 @@ import 'package:sales/domain/entities/order_item.dart';
 import 'package:sales/domain/entities/order_with_items_params.dart';
 import 'package:sales/domain/entities/product.dart';
 import 'package:sales/domain/entities/ranges.dart';
-import 'package:sales/domain/usecases/add_order_with_items_usecase.dart';
-import 'package:sales/domain/usecases/get_all_products_usecase.dart';
-import 'package:sales/domain/usecases/get_next_order_id_usecase.dart';
-import 'package:sales/domain/usecases/get_next_order_item_id_usecase.dart';
 import 'package:sales/domain/usecases/get_order_items_usecase.dart';
-import 'package:sales/domain/usecases/get_orders_usecase.dart';
+import 'package:sales/domain/usecases/order_with_items/add_order_with_items_usecase.dart';
+import 'package:sales/domain/usecases/order_with_items/get_next_order_item_id_usecase.dart';
+import 'package:sales/domain/usecases/order_with_items/update_order_with_items_usecase.dart';
+import 'package:sales/domain/usecases/orders/get_next_order_id_usecase.dart';
+import 'package:sales/domain/usecases/orders/get_orders_usecase.dart';
+import 'package:sales/domain/usecases/products/get_all_products_usecase.dart';
 import 'package:sales/domain/usecases/remove_order_with_items_usecase.dart';
-import 'package:sales/domain/usecases/update_order_with_items_usecase.dart';
 
 class OrdersState with EquatableMixin {
   /// Danh sách đơn hàng.

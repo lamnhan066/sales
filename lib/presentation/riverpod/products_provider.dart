@@ -9,18 +9,18 @@ import 'package:sales/domain/entities/get_product_params.dart';
 import 'package:sales/domain/entities/product.dart';
 import 'package:sales/domain/entities/product_order_by.dart';
 import 'package:sales/domain/entities/ranges.dart';
-import 'package:sales/domain/usecases/add_category_usecase.dart';
-import 'package:sales/domain/usecases/add_product_usecase.dart';
-import 'package:sales/domain/usecases/get_all_categories.dart';
-import 'package:sales/domain/usecases/get_next_category_id_usecase.dart';
-import 'package:sales/domain/usecases/get_next_product_id_and_sku_usecase.dart';
-import 'package:sales/domain/usecases/get_products_usecase.dart';
+import 'package:sales/domain/usecases/categories/add_category_usecase.dart';
+import 'package:sales/domain/usecases/categories/get_all_categories.dart';
+import 'package:sales/domain/usecases/categories/get_next_category_id_usecase.dart';
+import 'package:sales/domain/usecases/categories/remove_category_usecase.dart';
+import 'package:sales/domain/usecases/categories/update_category_usecase.dart';
 import 'package:sales/domain/usecases/import_data_usecase.dart';
-import 'package:sales/domain/usecases/remove_category_usecase.dart';
-import 'package:sales/domain/usecases/remove_product_usecase.dart';
+import 'package:sales/domain/usecases/products/add_product_usecase.dart';
+import 'package:sales/domain/usecases/products/get_next_product_id_and_sku_usecase.dart';
+import 'package:sales/domain/usecases/products/get_products_usecase.dart';
+import 'package:sales/domain/usecases/products/remove_product_usecase.dart';
+import 'package:sales/domain/usecases/products/update_product_usecase.dart';
 import 'package:sales/domain/usecases/replace_database_usecase.dart';
-import 'package:sales/domain/usecases/update_category_usecase.dart';
-import 'package:sales/domain/usecases/update_product_usecase.dart';
 
 class ProductsState with EquatableMixin {
   /// Danh sách sản phẩm.

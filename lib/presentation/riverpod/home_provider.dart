@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sales/core/usecases/usecase.dart';
 import 'package:sales/di.dart';
 import 'package:sales/domain/entities/views_model.dart';
-import 'package:sales/domain/usecases/logout_usecase.dart';
+import 'package:sales/domain/usecases/auth/logout_usecase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeState with EquatableMixin {
