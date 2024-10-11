@@ -16,7 +16,8 @@ class OrdersState with EquatableMixin {
   final int totalPage;
 
   /// Khoảng ngày khi lọc.
-  final Ranges<DateTime>? dateRange;
+  Ranges<DateTime?>? get dateRange => _dateRange;
+  Ranges<DateTime?>? _dateRange;
 
   final bool isLoading;
   final String error;
@@ -26,17 +27,16 @@ class OrdersState with EquatableMixin {
     this.perpage = 10,
     this.page = 1,
     this.totalPage = 0,
-    this.dateRange,
+    Ranges<DateTime?>? dateRange,
     this.isLoading = false,
     this.error = '',
-  });
+  }) : _dateRange = dateRange;
 
   OrdersState copyWith({
     List<Order>? orders,
     int? perpage,
     int? page,
     int? totalPage,
-    Ranges<DateTime>? dateRange,
     bool? isLoading,
     String? error,
   }) {
@@ -45,10 +45,14 @@ class OrdersState with EquatableMixin {
       perpage: perpage ?? this.perpage,
       page: page ?? this.page,
       totalPage: totalPage ?? this.totalPage,
-      dateRange: dateRange ?? this.dateRange,
       isLoading: isLoading ?? this.isLoading,
       error: error ?? this.error,
-    );
+    ).._dateRange = dateRange;
+  }
+
+  OrdersState updateDateRange(Ranges<DateTime?>? dateRange) {
+    _dateRange = dateRange;
+    return this;
   }
 
   @override
@@ -58,7 +62,7 @@ class OrdersState with EquatableMixin {
       perpage,
       page,
       totalPage,
-      dateRange,
+      _dateRange,
       isLoading,
       error,
     ];

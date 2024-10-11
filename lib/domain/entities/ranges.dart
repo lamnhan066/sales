@@ -2,11 +2,11 @@ import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
 
-extension DoubleRanges on Ranges<double> {
+extension DoubleRangesExtension on Ranges<double> {
   bool get isAllPrices => start == 0 && end == double.infinity;
 }
 
-class Ranges<T extends Object> with EquatableMixin {
+class Ranges<T extends Object?> with EquatableMixin {
   final T start;
   final T end;
 
@@ -38,5 +38,5 @@ class Ranges<T extends Object> with EquatableMixin {
   String toString() => 'Ranges(start: $start, end: $end)';
 
   @override
-  List<Object> get props => [start, end];
+  List<Object> get props => [start ?? '', end ?? ''];
 }

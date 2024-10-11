@@ -4,7 +4,7 @@ import 'package:sales/domain/entities/ranges.dart';
 class GetOrderParams with EquatableMixin {
   final int page;
   final int perpage;
-  final Ranges<DateTime>? dateRange;
+  final Ranges<DateTime?>? dateRange;
 
   const GetOrderParams({
     this.page = 1,
