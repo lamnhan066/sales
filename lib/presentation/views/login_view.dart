@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/domain/entities/server_configurations.dart';
-import 'package:sales/presentation/riverpod/login_provider.dart';
+import 'package:sales/presentation/riverpod/notifiers/login_provider.dart';
 import 'package:sales/presentation/views/home_view.dart';
 
 class LoginView extends ConsumerStatefulWidget {

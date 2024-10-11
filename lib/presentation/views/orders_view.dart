@@ -6,7 +6,8 @@ import 'package:language_helper/language_helper.dart';
 import 'package:sales/core/constants/app_configs.dart';
 import 'package:sales/core/utils/utils.dart';
 import 'package:sales/domain/entities/order.dart';
-import 'package:sales/presentation/riverpod/orders_provider.dart';
+import 'package:sales/presentation/riverpod/notifiers/orders_provider.dart';
+import 'package:sales/presentation/riverpod/states/orders_state.dart';
 import 'package:sales/presentation/widgets/data_table_plus.dart';
 import 'package:sales/presentation/widgets/order_dialog.dart';
 

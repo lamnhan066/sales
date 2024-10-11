@@ -1,10 +1,8 @@
-import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/core/errors/failure.dart';
 import 'package:sales/core/usecases/usecase.dart';
 import 'package:sales/di.dart';
-import 'package:sales/domain/entities/app_version.dart';
 import 'package:sales/domain/entities/login_credentials.dart';
 import 'package:sales/domain/entities/server_configurations.dart';
 import 'package:sales/domain/usecases/app/get_app_version_usecase.dart';
@@ -15,69 +13,20 @@ import 'package:sales/domain/usecases/auth/login_usecase.dart';
 import 'package:sales/domain/usecases/data_services/load_server_configuration_usecase.dart';
 import 'package:sales/domain/usecases/data_services/load_server_connection_usecase.dart';
 import 'package:sales/domain/usecases/data_services/save_server_configuration_usecase.dart';
+import 'package:sales/presentation/riverpod/states/login_state.dart';
 
-class LoginState with EquatableMixin {
-  final String username;
-  final String password;
-  final bool rememberMe;
-  final String error;
-  final AppVersion version;
-  final ServerConfigurations serverConfigurations;
-  final bool showAutoLoginDialog;
-  final bool isLoggedIn;
-  final bool isLoading;
-
-  LoginState({
-    required this.username,
-    required this.password,
-    this.isLoggedIn = false,
-    this.rememberMe = false,
-    this.error = '',
-    this.serverConfigurations = const ServerConfigurations(),
-    this.showAutoLoginDialog = false,
-    this.isLoading = false,
-    this.version = const AppVersion(version: '1.0.0'),
-  });
-
-  LoginState copyWith({
-    String? username,
-    String? password,
-    bool? rememberMe,
-    String? error,
-    AppVersion? version,
-    ServerConfigurations? serverConfigurations,
-    bool? showAutoLoginDialog,
-    bool? isLoggedIn,
-    bool? isLoading,
-  }) {
-    return LoginState(
-      username: username ?? this.username,
-      password: password ?? this.password,
-      rememberMe: rememberMe ?? this.rememberMe,
-      error: error ?? this.error,
-      version: version ?? this.version,
-      serverConfigurations: serverConfigurations ?? this.serverConfigurations,
-      showAutoLoginDialog: showAutoLoginDialog ?? this.showAutoLoginDialog,
-      isLoggedIn: isLoggedIn ?? this.isLoggedIn,
-      isLoading: isLoading ?? this.isLoading,
-    );
-  }
-
-  @override
-  List<Object> get props {
-    return [
-      username,
-      password,
-      rememberMe,
-      error,
-      version,
-      serverConfigurations,
-      showAutoLoginDialog,
-      isLoggedIn,
-      isLoading,
-    ];
-  }
-}
+final loginProvider = StateNotifierProvider<LoginNotifier, LoginState>((ref) {
+  return LoginNotifier(
+    loginUseCase: getIt(),
+    autoLoginUseCase: getIt(),
+    getAppVersionUseCase: getIt(),
+    loadServerConfigurationUseCase: getIt(),
+    saveServerConfigurationUseCase: getIt(),
+    checkLoginStateUseCase: getIt(),
+    getCachedLoginCredentialsLoginUseCase: getIt(),
+    loadServerConnectionUsecase: getIt(),
+  );
+});
 
 class LoginNotifier extends StateNotifier<LoginState> {
   final LoginUseCase _loginUseCase;
@@ -206,16 +155,3 @@ class LoginNotifier extends StateNotifier<LoginState> {
     await _saveServerConfigurationUseCase.call(configs);
   }
 }
-
-final loginProvider = StateNotifierProvider<LoginNotifier, LoginState>((ref) {
-  return LoginNotifier(
-    loginUseCase: getIt(),
-    autoLoginUseCase: getIt(),
-    getAppVersionUseCase: getIt(),
-    loadServerConfigurationUseCase: getIt(),
-    saveServerConfigurationUseCase: getIt(),
-    checkLoginStateUseCase: getIt(),
-    getCachedLoginCredentialsLoginUseCase: getIt(),
-    loadServerConnectionUsecase: getIt(),
-  );
-});

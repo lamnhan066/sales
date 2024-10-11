@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/core/utils/utils.dart';
-import 'package:sales/presentation/riverpod/dashboard_provider.dart';
+import 'package:sales/presentation/riverpod/notifiers/dashboard_provider.dart';
 
 /// Màn hình tổng quan.
 class DashboardView extends ConsumerStatefulWidget {

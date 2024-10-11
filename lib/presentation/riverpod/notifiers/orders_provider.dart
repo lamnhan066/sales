@@ -1,4 +1,3 @@
-import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sales/core/usecases/usecase.dart';
 import 'package:sales/di.dart';
@@ -8,7 +7,6 @@ import 'package:sales/domain/entities/order.dart';
 import 'package:sales/domain/entities/order_item.dart';
 import 'package:sales/domain/entities/order_with_items_params.dart';
 import 'package:sales/domain/entities/product.dart';
-import 'package:sales/domain/entities/ranges.dart';
 import 'package:sales/domain/usecases/order_with_items/add_order_with_items_usecase.dart';
 import 'package:sales/domain/usecases/order_with_items/get_next_order_item_id_usecase.dart';
 import 'package:sales/domain/usecases/order_with_items/get_order_items_usecase.dart';
@@ -17,69 +15,20 @@ import 'package:sales/domain/usecases/order_with_items/update_order_with_items_u
 import 'package:sales/domain/usecases/orders/get_next_order_id_usecase.dart';
 import 'package:sales/domain/usecases/orders/get_orders_usecase.dart';
 import 'package:sales/domain/usecases/products/get_all_products_usecase.dart';
+import 'package:sales/presentation/riverpod/states/orders_state.dart';
 
-class OrdersState with EquatableMixin {
-  /// Danh sách đơn hàng.
-  final List<Order> orders;
-
-  /// Số đơn hàng mỗi trang.
-  final int perpage;
-
-  /// Vị trí trang hiện tại.
-  final int page;
-
-  /// Tổng số trang.
-  final int totalPage;
-
-  /// Khoảng ngày khi lọc.
-  final Ranges<DateTime>? dateRange;
-
-  final bool isLoading;
-  final String error;
-
-  OrdersState({
-    this.orders = const [],
-    this.perpage = 10,
-    this.page = 1,
-    this.totalPage = 0,
-    this.dateRange,
-    this.isLoading = false,
-    this.error = '',
-  });
-
-  OrdersState copyWith({
-    List<Order>? orders,
-    int? perpage,
-    int? page,
-    int? totalPage,
-    Ranges<DateTime>? dateRange,
-    bool? isLoading,
-    String? error,
-  }) {
-    return OrdersState(
-      orders: orders ?? this.orders,
-      perpage: perpage ?? this.perpage,
-      page: page ?? this.page,
-      totalPage: totalPage ?? this.totalPage,
-      dateRange: dateRange ?? this.dateRange,
-      isLoading: isLoading ?? this.isLoading,
-      error: error ?? this.error,
-    );
-  }
-
-  @override
-  List<Object?> get props {
-    return [
-      orders,
-      perpage,
-      page,
-      totalPage,
-      dateRange,
-      isLoading,
-      error,
-    ];
-  }
-}
+final ordersProvider = StateNotifierProvider<OrdersNotifier, OrdersState>((ref) {
+  return OrdersNotifier(
+    getOrdersUseCase: getIt(),
+    getAllProductsUseCase: getIt(),
+    getOrderItemsUseCase: getIt(),
+    getNextOrderIdUseCase: getIt(),
+    getNextOrderItemIdUseCase: getIt(),
+    addOrderWithItemsUseCase: getIt(),
+    updateOrderWithItemsUseCase: getIt(),
+    removeOrderWithItemsUseCase: getIt(),
+  );
+});
 
 class OrdersNotifier extends StateNotifier<OrdersState> {
   final GetOrdersUseCase _getOrdersUseCase;
@@ -177,16 +126,3 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
     await fetchOrders();
   }
 }
-
-final ordersProvider = StateNotifierProvider<OrdersNotifier, OrdersState>((ref) {
-  return OrdersNotifier(
-    getOrdersUseCase: getIt(),
-    getAllProductsUseCase: getIt(),
-    getOrderItemsUseCase: getIt(),
-    getNextOrderIdUseCase: getIt(),
-    getNextOrderItemIdUseCase: getIt(),
-    addOrderWithItemsUseCase: getIt(),
-    updateOrderWithItemsUseCase: getIt(),
-    removeOrderWithItemsUseCase: getIt(),
-  );
-});

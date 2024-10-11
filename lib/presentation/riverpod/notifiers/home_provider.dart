@@ -1,34 +1,14 @@
-import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sales/core/usecases/usecase.dart';
 import 'package:sales/di.dart';
 import 'package:sales/domain/entities/views_model.dart';
 import 'package:sales/domain/usecases/auth/logout_usecase.dart';
+import 'package:sales/presentation/riverpod/states/home_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class HomeState with EquatableMixin {
-  /// Màn hình hiện tại
-  final ViewsModel currentView;
-  final bool isLoading;
-
-  HomeState({
-    required this.currentView,
-    required this.isLoading,
-  });
-
-  HomeState copyWith({
-    ViewsModel? currentView,
-    bool? isLoading,
-  }) {
-    return HomeState(
-      currentView: currentView ?? this.currentView,
-      isLoading: isLoading ?? this.isLoading,
-    );
-  }
-
-  @override
-  List<Object> get props => [currentView, isLoading];
-}
+final homeProvider = StateNotifierProvider<HomeNotifier, HomeState>((ref) {
+  return HomeNotifier(prefs: getIt(), logoutUseCase: getIt());
+});
 
 class HomeNotifier extends StateNotifier<HomeState> {
   final SharedPreferences _prefs;
@@ -61,7 +41,3 @@ class HomeNotifier extends StateNotifier<HomeState> {
     _prefs.clear();
   }
 }
-
-final homeProvider = StateNotifierProvider<HomeNotifier, HomeState>((ref) {
-  return HomeNotifier(prefs: getIt(), logoutUseCase: getIt());
-});

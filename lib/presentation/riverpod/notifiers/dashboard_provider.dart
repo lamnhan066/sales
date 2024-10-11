@@ -1,4 +1,3 @@
-import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sales/core/usecases/usecase.dart';
 import 'package:sales/di.dart';
@@ -11,86 +10,19 @@ import 'package:sales/domain/usecases/reports/get_daily_revenues_usecase.dart';
 import 'package:sales/domain/usecases/reports/get_five_highest_sales_products_usecase.dart';
 import 'package:sales/domain/usecases/reports/get_five_low_stock_products_usecase.dart';
 import 'package:sales/domain/usecases/reports/get_three_recent_orders_usecase.dart';
+import 'package:sales/presentation/riverpod/states/dashboard_state.dart';
 
-class DashboardState with EquatableMixin {
-  /// Tổng tất cả sản phẩm.
-  int totalProductCount = 0;
-
-  /// Năm sản phẩm có số lượng trong kho thấp (< 5).
-  List<Product> fiveLowStockProducts;
-
-  /// Năm sản phẩm bán chạy nhất và số lượng tương ứng.
-  Map<Product, int> fiveHighestSalesProducts;
-
-  /// Số đơn hàng bán hằng ngày.
-  int dailyOrderCount = 0;
-
-  /// Doanh thu hằng ngày.
-  int dailyRevenue = 0;
-
-  /// Ba đơn hàng gần nhất.
-  RecentOrdersResult threeRecentOrders;
-
-  /// Doanh thu hằng tháng.
-  List<int> dailyRevenueForMonth = [];
-
-  /// Đang load.
-  final bool isLoading;
-
-  /// Thông tin lỗi.
-  final String error;
-
-  DashboardState({
-    this.totalProductCount = 0,
-    this.fiveLowStockProducts = const [],
-    this.fiveHighestSalesProducts = const {},
-    this.dailyOrderCount = 0,
-    this.dailyRevenue = 0,
-    this.threeRecentOrders = const RecentOrdersResult(orderItems: {}, products: {}),
-    this.dailyRevenueForMonth = const [],
-    this.isLoading = true,
-    this.error = '',
-  });
-
-  DashboardState copyWith({
-    int? totalProductCount,
-    List<Product>? fiveLowStockProducts,
-    Map<Product, int>? fiveHighestSalesProducts,
-    int? dailyOrderCount,
-    int? dailyRevenue,
-    RecentOrdersResult? threeRecentOrders,
-    List<int>? dailyRevenueForMonth,
-    bool? isLoading,
-    String? error,
-  }) {
-    return DashboardState(
-      totalProductCount: totalProductCount ?? this.totalProductCount,
-      fiveLowStockProducts: fiveLowStockProducts ?? this.fiveLowStockProducts,
-      fiveHighestSalesProducts: fiveHighestSalesProducts ?? this.fiveHighestSalesProducts,
-      dailyOrderCount: dailyOrderCount ?? this.dailyOrderCount,
-      dailyRevenue: dailyRevenue ?? this.dailyRevenue,
-      threeRecentOrders: threeRecentOrders ?? this.threeRecentOrders,
-      dailyRevenueForMonth: dailyRevenueForMonth ?? this.dailyRevenueForMonth,
-      isLoading: isLoading ?? this.isLoading,
-      error: error ?? this.error,
-    );
-  }
-
-  @override
-  List<Object> get props {
-    return [
-      totalProductCount,
-      fiveLowStockProducts,
-      fiveHighestSalesProducts,
-      dailyOrderCount,
-      dailyRevenue,
-      threeRecentOrders,
-      dailyRevenueForMonth,
-      isLoading,
-      error
-    ];
-  }
-}
+final dashboardNotifierProvider = StateNotifierProvider<DashboardNotifier, DashboardState>((ref) {
+  return DashboardNotifier(
+    getTotalProductCountUseCase: getIt(),
+    getFiveLowStockProductsUseCase: getIt(),
+    getFiveHighestSalesProductsUseCase: getIt(),
+    getDailyOrderCountUseCase: getIt(),
+    getDailyRevenueUseCase: getIt(),
+    getThreeRecentOrdersUseCase: getIt(),
+    getDailyRevenueForMonthUseCase: getIt(),
+  );
+});
 
 class DashboardNotifier extends StateNotifier<DashboardState> {
   final GetDailyOrderCountUseCase getDailyOrderCountUseCase;
@@ -151,15 +83,3 @@ class DashboardNotifier extends StateNotifier<DashboardState> {
     }
   }
 }
-
-final dashboardNotifierProvider = StateNotifierProvider<DashboardNotifier, DashboardState>((ref) {
-  return DashboardNotifier(
-    getTotalProductCountUseCase: getIt(),
-    getFiveLowStockProductsUseCase: getIt(),
-    getFiveHighestSalesProductsUseCase: getIt(),
-    getDailyOrderCountUseCase: getIt(),
-    getDailyRevenueUseCase: getIt(),
-    getThreeRecentOrdersUseCase: getIt(),
-    getDailyRevenueForMonthUseCase: getIt(),
-  );
-});

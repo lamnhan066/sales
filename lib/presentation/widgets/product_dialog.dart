@@ -6,7 +6,7 @@ import 'package:language_helper/language_helper.dart';
 import 'package:sales/core/constants/app_configs.dart';
 import 'package:sales/domain/entities/category.dart';
 import 'package:sales/domain/entities/product.dart';
-import 'package:sales/presentation/riverpod/products_provider.dart';
+import 'package:sales/presentation/riverpod/notifiers/products_provider.dart';
 import 'package:sales/presentation/widgets/common_components.dart';
 import 'package:sales/presentation/widgets/product_form_dialog.dart';
 

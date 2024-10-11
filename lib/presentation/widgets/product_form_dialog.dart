@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/domain/entities/category.dart';
 import 'package:sales/domain/entities/product.dart';
-import 'package:sales/presentation/riverpod/products_provider.dart';
+import 'package:sales/presentation/riverpod/notifiers/products_provider.dart';
 import 'package:sales/presentation/widgets/category_dialog.dart';
 import 'package:sales/presentation/widgets/common_components.dart';
 import 'package:sales/presentation/widgets/image_dialog.dart';

@@ -9,7 +9,7 @@ import 'package:sales/domain/entities/order.dart';
 import 'package:sales/domain/entities/order_item.dart';
 import 'package:sales/domain/entities/order_status.dart';
 import 'package:sales/domain/entities/product.dart';
-import 'package:sales/presentation/riverpod/orders_provider.dart';
+import 'package:sales/presentation/riverpod/notifiers/orders_provider.dart';
 import 'package:sales/presentation/widgets/common_components.dart';
 import 'package:sales/presentation/widgets/data_table_plus.dart';
 
