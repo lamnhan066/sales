@@ -6,6 +6,7 @@ import 'package:sales/data/database/order_database.dart';
 import 'package:sales/data/database/order_item_database.dart';
 import 'package:sales/data/database/order_with_items_database.dart';
 import 'package:sales/data/database/product_database.dart';
+import 'package:sales/data/database/report_database.dart';
 import 'package:sales/data/source/local_postgres/local_postgres_storage.dart';
 import 'package:sales/domain/repositories/app_version_repository.dart';
 import 'package:sales/domain/repositories/auth_repository.dart';
@@ -15,6 +16,7 @@ import 'package:sales/domain/repositories/order_item_repository.dart';
 import 'package:sales/domain/repositories/order_repository.dart';
 import 'package:sales/domain/repositories/order_with_items_repository.dart';
 import 'package:sales/domain/repositories/product_repository.dart';
+import 'package:sales/domain/repositories/report_repository.dart';
 import 'package:sales/domain/repositories/server_configurations_repository.dart';
 import 'package:sales/domain/services/database_service.dart';
 import 'package:sales/domain/usecases/app/get_app_version_usecase.dart';
@@ -62,6 +64,7 @@ import 'package:sales/infrastructure/respositories/order_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/order_with_items_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/postgres_configurations_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/product_repository_impl.dart';
+import 'package:sales/infrastructure/respositories/report_repository_impl.dart';
 import 'package:sales/infrastructure/services/database_service_impl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -95,6 +98,7 @@ void _registerRepositories() {
   getIt.registerLazySingleton<OrderItemRepository>(() => OrderItemRepositoryImpl(getIt()));
   getIt.registerLazySingleton<OrderWithItemsRepository>(() => OrderWithItemsRepositoryImpl(getIt()));
   getIt.registerLazySingleton<CategoryRepository>(() => CategoryRepositoryImpl(getIt()));
+  getIt.registerLazySingleton<ReportRepository>(() => ReportRepositoryImpl(getIt()));
   getIt.registerLazySingleton<DataImporterRepository>(() => ExcelDataImporterImpl());
 }
 
@@ -108,6 +112,7 @@ void _registerDatabase() {
   getIt.registerLazySingleton<OrderDatabase>(() => postgresDatabase);
   getIt.registerLazySingleton<OrderItemDatabase>(() => postgresDatabase);
   getIt.registerLazySingleton<OrderWithItemsDatabase>(() => postgresDatabase);
+  getIt.registerLazySingleton<ReportDatabase>(() => postgresDatabase);
 }
 
 void _registerAuthUseCases() {
