@@ -7,6 +7,7 @@ import 'package:sales/data/database/order_item_database.dart';
 import 'package:sales/data/database/order_with_items_database.dart';
 import 'package:sales/data/database/product_database.dart';
 import 'package:sales/data/database/report_database.dart';
+import 'package:sales/data/source/local_postgres/local_postgres_storage.dart';
 import 'package:sales/domain/repositories/app_version_repository.dart';
 import 'package:sales/domain/repositories/auth_repository.dart';
 import 'package:sales/domain/repositories/category_repository.dart';
@@ -55,7 +56,6 @@ import 'package:sales/domain/usecases/reports/get_five_highest_sales_products_us
 import 'package:sales/domain/usecases/reports/get_five_low_stock_products_usecase.dart';
 import 'package:sales/domain/usecases/reports/get_three_recent_orders_usecase.dart';
 import 'package:sales/infrastructure/data_import/excel_data_importer_repository_impl.dart';
-import 'package:sales/infrastructure/database/local_postgres/local_postgres_storage.dart';
 import 'package:sales/infrastructure/respositories/app_version_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/category_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/local_auth_repository_impl.dart';
