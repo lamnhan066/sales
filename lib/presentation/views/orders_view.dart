@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/core/constants/app_configs.dart';
-import 'package:sales/core/utils/utils.dart';
+import 'package:sales/core/utils/date_time_utils.dart';
 import 'package:sales/domain/entities/order.dart';
 import 'package:sales/presentation/riverpod/notifiers/orders_provider.dart';
 import 'package:sales/presentation/riverpod/states/orders_state.dart';
@@ -161,7 +161,7 @@ class _OrdersViewState extends ConsumerState<OrdersView> {
             DataCell(
               Center(
                 child: Text(
-                  Utils.formatDateTime(o.date),
+                  DateTimeUtils.formatDateTime(o.date),
                   textAlign: TextAlign.center,
                 ),
               ),

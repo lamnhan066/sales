@@ -1,7 +1,5 @@
-import 'package:language_helper/language_helper.dart';
-
 /// Utils
-class Utils {
+class DateTimeUtils {
   /// DateTime -> hh:mm h dd/MM/yyyy
   static String formatDateTime(DateTime date) {
     String padLeft2(int number) {
@@ -19,20 +17,5 @@ class Utils {
   /// DateTime -> d/M/yyyy
   static String dateToSql(DateTime date) {
     return '${date.year}-${date.month}-${date.day}';
-  }
-
-  /// Chuyển khoảng giá sang dạng chữ.
-  ///
-  /// Với giá là infinity thì chữ sẽ trả về `Tối đa`.
-  static String getPriceRangeText(double price) {
-    if (price == double.infinity) {
-      return 'Tối đa'.tr;
-    }
-
-    return '${price.toInt()}';
-  }
-
-  static calcTotalPrice(int importPrice, int unitSalePrice, int quantity) {
-    return importPrice * quantity;
   }
 }

@@ -2,7 +2,7 @@ import 'package:chart_sparkline/chart_sparkline.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:language_helper/language_helper.dart';
-import 'package:sales/core/utils/utils.dart';
+import 'package:sales/core/utils/date_time_utils.dart';
 import 'package:sales/presentation/riverpod/notifiers/dashboard_provider.dart';
 
 /// Màn hình tổng quan.
@@ -152,7 +152,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                 padding: const EdgeInsets.all(8.0),
                                 child: Column(
                                   children: [
-                                    Text(Utils.formatDateTime(order.date)),
+                                    Text(DateTimeUtils.formatDateTime(order.date)),
                                     divider,
                                     for (int i = 0; i < dashboardState.threeRecentOrders.orderItems[order]!.length; i++)
                                       Builder(

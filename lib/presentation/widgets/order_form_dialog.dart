@@ -4,7 +4,7 @@ import 'package:boxw/boxw.dart';
 import 'package:flutter/material.dart' hide DataTable, DataRow, DataColumn, DataCell;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:language_helper/language_helper.dart';
-import 'package:sales/core/utils/utils.dart';
+import 'package:sales/core/utils/date_time_utils.dart';
 import 'package:sales/domain/entities/order.dart';
 import 'package:sales/domain/entities/order_item.dart';
 import 'package:sales/domain/entities/order_status.dart';
@@ -193,7 +193,7 @@ class _OrderFormDialogState extends State<OrderFormDialog> {
                         Flexible(
                           child: BoxWInput(
                             readOnly: true,
-                            initial: Utils.formatDateTime(widget.tempOrder.date),
+                            initial: DateTimeUtils.formatDateTime(widget.tempOrder.date),
                             title: 'Ngày Giờ'.tr,
                           ),
                         ),

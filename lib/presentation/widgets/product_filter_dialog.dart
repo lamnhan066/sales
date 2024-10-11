@@ -1,7 +1,7 @@
 import 'package:boxw/boxw.dart';
 import 'package:flutter/material.dart';
 import 'package:language_helper/language_helper.dart';
-import 'package:sales/core/utils/utils.dart';
+import 'package:sales/core/utils/price_utils.dart';
 import 'package:sales/domain/entities/category.dart';
 import 'package:sales/domain/entities/ranges.dart';
 
@@ -34,8 +34,8 @@ class _ProductFilterDialogState extends State<ProductFilterDialog> {
   @override
   void initState() {
     values = widget.initialPriceRange;
-    startController.text = Utils.getPriceRangeText(values.start);
-    endController.text = Utils.getPriceRangeText(values.end);
+    startController.text = PriceUtils.getPriceRangeText(values.start);
+    endController.text = PriceUtils.getPriceRangeText(values.end);
     categoryId = widget.intialCategoryId;
     super.initState();
   }
@@ -53,7 +53,7 @@ class _ProductFilterDialogState extends State<ProductFilterDialog> {
                   child: BoxWInput(
                     controller: startController,
                     title: 'Từ'.tr,
-                    initial: Utils.getPriceRangeText(values.start),
+                    initial: PriceUtils.getPriceRangeText(values.start),
                     validator: (value) {
                       if (value == null) {
                         return 'Không được bỏ trống'.tr;
@@ -76,7 +76,7 @@ class _ProductFilterDialogState extends State<ProductFilterDialog> {
                 ),
                 InkWell(
                   onTap: () {
-                    startController.text = Utils.getPriceRangeText(0);
+                    startController.text = PriceUtils.getPriceRangeText(0);
                     values = Ranges(0, values.end);
                   },
                   child: const Padding(
@@ -118,13 +118,13 @@ class _ProductFilterDialogState extends State<ProductFilterDialog> {
                 ),
                 InkWell(
                   onTap: () {
-                    endController.text = Utils.getPriceRangeText(double.infinity);
+                    endController.text = PriceUtils.getPriceRangeText(double.infinity);
                     values = Ranges(values.start, double.infinity);
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      Utils.getPriceRangeText(double.infinity),
+                      PriceUtils.getPriceRangeText(double.infinity),
                       style: const TextStyle(fontSize: 13),
                     ),
                   ),

@@ -4,7 +4,7 @@ import 'package:boxw/boxw.dart';
 import 'package:flutter/material.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/core/constants/app_configs.dart';
-import 'package:sales/core/utils/utils.dart';
+import 'package:sales/core/utils/price_utils.dart';
 import 'package:sales/domain/entities/order.dart';
 import 'package:sales/domain/entities/order_item.dart';
 import 'package:sales/domain/entities/order_result.dart';
@@ -156,7 +156,7 @@ Future<OrderResult?> _orderDialog({
       id: orderItemId,
       quantity: 1,
       unitSalePrice: product.importPrice.toDouble(),
-      totalPrice: Utils.calcTotalPrice(
+      totalPrice: PriceUtils.calcTotalPrice(
         product.importPrice,
         product.importPrice,
         1,
