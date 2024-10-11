@@ -10,13 +10,13 @@ class CategoryRepositoryImpl implements CategoryRepository {
 
   @override
   Future<void> addCategory(Category category) {
-    return _database.addCategory(category.toCategoryModel());
+    return _database.addCategory(category.toData());
   }
 
   @override
   Future<List<Category>> getAllCategories() async {
     final categories = await _database.getAllCategories();
-    return categories.map((e) => e.toCategory()).toList();
+    return categories.map((e) => e.toDomain()).toList();
   }
 
   @override
@@ -26,16 +26,16 @@ class CategoryRepositoryImpl implements CategoryRepository {
 
   @override
   Future<void> removeCategory(Category category) {
-    return _database.removeCategory(category.toCategoryModel());
+    return _database.removeCategory(category.toData());
   }
 
   @override
   Future<void> updateCategory(Category category) {
-    return _database.updateCategory(category.toCategoryModel());
+    return _database.updateCategory(category.toData());
   }
 
   @override
   Future<void> addAllCategories(List<Category> categories) async {
-    return _database.addAllCategories(categories.map((e) => e.toCategoryModel()).toList());
+    return _database.addAllCategories(categories.map((e) => e.toData()).toList());
   }
 }

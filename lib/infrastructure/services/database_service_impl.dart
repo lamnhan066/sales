@@ -45,14 +45,14 @@ class DatabaseServiceImpl implements DatabaseService {
 
   @override
   Future<void> mergeDatabase(DataImportResult data) {
-    final categories = data.categories.map((e) => e.toCategoryModel()).toList();
+    final categories = data.categories.map((e) => e.toData()).toList();
     final products = data.products.map((e) => e.toData()).toList();
     return _dataSyncDatabase.merge(categories, products);
   }
 
   @override
   Future<void> replaceDatabase(DataImportResult data) {
-    final categories = data.categories.map((e) => e.toCategoryModel()).toList();
+    final categories = data.categories.map((e) => e.toData()).toList();
     final products = data.products.map((e) => e.toData()).toList();
     return _dataSyncDatabase.replace(categories, products);
   }

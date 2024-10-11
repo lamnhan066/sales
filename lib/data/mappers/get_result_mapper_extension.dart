@@ -10,7 +10,7 @@ extension GetResultOrderModel on GetResult<OrderModel> {
 }
 
 extension GetResultOrderEntity on GetResult<Order> {
-  GetResult<OrderModel> toDomain() {
+  GetResult<OrderModel> toData() {
     return GetResult(totalCount: totalCount, items: items.map((e) => e.toData()).toList());
   }
 }
