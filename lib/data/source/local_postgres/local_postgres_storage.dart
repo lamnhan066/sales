@@ -452,7 +452,7 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
         parameters['productId'] = TypedValue(Type.integer, params.productId!);
       }
     }
-    final result = await _connection.execute(Sql.named(sql), parameters: parameters);
+    final result = await (session ?? _connection).execute(Sql.named(sql), parameters: parameters);
     return result.map((e) => OrderItemModel.fromMap(e.toColumnMap())).toList();
   }
 
