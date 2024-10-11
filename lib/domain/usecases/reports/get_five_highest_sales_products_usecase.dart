@@ -1,14 +1,14 @@
 import 'package:sales/core/usecases/usecase.dart';
 import 'package:sales/domain/entities/product.dart';
-import 'package:sales/domain/repositories/product_repository.dart';
+import 'package:sales/domain/repositories/report_repository.dart';
 
 class GetFiveHighestSalesProductsUseCase implements UseCase<Map<Product, int>, NoParams> {
-  final ProductRepository _productRepository;
+  final ReportRepository _repository;
 
-  const GetFiveHighestSalesProductsUseCase(this._productRepository);
+  const GetFiveHighestSalesProductsUseCase(this._repository);
 
   @override
   Future<Map<Product, int>> call(params) async {
-    return await _productRepository.getFiveHighestSalesProducts();
+    return await _repository.getFiveHighestSalesProducts();
   }
 }

@@ -14,13 +14,13 @@ import 'package:sales/domain/usecases/categories/get_all_categories.dart';
 import 'package:sales/domain/usecases/categories/get_next_category_id_usecase.dart';
 import 'package:sales/domain/usecases/categories/remove_category_usecase.dart';
 import 'package:sales/domain/usecases/categories/update_category_usecase.dart';
-import 'package:sales/domain/usecases/import_data_usecase.dart';
+import 'package:sales/domain/usecases/data_services/import_data_usecase.dart';
+import 'package:sales/domain/usecases/data_services/replace_database_usecase.dart';
 import 'package:sales/domain/usecases/products/add_product_usecase.dart';
 import 'package:sales/domain/usecases/products/get_next_product_id_and_sku_usecase.dart';
 import 'package:sales/domain/usecases/products/get_products_usecase.dart';
 import 'package:sales/domain/usecases/products/remove_product_usecase.dart';
 import 'package:sales/domain/usecases/products/update_product_usecase.dart';
-import 'package:sales/domain/usecases/replace_database_usecase.dart';
 
 class ProductsState with EquatableMixin {
   /// Danh sách sản phẩm.

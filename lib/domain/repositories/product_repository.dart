@@ -8,8 +8,6 @@ abstract class ProductRepository {
   Future<void> updateProduct(Product product);
   Future<({int id, String sku})> getNextProductIdAndSku();
   Future<int> getTotalProductCount();
-  Future<List<Product>> getFiveLowStockProducts();
-  Future<Map<Product, int>> getFiveHighestSalesProducts();
   Future<Product> getProductById(int id);
   Future<GetResult<Product>> getProducts(GetProductParams params);
   Future<void> addAllProducts(List<Product> products);

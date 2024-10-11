@@ -1,5 +1,6 @@
-import 'package:sales/data/local/database.dart';
+import 'package:sales/data/database/database.dart';
 import 'package:sales/data/models/category_model.dart';
+import 'package:sales/data/models/get_orders_result_model.dart';
 import 'package:sales/data/models/order_item_model.dart';
 import 'package:sales/data/models/order_model.dart';
 import 'package:sales/data/models/product_model.dart';
@@ -8,12 +9,15 @@ import 'package:sales/domain/entities/get_order_items_params.dart';
 import 'package:sales/domain/entities/get_order_params.dart';
 import 'package:sales/domain/entities/get_product_params.dart';
 import 'package:sales/domain/entities/get_result.dart';
+import 'package:sales/domain/entities/order_with_items_params.dart';
 import 'package:sales/domain/entities/product_order_by.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:string_normalizer/string_normalizer.dart';
 
+abstract class SharedPreferencesMemoryStorage implements Database {}
+
 /// Local database.
-class LocalDatabaseImpl extends Database {
+class SharedPreferencesMemoryStorageImpl extends SharedPreferencesMemoryStorage {
   final _pref = getIt<SharedPreferences>();
 
   @override
@@ -244,6 +248,132 @@ class LocalDatabaseImpl extends Database {
   @override
   Future<void> restore(String backupPath) {
     // TODO: implement restore
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> addOrderWithOrderItems(OrderWithItemsParams<OrderModel, OrderItemModel> params) {
+    // TODO: implement addOrderWithOrderItems
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<int> getDailyOrderCount(DateTime date) {
+    // TODO: implement getDailyOrderCount
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<int> getDailyRevenue(DateTime date) {
+    // TODO: implement getDailyRevenue
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<int>> getDailyRevenueForMonth(DateTime date) {
+    // TODO: implement getDailyRevenueForMonth
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Map<ProductModel, int>> getFiveHighestSalesProducts() {
+    // TODO: implement getFiveHighestSalesProducts
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<ProductModel>> getFiveLowStockProducts() {
+    // TODO: implement getFiveLowStockProducts
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<int> getNextCategoryId() {
+    // TODO: implement getNextCategoryId
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<int> getNextOrderId() {
+    // TODO: implement getNextOrderId
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<int> getNextOrderItemId() {
+    // TODO: implement getNextOrderItemId
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<({int id, String sku})> getNextProductIdSku() {
+    // TODO: implement getNextProductIdSku
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<OrderItemModel>> getOrderItems([GetOrderItemsParams? params]) {
+    // TODO: implement getOrderItems
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ProductModel> getProductById(int id) {
+    // TODO: implement getProductById
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<RecentOrdersResultModel> getThreeRecentOrders() {
+    // TODO: implement getThreeRecentOrders
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<int> getTotalProductCount() {
+    // TODO: implement getTotalProductCount
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> merge(List<CategoryModel> categories, List<ProductModel> products) {
+    // TODO: implement merge
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> removeCategory(CategoryModel category) {
+    // TODO: implement removeCategory
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> removeOrder(OrderModel order) {
+    // TODO: implement removeOrder
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> removeOrderItem(OrderItemModel orderItem) {
+    // TODO: implement removeOrderItem
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> removeProduct(ProductModel product) {
+    // TODO: implement removeProduct
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> replace(List<CategoryModel> categories, List<ProductModel> products) {
+    // TODO: implement replace
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> updateOrderWithItems(OrderWithItemsParams<OrderModel, OrderItemModel> params) {
+    // TODO: implement updateOrderWithItems
     throw UnimplementedError();
   }
 }

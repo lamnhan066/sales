@@ -1,4 +1,3 @@
-import 'package:sales/data/models/get_orders_result_model.dart';
 import 'package:sales/data/models/order_model.dart';
 import 'package:sales/domain/entities/get_order_params.dart';
 import 'package:sales/domain/entities/get_result.dart';
@@ -24,21 +23,4 @@ abstract interface class OrderDatabase {
 
   /// Trình tạo ra `id` cho loại hàng.
   Future<int> getNextOrderId();
-
-  /// Lấy số lượng đơn đặt hàng hằng ngày.
-  Future<int> getDailyOrderCount(DateTime dateTime);
-
-  /// Lấy danh sách 3 đơn đặt hàng gần đây nhất.
-  ///
-  /// Trả về danh sách sản phẩm đã đặt hàng và thông tin của đơn đặt hàng.
-  Future<RecentOrdersResultModel> getThreeRecentOrders();
-
-  /// Lấy tổng doanh thu hằng ngày.
-  Future<int> getDailyRevenue(DateTime dateTime);
-
-  /// Lấy tổng doanh thu tháng theo từng ngày.
-  ///
-  /// Trả về danh sách doanh thu theo ngày từ ngày 1 đến cuối tháng (hoặc đến
-  /// ngày hiện tại đối với tháng hiện tại).
-  Future<List<int>> getDailyRevenueForMonth(DateTime dateTime);
 }

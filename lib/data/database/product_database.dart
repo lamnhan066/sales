@@ -32,10 +32,4 @@ abstract interface class ProductDatabase {
 
   /// Lấy tổng số lượng sản phẩm có trong CSDL.
   Future<int> getTotalProductCount();
-
-  /// Lấy danh sách 5 sản phẩm có số lượng ít hơn 5 trong kho.
-  Future<List<ProductModel>> getFiveLowStockProducts();
-
-  /// Lấy danh sách 5 sản phẩm bán chạy nhất.
-  Future<Map<ProductModel, int>> getFiveHighestSalesProducts();
 }

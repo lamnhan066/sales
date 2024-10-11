@@ -11,18 +11,6 @@ class ProductRepositoryImpl implements ProductRepository {
   const ProductRepositoryImpl(this._database);
 
   @override
-  Future<Map<Product, int>> getFiveHighestSalesProducts() async {
-    final result = await _database.getFiveHighestSalesProducts();
-    return result.map((k, v) => MapEntry(k.toDomain(), v));
-  }
-
-  @override
-  Future<List<Product>> getFiveLowStockProducts() async {
-    final result = await _database.getFiveLowStockProducts();
-    return result.map((e) => e.toDomain()).toList();
-  }
-
-  @override
   Future<Product> getProductById(int id) async {
     final result = await _database.getProductById(id);
     return result.toDomain();

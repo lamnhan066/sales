@@ -4,13 +4,13 @@ import 'package:sales/core/usecases/usecase.dart';
 import 'package:sales/di.dart';
 import 'package:sales/domain/entities/product.dart';
 import 'package:sales/domain/entities/recent_orders_result.dart';
-import 'package:sales/domain/usecases/get_daily_order_count_usecase.dart';
-import 'package:sales/domain/usecases/get_daily_revenues_usecase.dart';
-import 'package:sales/domain/usecases/get_five_highest_sales_products_usecase.dart';
-import 'package:sales/domain/usecases/get_five_low_stock_products_usecase.dart';
-import 'package:sales/domain/usecases/get_monthly_revenues_usecase.dart';
-import 'package:sales/domain/usecases/get_three_recent_orders_usecase.dart';
-import 'package:sales/domain/usecases/get_total_product_count_usecase.dart';
+import 'package:sales/domain/usecases/products/get_total_product_count_usecase.dart';
+import 'package:sales/domain/usecases/reports/get_daily_order_count_usecase.dart';
+import 'package:sales/domain/usecases/reports/get_daily_revenue_for_month_usecase.dart';
+import 'package:sales/domain/usecases/reports/get_daily_revenues_usecase.dart';
+import 'package:sales/domain/usecases/reports/get_five_highest_sales_products_usecase.dart';
+import 'package:sales/domain/usecases/reports/get_five_low_stock_products_usecase.dart';
+import 'package:sales/domain/usecases/reports/get_three_recent_orders_usecase.dart';
 
 class DashboardState with EquatableMixin {
   /// Tổng tất cả sản phẩm.
@@ -32,7 +32,7 @@ class DashboardState with EquatableMixin {
   RecentOrdersResult threeRecentOrders;
 
   /// Doanh thu hằng tháng.
-  List<int> monthlyRevenues = [];
+  List<int> dailyRevenueForMonth = [];
 
   /// Đang load.
   final bool isLoading;
@@ -47,7 +47,7 @@ class DashboardState with EquatableMixin {
     this.dailyOrderCount = 0,
     this.dailyRevenue = 0,
     this.threeRecentOrders = const RecentOrdersResult(orderItems: {}, products: {}),
-    this.monthlyRevenues = const [],
+    this.dailyRevenueForMonth = const [],
     this.isLoading = true,
     this.error = '',
   });
@@ -59,7 +59,7 @@ class DashboardState with EquatableMixin {
     int? dailyOrderCount,
     int? dailyRevenue,
     RecentOrdersResult? threeRecentOrders,
-    List<int>? monthlyRevenues,
+    List<int>? dailyRevenueForMonth,
     bool? isLoading,
     String? error,
   }) {
@@ -70,7 +70,7 @@ class DashboardState with EquatableMixin {
       dailyOrderCount: dailyOrderCount ?? this.dailyOrderCount,
       dailyRevenue: dailyRevenue ?? this.dailyRevenue,
       threeRecentOrders: threeRecentOrders ?? this.threeRecentOrders,
-      monthlyRevenues: monthlyRevenues ?? this.monthlyRevenues,
+      dailyRevenueForMonth: dailyRevenueForMonth ?? this.dailyRevenueForMonth,
       isLoading: isLoading ?? this.isLoading,
       error: error ?? this.error,
     );
@@ -85,7 +85,7 @@ class DashboardState with EquatableMixin {
       dailyOrderCount,
       dailyRevenue,
       threeRecentOrders,
-      monthlyRevenues,
+      dailyRevenueForMonth,
       isLoading,
       error
     ];
@@ -97,7 +97,7 @@ class DashboardNotifier extends StateNotifier<DashboardState> {
   final GetDailyRevenueUseCase getDailyRevenueUseCase;
   final GetFiveHighestSalesProductsUseCase getFiveHighestSalesProductsUseCase;
   final GetFiveLowStockProductsUseCase getFiveLowStockProductsUseCase;
-  final GetMonthlyRevenuesUseCase getMonthlyRevenuesUseCase;
+  final GetDailyRevenueForMonth getDailyRevenueForMonthUseCase;
   final GetThreeRecentOrdersUseCase getThreeRecentOrdersUseCase;
   final GetTotalProductCountUseCase getTotalProductCountUseCase;
 
@@ -106,7 +106,7 @@ class DashboardNotifier extends StateNotifier<DashboardState> {
     required this.getDailyRevenueUseCase,
     required this.getFiveHighestSalesProductsUseCase,
     required this.getFiveLowStockProductsUseCase,
-    required this.getMonthlyRevenuesUseCase,
+    required this.getDailyRevenueForMonthUseCase,
     required this.getThreeRecentOrdersUseCase,
     required this.getTotalProductCountUseCase,
   }) : super(DashboardState());
@@ -121,7 +121,7 @@ class DashboardNotifier extends StateNotifier<DashboardState> {
       final dailyOrderCountFuture = getDailyOrderCountUseCase(now);
       final dailyRevenueFuture = getDailyRevenueUseCase(now);
       final threeRecentOrdersFuture = getThreeRecentOrdersUseCase(NoParams());
-      final monthlyRevenuesFuture = getMonthlyRevenuesUseCase(now);
+      final dailyRevenueForMonthFuture = getDailyRevenueForMonthUseCase(now);
 
       final results = await Future.wait([
         totalProductCountFuture,
@@ -130,7 +130,7 @@ class DashboardNotifier extends StateNotifier<DashboardState> {
         dailyOrderCountFuture,
         dailyRevenueFuture,
         threeRecentOrdersFuture,
-        monthlyRevenuesFuture,
+        dailyRevenueForMonthFuture,
       ]);
 
       state = state.copyWith(
@@ -140,7 +140,7 @@ class DashboardNotifier extends StateNotifier<DashboardState> {
         dailyOrderCount: results[3] as int,
         dailyRevenue: results[4] as int,
         threeRecentOrders: results[5] as RecentOrdersResult,
-        monthlyRevenues: results[6] as List<int>,
+        dailyRevenueForMonth: results[6] as List<int>,
         isLoading: false,
       );
     } catch (e) {
@@ -160,6 +160,6 @@ final dashboardNotifierProvider = StateNotifierProvider<DashboardNotifier, Dashb
     getDailyOrderCountUseCase: getIt(),
     getDailyRevenueUseCase: getIt(),
     getThreeRecentOrdersUseCase: getIt(),
-    getMonthlyRevenuesUseCase: getIt(),
+    getDailyRevenueForMonthUseCase: getIt(),
   );
 });

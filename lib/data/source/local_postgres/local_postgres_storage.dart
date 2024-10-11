@@ -1,6 +1,6 @@
 import 'package:postgres/postgres.dart';
 import 'package:sales/core/utils/utils.dart';
-import 'package:sales/data/local/database.dart';
+import 'package:sales/data/database/database.dart';
 import 'package:sales/data/models/category_model.dart';
 import 'package:sales/data/models/get_orders_result_model.dart';
 import 'package:sales/data/models/order_item_model.dart';
@@ -15,13 +15,15 @@ import 'package:sales/domain/entities/range_of_dates.dart';
 import 'package:sales/domain/entities/ranges.dart';
 import 'package:sales/domain/repositories/server_configurations_repository.dart';
 
+abstract interface class LocalPostgresStorage implements Database {}
+
 /// Database using Postgres
-class PostgresDatabaseImpl implements Database {
+class LocalPostgresStorageImpl implements LocalPostgresStorage {
   final ServerConfigurationsRepository _serverConfigurationRepository;
   late Connection _connection;
 
   /// Database using Postgres
-  PostgresDatabaseImpl(this._serverConfigurationRepository);
+  LocalPostgresStorageImpl(this._serverConfigurationRepository);
 
   @override
   Future<void> initial() async {

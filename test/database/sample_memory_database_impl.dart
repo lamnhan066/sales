@@ -1,12 +1,12 @@
-import 'package:sales/data/local/memory_datatabase_impl.dart';
 import 'package:sales/data/models/category_model.dart';
 import 'package:sales/data/models/order_item_model.dart';
 import 'package:sales/data/models/order_model.dart';
 import 'package:sales/data/models/product_model.dart';
+import 'package:sales/data/source/memory/memory_storage.dart';
 import 'package:sales/domain/entities/order_status.dart';
 
 /// Database in the memory with sample data.
-class SampleMemoryDatabaseImpl extends MemoryDatatabaseImpl {
+class SampleMemoryDatabaseImpl extends MemoryStorageImpl {
   @override
   Future<void> initial() async {
     await addAllCategories([

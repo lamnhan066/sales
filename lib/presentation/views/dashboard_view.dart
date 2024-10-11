@@ -188,13 +188,13 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                         child: SizedBox(
                           width: 600,
                           child: Sparkline(
-                            data: dashboardState.monthlyRevenues.map((e) => e.toDouble()).toList(),
+                            data: dashboardState.dailyRevenueForMonth.map((e) => e.toDouble()).toList(),
                             gridLinesEnable: true,
                             gridLinelabel: (gridLineValue) {
                               return '${(gridLineValue / 1000).round()}k';
                             },
                             xLabels: [
-                              for (int i = 1; i <= dashboardState.monthlyRevenues.length; i++) '$i',
+                              for (int i = 1; i <= dashboardState.dailyRevenueForMonth.length; i++) '$i',
                             ],
                           ),
                         ),
