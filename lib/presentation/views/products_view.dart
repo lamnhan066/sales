@@ -91,7 +91,7 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
                 IconButton(
                   color: Theme.of(context).primaryColor,
                   onPressed: () => showFilterDialog(),
-                  icon: const Icon(Icons.filter_list_rounded),
+                  icon: const Icon(Icons.filter_alt_rounded),
                 ),
                 IconButton(
                   color: Theme.of(context).primaryColor,
