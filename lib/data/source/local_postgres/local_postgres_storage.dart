@@ -422,7 +422,19 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
           day ASC;
     ''';
     final result = await _connection.execute(Sql.named(sql), parameters: {'currentDate': date});
-    return result.map((e) => e.toColumnMap()['total_revenue']).toList().cast<int>();
+    final mapResult = <int, int>{};
+    for (final e in result) {
+      final map = e.toColumnMap();
+      final day = int.parse(map['day']);
+      final total = map['total_revenue'] as int;
+      mapResult.putIfAbsent(day, () => 0);
+      mapResult[day] = mapResult[day]! + total;
+    }
+    final listResult = <int>[];
+    for (int i = 1; i <= date.day; i++) {
+      listResult.add(mapResult[i] ?? 0);
+    }
+    return listResult;
   }
 
   @override
