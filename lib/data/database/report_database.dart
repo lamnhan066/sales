@@ -15,8 +15,11 @@ abstract interface class ReportDatabase {
 
   /// Lấy tổng doanh thu tháng theo từng ngày.
   ///
-  /// Trả về danh sách doanh thu theo ngày từ ngày 1 đến cuối tháng (hoặc đến
-  /// ngày hiện tại đối với tháng hiện tại).
+  /// Dữ liệu sẽ trả về dưới dạng danh sách doanh thu tính từ đầu tháng đến
+  /// ngày hiện tại.
+  ///
+  /// Ví dự: [100, 200, 0, 200] -> Ngày hiện tại là ngày 4 và doanh thu tương
+  /// ứng theo từng ngày là 100, 200, 0 và 200.
   Future<List<int>> getDailyRevenueForMonth(DateTime dateTime);
 
   /// Lấy danh sách 5 sản phẩm có số lượng ít hơn 5 trong kho.
