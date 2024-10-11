@@ -13,9 +13,4 @@ class DateTimeUtils {
 
     return '${hour}h$minute $day/$month/${date.year}';
   }
-
-  /// DateTime -> d/M/yyyy
-  static String dateToSql(DateTime date) {
-    return '${date.year}-${date.month}-${date.day}';
-  }
 }

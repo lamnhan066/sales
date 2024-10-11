@@ -7,6 +7,7 @@ import 'package:sales/domain/entities/order.dart';
 import 'package:sales/domain/entities/order_item.dart';
 import 'package:sales/domain/entities/order_with_items_params.dart';
 import 'package:sales/domain/entities/product.dart';
+import 'package:sales/domain/entities/ranges.dart';
 import 'package:sales/domain/usecases/order_with_items/add_order_with_items_usecase.dart';
 import 'package:sales/domain/usecases/order_with_items/get_next_order_item_id_usecase.dart';
 import 'package:sales/domain/usecases/order_with_items/get_order_items_usecase.dart';
@@ -76,7 +77,7 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
   }
 
   Future<void> goToPreviousPage() async {
-    goToPage(state.page + 1);
+    goToPage(state.page - 1);
   }
 
   Future<void> goToNextPage() async {
@@ -91,8 +92,9 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
   }
 
   /// Nhấn nút lọc.
-  void onFilterTapped() {
-    // TODO: Thêm hành động khi nhấn nút lọc
+  Future<void> updateFilters(Ranges<DateTime?>? dateRange) async {
+    state = state.updateDateRange(dateRange);
+    await fetchOrders();
   }
 
   Future<List<Product>> getProducts() {

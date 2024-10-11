@@ -1,15 +1,17 @@
 import 'package:boxw/boxw.dart';
 import 'package:flutter/material.dart' hide DataTable, DataRow, DataColumn, DataCell;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/core/constants/app_configs.dart';
 import 'package:sales/core/utils/date_time_utils.dart';
 import 'package:sales/domain/entities/order.dart';
 import 'package:sales/presentation/riverpod/notifiers/orders_provider.dart';
 import 'package:sales/presentation/riverpod/states/orders_state.dart';
+import 'package:sales/presentation/widgets/common_components.dart';
 import 'package:sales/presentation/widgets/data_table_plus.dart';
 import 'package:sales/presentation/widgets/order_dialog.dart';
+import 'package:sales/presentation/widgets/order_filter_dialog.dart';
+import 'package:sales/presentation/widgets/page_chooser_dialog.dart';
 
 class OrdersView extends ConsumerStatefulWidget {
   const OrdersView({super.key});
@@ -55,7 +57,9 @@ class _OrdersViewState extends ConsumerState<OrdersView> {
                       IconButton(
                         color: Theme.of(context).primaryColor,
                         onPressed: filter,
-                        icon: const Icon(FontAwesomeIcons.filter),
+                        icon: ordersState.dateRange == null
+                            ? const Icon(Icons.filter_alt_off_rounded)
+                            : const Icon(Icons.filter_alt_rounded),
                       ),
                     ],
                   ),
@@ -286,11 +290,48 @@ class _OrdersViewState extends ConsumerState<OrdersView> {
     }
   }
 
-  void choosePage() {
-    // TODO:
+  Future<void> choosePage() async {
+    final notifier = ref.read(ordersProvider.notifier);
+    final state = ref.watch(ordersProvider);
+
+    final newPage = await pageChooser(
+      context: context,
+      page: state.page,
+      totalPage: state.totalPage,
+    );
+
+    if (newPage != null) {
+      await notifier.goToPage(newPage);
+    }
   }
 
-  void filter() {
-    // TODO:
+  Future<void> filter() async {
+    final notifier = ref.read(ordersProvider.notifier);
+    final state = ref.watch(ordersProvider);
+
+    var newDateRange = state.dateRange;
+    final result = await boxWDialog<bool>(
+      context: context,
+      title: 'Bộ lọc'.tr,
+      content: OrderFilterDialog(
+        initialDateRange: newDateRange,
+        onDateRangeChanged: (dateRange) {
+          newDateRange = dateRange;
+        },
+      ),
+      buttons: (context) {
+        return [
+          confirmCancelButtons(
+            context: context,
+            confirmText: 'OK'.tr,
+            cancelText: 'Huỷ'.tr,
+          ),
+        ];
+      },
+    );
+
+    if (result == true) {
+      await notifier.updateFilters(newDateRange);
+    }
   }
 }

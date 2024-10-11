@@ -225,10 +225,11 @@ class SharedPreferencesMemoryStorageImpl extends SharedPreferencesMemoryStorage 
       if (o.deleted) return false;
 
       // Lọc theo ngày
-      if (params.dateRange != null &&
-          (o.date.isBefore(params.dateRange!.start) || o.date.isAfter(params.dateRange!.end))) {
-        return false;
-      }
+      final start = params.dateRange?.start;
+      if (start != null && o.date.isBefore(start)) return false;
+
+      final end = params.dateRange?.end;
+      if (end != null && o.date.isAfter(end)) return false;
 
       return true;
     }).toList();

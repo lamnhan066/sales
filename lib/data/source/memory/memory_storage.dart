@@ -146,14 +146,16 @@ class MemoryStorageImpl implements MemoryStorage {
   }
 
   @override
-  Future<List<OrderModel>> getAllOrders({Ranges<DateTime>? dateRange}) async {
+  Future<List<OrderModel>> getAllOrders({Ranges<DateTime?>? dateRange}) async {
     final orders = _orders.where((o) {
       if (o.deleted) return false;
 
       // Lọc theo ngày
-      if (dateRange != null && (o.date.isBefore(dateRange.start) || o.date.isAfter(dateRange.end))) {
-        return false;
-      }
+      final start = dateRange?.start;
+      if (start != null && o.date.isBefore(start)) return false;
+
+      final end = dateRange?.end;
+      if (end != null && o.date.isAfter(end)) return false;
 
       return true;
     });

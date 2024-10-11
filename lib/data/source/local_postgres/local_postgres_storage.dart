@@ -1,5 +1,5 @@
 import 'package:postgres/postgres.dart';
-import 'package:sales/core/utils/date_time_utils.dart';
+import 'package:sales/core/extensions/data_time_extensions.dart';
 import 'package:sales/data/database/database.dart';
 import 'package:sales/data/models/category_model.dart';
 import 'package:sales/data/models/get_orders_result_model.dart';
@@ -241,8 +241,8 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
   Future<List<OrderModel>> getAllOrders({RangeOfDates? dateRange, Session? session}) async {
     String sql = 'SELECT * FROM orders WHERE o_deleted=FALSE';
     if (dateRange != null) {
-      sql += " AND o_date >= '${DateTimeUtils.dateToSql(dateRange.start)}'";
-      sql += " AND o_date <= '${DateTimeUtils.dateToSql(dateRange.end)}'";
+      sql += " AND o_date >= '${dateRange.start.toyyyyMd()}'";
+      sql += " AND o_date <= '${dateRange.end.toyyyyMd()}'";
     }
     final result = await (session ?? _connection).execute(sql);
 
@@ -459,10 +459,18 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
   @override
   Future<GetResult<OrderModel>> getOrders([GetOrderParams params = const GetOrderParams()]) async {
     String sql = 'SELECT * FROM orders WHERE o_deleted=FALSE';
-    if (params.dateRange != null) {
-      sql += " AND o_date >= '${DateTimeUtils.dateToSql(params.dateRange!.start)}'";
-      sql += " AND o_date <= '${DateTimeUtils.dateToSql(params.dateRange!.end)}'";
+
+    // Lọc theo ngày
+    final start = params.dateRange?.start;
+    if (start != null) {
+      sql += " AND o_date >= '${start.toyyyyMd()}'";
     }
+
+    final end = params.dateRange?.end;
+    if (end != null) {
+      sql += " AND o_date <= '${end.toyyyyMd()}'";
+    }
+
     final result = await _connection.execute(sql);
     final orders = result.map((e) => OrderModel.fromMap(e.toColumnMap())).toList();
 
