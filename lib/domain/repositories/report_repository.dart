@@ -25,4 +25,7 @@ abstract class ReportRepository {
 
   /// Lấy sản phẩm đã bán và số lượng bán được trong khoảng thời gian [dateRange].
   Future<Map<Product, int>> getSoldProductsWithQuantity(Ranges<DateTime> dateRange);
+
+  /// Lấy doanh thu trong khoảng thời gian cụ thể.
+  Future<int> getRevenuue(Ranges<DateTime> params);
 }

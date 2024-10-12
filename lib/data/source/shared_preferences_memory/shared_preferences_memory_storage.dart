@@ -384,4 +384,10 @@ class SharedPreferencesMemoryStorageImpl extends SharedPreferencesMemoryStorage 
     // TODO: implement getSoldProductsWithQuantity
     throw UnimplementedError();
   }
+
+  @override
+  Future<int> getRevenue(Ranges<DateTime> params) {
+    // TODO: implement getRevenue
+    throw UnimplementedError();
+  }
 }

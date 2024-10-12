@@ -48,4 +48,9 @@ class ReportRepositoryImpl implements ReportRepository {
   Future<Map<Product, int>> getSoldProductsWithQuantity(Ranges<DateTime> dateRange) {
     return _database.getSoldProductsWithQuantity(dateRange);
   }
+
+  @override
+  Future<int> getRevenuue(Ranges<DateTime> params) {
+    return _database.getRevenue(params);
+  }
 }

@@ -31,4 +31,7 @@ abstract interface class ReportDatabase {
 
   /// Lấy sản phẩm đã bán và số lượng bán được trong khoảng thời gian [dateRange].
   Future<Map<ProductModel, int>> getSoldProductsWithQuantity(Ranges<DateTime> dateRange);
+
+  /// Lấy doanh thu trong khoảng thời gian cụ thể.
+  Future<int> getRevenue(Ranges<DateTime> params);
 }
