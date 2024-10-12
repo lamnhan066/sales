@@ -155,7 +155,7 @@ Future<OrderResult?> _orderDialog({
     final orderItem = OrderItem(
       id: orderItemId,
       quantity: 1,
-      unitSalePrice: product.importPrice.toDouble(),
+      unitSalePrice: product.importPrice,
       totalPrice: PriceUtils.calcTotalPrice(
         product.importPrice,
         product.importPrice,

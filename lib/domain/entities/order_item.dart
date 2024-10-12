@@ -10,7 +10,7 @@ class OrderItem with EquatableMixin {
   final int quantity;
 
   /// Đơn giá.
-  final double unitSalePrice;
+  final int unitSalePrice;
 
   /// Thành tiền.
   final int totalPrice;
@@ -40,7 +40,7 @@ class OrderItem with EquatableMixin {
     return OrderItem(
       id: (map['id'] as num?)?.toInt() ?? 0,
       quantity: (map['quantity'] as num?)?.toInt() ?? 0,
-      unitSalePrice: (map['unitSalePrice'] as num?)?.toDouble() ?? 0.0,
+      unitSalePrice: (map['unitSalePrice'] as num?)?.toInt() ?? 0,
       totalPrice: (map['totalPrice'] as num?)?.toInt() ?? 0,
       productId: (map['productId'] as num?)?.toInt() ?? 0,
       orderId: (map['orderId'] as num?)?.toInt() ?? 0,
@@ -55,7 +55,7 @@ class OrderItem with EquatableMixin {
   OrderItem copyWith({
     int? id,
     int? quantity,
-    double? unitSalePrice,
+    int? unitSalePrice,
     int? totalPrice,
     int? productId,
     int? orderId,

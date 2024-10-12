@@ -19,7 +19,7 @@ class OrderItemModel extends OrderItem {
     return OrderItemModel(
       id: (map['oi_id'] as num?)?.toInt() ?? 0,
       quantity: (map['oi_quantity'] as num?)?.toInt() ?? 0,
-      unitSalePrice: (map['oi_unit_sale_price'] as num?)?.toDouble() ?? 0.0,
+      unitSalePrice: (map['oi_unit_sale_price'] as num?)?.toInt() ?? 0,
       totalPrice: (map['oi_total_price'] as num?)?.toInt() ?? 0,
       productId: (map['oi_product_id'] as num?)?.toInt() ?? 0,
       orderId: (map['oi_order_id'] as num?)?.toInt() ?? 0,
@@ -35,7 +35,7 @@ class OrderItemModel extends OrderItem {
   OrderItemModel copyWith({
     int? id,
     int? quantity,
-    double? unitSalePrice,
+    int? unitSalePrice,
     int? totalPrice,
     int? productId,
     int? orderId,
