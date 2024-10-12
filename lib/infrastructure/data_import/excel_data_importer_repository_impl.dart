@@ -20,7 +20,7 @@ class ExcelDataImporterImpl implements DataImporterRepository {
     final categories = <Category>[];
     for (int i = 1; i < firstSheet.maxRows; i++) {
       final row = firstSheet.rows.elementAt(i);
-      final categoryName = '${row.elementAt(6)?.value}';
+      final categoryName = '${row.elementAt(7)?.value}';
       Category category;
       try {
         category = categories.singleWhere((e) => e.name == categoryName);
@@ -39,10 +39,11 @@ class ExcelDataImporterImpl implements DataImporterRepository {
           name: '${row.elementAt(1)?.value}',
           imagePath: (jsonDecode('${row.elementAt(2)?.value}') as List<dynamic>).cast<String>(),
           importPrice: int.parse('${row.elementAt(3)?.value}'),
-          count: int.parse('${row.elementAt(4)?.value}'),
-          description: '${row.elementAt(5)?.value}',
+          unitSalePrice: int.parse('${row.elementAt(3)?.value}'),
+          count: int.parse('${row.elementAt(5)?.value}'),
+          description: '${row.elementAt(6)?.value}',
           categoryId: category.id,
-          deleted: bool.parse('${row.elementAt(7)?.value}'),
+          deleted: bool.parse('${row.elementAt(8)?.value}'),
         ),
       );
     }

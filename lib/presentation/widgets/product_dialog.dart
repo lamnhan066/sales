@@ -107,6 +107,7 @@ Future<Product?> _productDialog({
         name: '',
         imagePath: [],
         importPrice: 0,
+        unitSalePrice: 0,
         count: 1,
         description: '',
         categoryId: categories.first.id,

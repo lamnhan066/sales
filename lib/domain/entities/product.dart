@@ -30,6 +30,9 @@ class Product with EquatableMixin {
   /// Số lượng.
   final int count;
 
+  /// Giá bán.
+  final int unitSalePrice;
+
   /// Mô tả.
   final String description;
 
@@ -46,6 +49,7 @@ class Product with EquatableMixin {
     required this.name,
     required this.imagePath,
     required this.importPrice,
+    required this.unitSalePrice,
     required this.count,
     required this.description,
     required this.categoryId,
@@ -60,6 +64,7 @@ class Product with EquatableMixin {
       name: map['name'] as String,
       imagePath: List<String>.from(map['imagePath'] as List<dynamic>),
       importPrice: (map['importPrice'] as num).toInt(),
+      unitSalePrice: (map['unitSalePrice'] as num).toInt(),
       count: (map['count'] as num).toInt(),
       description: map['description'] as String,
       categoryId: (map['categoryId'] as num).toInt(),
@@ -77,6 +82,7 @@ class Product with EquatableMixin {
     String? name,
     List<String>? imagePath,
     int? importPrice,
+    int? unitSalePrice,
     int? count,
     String? description,
     int? categoryId,
@@ -88,6 +94,7 @@ class Product with EquatableMixin {
       name: name ?? this.name,
       imagePath: imagePath ?? this.imagePath,
       importPrice: importPrice ?? this.importPrice,
+      unitSalePrice: unitSalePrice ?? this.unitSalePrice,
       count: count ?? this.count,
       description: description ?? this.description,
       categoryId: categoryId ?? this.categoryId,
@@ -97,9 +104,7 @@ class Product with EquatableMixin {
 
   @override
   String toString() {
-    return 'Product(id: $id, sku: $sku, name: $name, imagePath: $imagePath, '
-        'importPrice: $importPrice, count: $count, description: $description, '
-        'categoryId: $categoryId, deleted: $deleted)';
+    return 'Product(id: $id, sku: $sku, name: $name, imagePath: $imagePath, importPrice: $importPrice, count: $count, unitSalePrice: $unitSalePrice, description: $description, categoryId: $categoryId, deleted: $deleted)';
   }
 
   /// Product -> Map.
@@ -110,6 +115,7 @@ class Product with EquatableMixin {
       'name': name,
       'imagePath': imagePath,
       'importPrice': importPrice,
+      'unitSalePrice': unitSalePrice,
       'count': count,
       'description': description,
       'categoryId': categoryId,
@@ -128,6 +134,7 @@ class Product with EquatableMixin {
       name,
       imagePath,
       importPrice,
+      unitSalePrice,
       count,
       description,
       categoryId,
