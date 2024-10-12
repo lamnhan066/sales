@@ -167,7 +167,7 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
   @override
   Future<void> addProduct(ProductModel product, [Session? session]) async {
     const sql =
-        'INSERT INTO products (p_sku, p_name, p_image_path, p_import_price, p_count, p_description, p_category_id, p_deleted) VALUES (@sku, @name, @imagePath, @importPrice, @count, @description, @categoryId, @deleted)';
+        'INSERT INTO products (p_sku, p_name, p_image_path, p_import_price, p_unit_sale_price, p_count, p_description, p_category_id, p_deleted) VALUES (@sku, @name, @imagePath, @importPrice, @unitSalePrice, @count, @description, @categoryId, @deleted)';
     await (session ?? _connection).execute(
       Sql.named(sql),
       parameters: {
@@ -175,6 +175,7 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
         'name': product.name,
         'imagePath': TypedValue(Type.varCharArray, product.imagePath),
         'importPrice': product.importPrice,
+        'unitSalePrice': product.unitSalePrice,
         'count': product.count,
         'description': product.description,
         'categoryId': product.categoryId,
@@ -186,13 +187,14 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
   @override
   Future<void> updateProduct(ProductModel product, [Session? session]) async {
     const sql =
-        'UPDATE products SET p_sku = @sku, p_name = @name, p_image_path = @imagePath, p_import_price = @importPrice, p_count = @count, p_description = @description, p_category_id = @categoryId, p_deleted = @deleted WHERE p_id=@id';
+        'UPDATE products SET p_sku = @sku, p_name = @name, p_image_path = @imagePath, p_import_price = @importPrice, p_unit_sale_price = @unitSalePrice, p_count = @count, p_description = @description, p_category_id = @categoryId, p_deleted = @deleted WHERE p_id=@id';
     await (session ?? _connection).execute(Sql.named(sql), parameters: {
       'id': product.id,
       'sku': product.sku,
       'name': product.name,
       'imagePath': TypedValue(Type.varCharArray, product.imagePath),
       'importPrice': product.importPrice,
+      'unitSalePrice': product.unitSalePrice,
       'count': product.count,
       'description': product.description,
       'categoryId': product.categoryId,
@@ -720,7 +722,7 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
     };
 
     final result = await _connection.execute(Sql.named(sql), parameters: parameters);
-    return result.first.first as int;
+    return (result.first.first as int?) ?? 0;
   }
 
   @override
@@ -743,6 +745,6 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
     };
 
     final result = await _connection.execute(Sql.named(sql), parameters: parameters);
-    return (result.first.first as double).toInt();
+    return ((result.first.first as double?) ?? 0.0).toInt();
   }
 }
