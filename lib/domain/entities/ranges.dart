@@ -40,3 +40,44 @@ class Ranges<T extends Object?> with EquatableMixin {
   @override
   List<Object> get props => [start ?? '', end ?? ''];
 }
+
+class SevenDaysRanges extends Ranges<DateTime> {
+  final DateTime date;
+
+  SevenDaysRanges(this.date) : super(_getStartDate(date), _getEndDate(date));
+
+  static DateTime _getStartDate(DateTime date) {
+    for (int i = 0;; i++) {
+      final previousDate = date.subtract(Duration(days: i));
+      if (previousDate.weekday == 1) return previousDate;
+    }
+  }
+
+  static DateTime _getEndDate(DateTime date) {
+    for (int i = 0;; i++) {
+      final nextDate = date.add(Duration(days: i));
+      if (nextDate.weekday == 1) return nextDate;
+    }
+  }
+}
+
+class MonthDaysRanges extends Ranges<DateTime> {
+  final DateTime date;
+
+  MonthDaysRanges(this.date) : super(_getStartDate(date), _getEndDate(date));
+
+  static DateTime _getStartDate(DateTime date) {
+    for (int i = 0;; i++) {
+      final previousDate = date.subtract(Duration(days: i));
+      if (previousDate.day == 1) return previousDate;
+    }
+  }
+
+  static DateTime _getEndDate(DateTime date) {
+    // Tìm ngày đầu của tháng tiếp theo nên cầu bắt đầu là 1 thay vì 0.
+    for (int i = 1;; i++) {
+      final nextDate = date.add(Duration(days: i));
+      if (nextDate.day == 1) return nextDate;
+    }
+  }
+}
