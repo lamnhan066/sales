@@ -483,4 +483,10 @@ class MemoryStorageImpl implements MemoryStorage {
     // TODO: implement restore
     throw UnimplementedError();
   }
+
+  @override
+  Future<Map<ProductModel, int>> getSoldProductsWithQuantity(Ranges<DateTime> dateRange) {
+    // TODO: implement getSoldProductsWithQuantity
+    throw UnimplementedError();
+  }
 }

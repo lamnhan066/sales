@@ -1,5 +1,6 @@
 import 'package:sales/data/models/get_orders_result_model.dart';
 import 'package:sales/data/models/product_model.dart';
+import 'package:sales/domain/entities/ranges.dart';
 
 abstract interface class ReportDatabase {
   /// Lấy số lượng đơn đặt hàng hằng ngày.
@@ -27,4 +28,7 @@ abstract interface class ReportDatabase {
 
   /// Lấy danh sách 5 sản phẩm bán chạy nhất.
   Future<Map<ProductModel, int>> getFiveHighestSalesProducts();
+
+  /// Lấy sản phẩm đã bán và số lượng bán được trong khoảng thời gian [dateRange].
+  Future<Map<ProductModel, int>> getSoldProductsWithQuantity(Ranges<DateTime> dateRange);
 }

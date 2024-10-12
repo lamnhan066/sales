@@ -411,7 +411,7 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
       FROM 
           orders
       JOIN 
-          order_items ON o_id = oi_id
+          order_items ON o_id = oi_order_id
       JOIN 
           products ON oi_product_id = p_id
       WHERE 
@@ -663,5 +663,42 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
   Future<void> restore(String backupPath) {
     // TODO: implement restore
     throw UnimplementedError();
+  }
+
+  @override
+  Future<Map<ProductModel, int>> getSoldProductsWithQuantity(Ranges<DateTime> dateRange) async {
+    String sql = '''
+      SELECT
+          *, SUM(oi_quantity) AS total_quantity
+      FROM
+          products
+      JOIN 
+          order_items ON p_id = oi_product_id
+      JOIN
+          orders ON oi_order_id = o_id
+      WHERE
+          p_deleted = FALSE AND o_deleted = FALSE AND o_date >= @startDate AND o_date <= @endDate
+      GROUP BY
+          p_id, oi_id, o_id
+      ORDER BY
+          o_date
+    ''';
+    final parameters = {
+      'startDate': dateRange.start.toyyyyMd(),
+      'endDate': dateRange.end.toyyyyMd(),
+    };
+
+    final result = await _connection.execute(Sql.named(sql), parameters: parameters);
+    final mapResult = <ProductModel, int>{};
+    for (final e in result) {
+      final map = e.toColumnMap();
+      final productModel = ProductModel.fromMap(map);
+      final quantity = map['total_quantity'] as int;
+
+      mapResult.putIfAbsent(productModel, () => 0);
+      mapResult[productModel] = mapResult[productModel]! + quantity;
+    }
+
+    return mapResult;
   }
 }

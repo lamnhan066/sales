@@ -54,6 +54,7 @@ import 'package:sales/domain/usecases/reports/get_daily_revenue_for_month_usecas
 import 'package:sales/domain/usecases/reports/get_daily_revenues_usecase.dart';
 import 'package:sales/domain/usecases/reports/get_five_highest_sales_products_usecase.dart';
 import 'package:sales/domain/usecases/reports/get_five_low_stock_products_usecase.dart';
+import 'package:sales/domain/usecases/reports/get_sold_products_with_quantity_usecase.dart';
 import 'package:sales/domain/usecases/reports/get_three_recent_orders_usecase.dart';
 import 'package:sales/infrastructure/data_import/excel_data_importer_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/app_version_repository_impl.dart';
@@ -83,10 +84,10 @@ Future<void> setupDependencies() async {
 void _registerUseCases() {
   _registerAuthUseCases();
   _registerCategoryUseCases();
-  _registerDashboardUseCases();
   _registerDatabaseUseCases();
   _registerOrderUseCases();
   _registerProductUseCases();
+  _registerReportUseCases();
 }
 
 void _registerRepositories() {
@@ -152,21 +153,22 @@ void _registerCategoryUseCases() {
   getIt.registerLazySingleton<GetNextCategoryIdUseCase>(() => GetNextCategoryIdUseCase(getIt()));
 }
 
-void _registerDatabaseUseCases() {
-  getIt.registerLazySingleton<LoadServerConfigurationUseCase>(() => LoadServerConfigurationUseCase(getIt()));
-  getIt.registerLazySingleton<SaveServerConfigurationUseCase>(() => SaveServerConfigurationUseCase(getIt()));
-  getIt.registerLazySingleton<LoadServerConnectionUsecase>(() => LoadServerConnectionUsecase(getIt()));
-  getIt.registerLazySingleton<ReplaceDatabaseUsecase>(() => ReplaceDatabaseUsecase(getIt()));
-  getIt.registerLazySingleton<ImportDataUseCase>(() => ImportDataUseCase(getIt()));
-}
-
-void _registerDashboardUseCases() {
+void _registerReportUseCases() {
   getIt.registerLazySingleton<GetDailyOrderCountUseCase>(() => GetDailyOrderCountUseCase(getIt()));
   getIt.registerLazySingleton<GetDailyRevenueUseCase>(() => GetDailyRevenueUseCase(getIt()));
   getIt.registerLazySingleton<GetFiveHighestSalesProductsUseCase>(() => GetFiveHighestSalesProductsUseCase(getIt()));
   getIt.registerLazySingleton<GetFiveLowStockProductsUseCase>(() => GetFiveLowStockProductsUseCase(getIt()));
   getIt.registerLazySingleton<GetDailyRevenueForMonth>(() => GetDailyRevenueForMonth(getIt()));
   getIt.registerLazySingleton<GetThreeRecentOrdersUseCase>(() => GetThreeRecentOrdersUseCase(getIt()));
+  getIt.registerLazySingleton<GetSoldProductsWithQuantityUsecase>(() => GetSoldProductsWithQuantityUsecase(getIt()));
+}
+
+void _registerDatabaseUseCases() {
+  getIt.registerLazySingleton<LoadServerConfigurationUseCase>(() => LoadServerConfigurationUseCase(getIt()));
+  getIt.registerLazySingleton<SaveServerConfigurationUseCase>(() => SaveServerConfigurationUseCase(getIt()));
+  getIt.registerLazySingleton<LoadServerConnectionUsecase>(() => LoadServerConnectionUsecase(getIt()));
+  getIt.registerLazySingleton<ReplaceDatabaseUsecase>(() => ReplaceDatabaseUsecase(getIt()));
+  getIt.registerLazySingleton<ImportDataUseCase>(() => ImportDataUseCase(getIt()));
 }
 
 void _registerServices() {

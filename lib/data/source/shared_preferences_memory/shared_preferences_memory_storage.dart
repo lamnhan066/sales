@@ -11,6 +11,7 @@ import 'package:sales/domain/entities/get_product_params.dart';
 import 'package:sales/domain/entities/get_result.dart';
 import 'package:sales/domain/entities/order_with_items_params.dart';
 import 'package:sales/domain/entities/product_order_by.dart';
+import 'package:sales/domain/entities/ranges.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:string_normalizer/string_normalizer.dart';
 
@@ -375,6 +376,12 @@ class SharedPreferencesMemoryStorageImpl extends SharedPreferencesMemoryStorage 
   @override
   Future<void> updateOrderWithItems(OrderWithItemsParams<OrderModel, OrderItemModel> params) {
     // TODO: implement updateOrderWithItems
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Map<ProductModel, int>> getSoldProductsWithQuantity(Ranges<DateTime> dateRange) {
+    // TODO: implement getSoldProductsWithQuantity
     throw UnimplementedError();
   }
 }
