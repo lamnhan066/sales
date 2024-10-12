@@ -41,19 +41,18 @@ class DashboardNotifier extends StateNotifier<DashboardState> {
     required this.getDailyRevenueForMonthUseCase,
     required this.getThreeRecentOrdersUseCase,
     required this.getTotalProductCountUseCase,
-  }) : super(DashboardState());
+  }) : super(DashboardState(reportDateTime: DateTime.now()));
 
   Future<void> loadDashboardData() async {
     state = state.copyWith(isLoading: true, error: '');
-    final now = DateTime.now();
     try {
       final totalProductCountFuture = getTotalProductCountUseCase(NoParams());
       final fiveLowStockProductsFuture = getFiveLowStockProductsUseCase(NoParams());
       final fiveHighestSalesProductsFuture = getFiveHighestSalesProductsUseCase(NoParams());
-      final dailyOrderCountFuture = getDailyOrderCountUseCase(now);
-      final dailyRevenueFuture = getDailyRevenueUseCase(now);
+      final dailyOrderCountFuture = getDailyOrderCountUseCase(state.reportDateTime);
+      final dailyRevenueFuture = getDailyRevenueUseCase(state.reportDateTime);
       final threeRecentOrdersFuture = getThreeRecentOrdersUseCase(NoParams());
-      final dailyRevenueForMonthFuture = getDailyRevenueForMonthUseCase(now);
+      final dailyRevenueForMonthFuture = getDailyRevenueForMonthUseCase(state.reportDateTime);
 
       final results = await Future.wait([
         totalProductCountFuture,
@@ -81,5 +80,12 @@ class DashboardNotifier extends StateNotifier<DashboardState> {
         error: e.toString(),
       );
     }
+  }
+
+  Future<void> updateReportDate(DateTime? date) async {
+    if (date == null) return;
+
+    state = state.copyWith(reportDateTime: date);
+    loadDashboardData();
   }
 }

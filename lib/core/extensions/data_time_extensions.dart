@@ -9,4 +9,10 @@ extension DateTimeExtensions on DateTime {
   String toyyyyMd() {
     return '$year-$month-$day';
   }
+
+  /// MM-yyyy
+  String tommyyyy() {
+    final mm = '$month'.padLeft(2, '0');
+    return '$mm-$year';
+  }
 }

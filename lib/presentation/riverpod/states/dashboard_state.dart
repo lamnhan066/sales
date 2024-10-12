@@ -4,25 +4,28 @@ import 'package:sales/domain/entities/recent_orders_result.dart';
 
 class DashboardState with EquatableMixin {
   /// Tổng tất cả sản phẩm.
-  int totalProductCount = 0;
+  final int totalProductCount;
 
   /// Năm sản phẩm có số lượng trong kho thấp (< 5).
-  List<Product> fiveLowStockProducts;
+  final List<Product> fiveLowStockProducts;
 
   /// Năm sản phẩm bán chạy nhất và số lượng tương ứng.
-  Map<Product, int> fiveHighestSalesProducts;
+  final Map<Product, int> fiveHighestSalesProducts;
 
   /// Số đơn hàng bán hằng ngày.
-  int dailyOrderCount = 0;
+  final int dailyOrderCount;
 
   /// Doanh thu hằng ngày.
-  int dailyRevenue = 0;
+  final int dailyRevenue;
 
   /// Ba đơn hàng gần nhất.
-  RecentOrdersResult threeRecentOrders;
+  final RecentOrdersResult threeRecentOrders;
 
-  /// Doanh thu hằng tháng.
-  List<int> dailyRevenueForMonth = [];
+  /// Doanh thu từng ngày trong tháng.
+  final List<int> dailyRevenueForMonth;
+
+  /// Ngày cho doanh thu từng ngày trong tháng.
+  final DateTime reportDateTime;
 
   /// Đang load.
   final bool isLoading;
@@ -38,6 +41,7 @@ class DashboardState with EquatableMixin {
     this.dailyRevenue = 0,
     this.threeRecentOrders = const RecentOrdersResult(orderItems: {}, products: {}),
     this.dailyRevenueForMonth = const [],
+    required this.reportDateTime,
     this.isLoading = true,
     this.error = '',
   });
@@ -50,6 +54,7 @@ class DashboardState with EquatableMixin {
     int? dailyRevenue,
     RecentOrdersResult? threeRecentOrders,
     List<int>? dailyRevenueForMonth,
+    DateTime? reportDateTime,
     bool? isLoading,
     String? error,
   }) {
@@ -61,6 +66,7 @@ class DashboardState with EquatableMixin {
       dailyRevenue: dailyRevenue ?? this.dailyRevenue,
       threeRecentOrders: threeRecentOrders ?? this.threeRecentOrders,
       dailyRevenueForMonth: dailyRevenueForMonth ?? this.dailyRevenueForMonth,
+      reportDateTime: reportDateTime ?? this.reportDateTime,
       isLoading: isLoading ?? this.isLoading,
       error: error ?? this.error,
     );
