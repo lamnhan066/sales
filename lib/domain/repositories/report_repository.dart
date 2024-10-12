@@ -28,4 +28,7 @@ abstract class ReportRepository {
 
   /// Lấy doanh thu trong khoảng thời gian cụ thể.
   Future<int> getRevenuue(Ranges<DateTime> params);
+
+  /// Lấy lợi nhuận.
+  Future<int> getProfit(Ranges<DateTime> params);
 }

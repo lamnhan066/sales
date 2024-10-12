@@ -34,4 +34,7 @@ abstract interface class ReportDatabase {
 
   /// Lấy doanh thu trong khoảng thời gian cụ thể.
   Future<int> getRevenue(Ranges<DateTime> params);
+
+  /// Lấy lợi nhuận.
+  Future<int> getProfit(Ranges<DateTime> params);
 }

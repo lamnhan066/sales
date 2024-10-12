@@ -706,15 +706,13 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
   Future<int> getRevenue(Ranges<DateTime> dateRange) async {
     String sql = '''
       SELECT
-          *, SUM(oi_total_price) AS total_price
+          SUM(oi_total_price) AS total_price
       FROM
           orders
       JOIN
           order_items ON o_id = oi_order_id
       WHERE
           o_deleted = FALSE AND oi_deleted = FALSE AND o_date >= @startDate AND o_date <= @endDate
-      GROUP BY
-          o_id, oi_id
     ''';
     final parameters = {
       'startDate': dateRange.start.toyyyyMd(),
@@ -722,12 +720,29 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
     };
 
     final result = await _connection.execute(Sql.named(sql), parameters: parameters);
-    int total = 0;
-    for (final e in result) {
-      final map = e.toColumnMap();
-      total += map['total_price'] as int;
-    }
+    return result.first.first as int;
+  }
 
-    return total;
+  @override
+  Future<int> getProfit(Ranges<DateTime> dateRange) async {
+    String sql = '''
+      SELECT
+          SUM((oi_unit_sale_price - p_import_price) * oi_quantity) AS profit
+      FROM
+          order_items
+      JOIN
+          products ON oi_product_id = p_id
+      JOIN
+          orders ON oi_order_id = o_id
+      WHERE
+          oi_deleted = FALSE AND p_deleted = FALSE AND o_date >= @startDate AND o_date <= @endDate
+    ''';
+    final parameters = {
+      'startDate': dateRange.start.toyyyyMd(),
+      'endDate': dateRange.end.toyyyyMd(),
+    };
+
+    final result = await _connection.execute(Sql.named(sql), parameters: parameters);
+    return (result.first.first as double).toInt();
   }
 }

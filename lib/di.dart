@@ -54,6 +54,7 @@ import 'package:sales/domain/usecases/reports/get_daily_revenue_for_month_usecas
 import 'package:sales/domain/usecases/reports/get_daily_revenues_usecase.dart';
 import 'package:sales/domain/usecases/reports/get_five_highest_sales_products_usecase.dart';
 import 'package:sales/domain/usecases/reports/get_five_low_stock_products_usecase.dart';
+import 'package:sales/domain/usecases/reports/get_profit_usecase.dart';
 import 'package:sales/domain/usecases/reports/get_revenue_usecase.dart';
 import 'package:sales/domain/usecases/reports/get_sold_products_with_quantity_usecase.dart';
 import 'package:sales/domain/usecases/reports/get_three_recent_orders_usecase.dart';
@@ -163,6 +164,7 @@ void _registerReportUseCases() {
   getIt.registerLazySingleton<GetThreeRecentOrdersUseCase>(() => GetThreeRecentOrdersUseCase(getIt()));
   getIt.registerLazySingleton<GetSoldProductsWithQuantityUsecase>(() => GetSoldProductsWithQuantityUsecase(getIt()));
   getIt.registerLazySingleton<GetRevenueUseCase>(() => GetRevenueUseCase(getIt()));
+  getIt.registerLazySingleton<GetProfitUseCase>(() => GetProfitUseCase(getIt()));
 }
 
 void _registerDatabaseUseCases() {

@@ -53,4 +53,9 @@ class ReportRepositoryImpl implements ReportRepository {
   Future<int> getRevenuue(Ranges<DateTime> params) {
     return _database.getRevenue(params);
   }
+
+  @override
+  Future<int> getProfit(Ranges<DateTime> params) {
+    return _database.getProfit(params);
+  }
 }
