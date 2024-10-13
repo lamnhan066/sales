@@ -380,7 +380,7 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
       JOIN
         order_items ON p_id = oi_product_id
       WHERE
-        p_deleted = FALSE
+        p_deleted = FALSE AND oi_deleted = FALSE
       GROUP BY
         p_id, oi_id
       ORDER BY
@@ -537,7 +537,7 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
       JOIN
         products ON oi_product_id = p_id
       WHERE 
-        o_deleted = FALSE
+        o_deleted = FALSE AND oi_deleted = FALSE AND p_deleted = FALSE
       ORDER BY
         o_date DESC
       LIMIT
