@@ -18,7 +18,9 @@ import 'package:sales/presentation/widgets/product_dialog.dart';
 import 'package:sales/presentation/widgets/product_filter_dialog.dart';
 
 class ProductsView extends ConsumerStatefulWidget {
-  const ProductsView({super.key});
+  const ProductsView({super.key, this.chooseProduct = false});
+
+  final bool chooseProduct;
 
   @override
   ConsumerState<ProductsView> createState() => _ProductsViewState();
@@ -53,6 +55,7 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
           _buildToolbar(context, productState, productNotifier),
           _buildDataTable(context, productState, productNotifier),
           _buildPaginationControls(context, productState, productNotifier),
+          _buildCancelButton(context),
         ],
       ),
     );
@@ -173,26 +176,33 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
   }
 
   Widget _buildActionButtons(Product product) {
-    return Row(
-      children: [
-        IconButton(
-          onPressed: () => viewProduct(product),
-          icon: const Icon(Icons.info_rounded),
-        ),
-        IconButton(
-          onPressed: () => updateProduct(product),
-          icon: const Icon(Icons.edit_rounded),
-        ),
-        IconButton(
-          onPressed: () => copyProduct(product),
-          icon: const Icon(Icons.copy_rounded),
-        ),
-        IconButton(
-          onPressed: () => removeProduct(product),
-          icon: const Icon(Icons.close_rounded, color: Colors.red),
-        ),
-      ],
-    );
+    return widget.chooseProduct
+        ? IconButton(
+            onPressed: () {
+              Navigator.pop(context, product);
+            },
+            icon: const Icon(Icons.check_rounded),
+          )
+        : Row(
+            children: [
+              IconButton(
+                onPressed: () => viewProduct(product),
+                icon: const Icon(Icons.info_rounded),
+              ),
+              IconButton(
+                onPressed: () => updateProduct(product),
+                icon: const Icon(Icons.edit_rounded),
+              ),
+              IconButton(
+                onPressed: () => copyProduct(product),
+                icon: const Icon(Icons.copy_rounded),
+              ),
+              IconButton(
+                onPressed: () => removeProduct(product),
+                icon: const Icon(Icons.close_rounded, color: Colors.red),
+              ),
+            ],
+          );
   }
 
   Widget _buildPaginationControls(BuildContext context, ProductsState state, ProductsNotifier notifier) {
@@ -490,5 +500,16 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
       ProductOrderBy.countAsc => 'Số lượng tăng đần'.tr,
       ProductOrderBy.countDesc => 'Số lượng giảm đần'.tr,
     };
+  }
+
+  Widget _buildCancelButton(BuildContext context) {
+    return !widget.chooseProduct
+        ? const SizedBox.shrink()
+        : FilledButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text('Trở về'.tr),
+          );
   }
 }
