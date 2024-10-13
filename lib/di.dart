@@ -18,13 +18,16 @@ import 'package:sales/domain/repositories/language_repository.dart';
 import 'package:sales/domain/repositories/order_item_repository.dart';
 import 'package:sales/domain/repositories/order_repository.dart';
 import 'package:sales/domain/repositories/order_with_items_repository.dart';
+import 'package:sales/domain/repositories/page_configurations_repository.dart';
 import 'package:sales/domain/repositories/product_repository.dart';
 import 'package:sales/domain/repositories/report_repository.dart';
 import 'package:sales/domain/repositories/server_configurations_repository.dart';
 import 'package:sales/domain/services/database_service.dart';
+import 'package:sales/domain/usecases/app/change_item_per_page_usecase.dart';
 import 'package:sales/domain/usecases/app/change_language_usecase.dart';
 import 'package:sales/domain/usecases/app/get_app_version_usecase.dart';
 import 'package:sales/domain/usecases/app/get_current_language_usecase.dart';
+import 'package:sales/domain/usecases/app/get_item_per_page_usecase.dart';
 import 'package:sales/domain/usecases/app/get_supported_languages_usecase.dart';
 import 'package:sales/domain/usecases/app/initialize_language_usecase.dart';
 import 'package:sales/domain/usecases/auth/auto_login_usecase.dart';
@@ -73,6 +76,7 @@ import 'package:sales/infrastructure/respositories/local_auth_repository_impl.da
 import 'package:sales/infrastructure/respositories/order_item_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/order_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/order_with_items_repository_impl.dart';
+import 'package:sales/infrastructure/respositories/page_configurations_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/postgres_configurations_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/product_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/report_repository_impl.dart';
@@ -116,6 +120,7 @@ void _registerRepositories() {
   getIt.registerLazySingleton<ReportRepository>(() => ReportRepositoryImpl(getIt()));
   getIt.registerLazySingleton<DataImporterRepository>(() => ExcelDataImporterImpl());
   getIt.registerLazySingleton<LanguageRepository>(() => LanguageRepositoryImpl(getIt()));
+  getIt.registerLazySingleton<PageConfigurationsRepository>(() => PageConfigurationsRepositoryImpl(getIt()));
 }
 
 void _registerDatabase() {
@@ -137,6 +142,8 @@ void _registerAppUseCases() {
   getIt.registerLazySingleton<GetCurrentLanguageUseCase>(() => GetCurrentLanguageUseCase(getIt()));
   getIt.registerLazySingleton<GetSupportedLanguagesUseCase>(() => GetSupportedLanguagesUseCase(getIt()));
   getIt.registerLazySingleton<ChangeLanguageUseCase>(() => ChangeLanguageUseCase(getIt()));
+  getIt.registerLazySingleton<ChangeItemPerPageUseCase>(() => ChangeItemPerPageUseCase(getIt()));
+  getIt.registerLazySingleton<GetItemPerPageUseCase>(() => GetItemPerPageUseCase(getIt()));
 }
 
 void _registerAuthUseCases() {
