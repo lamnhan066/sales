@@ -3,7 +3,7 @@ import 'package:flutter/material.dart' hide DataTable, DataRow, DataColumn, Data
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/core/constants/app_configs.dart';
-import 'package:sales/core/utils/date_time_utils.dart';
+import 'package:sales/core/extensions/data_time_extensions.dart';
 import 'package:sales/domain/entities/order.dart';
 import 'package:sales/presentation/riverpod/notifiers/orders_provider.dart';
 import 'package:sales/presentation/riverpod/states/orders_state.dart';
@@ -165,7 +165,7 @@ class _OrdersViewState extends ConsumerState<OrdersView> {
             DataCell(
               Center(
                 child: Text(
-                  DateTimeUtils.formatDateTime(o.date),
+                  o.date.toHHmmssddMMyyyy(),
                   textAlign: TextAlign.center,
                 ),
               ),
