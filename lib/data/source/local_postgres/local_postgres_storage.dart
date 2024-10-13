@@ -5,12 +5,12 @@ import 'package:sales/data/models/category_model.dart';
 import 'package:sales/data/models/get_orders_result_model.dart';
 import 'package:sales/data/models/order_item_model.dart';
 import 'package:sales/data/models/order_model.dart';
+import 'package:sales/data/models/order_with_items_model.dart';
 import 'package:sales/data/models/product_model.dart';
 import 'package:sales/domain/entities/get_order_items_params.dart';
 import 'package:sales/domain/entities/get_order_params.dart';
 import 'package:sales/domain/entities/get_product_params.dart';
 import 'package:sales/domain/entities/get_result.dart';
-import 'package:sales/domain/entities/order_with_items_params.dart';
 import 'package:sales/domain/entities/range_of_dates.dart';
 import 'package:sales/domain/entities/ranges.dart';
 import 'package:sales/domain/repositories/server_configurations_repository.dart';
@@ -347,7 +347,7 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
   }
 
   @override
-  Future<void> addOrderWithOrderItems(OrderWithItemsParams<OrderModel, OrderItemModel> params) async {
+  Future<void> addOrderWithItems(OrderWithItemsParamsModel params) async {
     await _connection.runTx((session) async {
       final orderId = await addOrder(params.order, session);
       for (var orderItem in params.orderItems) {
@@ -645,7 +645,7 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
   }
 
   @override
-  Future<void> updateOrderWithItems(OrderWithItemsParams<OrderModel, OrderItemModel> params) async {
+  Future<void> updateOrderWithItems(OrderWithItemsParamsModel params) async {
     await _connection.runTx((session) async {
       await updateOrder(params.order, session);
       final orderItemsFromDatabase = await getOrderItems(GetOrderItemsParams(orderId: params.order.id), session);
@@ -779,5 +779,48 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
 
     final result = await _connection.execute(Sql.named(sql), parameters: parameters);
     return (result.first.first as int?) ?? 0;
+  }
+
+  @override
+  Future<void> addAllOrdersWithItems(List<OrderWithItemsParamsModel> params) async {
+    for (final item in params) {
+      await addOrderWithItems(item);
+    }
+  }
+
+  @override
+  Future<List<OrderWithItemsParamsModel>> getAllOrdersWithItems() async {
+    const sql = '''
+      SELECT
+          *
+      FROM
+          orders
+      JOIN
+          order_items on oi_order_id = o_id
+    ''';
+
+    final result = await _connection.execute(sql);
+    final data = <OrderWithItemsParamsModel>[];
+    for (final row in result) {
+      final map = row.toColumnMap();
+      final orderModel = OrderModel.fromMap(map);
+      final orderItemModel = OrderItemModel.fromMap(map);
+
+      OrderWithItemsParamsModel? item;
+      for (int i = 0; i < data.length; i++) {
+        if (data[i].order == orderModel) {
+          item = data[i];
+          break;
+        }
+      }
+
+      if (item != null) {
+        item.orderItems.add(orderItemModel);
+      } else {
+        data.add(OrderWithItemsParamsModel(order: orderModel, orderItems: [orderItemModel]));
+      }
+    }
+
+    return data;
   }
 }

@@ -5,12 +5,12 @@ import 'package:sales/data/models/category_model.dart';
 import 'package:sales/data/models/get_orders_result_model.dart';
 import 'package:sales/data/models/order_item_model.dart';
 import 'package:sales/data/models/order_model.dart';
+import 'package:sales/data/models/order_with_items_model.dart';
 import 'package:sales/data/models/product_model.dart';
 import 'package:sales/domain/entities/get_order_items_params.dart';
 import 'package:sales/domain/entities/get_order_params.dart';
 import 'package:sales/domain/entities/get_product_params.dart';
 import 'package:sales/domain/entities/get_result.dart';
-import 'package:sales/domain/entities/order_with_items_params.dart';
 import 'package:sales/domain/entities/product_order_by.dart';
 import 'package:sales/domain/entities/ranges.dart';
 import 'package:string_normalizer/string_normalizer.dart';
@@ -203,7 +203,7 @@ class MemoryStorageImpl implements MemoryStorage {
   }
 
   @override
-  Future<void> addOrderWithOrderItems(OrderWithItemsParams<OrderModel, OrderItemModel> params) async {
+  Future<void> addOrderWithItems(OrderWithItemsParamsModel params) async {
     await addOrder(params.order);
     for (final orderItem in params.orderItems) {
       await addOrderItem(orderItem);
@@ -446,9 +446,11 @@ class MemoryStorageImpl implements MemoryStorage {
   }
 
   @override
-  Future<void> updateOrderWithItems(OrderWithItemsParams<OrderModel, OrderItemModel> params) async {
+  Future<void> updateOrderWithItems(OrderWithItemsParamsModel params) async {
     await updateOrder(params.order);
     final orderItemsFromDatabase = await getOrderItems(GetOrderItemsParams(orderId: params.order.id));
+
+    // Thêm và chỉnh sửa chi tiết đơn hàng
     for (final orderItem in params.orderItems) {
       final index = orderItemsFromDatabase.indexWhere((e) => e.id == orderItem.id);
       if (index == -1) {
@@ -467,6 +469,19 @@ class MemoryStorageImpl implements MemoryStorage {
         final differentCount = databaseCount - newCount;
         var product = await getProductById(orderItem.productId);
         product = product.copyWith(count: product.count + differentCount);
+        await updateProduct(product);
+      }
+    }
+
+    // Xoá chi tiết đơn hàng
+    for (final orderItem in orderItemsFromDatabase) {
+      final index = params.orderItems.indexWhere((e) => e.id == orderItem.id);
+      if (index == -1) {
+        await removeOrderItem(orderItem);
+
+        // Cập nhật lại số lượng sản phẩm.
+        var product = await getProductById(orderItem.productId);
+        product = product.copyWith(count: product.count + orderItem.quantity);
         await updateProduct(product);
       }
     }
@@ -499,6 +514,18 @@ class MemoryStorageImpl implements MemoryStorage {
   @override
   Future<int> getProfit(Ranges<DateTime> params) {
     // TODO: implement getProfit
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> addAllOrdersWithItems(List<OrderWithItemsParamsModel> orderWithItems) {
+    // TODO: implement addAllOrdersWithItems
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<OrderWithItemsParamsModel>> getAllOrdersWithItems() {
+    // TODO: implement getAllOrdersWithItems
     throw UnimplementedError();
   }
 }
