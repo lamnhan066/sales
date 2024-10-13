@@ -417,7 +417,7 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
       JOIN 
           products ON oi_product_id = p_id
       WHERE 
-          DATE_TRUNC('month', o_date::timestamp) = DATE_TRUNC('month', @currentDate::timestamp)
+          o_deleted = FALSE AND oi_deleted = FALSE AND p_deleted = FALSE AND DATE_TRUNC('month', o_date::timestamp) = DATE_TRUNC('month', @currentDate::timestamp)
       GROUP BY 
           TO_CHAR(o_date, 'DD')
       ORDER BY 
@@ -688,9 +688,9 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
       SELECT
           *, SUM(oi_quantity) AS total_quantity
       FROM
-          products
+          order_items
       JOIN 
-          order_items ON p_id = oi_product_id
+          products ON oi_product_id = p_id
       JOIN
           orders ON oi_order_id = o_id
       WHERE
@@ -752,7 +752,7 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
       JOIN
           orders ON oi_order_id = o_id
       WHERE
-          oi_deleted = FALSE AND p_deleted = FALSE AND o_date >= @startDate AND o_date <= @endDate
+          oi_deleted = FALSE AND p_deleted = FALSE AND o_deleted= FALSE AND o_date >= @startDate AND o_date <= @endDate
     ''';
     final parameters = {
       'startDate': dateRange.start.toyyyyMd(),
