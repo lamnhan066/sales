@@ -127,7 +127,7 @@ ALTER SEQUENCE public.order_items_sequence OWNED BY public.order_items.oi_id;
 CREATE TABLE public.orders (
     o_id integer NOT NULL,
     o_status character(10) NOT NULL,
-    o_date date NOT NULL,
+    o_date timestamptz NOT NULL,
     o_deleted boolean DEFAULT false NOT NULL
 );
 
