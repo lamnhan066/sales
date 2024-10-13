@@ -1,17 +1,25 @@
 abstract class Failure {
   final String message;
+  final dynamic details;
 
-  const Failure(this.message);
+  const Failure(this.message, [this.details]);
+
+  @override
+  String toString() => 'Failure(message: $message, details: $details)';
 }
 
 class ServerFailure extends Failure {
-  ServerFailure([super.message = 'Server failure occurred']);
+  const ServerFailure(super.message, [super.details]);
 }
 
 class CacheFailure extends Failure {
-  CacheFailure([super.message = 'Cache failure occurred']);
+  const CacheFailure(super.message, [super.details]);
 }
 
 class NetworkFailure extends Failure {
-  NetworkFailure([super.message = 'Network failure occurred']);
+  const NetworkFailure(super.message, [super.details]);
+}
+
+class ImportFailure extends Failure {
+  const ImportFailure(super.message, [super.details]);
 }

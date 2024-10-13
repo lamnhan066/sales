@@ -6,6 +6,8 @@ import 'package:flutter/material.dart' hide DataTable, DataRow, DataColumn, Data
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/core/constants/app_configs.dart';
+import 'package:sales/core/errors/failure.dart';
+import 'package:sales/domain/entities/data_import_result.dart';
 import 'package:sales/domain/entities/product.dart';
 import 'package:sales/domain/entities/product_order_by.dart';
 import 'package:sales/presentation/riverpod/notifiers/products_provider.dart';
@@ -431,7 +433,17 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
   Future<void> _loadDataFromExcel(BuildContext context) async {
     final notifier = ref.read(productsProvider.notifier);
 
-    final data = await notifier.importData();
+    DataImportResult? data;
+    try {
+      data = await notifier.importData();
+    } on ImportFailure catch (e) {
+      if (!context.mounted) return;
+
+      await boxWAlert(context: context, title: 'Nhập Excel'.tr, content: e.message);
+
+      return;
+    }
+
     if (!context.mounted) return;
 
     if (data == null) {
