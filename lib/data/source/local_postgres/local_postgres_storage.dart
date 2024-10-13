@@ -631,6 +631,8 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
     await _connection.runTx((session) async {
       await updateOrder(params.order, session);
       final orderItemsFromDatabase = await getOrderItems(GetOrderItemsParams(orderId: params.order.id), session);
+
+      // Thêm và chỉnh sửa chi tiết đơn hàng
       for (final orderItem in params.orderItems) {
         final index = orderItemsFromDatabase.indexWhere((e) => e.id == orderItem.id);
         if (index == -1) {
@@ -649,6 +651,19 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
           final differentCount = databaseCount - newCount;
           var product = await getProductById(orderItem.productId, session);
           product = product.copyWith(count: product.count + differentCount);
+          await updateProduct(product, session);
+        }
+      }
+
+      // Xoá chi tiết đơn hàng
+      for (final orderItem in orderItemsFromDatabase) {
+        final index = params.orderItems.indexWhere((e) => e.id == orderItem.id);
+        if (index == -1) {
+          await removeOrderItem(orderItem, session);
+
+          // Cập nhật lại số lượng sản phẩm.
+          var product = await getProductById(orderItem.productId, session);
+          product = product.copyWith(count: product.count + orderItem.quantity);
           await updateProduct(product, session);
         }
       }

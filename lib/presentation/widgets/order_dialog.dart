@@ -176,12 +176,9 @@ Future<OrderResult?> _orderDialog({
   }
 
   Future<void> removeProduct(Product product) async {
+    orderItems.removeWhere((orderItem) => orderItem.productId == product.id);
     if (isNewOrder) {
-      orderItems.removeWhere((orderItem) => orderItem.productId == product.id);
       await regenerateOrderItemIds();
-    } else {
-      final index = orderItems.indexWhere((e) => e.productId == product.id);
-      orderItems[index] = orderItems[index].copyWith(deleted: true);
     }
   }
 
