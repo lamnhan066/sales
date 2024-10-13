@@ -18,6 +18,13 @@ extension DateTimeExtensions on DateTime {
     return '$mm-$year';
   }
 
+  String toHHmmssddMMyyyy() {
+    final hh = '$hour'.padLeft(2, '0');
+    final mm = '$minute'.padLeft(2, '0');
+    final ss = '$second'.padLeft(2, '0');
+    return '$hh:$mm:$ss ${toddMMyyyy()}';
+  }
+
   /// Date only
   DateTime dateOnly() {
     return DateUtils.dateOnly(this);
