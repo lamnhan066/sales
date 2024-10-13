@@ -10,7 +10,7 @@ import 'package:sales/domain/entities/order_item.dart';
 import 'package:sales/domain/entities/order_status.dart';
 import 'package:sales/domain/entities/product.dart';
 import 'package:sales/presentation/riverpod/notifiers/orders_provider.dart';
-import 'package:sales/presentation/widgets/common_components.dart';
+import 'package:sales/presentation/views/products_view.dart';
 import 'package:sales/presentation/widgets/data_table_plus.dart';
 
 class OrderFormDialog extends StatefulWidget {
@@ -89,45 +89,22 @@ class _OrderFormDialogState extends State<OrderFormDialog> {
   }
 
   void onAddPressed() async {
-    Product selected = availableProducts.first;
-    final result = await boxWDialog(
+    final size = MediaQuery.sizeOf(context);
+    final selected = await boxWDialog(
       context: context,
-      title: 'Chọn sản phẩm'.tr,
-      width: 300,
-      content: SizedBox(
-        height: 300,
-        child: StatefulBuilder(builder: (context, listViewState) {
-          return Material(
-            child: ListView.builder(
-              itemCount: availableProducts.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  tileColor: selected == availableProducts[index] ? Theme.of(context).primaryColor : null,
-                  textColor: selected == availableProducts[index] ? Theme.of(context).colorScheme.onPrimary : null,
-                  title: Text(availableProducts[index].name),
-                  onTap: () {
-                    listViewState(() {
-                      selected = availableProducts[index];
-                    });
-                  },
-                );
-              },
-            ),
-          );
-        }),
+      showCloseButton: true,
+      constrains: BoxConstraints(maxWidth: size.width - 50, maxHeight: size.height - 50),
+      width: double.infinity,
+      height: double.infinity,
+      title: 'Chọn Sản Phẩm'.tr,
+      content: const Flexible(
+        child: ProductsView(
+          chooseProduct: true,
+        ),
       ),
-      buttons: (context) {
-        return [
-          confirmCancelButtons(
-            context: context,
-            confirmText: 'Thêm'.tr,
-            cancelText: 'Huỷ'.tr,
-          ),
-        ];
-      },
     );
 
-    if (result == true) {
+    if (selected != null) {
       final orderItem = await widget.addProduct(selected);
 
       setState(() {
