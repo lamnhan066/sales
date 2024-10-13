@@ -78,9 +78,7 @@ class ProductsNotifier extends StateNotifier<ProductsState> {
         _addCategoryUseCase = addCategoryUseCase,
         _getNextCategoryIdUseCase = getNextCategoryIdUseCase,
         _replaceDatabaseUsecase = replaceDatabaseUsecase,
-        super(const ProductsState()) {
-    // TODO: Thử để `loadInitialData` ở đây để xem trang products có tự cập nhật lại số lượng sản phẩm khi order không.
-  }
+        super(const ProductsState());
 
   Future<void> loadInitialData() async {
     state = state.copyWith(isLoading: true);
