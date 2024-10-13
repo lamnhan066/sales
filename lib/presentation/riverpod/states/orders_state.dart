@@ -7,7 +7,7 @@ class OrdersState with EquatableMixin {
   final List<Order> orders;
 
   /// Số đơn hàng mỗi trang.
-  final int perpage;
+  final int perPage;
 
   /// Vị trí trang hiện tại.
   final int page;
@@ -24,7 +24,7 @@ class OrdersState with EquatableMixin {
 
   OrdersState({
     this.orders = const [],
-    this.perpage = 10,
+    this.perPage = 10,
     this.page = 1,
     this.totalPage = 0,
     Ranges<DateTime?>? dateRange,
@@ -34,7 +34,7 @@ class OrdersState with EquatableMixin {
 
   OrdersState copyWith({
     List<Order>? orders,
-    int? perpage,
+    int? perPage,
     int? page,
     int? totalPage,
     bool? isLoading,
@@ -42,7 +42,7 @@ class OrdersState with EquatableMixin {
   }) {
     return OrdersState(
       orders: orders ?? this.orders,
-      perpage: perpage ?? this.perpage,
+      perPage: perPage ?? this.perPage,
       page: page ?? this.page,
       totalPage: totalPage ?? this.totalPage,
       isLoading: isLoading ?? this.isLoading,
@@ -59,7 +59,7 @@ class OrdersState with EquatableMixin {
   List<Object?> get props {
     return [
       orders,
-      perpage,
+      perPage,
       page,
       totalPage,
       _dateRange,

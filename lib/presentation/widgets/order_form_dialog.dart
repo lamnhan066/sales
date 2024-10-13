@@ -290,7 +290,7 @@ class _OrderFormDialogState extends State<OrderFormDialog> {
                                               child: Consumer(builder: (context, ref, child) {
                                                 final ordersState = ref.watch(ordersProvider);
                                                 return Text(
-                                                  '${(ordersState.page - 1) * ordersState.perpage + orderItems.indexOf(item) + 1}',
+                                                  '${(ordersState.page - 1) * ordersState.perPage + orderItems.indexOf(item) + 1}',
                                                   textAlign: TextAlign.center,
                                                 );
                                               }),
