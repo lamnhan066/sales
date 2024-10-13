@@ -17,7 +17,7 @@
     - Chức năng bổ sung:
         - Cụ thể hơn là khi ứng dụng tiến hành tự động đăng nhập thì một hộp thoại sẽ hiện ra để người dùng có thể huỷ trong vòng 3s.
 
-2. Dashboard tổng quan hệ thống:
+2. Trang tổng quan hệ thống (Dashboard):
 
     - Tổng số sản phẩm.
     - Cho biết top 5 sản phẩm sắp hết hàng (số lượng < 5)
@@ -27,7 +27,7 @@
     - Chi tiết 3 đơn hàng gần nhất
     - Biểu đồ doanh thu theo ngày trong tháng hiện tại
 
-3. Trang Products:
+3. Trang Sản Phẩm (Products):
 
     - Cho phép xem danh sách sản phẩm theo loại > Xem chi tiết > Xóa / Sửa:
         - Có hỗ trợ phân trang
@@ -59,19 +59,19 @@
         - Mỗi sản phẩm có ít nhất 3 hình.
         - Dữ liệu thật lấy từ thegioididong.com.
 
-4. Trang Orders:
+4. Trang Đơn Hàng (Orders):
 
     - Tạo ra các đơn hàng.
     - Cho phép xóa một đơn hàng, cập nhật một đơn hàng.
     - Cho phép xem danh sách các đơn hàng có phân trang, xem chi tiết một đơn hàng.
-    - TODO: Tìm kiếm các đơn hàng từ ngày đến ngày.
+    - Tìm kiếm các đơn hàng từ ngày đến ngày.
 
-5. Trang Settings:
+5. Trang Cài Đặt (Settings):
 
-    - TODO: Ngôn ngữ Anh.
-    - TODO: Chế độ sáng tối.
-    - TODO: Cài đặt số dòng mỗi trang khi phân trang.
-    - TODO: Sao lưu/Khôi phục Database.
+    - Chọn ngôn ngữ: Anh, Việt.
+    - Chế độ sáng tối.
+    - Cài đặt số dòng mỗi trang khi phân trang.
+    - Sao lưu/Khôi phục Database.
 
 ### Các Chức Năng Tự Chọn
 
@@ -80,10 +80,26 @@
     - TODO: Chương trình có khả năng mở rộng động theo kiến trúc plugin (1 điểm)
     - TODO: Bổ sung khuyến mãi giảm giá (1 điểm)
     - TODO: Thêm chế độ dùng thử - cho phép xài full phần mềm trong 15 ngày. Hết 15 ngày bắt đăng kí (mã code hay cách kích hoạt nào đó) (0.5 điểm)
-    - TODO: Backup / restore database (0.25 điểm)
+    - Backup / restore database (0.25 điểm)
     - TODO: Sử dụng kiến trúc MVVM (0.5 điểm)
     - TODO: Làm rối mã nguồn (obfuscator) chống dịch ngược (0.25 điểm)
-    - TODO: Sử dụng Dependency Injection (0.5 điểm)
+    - Sử dụng Dependency Injection (0.5 điểm)
     - TODO: Hỗ trợ onboarding (0.5 điểm)
     - TODO: Tạo ra các test case kiểm thử chức năng và giao diện (0.5 điểm)
     - TODO: In đơn hàng (0.5 điểm)
+
+### Phần Tự Tìm Hiểu
+
+    - Sử dụng kiến trúc Clean Architecture.
+    - Màn hình Đăng Nhập:
+        - Khi ứng dụng tiến hành tự động đăng nhập thì một hộp thoại sẽ hiện ra để người dùng có thể huỷ trong vòng 3s.
+    - Màn hình Sản Phẩm:
+        - Sao chép một sản phẩm.
+    - Màn hình Đơn Hàng:
+        - Sao chép một đơn hàng.
+    - Màn hình Cài Đặt:
+        - Chọn ngôn ngữ: Anh, Việt,
+        - Chế độ sáng/tối.
+    - CSDL:
+        - Sử dụng Postgres.app để quản lý server.
+        - Sử dụng pgAdmin 4 để quản lý dữ liệu.
