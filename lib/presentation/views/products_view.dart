@@ -173,7 +173,7 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
           DataCell(Text('${product.unitSalePrice}')),
           DataCell(Center(child: Text(category.name))),
           DataCell(Text('${product.count}')),
-          DataCell(_buildActionButtons(product)),
+          DataCell(Center(child: _buildActionButtons(product))),
         ],
       );
     }).toList();
