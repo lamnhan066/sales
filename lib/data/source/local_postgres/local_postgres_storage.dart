@@ -374,7 +374,7 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
   Future<Map<ProductModel, int>> getFiveHighestSalesProducts() async {
     const sql = '''
       SELECT
-        p_id, p_sku, p_name, p_image_path, p_import_price, p_count, p_description, p_category_id, p_deleted, SUM(oi_quantity) AS total_quantity
+        *, SUM(oi_quantity) AS total_quantity
       FROM 
         products
       JOIN
@@ -382,7 +382,7 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
       WHERE
         p_deleted = FALSE
       GROUP BY
-        p_id
+        p_id, oi_id
       ORDER BY
         total_quantity DESC
       LIMIT 5
