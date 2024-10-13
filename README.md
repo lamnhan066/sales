@@ -98,7 +98,7 @@
     - Màn hình Đơn Hàng:
         - Sao chép một đơn hàng.
     - Màn hình Cài Đặt:
-        - Chọn ngôn ngữ: Anh, Việt,
+        - Chọn ngôn ngữ: Anh, Việt.
         - Chế độ sáng/tối.
     - CSDL:
         - Sử dụng Postgres.app để quản lý server.
