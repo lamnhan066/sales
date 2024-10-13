@@ -39,7 +39,7 @@ class ExcelDataImporterImpl implements DataImporterRepository {
           name: '${row.elementAt(1)?.value}',
           imagePath: (jsonDecode('${row.elementAt(2)?.value}') as List<dynamic>).cast<String>(),
           importPrice: int.parse('${row.elementAt(3)?.value}'),
-          unitSalePrice: int.parse('${row.elementAt(3)?.value}'),
+          unitSalePrice: int.parse('${row.elementAt(4)?.value}'),
           count: int.parse('${row.elementAt(5)?.value}'),
           description: '${row.elementAt(6)?.value}',
           categoryId: category.id,
