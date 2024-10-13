@@ -12,6 +12,7 @@ import 'package:sales/data/database/report_database.dart';
 import 'package:sales/data/source/local_postgres/local_postgres_storage.dart';
 import 'package:sales/domain/repositories/app_version_repository.dart';
 import 'package:sales/domain/repositories/auth_repository.dart';
+import 'package:sales/domain/repositories/brightness_repository.dart';
 import 'package:sales/domain/repositories/category_repository.dart';
 import 'package:sales/domain/repositories/data_importer_repository.dart';
 import 'package:sales/domain/repositories/language_repository.dart';
@@ -26,10 +27,12 @@ import 'package:sales/domain/services/database_service.dart';
 import 'package:sales/domain/usecases/app/change_item_per_page_usecase.dart';
 import 'package:sales/domain/usecases/app/change_language_usecase.dart';
 import 'package:sales/domain/usecases/app/get_app_version_usecase.dart';
+import 'package:sales/domain/usecases/app/get_current_brightness_usecase.dart';
 import 'package:sales/domain/usecases/app/get_current_language_usecase.dart';
 import 'package:sales/domain/usecases/app/get_item_per_page_usecase.dart';
 import 'package:sales/domain/usecases/app/get_supported_languages_usecase.dart';
 import 'package:sales/domain/usecases/app/initialize_language_usecase.dart';
+import 'package:sales/domain/usecases/app/set_brightness_usecase.dart';
 import 'package:sales/domain/usecases/auth/auto_login_usecase.dart';
 import 'package:sales/domain/usecases/auth/get_cached_credentials_usecase.dart';
 import 'package:sales/domain/usecases/auth/get_login_state_usecase.dart';
@@ -70,6 +73,7 @@ import 'package:sales/domain/usecases/reports/get_sold_products_with_quantity_us
 import 'package:sales/domain/usecases/reports/get_three_recent_orders_usecase.dart';
 import 'package:sales/infrastructure/data_import/excel_data_importer_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/app_version_repository_impl.dart';
+import 'package:sales/infrastructure/respositories/brightness_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/category_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/language_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/local_auth_repository_impl.dart';
@@ -121,6 +125,7 @@ void _registerRepositories() {
   getIt.registerLazySingleton<DataImporterRepository>(() => ExcelDataImporterImpl());
   getIt.registerLazySingleton<LanguageRepository>(() => LanguageRepositoryImpl(getIt()));
   getIt.registerLazySingleton<PageConfigurationsRepository>(() => PageConfigurationsRepositoryImpl(getIt()));
+  getIt.registerLazySingleton<BrightnessRepository>(() => BrightnessRepositoryImpl(getIt()));
 }
 
 void _registerDatabase() {
@@ -144,6 +149,8 @@ void _registerAppUseCases() {
   getIt.registerLazySingleton<ChangeLanguageUseCase>(() => ChangeLanguageUseCase(getIt()));
   getIt.registerLazySingleton<ChangeItemPerPageUseCase>(() => ChangeItemPerPageUseCase(getIt()));
   getIt.registerLazySingleton<GetItemPerPageUseCase>(() => GetItemPerPageUseCase(getIt()));
+  getIt.registerLazySingleton<GetCurrentBrightnessUseCase>(() => GetCurrentBrightnessUseCase(getIt()));
+  getIt.registerLazySingleton<SetBrightnessUseCase>(() => SetBrightnessUseCase(getIt()));
 }
 
 void _registerAuthUseCases() {
