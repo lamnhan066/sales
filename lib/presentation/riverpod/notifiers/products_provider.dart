@@ -123,8 +123,7 @@ class ProductsNotifier extends StateNotifier<ProductsState> {
   Future<void> addCategory(Category category) async {
     try {
       await _addCategoryUseCase(category);
-      final categories = await _getAllCategoriesUseCase(NoParams());
-      state = state.copyWith(categories: categories);
+      await fetchCategories();
     } on Failure catch (e) {
       state = state.copyWith(error: e.message);
     }
@@ -133,8 +132,7 @@ class ProductsNotifier extends StateNotifier<ProductsState> {
   Future<void> removeCategory(Category category) async {
     try {
       await _removeCategoryUseCase(category);
-      final categories = await _getAllCategoriesUseCase(NoParams());
-      state = state.copyWith(categories: categories);
+      await fetchCategories();
     } on Failure catch (e) {
       state = state.copyWith(error: e.message);
     }
@@ -143,11 +141,15 @@ class ProductsNotifier extends StateNotifier<ProductsState> {
   Future<void> updateCategory(Category category) async {
     try {
       await _updateCategoryUseCase(category);
-      final categories = await _getAllCategoriesUseCase(NoParams());
-      state = state.copyWith(categories: categories);
+      await fetchCategories();
     } on Failure catch (e) {
       state = state.copyWith(error: e.message);
     }
+  }
+
+  Future<void> fetchCategories() async {
+    final categories = await _getAllCategoriesUseCase(NoParams());
+    state = state.copyWith(categories: categories);
   }
 
   Future<void> fetchProducts({bool resetPage = false}) async {
@@ -228,6 +230,7 @@ class ProductsNotifier extends StateNotifier<ProductsState> {
 
   Future<void> replaceDatabase(DataImportResult data) async {
     await _replaceDatabaseUsecase(data);
+    await fetchCategories();
     await fetchProducts(resetPage: true);
   }
 
