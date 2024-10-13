@@ -155,6 +155,28 @@ class _ProductFormDialogState extends State<ProductFormDialog> {
               },
             ),
             BoxWInput(
+              title: 'Giá bán'.tr,
+              initial: widget.tempProduct.unitSalePrice.toString(),
+              readOnly: widget.readOnly,
+              validator: (value) {
+                if (value != null) {
+                  final n = int.tryParse(value);
+                  if (n == null) {
+                    return 'Vui lòng chỉ nhập số'.tr;
+                  }
+                }
+
+                return null;
+              },
+              onChanged: (value) {
+                final unitSalePrice = int.tryParse(value);
+                if (unitSalePrice != null) {
+                  tempProduct = tempProduct.copyWith(unitSalePrice: unitSalePrice);
+                  widget.onChanged(tempProduct);
+                }
+              },
+            ),
+            BoxWInput(
               title: 'Số lượng'.tr,
               initial: widget.tempProduct.count.toString(),
               readOnly: widget.readOnly,

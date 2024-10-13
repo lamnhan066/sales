@@ -136,6 +136,7 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
       _headerTextColumn('ID'.tr),
       _headerTextColumn('Tên'.tr),
       _headerTextColumn('Giá nhập'.tr, numeric: true),
+      _headerTextColumn('Giá bán'.tr, numeric: true),
       _headerTextColumn('Loại hàng'.tr),
       _headerTextColumn('Số lượng'.tr, numeric: true),
       _headerTextColumn('Hành động'.tr),
@@ -167,6 +168,7 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
           DataCell(Center(child: Text(product.name))),
           // TODO: Giá nhập nên hiện theo dạng phân cách hàng ngàn bằng dấu phẩy
           DataCell(Text('${product.importPrice}')),
+          DataCell(Text('${product.unitSalePrice}')),
           DataCell(Center(child: Text(category.name))),
           DataCell(Text('${product.count}')),
           DataCell(_buildActionButtons(product)),
