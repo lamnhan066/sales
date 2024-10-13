@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:get_it/get_it.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/core/usecases/usecase.dart';
@@ -12,6 +13,7 @@ import 'package:sales/data/database/report_database.dart';
 import 'package:sales/data/source/local_postgres/local_postgres_storage.dart';
 import 'package:sales/domain/repositories/app_version_repository.dart';
 import 'package:sales/domain/repositories/auth_repository.dart';
+import 'package:sales/domain/repositories/backup_restore_repository.dart';
 import 'package:sales/domain/repositories/brightness_repository.dart';
 import 'package:sales/domain/repositories/category_repository.dart';
 import 'package:sales/domain/repositories/data_importer_repository.dart';
@@ -38,6 +40,8 @@ import 'package:sales/domain/usecases/auth/get_cached_credentials_usecase.dart';
 import 'package:sales/domain/usecases/auth/get_login_state_usecase.dart';
 import 'package:sales/domain/usecases/auth/login_usecase.dart';
 import 'package:sales/domain/usecases/auth/logout_usecase.dart';
+import 'package:sales/domain/usecases/backup_restore/backup_database_usecase.dart';
+import 'package:sales/domain/usecases/backup_restore/restore_database_usecase.dart';
 import 'package:sales/domain/usecases/categories/add_category_usecase.dart';
 import 'package:sales/domain/usecases/categories/get_all_categories.dart';
 import 'package:sales/domain/usecases/categories/get_next_category_id_usecase.dart';
@@ -73,6 +77,7 @@ import 'package:sales/domain/usecases/reports/get_sold_products_with_quantity_us
 import 'package:sales/domain/usecases/reports/get_three_recent_orders_usecase.dart';
 import 'package:sales/infrastructure/data_import/excel_data_importer_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/app_version_repository_impl.dart';
+import 'package:sales/infrastructure/respositories/backup_restore_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/brightness_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/category_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/language_repository_impl.dart';
@@ -93,6 +98,7 @@ Future<void> setupDependencies() async {
   final preferences = await SharedPreferences.getInstance();
   getIt.registerSingleton<SharedPreferences>(preferences);
   getIt.registerSingleton<LanguageHelper>(LanguageHelper.instance);
+  getIt.registerLazySingleton<FilePicker>(() => FilePicker.platform);
 
   _registerRepositories();
   _registerDatabase();
@@ -110,6 +116,7 @@ void _registerUseCases() {
   _registerOrderUseCases();
   _registerProductUseCases();
   _registerReportUseCases();
+  _registerBackupRestoreUseCases();
 }
 
 void _registerRepositories() {
@@ -126,6 +133,7 @@ void _registerRepositories() {
   getIt.registerLazySingleton<LanguageRepository>(() => LanguageRepositoryImpl(getIt()));
   getIt.registerLazySingleton<PageConfigurationsRepository>(() => PageConfigurationsRepositoryImpl(getIt()));
   getIt.registerLazySingleton<BrightnessRepository>(() => BrightnessRepositoryImpl(getIt()));
+  getIt.registerLazySingleton<BackupRestoreRepository>(() => BackupRestoreRepositoryImpl(getIt()));
 }
 
 void _registerDatabase() {
@@ -207,6 +215,11 @@ void _registerDatabaseUseCases() {
   getIt.registerLazySingleton<LoadServerConnectionUsecase>(() => LoadServerConnectionUsecase(getIt()));
   getIt.registerLazySingleton<ReplaceDatabaseUsecase>(() => ReplaceDatabaseUsecase(getIt()));
   getIt.registerLazySingleton<ImportDataUseCase>(() => ImportDataUseCase(getIt()));
+}
+
+void _registerBackupRestoreUseCases() {
+  getIt.registerLazySingleton<BackupDatabaseUseCase>(() => BackupDatabaseUseCase(getIt()));
+  getIt.registerLazySingleton<RestoreDatabaseUseCase>(() => RestoreDatabaseUseCase(getIt()));
 }
 
 void _registerServices() {

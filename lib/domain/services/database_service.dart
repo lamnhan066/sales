@@ -18,10 +18,4 @@ abstract class DatabaseService {
   /// Việc thay thế này sẽ dẫn đến dữ liệu ở database bị xoá hoàn toàn
   /// và được thay thế mới.
   Future<void> replaceDatabase(DataImportResult data);
-
-  /// Sao lưu database.
-  Future<void> backupDatabase(String backupPath);
-
-  /// Khôi phục database.
-  Future<void> restoreDatabase(String backupPath);
 }

@@ -32,18 +32,6 @@ class DatabaseServiceImpl implements DatabaseService {
   }
 
   @override
-  Future<void> backupDatabase(String backupPath) {
-    // TODO: implement backupDatabase
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> restoreDatabase(String backupPath) {
-    // TODO: implement restoreDatabase
-    throw UnimplementedError();
-  }
-
-  @override
   Future<void> mergeDatabase(DataImportResult data) {
     final categories = data.categories.map((e) => e.toData()).toList();
     final products = data.products.map((e) => e.toData()).toList();
