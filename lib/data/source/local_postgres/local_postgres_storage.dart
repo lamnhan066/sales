@@ -102,7 +102,7 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
       Sql.named(sql),
       parameters: {
         'status': order.status.name,
-        'date': TypedValue(Type.date, order.date),
+        'date': TypedValue(Type.timestampTz, order.date),
       },
     );
 
@@ -117,7 +117,7 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
       parameters: {
         'id': order.id,
         'status': order.status.name,
-        'date': order.date,
+        'date': TypedValue(Type.timestampTz, order.date),
         'deleted': order.deleted,
       },
     );
@@ -186,8 +186,14 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
 
   @override
   Future<void> updateProduct(ProductModel product, [Session? session]) async {
-    const sql =
-        'UPDATE products SET p_sku = @sku, p_name = @name, p_image_path = @imagePath, p_import_price = @importPrice, p_unit_sale_price = @unitSalePrice, p_count = @count, p_description = @description, p_category_id = @categoryId, p_deleted = @deleted WHERE p_id=@id';
+    const sql = '''
+    UPDATE 
+        products 
+    SET 
+        p_sku = @sku, p_name = @name, p_image_path = @imagePath, p_import_price = @importPrice, p_unit_sale_price = @unitSalePrice, p_count = @count, p_description = @description, p_category_id = @categoryId, p_deleted = @deleted
+    WHERE 
+        p_id=@id
+    ''';
     await (session ?? _connection).execute(Sql.named(sql), parameters: {
       'id': product.id,
       'sku': product.sku,
@@ -242,11 +248,16 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
   @override
   Future<List<OrderModel>> getAllOrders({RangeOfDates? dateRange, Session? session}) async {
     String sql = 'SELECT * FROM orders WHERE o_deleted=FALSE';
+    final parameters = <String, Object>{};
     if (dateRange != null) {
-      sql += " AND o_date >= '${dateRange.start.toyyyyMd()}'";
-      sql += " AND o_date <= '${dateRange.end.toyyyyMd()}'";
+      sql += " AND o_date::timestamptz >= @startDate::timestamptz";
+      sql += " AND o_date::timestamptz <= @endDate::timestamptz";
+      parameters.addAll({
+        'startDate': dateRange.start.dateOnly(),
+        'endDate': dateRange.end.dateOnly(),
+      });
     }
-    final result = await (session ?? _connection).execute(sql);
+    final result = await (session ?? _connection).execute(Sql.named(sql), parameters: parameters);
 
     return result.map((e) => OrderModel.fromMap(e.toColumnMap())).toList();
   }
@@ -417,7 +428,7 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
       JOIN 
           products ON oi_product_id = p_id
       WHERE 
-          o_deleted = FALSE AND oi_deleted = FALSE AND p_deleted = FALSE AND DATE_TRUNC('month', o_date::timestamp) = DATE_TRUNC('month', @currentDate::timestamp)
+          o_deleted = FALSE AND oi_deleted = FALSE AND p_deleted = FALSE AND DATE_TRUNC('month', o_date::timestamptz) = DATE_TRUNC('month', @currentDate::timestamptz)
       GROUP BY 
           TO_CHAR(o_date, 'DD')
       ORDER BY 
@@ -464,16 +475,23 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
 
     // Lọc theo ngày
     final start = params.dateRange?.start;
+    final parameters = <String, Object>{};
     if (start != null) {
-      sql += " AND o_date >= '${start.toyyyyMd()}'";
+      sql += " AND o_date::timestamptz >= @startDate::timestamptz";
+      parameters.addAll({
+        'startDate': start,
+      });
     }
 
     final end = params.dateRange?.end;
     if (end != null) {
-      sql += " AND o_date <= '${end.toyyyyMd()}'";
+      sql += " AND o_date::timestamptz <= @endDate::timestamptz";
+      parameters.addAll({
+        'endDate': end,
+      });
     }
 
-    final result = await _connection.execute(sql);
+    final result = await _connection.execute(Sql.named(sql), parameters: parameters);
     final orders = result.map((e) => OrderModel.fromMap(e.toColumnMap())).toList();
 
     return GetResult(
@@ -694,15 +712,15 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
       JOIN
           orders ON oi_order_id = o_id
       WHERE
-          p_deleted = FALSE AND o_deleted = FALSE AND o_date >= @startDate AND o_date <= @endDate
+          p_deleted = FALSE AND o_deleted = FALSE AND o_date::timestamptz >= @startDate::timestamptz AND o_date::timestamptz <= @endDate::timestamptz
       GROUP BY
           p_id, oi_id, o_id
       ORDER BY
           o_date
     ''';
     final parameters = {
-      'startDate': dateRange.start.toyyyyMd(),
-      'endDate': dateRange.end.toyyyyMd(),
+      'startDate': dateRange.start.dateOnly(),
+      'endDate': dateRange.end.dateOnly(),
     };
 
     final result = await _connection.execute(Sql.named(sql), parameters: parameters);
@@ -729,11 +747,11 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
       JOIN
           order_items ON o_id = oi_order_id
       WHERE
-          o_deleted = FALSE AND oi_deleted = FALSE AND o_date >= @startDate AND o_date <= @endDate
+          o_deleted = FALSE AND oi_deleted = FALSE AND o_date::timestamptz >= @startDate::timestamptz AND o_date::timestamptz <= @endDate::timestamptz
     ''';
     final parameters = {
-      'startDate': dateRange.start.toyyyyMd(),
-      'endDate': dateRange.end.toyyyyMd(),
+      'startDate': dateRange.start.dateOnly(),
+      'endDate': dateRange.end.dateOnly(),
     };
 
     final result = await _connection.execute(Sql.named(sql), parameters: parameters);
@@ -752,11 +770,11 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
       JOIN
           orders ON oi_order_id = o_id
       WHERE
-          oi_deleted = FALSE AND p_deleted = FALSE AND o_deleted= FALSE AND o_date >= @startDate AND o_date <= @endDate
+          oi_deleted = FALSE AND p_deleted = FALSE AND o_deleted= FALSE AND o_date::timestamptz >= @startDate::timestamptz AND o_date::timestamptz <= @endDate::timestamptz
     ''';
     final parameters = {
-      'startDate': dateRange.start.toyyyyMd(),
-      'endDate': dateRange.end.toyyyyMd(),
+      'startDate': dateRange.start.dateOnly(),
+      'endDate': dateRange.end.dateOnly(),
     };
 
     final result = await _connection.execute(Sql.named(sql), parameters: parameters);
