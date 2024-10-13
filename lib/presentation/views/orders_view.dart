@@ -157,7 +157,7 @@ class _OrdersViewState extends ConsumerState<OrdersView> {
             DataCell(
               Center(
                 child: Text(
-                  '${(ordersState.page - 1) * 10 + ordersState.orders.indexOf(o) + 1}',
+                  '${(ordersState.page - 1) * ordersState.perPage + ordersState.orders.indexOf(o) + 1}',
                   textAlign: TextAlign.center,
                 ),
               ),
