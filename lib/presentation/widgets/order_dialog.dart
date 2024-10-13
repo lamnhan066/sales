@@ -152,14 +152,15 @@ Future<OrderResult?> _orderDialog({
   }
 
   Future<OrderItem> addProduct(Product product) async {
+    const quantity = 1;
     final orderItem = OrderItem(
       id: orderItemId,
-      quantity: 1,
-      unitSalePrice: product.importPrice,
+      quantity: quantity,
+      unitSalePrice: product.unitSalePrice,
       totalPrice: PriceUtils.calcTotalPrice(
         product.importPrice,
-        product.importPrice,
-        1,
+        product.unitSalePrice,
+        quantity,
       ),
       productId: product.id,
       orderId: tempOrder.id,
