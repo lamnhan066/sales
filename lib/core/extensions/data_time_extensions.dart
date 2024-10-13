@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 
 extension DateTimeExtensions on DateTime {
+  /// dd/MM/yyyy
   String toddMMyyyy() {
     final dd = '$day'.padLeft(2, '0');
     final mm = '$month'.padLeft(2, '0');
     return '$dd/$mm/$year';
   }
 
-  /// yyyy-MM-dd
+  /// yyyy-M-d
   String toyyyyMd() {
     return '$year-$month-$day';
   }
@@ -18,6 +19,7 @@ extension DateTimeExtensions on DateTime {
     return '$mm-$year';
   }
 
+  // HH:mm:ss dd/MM/yyyy
   String toHHmmssddMMyyyy() {
     final hh = '$hour'.padLeft(2, '0');
     final mm = '$minute'.padLeft(2, '0');
