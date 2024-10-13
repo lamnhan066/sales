@@ -745,6 +745,6 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
     };
 
     final result = await _connection.execute(Sql.named(sql), parameters: parameters);
-    return ((result.first.first as double?) ?? 0.0).toInt();
+    return (result.first.first as int?) ?? 0;
   }
 }
