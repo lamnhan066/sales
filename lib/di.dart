@@ -1,4 +1,6 @@
 import 'package:get_it/get_it.dart';
+import 'package:language_helper/language_helper.dart';
+import 'package:sales/core/usecases/usecase.dart';
 import 'package:sales/data/database/category_database.dart';
 import 'package:sales/data/database/core_database.dart';
 import 'package:sales/data/database/data_sync_database.dart';
@@ -12,6 +14,7 @@ import 'package:sales/domain/repositories/app_version_repository.dart';
 import 'package:sales/domain/repositories/auth_repository.dart';
 import 'package:sales/domain/repositories/category_repository.dart';
 import 'package:sales/domain/repositories/data_importer_repository.dart';
+import 'package:sales/domain/repositories/language_repository.dart';
 import 'package:sales/domain/repositories/order_item_repository.dart';
 import 'package:sales/domain/repositories/order_repository.dart';
 import 'package:sales/domain/repositories/order_with_items_repository.dart';
@@ -19,7 +22,11 @@ import 'package:sales/domain/repositories/product_repository.dart';
 import 'package:sales/domain/repositories/report_repository.dart';
 import 'package:sales/domain/repositories/server_configurations_repository.dart';
 import 'package:sales/domain/services/database_service.dart';
+import 'package:sales/domain/usecases/app/change_language_usecase.dart';
 import 'package:sales/domain/usecases/app/get_app_version_usecase.dart';
+import 'package:sales/domain/usecases/app/get_current_language_usecase.dart';
+import 'package:sales/domain/usecases/app/get_supported_languages_usecase.dart';
+import 'package:sales/domain/usecases/app/initialize_language_usecase.dart';
 import 'package:sales/domain/usecases/auth/auto_login_usecase.dart';
 import 'package:sales/domain/usecases/auth/get_cached_credentials_usecase.dart';
 import 'package:sales/domain/usecases/auth/get_login_state_usecase.dart';
@@ -61,6 +68,7 @@ import 'package:sales/domain/usecases/reports/get_three_recent_orders_usecase.da
 import 'package:sales/infrastructure/data_import/excel_data_importer_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/app_version_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/category_repository_impl.dart';
+import 'package:sales/infrastructure/respositories/language_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/local_auth_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/order_item_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/order_repository_impl.dart';
@@ -76,15 +84,19 @@ final getIt = GetIt.instance;
 Future<void> setupDependencies() async {
   final preferences = await SharedPreferences.getInstance();
   getIt.registerSingleton<SharedPreferences>(preferences);
+  getIt.registerSingleton<LanguageHelper>(LanguageHelper.instance);
 
   _registerRepositories();
   _registerDatabase();
   _registerUseCases();
   _registerServices();
+
+  await getIt<InitializeLanguageUseCase>()(NoParams());
 }
 
 void _registerUseCases() {
   _registerAuthUseCases();
+  _registerAppUseCases();
   _registerCategoryUseCases();
   _registerDatabaseUseCases();
   _registerOrderUseCases();
@@ -103,6 +115,7 @@ void _registerRepositories() {
   getIt.registerLazySingleton<CategoryRepository>(() => CategoryRepositoryImpl(getIt()));
   getIt.registerLazySingleton<ReportRepository>(() => ReportRepositoryImpl(getIt()));
   getIt.registerLazySingleton<DataImporterRepository>(() => ExcelDataImporterImpl());
+  getIt.registerLazySingleton<LanguageRepository>(() => LanguageRepositoryImpl(getIt()));
 }
 
 void _registerDatabase() {
@@ -118,13 +131,20 @@ void _registerDatabase() {
   getIt.registerLazySingleton<ReportDatabase>(() => postgresDatabase);
 }
 
+void _registerAppUseCases() {
+  getIt.registerLazySingleton<GetAppVersionUseCase>(() => GetAppVersionUseCase(getIt()));
+  getIt.registerLazySingleton<InitializeLanguageUseCase>(() => InitializeLanguageUseCase(getIt()));
+  getIt.registerLazySingleton<GetCurrentLanguageUseCase>(() => GetCurrentLanguageUseCase(getIt()));
+  getIt.registerLazySingleton<GetSupportedLanguagesUseCase>(() => GetSupportedLanguagesUseCase(getIt()));
+  getIt.registerLazySingleton<ChangeLanguageUseCase>(() => ChangeLanguageUseCase(getIt()));
+}
+
 void _registerAuthUseCases() {
   getIt.registerLazySingleton<AutoLoginUseCase>(() => AutoLoginUseCase(getIt()));
   getIt.registerLazySingleton<LoginUseCase>(() => LoginUseCase(getIt()));
   getIt.registerLazySingleton<LogoutUseCase>(() => LogoutUseCase(getIt()));
   getIt.registerLazySingleton<GetLoginStateUseCase>(() => GetLoginStateUseCase(getIt()));
   getIt.registerLazySingleton<GetCachedCredentialsUseCase>(() => GetCachedCredentialsUseCase(getIt()));
-  getIt.registerLazySingleton<GetAppVersionUseCase>(() => GetAppVersionUseCase(getIt()));
 }
 
 void _registerProductUseCases() {

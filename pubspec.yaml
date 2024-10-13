@@ -31,7 +31,7 @@ dependencies:
   flutter:
     sdk: flutter
   get_it: ^7.7.0
-  language_helper: ^0.11.3
+  language_helper: ^0.11.3+1
   boxw: ^0.0.48
   shared_preferences: ^2.3.2
   encrypt: ^5.0.3
