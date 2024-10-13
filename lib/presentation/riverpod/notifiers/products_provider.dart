@@ -147,38 +147,6 @@ class ProductsNotifier extends StateNotifier<ProductsState> {
     }
   }
 
-  Future<void> fetchCategories() async {
-    final categories = await _getAllCategoriesUseCase(NoParams());
-    state = state.copyWith(categories: categories);
-  }
-
-  Future<void> fetchProducts({bool resetPage = false}) async {
-    if (resetPage) state = state.copyWith(page: 1);
-
-    state = state.copyWith(isLoading: true, error: '');
-    try {
-      final productsResult = await _getProductsUseCase(GetProductParams(
-        page: state.page,
-        perPage: state.perPage,
-        searchText: state.searchText,
-        orderBy: state.orderBy,
-        priceRange: state.priceRange,
-        categoryIdFilter: state.categoryIdFilter,
-      ));
-
-      state = state.copyWith(
-        products: productsResult.items,
-        totalPage: (productsResult.totalCount / state.perPage).ceil(),
-        isLoading: false,
-      );
-    } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
-    }
-  }
-
   /// Callback cho nút trang trước.
   Future<void> goToPreviousPage() async {
     await goToPage(state.page - 1);
@@ -236,5 +204,37 @@ class ProductsNotifier extends StateNotifier<ProductsState> {
 
   Future<DataImportResult?> importData() async {
     return await _importDataUseCase(NoParams());
+  }
+
+  Future<void> fetchCategories() async {
+    final categories = await _getAllCategoriesUseCase(NoParams());
+    state = state.copyWith(categories: categories);
+  }
+
+  Future<void> fetchProducts({bool resetPage = false}) async {
+    if (resetPage) state = state.copyWith(page: 1);
+
+    state = state.copyWith(isLoading: true, error: '');
+    try {
+      final productsResult = await _getProductsUseCase(GetProductParams(
+        page: state.page,
+        perPage: state.perPage,
+        searchText: state.searchText,
+        orderBy: state.orderBy,
+        priceRange: state.priceRange,
+        categoryIdFilter: state.categoryIdFilter,
+      ));
+
+      state = state.copyWith(
+        products: productsResult.items,
+        totalPage: (productsResult.totalCount / state.perPage).ceil(),
+        isLoading: false,
+      );
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        error: e.toString(),
+      );
+    }
   }
 }
