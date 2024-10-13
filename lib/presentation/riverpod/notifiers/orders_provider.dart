@@ -114,7 +114,11 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
   }
 
   Future<void> updateOrderWithItems(Order order, List<OrderItem> orderItems) async {
-    await _updateOrderWithItemsUseCase(OrderWithItemsParams(order: order, orderItems: orderItems));
+    if (orderItems.isEmpty) {
+      await _removeOrderWithItemsUseCase(order);
+    } else {
+      await _updateOrderWithItemsUseCase(OrderWithItemsParams(order: order, orderItems: orderItems));
+    }
     await fetchOrders();
   }
 
