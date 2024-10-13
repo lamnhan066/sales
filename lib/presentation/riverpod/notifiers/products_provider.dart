@@ -226,8 +226,9 @@ class ProductsNotifier extends StateNotifier<ProductsState> {
     await fetchProducts(resetPage: true);
   }
 
-  Future<void> replaceDatabase(DataImportResult data) {
-    return _replaceDatabaseUsecase(data);
+  Future<void> replaceDatabase(DataImportResult data) async {
+    await _replaceDatabaseUsecase(data);
+    await fetchProducts(resetPage: true);
   }
 
   Future<DataImportResult?> importData() async {
