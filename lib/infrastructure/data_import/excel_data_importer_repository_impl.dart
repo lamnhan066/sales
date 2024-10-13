@@ -43,7 +43,7 @@ class ExcelDataImporterImpl implements DataImporterRepository {
           count: int.parse('${row.elementAt(5)?.value}'),
           description: '${row.elementAt(6)?.value}',
           categoryId: category.id,
-          deleted: bool.parse('${row.elementAt(8)?.value}'),
+          deleted: false,
         ),
       );
     }
