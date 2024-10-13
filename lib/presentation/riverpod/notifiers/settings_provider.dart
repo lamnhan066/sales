@@ -1,0 +1,151 @@
+import 'dart:ui';
+
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:language_helper/language_helper.dart';
+import 'package:sales/core/usecases/usecase.dart';
+import 'package:sales/di.dart';
+import 'package:sales/domain/entities/backup_data.dart';
+import 'package:sales/domain/usecases/app/change_item_per_page_usecase.dart';
+import 'package:sales/domain/usecases/app/change_language_usecase.dart';
+import 'package:sales/domain/usecases/app/get_current_brightness_usecase.dart';
+import 'package:sales/domain/usecases/app/get_current_language_usecase.dart';
+import 'package:sales/domain/usecases/app/get_item_per_page_usecase.dart';
+import 'package:sales/domain/usecases/app/get_supported_languages_usecase.dart';
+import 'package:sales/domain/usecases/app/set_brightness_usecase.dart';
+import 'package:sales/domain/usecases/backup_restore/backup_database_usecase.dart';
+import 'package:sales/domain/usecases/backup_restore/restore_database_usecase.dart';
+import 'package:sales/domain/usecases/categories/add_all_categories_usecase.dart';
+import 'package:sales/domain/usecases/categories/get_all_categories.dart';
+import 'package:sales/domain/usecases/order_with_items/add_all_orders_with_items_usecase.dart';
+import 'package:sales/domain/usecases/order_with_items/get_all_orders_with_items_usecase.dart';
+import 'package:sales/domain/usecases/products/add_all_products_usecase.dart';
+import 'package:sales/domain/usecases/products/get_all_products_usecase.dart';
+import 'package:sales/presentation/riverpod/states/settings_state.dart';
+
+final settingsProvider = StateNotifierProvider<SettingsNotifier, SettingsState>((ref) {
+  return SettingsNotifier(
+    getCurrentLanguageUseCase: getIt(),
+    getSupportedLanguagesUseCase: getIt(),
+    changeLanguageUseCase: getIt(),
+    getItemPerPageUseCase: getIt(),
+    changeItemPerPageUseCase: getIt(),
+    getCurrentBrightnessUseCase: getIt(),
+    setBrightnessUseCase: getIt(),
+    backupDatabaseUseCase: getIt(),
+    restoreDatabaseUseCase: getIt(),
+    getAllProductsUseCase: getIt(),
+    getAllCategoriesUsecCase: getIt(),
+    getAllOrdersWithItemsUseCase: getIt(),
+    addAllCategoriesUseCase: getIt(),
+    addAllProductsUseCase: getIt(),
+    addAllOrdersWithItemsUseCase: getIt(),
+  );
+});
+
+class SettingsNotifier extends StateNotifier<SettingsState> {
+  final GetCurrentLanguageUseCase getCurrentLanguageUseCase;
+  final GetSupportedLanguagesUseCase getSupportedLanguagesUseCase;
+  final ChangeLanguageUseCase changeLanguageUseCase;
+  final ChangeItemPerPageUseCase changeItemPerPageUseCase;
+  final GetItemPerPageUseCase getItemPerPageUseCase;
+  final GetCurrentBrightnessUseCase getCurrentBrightnessUseCase;
+  final SetBrightnessUseCase setBrightnessUseCase;
+  final BackupDatabaseUseCase backupDatabaseUseCase;
+  final RestoreDatabaseUseCase restoreDatabaseUseCase;
+  final GetAllProductsUseCase getAllProductsUseCase;
+  final GetAllCategoriesUsecCase getAllCategoriesUsecCase;
+  final GetAllOrdersWithItemsUseCase getAllOrdersWithItemsUseCase;
+  final AddAllCategoriesUseCase addAllCategoriesUseCase;
+  final AddAllProductsUseCase addAllProductsUseCase;
+  final AddAllOrdersWithItemsUseCase addAllOrdersWithItemsUseCase;
+
+  SettingsNotifier({
+    required this.getCurrentLanguageUseCase,
+    required this.getSupportedLanguagesUseCase,
+    required this.changeLanguageUseCase,
+    required this.changeItemPerPageUseCase,
+    required this.getItemPerPageUseCase,
+    required this.getCurrentBrightnessUseCase,
+    required this.setBrightnessUseCase,
+    required this.backupDatabaseUseCase,
+    required this.restoreDatabaseUseCase,
+    required this.getAllProductsUseCase,
+    required this.getAllCategoriesUsecCase,
+    required this.getAllOrdersWithItemsUseCase,
+    required this.addAllCategoriesUseCase,
+    required this.addAllProductsUseCase,
+    required this.addAllOrdersWithItemsUseCase,
+  }) : super(SettingsState()) {
+    initialize();
+  }
+
+  Future<void> initialize() async {
+    state = state.copyWith(isLoading: true);
+
+    final currentLanguage = await getCurrentLanguageUseCase(NoParams());
+    final supportedLanguages = await getSupportedLanguagesUseCase(NoParams());
+    final itemPerPage = await getItemPerPageUseCase(NoParams());
+    final brightness = await getCurrentBrightnessUseCase(NoParams());
+
+    state = state.copyWith(
+      currentlanguage: currentLanguage,
+      supportedLanguages: supportedLanguages,
+      itemPerPage: itemPerPage,
+      brightness: brightness,
+      isLoading: false,
+    );
+  }
+
+  Future<LanguageCodes> getCurrentLanguage() {
+    return getCurrentLanguageUseCase(NoParams());
+  }
+
+  Future<Set<LanguageCodes>> getSupportedLanguages() async {
+    return getSupportedLanguagesUseCase(NoParams());
+  }
+
+  Future<void> changeLanguage(LanguageCodes code) async {
+    state = state.copyWith(currentlanguage: code);
+    await changeLanguageUseCase(code);
+  }
+
+  Future<void> updateItemPerPage(int value) async {
+    state = state.copyWith(itemPerPage: value);
+    await changeItemPerPageUseCase(value);
+  }
+
+  Future<int> getItemPerPage() async {
+    return getItemPerPageUseCase(NoParams());
+  }
+
+  Future<Brightness> getCurrentBrightness() {
+    return getCurrentBrightnessUseCase(NoParams());
+  }
+
+  Future<void> setBrightness(Brightness brightness) async {
+    state = state.copyWith(brightness: brightness);
+    await setBrightnessUseCase(brightness);
+  }
+
+  Future<void> backup() async {
+    final products = await getAllProductsUseCase(NoParams());
+    final categories = await getAllCategoriesUsecCase(NoParams());
+    final ordersWithItems = await getAllOrdersWithItemsUseCase(NoParams());
+
+    final data = BackupData(
+      categories: categories,
+      products: products,
+      orderWithItems: ordersWithItems,
+    );
+
+    await backupDatabaseUseCase(data);
+  }
+
+  Future<void> restore() async {
+    final data = await restoreDatabaseUseCase(NoParams());
+
+    await addAllCategoriesUseCase(data.categories);
+    await addAllProductsUseCase(data.products);
+    await addAllOrdersWithItemsUseCase(data.orderWithItems);
+  }
+}

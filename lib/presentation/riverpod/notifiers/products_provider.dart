@@ -8,6 +8,7 @@ import 'package:sales/domain/entities/get_product_params.dart';
 import 'package:sales/domain/entities/product.dart';
 import 'package:sales/domain/entities/product_order_by.dart';
 import 'package:sales/domain/entities/ranges.dart';
+import 'package:sales/domain/usecases/app/get_item_per_page_usecase.dart';
 import 'package:sales/domain/usecases/categories/add_category_usecase.dart';
 import 'package:sales/domain/usecases/categories/get_all_categories.dart';
 import 'package:sales/domain/usecases/categories/get_next_category_id_usecase.dart';
@@ -36,6 +37,7 @@ final productsProvider = StateNotifierProvider<ProductsNotifier, ProductsState>(
     getNextProductIdAndSkuUseCase: getIt(),
     replaceDatabaseUsecase: getIt(),
     importDataUseCase: getIt(),
+    getItemPerPageUseCase: getIt(),
   );
 });
 
@@ -52,6 +54,7 @@ class ProductsNotifier extends StateNotifier<ProductsState> {
   final GetNextProductIdAndSkuUseCase _getNextProductIdAndSkuUseCase;
   final ReplaceDatabaseUsecase _replaceDatabaseUsecase;
   final ImportDataUseCase _importDataUseCase;
+  final GetItemPerPageUseCase _getItemPerPageUseCase;
 
   ProductsNotifier({
     required GetAllCategoriesUsecCase getAllCategoriesUsecCase,
@@ -66,6 +69,7 @@ class ProductsNotifier extends StateNotifier<ProductsState> {
     required UpdateCategoryUseCase updateCategoryUseCase,
     required ReplaceDatabaseUsecase replaceDatabaseUsecase,
     required ImportDataUseCase importDataUseCase,
+    required GetItemPerPageUseCase getItemPerPageUseCase,
   })  : _importDataUseCase = importDataUseCase,
         _updateCategoryUseCase = updateCategoryUseCase,
         _removeCategoryUseCase = removeCategoryUseCase,
@@ -78,10 +82,12 @@ class ProductsNotifier extends StateNotifier<ProductsState> {
         _addCategoryUseCase = addCategoryUseCase,
         _getNextCategoryIdUseCase = getNextCategoryIdUseCase,
         _replaceDatabaseUsecase = replaceDatabaseUsecase,
+        _getItemPerPageUseCase = getItemPerPageUseCase,
         super(const ProductsState());
 
   Future<void> loadInitialData() async {
-    state = state.copyWith(isLoading: true);
+    int perPage = await _getItemPerPageUseCase(NoParams());
+    state = state.copyWith(perPage: perPage, isLoading: true);
     try {
       final categories = await _getAllCategoriesUseCase(NoParams());
       state = state.copyWith(categories: categories);
@@ -234,5 +240,12 @@ class ProductsNotifier extends StateNotifier<ProductsState> {
         error: e.toString(),
       );
     }
+  }
+
+  Future<void> updatePerPage(int itemPerPage) async {
+    if (itemPerPage == state.perPage) return;
+
+    state = state.copyWith(perPage: itemPerPage);
+    await fetchProducts(resetPage: true);
   }
 }

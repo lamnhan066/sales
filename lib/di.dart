@@ -42,6 +42,7 @@ import 'package:sales/domain/usecases/auth/login_usecase.dart';
 import 'package:sales/domain/usecases/auth/logout_usecase.dart';
 import 'package:sales/domain/usecases/backup_restore/backup_database_usecase.dart';
 import 'package:sales/domain/usecases/backup_restore/restore_database_usecase.dart';
+import 'package:sales/domain/usecases/categories/add_all_categories_usecase.dart';
 import 'package:sales/domain/usecases/categories/add_category_usecase.dart';
 import 'package:sales/domain/usecases/categories/get_all_categories.dart';
 import 'package:sales/domain/usecases/categories/get_next_category_id_usecase.dart';
@@ -52,13 +53,16 @@ import 'package:sales/domain/usecases/data_services/load_server_configuration_us
 import 'package:sales/domain/usecases/data_services/load_server_connection_usecase.dart';
 import 'package:sales/domain/usecases/data_services/replace_database_usecase.dart';
 import 'package:sales/domain/usecases/data_services/save_server_configuration_usecase.dart';
+import 'package:sales/domain/usecases/order_with_items/add_all_orders_with_items_usecase.dart';
 import 'package:sales/domain/usecases/order_with_items/add_order_with_items_usecase.dart';
+import 'package:sales/domain/usecases/order_with_items/get_all_orders_with_items_usecase.dart';
 import 'package:sales/domain/usecases/order_with_items/get_next_order_item_id_usecase.dart';
 import 'package:sales/domain/usecases/order_with_items/get_order_items_usecase.dart';
 import 'package:sales/domain/usecases/order_with_items/remove_order_with_items_usecase.dart';
 import 'package:sales/domain/usecases/order_with_items/update_order_with_items_usecase.dart';
 import 'package:sales/domain/usecases/orders/get_next_order_id_usecase.dart';
 import 'package:sales/domain/usecases/orders/get_orders_usecase.dart';
+import 'package:sales/domain/usecases/products/add_all_products_usecase.dart';
 import 'package:sales/domain/usecases/products/add_product_usecase.dart';
 import 'package:sales/domain/usecases/products/get_all_products_usecase.dart';
 import 'package:sales/domain/usecases/products/get_next_product_id_and_sku_usecase.dart';
@@ -177,6 +181,7 @@ void _registerProductUseCases() {
   getIt.registerLazySingleton<RemoveProductUseCase>(() => RemoveProductUseCase(getIt()));
   getIt.registerLazySingleton<GetNextProductIdAndSkuUseCase>(() => GetNextProductIdAndSkuUseCase(getIt()));
   getIt.registerLazySingleton<GetAllProductsUseCase>(() => GetAllProductsUseCase(getIt()));
+  getIt.registerLazySingleton<AddAllProductsUseCase>(() => AddAllProductsUseCase(getIt()));
 }
 
 void _registerOrderUseCases() {
@@ -187,6 +192,8 @@ void _registerOrderUseCases() {
   getIt.registerLazySingleton<AddOrderWithItemsUseCase>(() => AddOrderWithItemsUseCase(getIt()));
   getIt.registerLazySingleton<UpdateOrderWithItemsUseCase>(() => UpdateOrderWithItemsUseCase(getIt()));
   getIt.registerLazySingleton<RemoveOrderWithItemsUseCase>(() => RemoveOrderWithItemsUseCase(getIt()));
+  getIt.registerLazySingleton<GetAllOrdersWithItemsUseCase>(() => GetAllOrdersWithItemsUseCase(getIt()));
+  getIt.registerLazySingleton<AddAllOrdersWithItemsUseCase>(() => AddAllOrdersWithItemsUseCase(getIt()));
 }
 
 void _registerCategoryUseCases() {
@@ -195,6 +202,7 @@ void _registerCategoryUseCases() {
   getIt.registerLazySingleton<UpdateCategoryUseCase>(() => UpdateCategoryUseCase(getIt()));
   getIt.registerLazySingleton<GetAllCategoriesUsecCase>(() => GetAllCategoriesUsecCase(getIt()));
   getIt.registerLazySingleton<GetNextCategoryIdUseCase>(() => GetNextCategoryIdUseCase(getIt()));
+  getIt.registerLazySingleton<AddAllCategoriesUseCase>(() => AddAllCategoriesUseCase(getIt()));
 }
 
 void _registerReportUseCases() {

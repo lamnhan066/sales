@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:typed_data';
+import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:language_helper/language_helper.dart';
@@ -14,20 +14,23 @@ class BackupRestoreRepositoryImpl implements BackupRestoreRepository {
 
   @override
   Future<void> backup(BackupData params) async {
-    final data = Uint8List.fromList(utf8.encode(params.toJson()));
-    await _filePicker.saveFile(
+    final data = utf8.encode(params.toJson());
+    final path = await _filePicker.saveFile(
       dialogTitle: 'Lưu Bản Sao Lưu'.tr,
       fileName: 'sales.bak',
-      allowedExtensions: ['bak'],
-      bytes: data,
     );
+
+    if (path != null) {
+      final file = File(path);
+      await file.writeAsBytes(data);
+    }
   }
 
   @override
   Future<BackupData> restore() async {
     final file = await _filePicker.pickFiles(
       dialogTitle: 'Chọn Bản Sao Lưu'.tr,
-      allowedExtensions: ['bak'],
+      withData: true,
     );
 
     if (file == null || file.files.isEmpty) {
