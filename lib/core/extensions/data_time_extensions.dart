@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 extension DateTimeExtensions on DateTime {
   String toddMMyyyy() {
     final dd = '$day'.padLeft(2, '0');
@@ -14,5 +16,10 @@ extension DateTimeExtensions on DateTime {
   String tommyyyy() {
     final mm = '$month'.padLeft(2, '0');
     return '$mm-$year';
+  }
+
+  /// Date only
+  DateTime dateOnly() {
+    return DateUtils.dateOnly(this);
   }
 }
