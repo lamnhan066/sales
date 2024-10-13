@@ -12,7 +12,7 @@ abstract interface class OrderDatabase {
   /// Xoá đơn đặt hàng.
   Future<void> removeOrder(OrderModel order);
 
-  /// Lấy danh sách tất cả các đơn hàng.
+  /// Lấy danh sách tất cả các đơn hàng kể cả đơn hàng đã bị xoá.
   Future<List<OrderModel>> getAllOrders();
 
   /// Lấy danh sách đơn hàng theo điều kiện.

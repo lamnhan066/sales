@@ -488,18 +488,6 @@ class MemoryStorageImpl implements MemoryStorage {
   }
 
   @override
-  Future<void> backup(String backupPath) {
-    // TODO: implement backup
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> restore(String backupPath) {
-    // TODO: implement restore
-    throw UnimplementedError();
-  }
-
-  @override
   Future<Map<ProductModel, int>> getSoldProductsWithQuantity(Ranges<DateTime> dateRange) {
     // TODO: implement getSoldProductsWithQuantity
     throw UnimplementedError();

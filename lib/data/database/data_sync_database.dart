@@ -13,10 +13,4 @@ abstract interface class DataSyncDatabase {
   /// Việc thay thế này sẽ dẫn đến dữ liệu ở database bị xoá hoàn toàn
   /// và được thay thế mới.
   Future<void> replace(List<CategoryModel> categories, List<ProductModel> products);
-
-  /// Sao lưu dữ liệu
-  Future<void> backup(String backupPath);
-
-  /// Khôi phục dữ liệu.
-  Future<void> restore(String backupPath);
 }

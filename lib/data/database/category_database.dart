@@ -17,7 +17,7 @@ abstract interface class CategoryDatabase {
   /// Xoá loại hàng.
   Future<void> removeCategory(CategoryModel category);
 
-  /// Lấy danh sách tất cả các loại hàng.
+  /// Lấy danh sách tất cả các loại hàng kể cả loại hàng đã bị xoá.
   Future<List<CategoryModel>> getAllCategories();
 
   /// Lưu tất cả loại hàng vào CSDL.

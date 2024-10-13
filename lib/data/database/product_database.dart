@@ -24,7 +24,7 @@ abstract interface class ProductDatabase {
   /// sản phẩm trang hiện tại).
   Future<GetResult<ProductModel>> getProducts([GetProductParams params]);
 
-  /// Lấy toàn bộ danh sách sản phẩm.
+  /// Lấy toàn bộ danh sách sản phẩm kể cả sản phẩm đã bị xoá.
   Future<List<ProductModel>> getAllProducts();
 
   /// Trình tạo ra `id` và `sku` cho sản phẩm.

@@ -14,6 +14,6 @@ abstract interface class OrderWithItemsDatabase {
   /// Thêm tất cả đơn hàng và chi tiết đơn hàng
   Future<void> addAllOrdersWithItems(List<OrderWithItemsParamsModel> orderWithItems);
 
-  /// Lấy tất cả đơn hàng và chi tiết đơn hàng
+  /// Lấy tất cả đơn hàng và chi tiết đơn hàng kể cả đơn đã bị xoá
   Future<List<OrderWithItemsParamsModel>> getAllOrdersWithItems();
 }

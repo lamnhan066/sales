@@ -14,10 +14,10 @@ abstract interface class OrderItemDatabase {
   /// Lấy danh sách chi tiết sản phẩm đã đặt theo mã đơn và mã sản phẩm.
   Future<List<OrderItemModel>> getOrderItems([GetOrderItemsParams? params]);
 
-  /// Lấy tất tất cả sản phẩm đã đặt hàng.
+  /// Lấy tất tất cả chi tiết đơn đặt hàng kể cả chi tiết đơn đã bị xoá.
   Future<List<OrderItemModel>> getAllOrderItems();
 
-  /// Lưu tất cả sản phẩm đã đặt hàng.
+  /// Lưu tất cả sản phẩm đã đặt hàng kể cả đơn đã xoá.
   Future<void> addAllOrderItems(List<OrderItemModel> orderItems);
 
   /// Trình tạo ra `id` cho chi tiết đơn hàng.

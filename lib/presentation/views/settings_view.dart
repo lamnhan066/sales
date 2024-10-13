@@ -22,24 +22,22 @@ class SettingsView extends ConsumerWidget {
       return Center(child: Text(state.error));
     }
 
-    return LanguageBuilder(builder: (context) {
-      return Scaffold(
-        body: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 600),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                _buildLanguage(notifier, state),
-                _buildBrightness(notifier, state),
-                _buildItemPerPage(notifier, state),
-                _buildBackupRestore(notifier, state),
-              ],
-            ),
+    return Scaffold(
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 600),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              _buildLanguage(notifier, state),
+              _buildBrightness(notifier, state),
+              _buildItemPerPage(notifier, state),
+              _buildBackupRestore(notifier, state),
+            ],
           ),
         ),
-      );
-    });
+      ),
+    );
   }
 
   Widget _buildLanguage(SettingsNotifier notifier, SettingsState state) {

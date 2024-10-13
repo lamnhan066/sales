@@ -11,7 +11,6 @@ import 'package:sales/domain/entities/get_order_items_params.dart';
 import 'package:sales/domain/entities/get_order_params.dart';
 import 'package:sales/domain/entities/get_product_params.dart';
 import 'package:sales/domain/entities/get_result.dart';
-import 'package:sales/domain/entities/range_of_dates.dart';
 import 'package:sales/domain/entities/ranges.dart';
 import 'package:sales/domain/repositories/server_configurations_repository.dart';
 
@@ -225,46 +224,30 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
 
   @override
   Future<List<CategoryModel>> getAllCategories([Session? session]) async {
-    const sql = 'SELECT * FROM categories WHERE c_deleted=FALSE';
+    const sql = 'SELECT * FROM categories';
     final result = await (session ?? _connection).execute(sql);
 
     return result.map((e) => CategoryModel.fromMap(e.toColumnMap())).toList();
   }
 
   @override
-  Future<List<OrderItemModel>> getAllOrderItems([GetOrderItemsParams? params, Session? session]) async {
-    var sql = 'SELECT * FROM order_items WHERE oi_deleted=FALSE';
-    if (params?.orderId != null) {
-      sql += ' AND oi_order_id = ${params?.orderId}';
-    }
-    if (params?.productId != null) {
-      sql += ' AND oi_product_id = ${params?.orderId}';
-    }
+  Future<List<OrderItemModel>> getAllOrderItems([Session? session]) async {
+    var sql = 'SELECT * FROM order_items';
     final result = await (session ?? _connection).execute(sql);
-
     return result.map((e) => OrderItemModel.fromMap(e.toColumnMap())).toList();
   }
 
   @override
-  Future<List<OrderModel>> getAllOrders({RangeOfDates? dateRange, Session? session}) async {
-    String sql = 'SELECT * FROM orders WHERE o_deleted=FALSE';
-    final parameters = <String, Object>{};
-    if (dateRange != null) {
-      sql += " AND o_date::timestamptz >= @startDate::timestamptz";
-      sql += " AND o_date::timestamptz <= @endDate::timestamptz";
-      parameters.addAll({
-        'startDate': dateRange.start.dateOnly(),
-        'endDate': dateRange.end.dateOnly(),
-      });
-    }
-    final result = await (session ?? _connection).execute(Sql.named(sql), parameters: parameters);
+  Future<List<OrderModel>> getAllOrders({Session? session}) async {
+    String sql = 'SELECT * FROM orders';
+    final result = await (session ?? _connection).execute(sql);
 
     return result.map((e) => OrderModel.fromMap(e.toColumnMap())).toList();
   }
 
   @override
   Future<List<ProductModel>> getAllProducts() async {
-    String sql = 'SELECT * FROM products WHERE p_deleted = FALSE';
+    String sql = 'SELECT * FROM products';
     final result = await _connection.execute(Sql.named(sql));
 
     return result.map((e) => ProductModel.fromMap(e.toColumnMap())).toList();
@@ -612,7 +595,7 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
   @override
   Future<void> removeOrderWithItems(OrderModel order) async {
     await _connection.runTx((session) async {
-      final orderItems = await getAllOrderItems(GetOrderItemsParams(orderId: order.id), session);
+      final orderItems = await getOrderItems(GetOrderItemsParams(orderId: order.id), session);
       for (final orderItem in orderItems) {
         final tempOrderItems = orderItem.copyWith(deleted: true);
         await updateOrderItem(tempOrderItems, session);
@@ -686,18 +669,6 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
         }
       }
     });
-  }
-
-  @override
-  Future<void> backup(String backupPath) {
-    // TODO: implement backup
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> restore(String backupPath) {
-    // TODO: implement restore
-    throw UnimplementedError();
   }
 
   @override
