@@ -128,10 +128,12 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
   }
 
   Future<void> backup() async {
+    state = state.copyWith(backupRestoreStatus: 'Đang chuẩn bị dữ liệu...'.tr);
     final products = await getAllProductsUseCase(NoParams());
     final categories = await getAllCategoriesUsecCase(NoParams());
     final ordersWithItems = await getAllOrdersWithItemsUseCase(NoParams());
 
+    state = state.copyWith(backupRestoreStatus: 'Chọn vị trí lưu và lưu bản sao lưu...'.tr);
     final data = BackupData(
       categories: categories,
       products: products,
@@ -139,13 +141,22 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
     );
 
     await backupDatabaseUseCase(data);
+    state = state.copyWith(backupRestoreStatus: 'Sao lưu đã hoàn tất tại'.tr);
   }
 
   Future<void> restore() async {
+    state = state.copyWith(backupRestoreStatus: 'Đang lấy dữ liệu đã sao lưu...'.tr);
     final data = await restoreDatabaseUseCase(NoParams());
 
+    state = state.copyWith(backupRestoreStatus: 'Đang tiến hành khôi phục Loại Hàng...'.tr);
     await addAllCategoriesUseCase(data.categories);
+
+    state = state.copyWith(backupRestoreStatus: 'Đang tiến hành khôi phục Sản Phẩm...'.tr);
     await addAllProductsUseCase(data.products);
+
+    state = state.copyWith(backupRestoreStatus: 'Đang tiến hành khôi phục Đơn Hàng và Chi Tiết Đơn hàng...'.tr);
     await addAllOrdersWithItemsUseCase(data.orderWithItems);
+
+    state = state.copyWith(backupRestoreStatus: 'Khôi phục đã hoàn tất'.tr);
   }
 }
