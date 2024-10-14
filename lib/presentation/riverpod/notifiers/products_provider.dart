@@ -92,7 +92,7 @@ class ProductsNotifier extends StateNotifier<ProductsState> {
     try {
       final categories = await _getAllCategoriesUseCase(NoParams());
       state = state.copyWith(categories: categories);
-      await fetchProducts();
+      await fetchProducts(resetPage: true);
     } on Failure catch (e) {
       error = e.message;
     }
