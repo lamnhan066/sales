@@ -18,7 +18,7 @@ class OrderModel extends Order {
     return OrderModel(
       id: (map['o_id'] as num).toInt(),
       status: OrderStatus.values.byName((map['o_status'] as String).trim()),
-      date: map['o_date'],
+      date: (map['o_date'] as DateTime).toLocal(),
       deleted: map['o_deleted'] as bool,
     );
   }
