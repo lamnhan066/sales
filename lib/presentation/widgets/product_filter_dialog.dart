@@ -46,7 +46,10 @@ class _ProductFilterDialogState extends State<ProductFilterDialog> {
       children: [
         Column(
           children: [
-            Text('Lọc theo mức giá'.tr),
+            Text(
+              'Lọc theo mức giá'.tr,
+              style: const TextStyle(fontSize: 18),
+            ),
             Row(
               children: [
                 Expanded(
@@ -131,7 +134,10 @@ class _ProductFilterDialogState extends State<ProductFilterDialog> {
                 ),
               ],
             ),
-            Text('Lọc theo loại hàng'.tr),
+            Text(
+              'Lọc theo loại hàng'.tr,
+              style: const TextStyle(fontSize: 18),
+            ),
             BoxWDropdown<int>(
               title: 'Loại hàng'.tr,
               items: widget.categories
