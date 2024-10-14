@@ -2,7 +2,7 @@ import 'package:language_helper/language_helper.dart';
 import 'package:sales/core/utils/password_cryptor.dart';
 import 'package:sales/domain/entities/login_credentials.dart';
 import 'package:sales/domain/entities/user.dart';
-import 'package:sales/domain/exceptions/credentials_exception.dart';
+import 'package:sales/infrastructure/exceptions/credentials_exception.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../domain/repositories/auth_repository.dart';
@@ -17,7 +17,7 @@ class LocalAuthRepositoryImpl implements AuthRepository {
   @override
   Future<User> login(LoginCredentials credentials) async {
     if (credentials.username != 'postgres' || credentials.password != 'sales') {
-      throw InvalidCredentialsException('Sai tên đăng nhập hoặc mật khẩu'.tr);
+      throw CredentialsException('Sai tên đăng nhập hoặc mật khẩu'.tr);
     }
 
     if (credentials.rememberMe) {
@@ -34,7 +34,7 @@ class LocalAuthRepositoryImpl implements AuthRepository {
   Future<User> autoLogin() async {
     final credentials = getRememberedCredentials();
     if (credentials == null) {
-      throw InvalidCacheCredentialsException('Không có thông tin đăng nhập được lưu'.tr);
+      throw CredentialsException('Không có thông tin đăng nhập được lưu'.tr);
     }
     return login(credentials);
   }

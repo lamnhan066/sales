@@ -1,7 +1,7 @@
 import 'package:sales/core/errors/failure.dart';
 import 'package:sales/core/usecases/usecase.dart';
-import 'package:sales/domain/exceptions/server_connection_exception.dart';
 import 'package:sales/domain/services/database_service.dart';
+import 'package:sales/infrastructure/exceptions/server_exception.dart';
 
 class LoadServerConnectionUsecase implements UseCase<void, NoParams> {
   final DatabaseService _service;
@@ -12,7 +12,7 @@ class LoadServerConnectionUsecase implements UseCase<void, NoParams> {
   Future<void> call(NoParams params) async {
     try {
       await _service.initial();
-    } on InvalidServerConnectionException catch (e) {
+    } on ServerException catch (e) {
       throw ServerFailure(e.message);
     }
   }
