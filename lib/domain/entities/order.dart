@@ -30,7 +30,7 @@ class Order with EquatableMixin {
     return Order(
       id: (map['id'] as num?)?.toInt() ?? 0,
       status: OrderStatus.values.byName((map['status'] as String).trim()),
-      date: DateTime.fromMillisecondsSinceEpoch(map['date'] as int),
+      date: DateTime.fromMillisecondsSinceEpoch(map['date'] as int).toLocal(),
       deleted: map['deleted'] as bool,
     );
   }
