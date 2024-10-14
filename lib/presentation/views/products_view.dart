@@ -98,7 +98,6 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
             Row(
               children: [
                 IconButton(
-                  color: Theme.of(context).primaryColor,
                   onPressed: () => _loadDataFromExcel(context),
                   icon: const Icon(Icons.upload_rounded),
                 ),
@@ -116,12 +115,11 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
                   ),
                 ),
                 IconButton(
-                  color: Theme.of(context).primaryColor,
                   onPressed: () => showFilterDialog(),
                   icon: const Icon(Icons.filter_alt_rounded),
                 ),
+                const SizedBox(width: 6),
                 IconButton(
-                  color: Theme.of(context).primaryColor,
                   onPressed: () => showSortDialog(),
                   icon: const Icon(Icons.sort_rounded),
                 ),

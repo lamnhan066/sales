@@ -55,7 +55,6 @@ class _OrdersViewState extends ConsumerState<OrdersView> {
                   Row(
                     children: [
                       IconButton(
-                        color: Theme.of(context).primaryColor,
                         onPressed: filter,
                         icon: ordersState.dateRange == null
                             ? const Icon(Icons.filter_alt_off_rounded)

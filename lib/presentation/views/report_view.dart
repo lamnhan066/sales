@@ -1,4 +1,5 @@
 import 'package:boxw/boxw.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:language_helper/language_helper.dart';
@@ -17,6 +18,8 @@ class ReportView extends ConsumerStatefulWidget {
 }
 
 class _ReportViewState extends ConsumerState<ReportView> {
+  int touchedIndex = -1;
+
   @override
   void initState() {
     super.initState();
@@ -33,12 +36,16 @@ class _ReportViewState extends ConsumerState<ReportView> {
 
     return Scaffold(
       body: Column(
+        mainAxisSize: MainAxisSize.max,
         children: [
           _buildToolbar(context, notifier, state),
-          Expanded(
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxHeight: 400),
             child: _buildProductReport(context, notifier, state),
           ),
-          _buildRevenueReport(context, notifier, state),
+          Expanded(
+            child: _buildRevenueReport(context, notifier, state),
+          ),
         ],
       ),
     );
@@ -48,7 +55,6 @@ class _ReportViewState extends ConsumerState<ReportView> {
     return Toolbar(
       trailings: [
         IconButton(
-          color: Theme.of(context).primaryColor,
           onPressed: () => _updateFilters(context, notifier, state),
           icon: const Icon(Icons.calendar_month_rounded),
         ),
@@ -60,13 +66,19 @@ class _ReportViewState extends ConsumerState<ReportView> {
     final data = state.soldProductsWithQuantity.entries;
     return Column(
       children: [
-        Text('Sản phẩm và số lượng bán tương ứng:'.tr),
+        Text(
+          'Sản phẩm và số lượng bán tương ứng:'.tr,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+        ),
         Expanded(
           child: ListView.builder(
             itemCount: data.length,
             itemBuilder: (context, index) {
               final entry = data.elementAt(index);
-              return Text('${entry.key.name} - ${entry.value}');
+              return Center(child: Text('${entry.key.name} - ${entry.value}'));
             },
           ),
         ),
@@ -77,11 +89,91 @@ class _ReportViewState extends ConsumerState<ReportView> {
   Widget _buildRevenueReport(BuildContext context, ReportNotifier notifier, ReportState state) {
     return Column(
       children: [
-        Text('Doanh thu và lợi nhuận:'.tr),
-        Text('Doanh thu: ${state.revenue}'),
-        Text('Lợi nhuận: ${state.profit}'),
+        Text(
+          'Doanh thu và lợi nhuận:'.tr,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+        ),
+        Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Doanh thu: ${state.revenue}'),
+              Text('Lợi nhuận: ${state.profit}'),
+            ],
+          ),
+        ),
+        Expanded(
+          child: PieChart(
+            PieChartData(
+              pieTouchData: PieTouchData(
+                touchCallback: (FlTouchEvent event, pieTouchResponse) {
+                  setState(() {
+                    if (!event.isInterestedForInteractions ||
+                        pieTouchResponse == null ||
+                        pieTouchResponse.touchedSection == null) {
+                      touchedIndex = -1;
+                      return;
+                    }
+                    touchedIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
+                  });
+                },
+              ),
+              borderData: FlBorderData(
+                show: false,
+              ),
+              sectionsSpace: 0,
+              centerSpaceRadius: 40,
+              sections: showingSections(notifier, state),
+            ),
+          ),
+        ),
       ],
     );
+  }
+
+  List<PieChartSectionData> showingSections(ReportNotifier notifier, ReportState state) {
+    return List.generate(2, (i) {
+      final isTouched = i == touchedIndex;
+      final fontSize = isTouched ? 25.0 : 16.0;
+      final radius = isTouched ? 60.0 : 50.0;
+      const shadows = [Shadow(color: Colors.black, blurRadius: 2)];
+
+      final bigPie = (state.revenue - state.profit) / state.revenue;
+      final smallPie = state.profit / state.revenue;
+      switch (i) {
+        case 0:
+          return PieChartSectionData(
+            color: Colors.blue,
+            value: bigPie,
+            title: '${(bigPie * 100).toStringAsFixed(0)}%',
+            radius: radius,
+            titleStyle: TextStyle(
+              fontSize: fontSize,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+              shadows: shadows,
+            ),
+          );
+        case 1:
+          return PieChartSectionData(
+            color: Colors.green,
+            value: smallPie,
+            title: '${(smallPie * 100).toStringAsFixed(0)}%',
+            radius: radius,
+            titleStyle: TextStyle(
+              fontSize: fontSize,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+              shadows: shadows,
+            ),
+          );
+        default:
+          throw Error();
+      }
+    });
   }
 
   Future<void> _updateFilters(BuildContext context, ReportNotifier notifier, ReportState state) async {
