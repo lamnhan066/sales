@@ -7,7 +7,7 @@
 
 ### Các Chức Năng Cơ Sở
 
-1. Đăng nhập:
+1. Trang Đăng nhập (Login):
 
     - Nếu có thông tin đăng nhập lưu từ lần trước thì tự động đăng nhập và đi vào màn hình chính luôn.
     - Thông tin đăng nhập cần phải được mã hóa.
@@ -56,7 +56,7 @@
                 - Cách để lấy được số hiện tại của trình tự động tạo số.
         - Có 3 loại sản phẩm: Điện Thoại, Máy Tính, Màn Hình.
         - Mỗi loại sản phẩm có 22 sản phẩm.
-        - Mỗi sản phẩm có ít nhất 3 hình.
+        - Mỗi sản phẩm có ít nhất 3 hình (hình ảnh có thể là đường dẫn từ máy tính hoặc URL).
         - Dữ liệu thật lấy từ thegioididong.com.
 
 4. Trang Đơn Hàng (Orders):
