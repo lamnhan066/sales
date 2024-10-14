@@ -411,7 +411,7 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
       JOIN 
           products ON oi_product_id = p_id
       WHERE 
-          o_deleted = FALSE AND oi_deleted = FALSE AND p_deleted = FALSE AND DATE_TRUNC('month', o_date::timestamptz) = DATE_TRUNC('month', @currentDate::timestamptz)
+          o_deleted = FALSE AND oi_deleted = FALSE AND p_deleted = FALSE AND DATE_TRUNC('month', o_date::timestamp) = DATE_TRUNC('month', @currentDate::timestamp)
       GROUP BY 
           TO_CHAR(o_date, 'DD')
       ORDER BY 
@@ -460,17 +460,17 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
     final start = params.dateRange?.start;
     final parameters = <String, Object>{};
     if (start != null) {
-      sql += " AND o_date::timestamptz >= @startDate::timestamptz";
+      sql += " AND o_date >= @startDate";
       parameters.addAll({
-        'startDate': start,
+        'startDate': TypedValue(Type.timestampTz, start.dateOnly()),
       });
     }
 
     final end = params.dateRange?.end;
     if (end != null) {
-      sql += " AND o_date::timestamptz <= @endDate::timestamptz";
+      sql += " AND o_date < @endDate";
       parameters.addAll({
-        'endDate': end,
+        'endDate': TypedValue(Type.timestampTz, end.dateOnly().add(const Duration(days: 1))),
       });
     }
 
@@ -683,7 +683,7 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
       JOIN
           orders ON oi_order_id = o_id
       WHERE
-          p_deleted = FALSE AND o_deleted = FALSE AND o_date::timestamptz >= @startDate::timestamptz AND o_date::timestamptz <= @endDate::timestamptz
+          p_deleted = FALSE AND o_deleted = FALSE AND o_date >= @startDate AND o_date < @endDate
       GROUP BY
           p_id, oi_id, o_id
       ORDER BY
@@ -691,7 +691,7 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
     ''';
     final parameters = {
       'startDate': dateRange.start.dateOnly(),
-      'endDate': dateRange.end.dateOnly(),
+      'endDate': dateRange.end.dateOnly().add(const Duration(days: 1)),
     };
 
     final result = await _connection.execute(Sql.named(sql), parameters: parameters);
@@ -718,11 +718,11 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
       JOIN
           order_items ON o_id = oi_order_id
       WHERE
-          o_deleted = FALSE AND oi_deleted = FALSE AND o_date::timestamptz >= @startDate::timestamptz AND o_date::timestamptz <= @endDate::timestamptz
+          o_deleted = FALSE AND oi_deleted = FALSE AND o_date >= @startDate AND o_date < @endDate
     ''';
     final parameters = {
       'startDate': dateRange.start.dateOnly(),
-      'endDate': dateRange.end.dateOnly(),
+      'endDate': dateRange.end.dateOnly().add(const Duration(days: 1)),
     };
 
     final result = await _connection.execute(Sql.named(sql), parameters: parameters);
@@ -741,11 +741,11 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
       JOIN
           orders ON oi_order_id = o_id
       WHERE
-          oi_deleted = FALSE AND p_deleted = FALSE AND o_deleted= FALSE AND o_date::timestamptz >= @startDate::timestamptz AND o_date::timestamptz <= @endDate::timestamptz
+          oi_deleted = FALSE AND p_deleted = FALSE AND o_deleted= FALSE AND o_date >= @startDate AND o_date <= @endDate
     ''';
     final parameters = {
       'startDate': dateRange.start.dateOnly(),
-      'endDate': dateRange.end.dateOnly(),
+      'endDate': dateRange.end.dateOnly().add(const Duration(days: 1)),
     };
 
     final result = await _connection.execute(Sql.named(sql), parameters: parameters);
