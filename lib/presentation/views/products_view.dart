@@ -29,19 +29,39 @@ class ProductsView extends ConsumerStatefulWidget {
 }
 
 class _ProductsViewState extends ConsumerState<ProductsView> {
+  final searchTextController = TextEditingController(text: '');
+  final searchTextFocus = FocusNode();
+  bool lastSearchFocusState = false;
+  Timer? timer;
+
   @override
   void initState() {
     super.initState();
 
+    lastSearchFocusState = false;
+    searchTextFocus.addListener(searchFocusListener);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(productsProvider.notifier).loadInitialData();
     });
   }
 
   @override
+  void dispose() {
+    searchTextFocus.removeListener(searchFocusListener);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final productState = ref.watch(productsProvider);
     final productNotifier = ref.read(productsProvider.notifier);
+
+    searchTextController.text = productState.searchText;
+    if (lastSearchFocusState) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        searchTextFocus.requestFocus();
+      });
+    }
 
     if (productState.isLoading) {
       return const SizedBox.shrink();
@@ -85,10 +105,12 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
                 SizedBox(
                   width: 200,
                   child: BoxWInput(
+                    controller: searchTextController,
+                    focusNode: searchTextFocus,
                     hintText: 'Tìm Kiếm'.tr,
                     hintStyle: const TextStyle(color: Colors.grey),
                     onChanged: (value) {
-                      notifier.updateSearchText(value);
+                      startSearchAfterDelay(notifier, value);
                     },
                     suffixIcon: const Icon(Icons.search),
                   ),
@@ -230,6 +252,17 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
         ],
       ),
     );
+  }
+
+  void searchFocusListener() {
+    lastSearchFocusState = searchTextFocus.hasFocus;
+  }
+
+  void startSearchAfterDelay(ProductsNotifier notifier, String value) {
+    timer?.cancel();
+    timer = Timer(const Duration(milliseconds: 300), () {
+      notifier.updateSearchText(value);
+    });
   }
 
   /// Thêm sản phẩm.
