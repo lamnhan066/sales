@@ -95,6 +95,7 @@
         - Khi ứng dụng tiến hành tự động đăng nhập thì một hộp thoại sẽ hiện ra để người dùng có thể huỷ trong vòng 3s.
     - Màn hình Sản Phẩm:
         - Sao chép một sản phẩm.
+        - Tạo một khoảng delay khi người dùng nhập vào ô tìm kiếm để đảm bảo người dùng hoàn thiện nhập liệu nhằm giảm số lần request lên server và giảm nháy màn hình khi tải dữ liệu.
     - Màn hình Đơn Hàng:
         - Sao chép một đơn hàng.
     - Màn hình Cài Đặt:
