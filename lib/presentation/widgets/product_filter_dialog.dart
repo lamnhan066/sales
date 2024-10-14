@@ -72,6 +72,7 @@ class _ProductFilterDialogState extends State<ProductFilterDialog> {
                       final start = double.tryParse(value);
                       if (start != null) {
                         values = Ranges(start, values.end);
+                        widget.onPriceRangeChanged(values);
                       }
                     },
                     keyboardType: TextInputType.number,
@@ -81,6 +82,7 @@ class _ProductFilterDialogState extends State<ProductFilterDialog> {
                   onTap: () {
                     startController.text = PriceUtils.getPriceRangeText(0);
                     values = Ranges(0, values.end);
+                    widget.onPriceRangeChanged(values);
                   },
                   child: const Padding(
                     padding: EdgeInsets.all(8.0),
@@ -114,6 +116,7 @@ class _ProductFilterDialogState extends State<ProductFilterDialog> {
                       final end = double.tryParse(value);
                       if (end != null) {
                         values = Ranges(values.start, end);
+                        widget.onPriceRangeChanged(values);
                       }
                     },
                     keyboardType: TextInputType.number,
@@ -123,6 +126,7 @@ class _ProductFilterDialogState extends State<ProductFilterDialog> {
                   onTap: () {
                     endController.text = PriceUtils.getPriceRangeText(double.infinity);
                     values = Ranges(values.start, double.infinity);
+                    widget.onPriceRangeChanged(values);
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
