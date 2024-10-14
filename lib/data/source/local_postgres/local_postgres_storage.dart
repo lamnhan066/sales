@@ -454,7 +454,7 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
 
   @override
   Future<GetResult<OrderModel>> getOrders([GetOrderParams params = const GetOrderParams()]) async {
-    String sql = 'SELECT * FROM orders WHERE o_deleted=FALSE';
+    String sql = 'FROM orders WHERE o_deleted=FALSE';
 
     // Lọc theo ngày
     final start = params.dateRange?.start;
@@ -474,18 +474,29 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
       });
     }
 
-    final result = await _connection.execute(Sql.named(sql), parameters: parameters);
+    // Lấy tổng số đơn hàng.
+    final countResult = await _connection.execute(Sql.named('SELECT COUNT(*) $sql'), parameters: parameters);
+    final totalCount = countResult.first.first as int;
+
+    sql += ' ORDER BY o_id LIMIT @limit OFFSET @offset';
+    parameters.addAll({
+      'limit': params.perpage,
+      'offset': (params.page - 1) * params.perpage,
+    });
+
+    // Lấy danh sách đơn hàng ở trang hiện tại.
+    final result = await _connection.execute(Sql.named('SELECT * $sql'), parameters: parameters);
     final orders = result.map((e) => OrderModel.fromMap(e.toColumnMap())).toList();
 
     return GetResult(
-      totalCount: result.length,
-      items: orders.skip((params.page - 1) * params.perpage).take(params.perpage).toList(),
+      totalCount: totalCount,
+      items: orders,
     );
   }
 
   @override
   Future<GetResult<ProductModel>> getProducts([GetProductParams params = const GetProductParams()]) async {
-    String sql = 'SELECT * FROM products WHERE p_deleted=FALSE';
+    String sql = 'FROM products WHERE p_deleted=FALSE';
     final Map<String, Object> parameters = {};
 
     if (params.isUseCategoryFilter) {
@@ -515,14 +526,24 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
       parameters.addAll({'searchText': '%${params.searchText}%'});
     }
 
-    sql += ' ORDER BY ${params.orderBy.sql}';
+    // Lấy tổng số sản phẩm.
+    final countResult = await _connection.execute(Sql.named('SELECT COUNT(*) $sql'), parameters: parameters);
+    final totalCount = countResult.first.first as int;
 
-    final result = await _connection.execute(Sql.named(sql), parameters: parameters);
+    sql += ' ORDER BY @orderBy LIMIT @limit OFFSET @offset';
+    parameters.addAll({
+      'orderBy': params.orderBy.sql,
+      'limit': params.perPage,
+      'offset': (params.page - 1) * params.perPage,
+    });
+
+    // Lấy danh sách sản phẩm cho trang hiện tại.
+    final result = await _connection.execute(Sql.named('SELECT * $sql'), parameters: parameters);
     final products = result.map((e) => ProductModel.fromMap(e.toColumnMap())).toList();
 
     return GetResult(
-      totalCount: result.length,
-      items: products.skip((params.page - 1) * params.perPage).take(params.perPage).toList(),
+      totalCount: totalCount,
+      items: products,
     );
   }
 
