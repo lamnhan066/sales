@@ -31,6 +31,7 @@ class HomeView extends ConsumerWidget {
     }
 
     Widget buildDrawer() {
+      final colorScheme = Theme.of(context).colorScheme;
       return SizedBox(
         width: 220,
         child: Drawer(
@@ -45,13 +46,12 @@ class HomeView extends ConsumerWidget {
                     children: [
                       for (final view in ViewsModel.values)
                         ListTile(
-                          tileColor: homeState.currentView == view ? Theme.of(context).primaryColor : null,
-                          textColor: homeState.currentView == view ? Theme.of(context).colorScheme.onPrimary : null,
+                          selected: homeState.currentView == view,
+                          selectedTileColor: colorScheme.inversePrimary,
                           title: Text(title(view)),
-                          trailing: Icon(
+                          trailing: const Icon(
                             Icons.arrow_forward_ios_outlined,
                             size: 12,
-                            color: homeState.currentView == view ? Theme.of(context).colorScheme.onPrimary : null,
                           ),
                           onTap: () {
                             homeNotifier.setView(view);
