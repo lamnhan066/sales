@@ -110,6 +110,8 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
   }
 
   Future<void> updateItemPerPage(int value) async {
+    if (value <= 0) return;
+
     state = state.copyWith(itemPerPage: value);
     await changeItemPerPageUseCase(value);
   }
