@@ -530,9 +530,8 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
     final countResult = await _connection.execute(Sql.named('SELECT COUNT(*) $sql'), parameters: parameters);
     final totalCount = countResult.first.first as int;
 
-    sql += ' ORDER BY @orderBy LIMIT @limit OFFSET @offset';
+    sql += ' ORDER BY ${params.orderBy.sql} LIMIT @limit OFFSET @offset';
     parameters.addAll({
-      'orderBy': params.orderBy.sql,
       'limit': params.perPage,
       'offset': (params.page - 1) * params.perPage,
     });
