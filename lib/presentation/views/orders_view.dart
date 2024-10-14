@@ -25,7 +25,7 @@ class _OrdersViewState extends ConsumerState<OrdersView> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(ordersProvider.notifier).fetchOrders();
+      ref.read(ordersProvider.notifier).initialize();
     });
   }
 

@@ -65,13 +65,19 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
         _getItemPerPageUseCase = getItemPerPageUseCase,
         super(OrdersState());
 
+  Future<void> initialize() async {
+    state = state.copyWith(isLoading: true);
+    await fetchOrders(resetPage: true);
+    state = state.copyWith(isLoading: false);
+  }
+
   Future<void> fetchOrders({bool resetPage = false}) async {
     int perpage = await _getItemPerPageUseCase(NoParams());
     int page = state.page;
-    if (resetPage) {
-      page = 1;
-    }
-    state = state.copyWith(page: page, perPage: perpage, isLoading: true);
+    if (resetPage) page = 1;
+
+    state = state.copyWith(page: page, perPage: perpage);
+    String error = '';
     try {
       final result = await _getOrdersUseCase(
         GetOrderParams(page: state.page, perpage: state.perPage, dateRange: state.dateRange),
@@ -82,8 +88,9 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
         isLoading: false,
       );
     } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
+      error = e.toString();
     }
+    state = state.copyWith(error: error);
   }
 
   Future<void> goToPreviousPage() async {

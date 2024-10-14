@@ -88,13 +88,15 @@ class ProductsNotifier extends StateNotifier<ProductsState> {
   Future<void> loadInitialData() async {
     int perPage = await _getItemPerPageUseCase(NoParams());
     state = state.copyWith(perPage: perPage, isLoading: true);
+    String error = '';
     try {
       final categories = await _getAllCategoriesUseCase(NoParams());
       state = state.copyWith(categories: categories);
       await fetchProducts();
     } on Failure catch (e) {
-      state = state.copyWith(isLoading: false, error: e.message);
+      error = e.message;
     }
+    state = state.copyWith(isLoading: false, error: error);
   }
 
   Future<void> addProduct(Product product) async {
@@ -218,7 +220,6 @@ class ProductsNotifier extends StateNotifier<ProductsState> {
   Future<void> fetchProducts({bool resetPage = false}) async {
     if (resetPage) state = state.copyWith(page: 1);
 
-    state = state.copyWith(isLoading: true, error: '');
     try {
       final productsResult = await _getProductsUseCase(GetProductParams(
         page: state.page,
@@ -232,13 +233,9 @@ class ProductsNotifier extends StateNotifier<ProductsState> {
       state = state.copyWith(
         products: productsResult.items,
         totalPage: (productsResult.totalCount / state.perPage).ceil(),
-        isLoading: false,
       );
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(error: e.toString());
     }
   }
 

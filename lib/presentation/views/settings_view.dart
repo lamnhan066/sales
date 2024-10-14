@@ -113,7 +113,6 @@ class SettingsView extends ConsumerWidget {
             child: BoxWNumberField(
               initial: state.itemPerPage,
               min: 1,
-              max: 20,
               onChanged: (value) async {
                 if (value != null) {
                   await notifier.updateItemPerPage(value);
