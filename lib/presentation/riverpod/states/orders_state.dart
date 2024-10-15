@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:features_tour/features_tour.dart';
 import 'package:sales/domain/entities/order.dart';
 import 'package:sales/domain/entities/ranges.dart';
 
@@ -19,6 +20,8 @@ class OrdersState with EquatableMixin {
   Ranges<DateTime?>? get dateRange => _dateRange;
   Ranges<DateTime?>? _dateRange;
 
+  final FeaturesTourController tour;
+
   final bool isLoading;
   final String error;
 
@@ -30,6 +33,7 @@ class OrdersState with EquatableMixin {
     Ranges<DateTime?>? dateRange,
     this.isLoading = false,
     this.error = '',
+    required this.tour,
   }) : _dateRange = dateRange;
 
   OrdersState copyWith({
@@ -47,6 +51,7 @@ class OrdersState with EquatableMixin {
       totalPage: totalPage ?? this.totalPage,
       isLoading: isLoading ?? this.isLoading,
       error: error ?? this.error,
+      tour: tour,
     ).._dateRange = dateRange;
   }
 
@@ -65,6 +70,7 @@ class OrdersState with EquatableMixin {
       _dateRange,
       isLoading,
       error,
+      tour.pageName,
     ];
   }
 }

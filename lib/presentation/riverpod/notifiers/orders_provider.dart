@@ -1,3 +1,4 @@
+import 'package:features_tour/features_tour.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sales/core/usecases/usecase.dart';
 import 'package:sales/di.dart';
@@ -63,7 +64,7 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
         _updateOrderWithItemsUseCase = updateOrderWithItemsUseCase,
         _removeOrderWithItemsUseCase = removeOrderWithItemsUseCase,
         _getItemPerPageUseCase = getItemPerPageUseCase,
-        super(OrdersState());
+        super(OrdersState(tour: FeaturesTourController('OrdersView')));
 
   Future<void> initialize() async {
     state = state.copyWith(isLoading: true);

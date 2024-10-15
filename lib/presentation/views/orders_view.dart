@@ -1,8 +1,8 @@
 import 'package:boxw/boxw.dart';
+import 'package:features_tour/features_tour.dart';
 import 'package:flutter/material.dart' hide DataTable, DataRow, DataColumn, DataCell;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:language_helper/language_helper.dart';
-import 'package:sales/core/constants/app_configs.dart';
 import 'package:sales/core/extensions/data_time_extensions.dart';
 import 'package:sales/domain/entities/order.dart';
 import 'package:sales/presentation/riverpod/notifiers/orders_provider.dart';
@@ -12,6 +12,7 @@ import 'package:sales/presentation/widgets/data_table_plus.dart';
 import 'package:sales/presentation/widgets/order_dialog.dart';
 import 'package:sales/presentation/widgets/order_filter_dialog.dart';
 import 'package:sales/presentation/widgets/page_chooser_dialog.dart';
+import 'package:sales/presentation/widgets/toolbar.dart';
 
 class OrdersView extends ConsumerStatefulWidget {
   const OrdersView({super.key});
@@ -26,6 +27,7 @@ class _OrdersViewState extends ConsumerState<OrdersView> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(ordersProvider.notifier).initialize();
+      ref.read(ordersProvider).tour.start(context);
     });
   }
 
@@ -41,30 +43,31 @@ class _OrdersViewState extends ConsumerState<OrdersView> {
     return Scaffold(
       body: Column(
         children: [
-          SizedBox(
-            height: AppConfigs.toolbarHeight,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  FilledButton(
-                    onPressed: addOrder,
-                    child: const Icon(Icons.add),
-                  ),
-                  Row(
-                    children: [
-                      IconButton(
-                        onPressed: filter,
-                        icon: ordersState.dateRange == null
-                            ? const Icon(Icons.filter_alt_off_rounded)
-                            : const Icon(Icons.filter_alt_rounded),
-                      ),
-                    ],
-                  ),
-                ],
+          Toolbar(
+            leadings: [
+              FeaturesTour(
+                controller: ordersState.tour,
+                index: 1,
+                introduce: Text('Nhấn vào đây để thêm đơn hàng'.tr),
+                child: FilledButton(
+                  onPressed: addOrder,
+                  child: const Icon(Icons.add),
+                ),
               ),
-            ),
+            ],
+            trailings: [
+              FeaturesTour(
+                controller: ordersState.tour,
+                index: 2,
+                introduce: Text('Nhấn vào đây để mở tuỳ chọn lọc đơn hàng'.tr),
+                child: IconButton(
+                  onPressed: filter,
+                  icon: ordersState.dateRange == null
+                      ? const Icon(Icons.filter_alt_off_rounded)
+                      : const Icon(Icons.filter_alt_rounded),
+                ),
+              ),
+            ],
           ),
           if (ordersState.isLoading)
             const Center(child: CircularProgressIndicator())
@@ -149,70 +152,160 @@ class _OrdersViewState extends ConsumerState<OrdersView> {
   }
 
   List<DataRow> _buildRows(OrdersState ordersState, OrdersNotifier ordersNotifier) {
-    return [
-      for (final o in ordersState.orders)
-        DataRow(
-          cells: [
-            DataCell(
-              Center(
-                child: Text(
-                  '${(ordersState.page - 1) * ordersState.perPage + ordersState.orders.indexOf(o) + 1}',
-                  textAlign: TextAlign.center,
-                ),
+    return ordersState.orders.asMap().entries.map((entry) {
+      final index = entry.key;
+      final order = entry.value;
+
+      return DataRow(
+        cells: [
+          DataCell(
+            Center(
+              child: Text(
+                '${(ordersState.page - 1) * ordersState.perPage + index + 1}',
+                textAlign: TextAlign.center,
               ),
             ),
-            DataCell(
-              Center(
-                child: Text(
-                  o.date.toHHmmssddMMyyyy(),
-                  textAlign: TextAlign.center,
-                ),
+          ),
+          DataCell(
+            Center(
+              child: Text(
+                order.date.toHHmmssddMMyyyy(),
+                textAlign: TextAlign.center,
               ),
             ),
-            DataCell(
-              Center(
-                child: Text(
-                  o.status.text,
-                  textAlign: TextAlign.center,
-                ),
+          ),
+          DataCell(
+            Center(
+              child: Text(
+                order.status.text,
+                textAlign: TextAlign.center,
               ),
             ),
-            DataCell(
-              Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    IconButton(
+          ),
+          DataCell(
+            Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  FeaturesTour(
+                    enabled: index == 0,
+                    controller: ordersState.tour,
+                    index: 3,
+                    introduce: Text('Nhấn vào đây để xem chi tiết đơn hàng'.tr),
+                    child: IconButton(
                       onPressed: () {
-                        viewOrder(o);
+                        viewOrder(order);
                       },
                       icon: const Icon(Icons.info_rounded),
                     ),
-                    IconButton(
+                  ),
+                  FeaturesTour(
+                    enabled: index == 0,
+                    controller: ordersState.tour,
+                    index: 4,
+                    introduce: Text('Nhấn vào đây để cập nhật chi tiết đơn hàng'.tr),
+                    child: IconButton(
                       onPressed: () {
-                        updateOrder(o);
+                        updateOrder(order);
                       },
                       icon: const Icon(Icons.edit),
                     ),
-                    IconButton(
+                  ),
+                  FeaturesTour(
+                    enabled: index == 0,
+                    controller: ordersState.tour,
+                    index: 5,
+                    introduce: Text('Nhấn vào đây để sao chép chi tiết đơn hàng'.tr),
+                    child: IconButton(
                       onPressed: () {
-                        copyOrder(o);
+                        copyOrder(order);
                       },
                       icon: const Icon(Icons.copy),
                     ),
-                    IconButton(
+                  ),
+                  FeaturesTour(
+                    enabled: index == 0,
+                    controller: ordersState.tour,
+                    index: 6,
+                    introduce: Text('Nhấn vào đây để xoá đơn hàng'.tr),
+                    child: IconButton(
                       onPressed: () {
-                        removeOrder(o);
+                        removeOrder(order);
                       },
                       icon: const Icon(Icons.close_rounded, color: Colors.red),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
-    ];
+          ),
+        ],
+      );
+    }).toList();
+    // [
+    //   for (final o in ordersState.orders)
+    //     DataRow(
+    //       cells: [
+    //         DataCell(
+    //           Center(
+    //             child: Text(
+    //               '${(ordersState.page - 1) * ordersState.perPage + ordersState.orders.indexOf(o) + 1}',
+    //               textAlign: TextAlign.center,
+    //             ),
+    //           ),
+    //         ),
+    //         DataCell(
+    //           Center(
+    //             child: Text(
+    //               o.date.toHHmmssddMMyyyy(),
+    //               textAlign: TextAlign.center,
+    //             ),
+    //           ),
+    //         ),
+    //         DataCell(
+    //           Center(
+    //             child: Text(
+    //               o.status.text,
+    //               textAlign: TextAlign.center,
+    //             ),
+    //           ),
+    //         ),
+    //         DataCell(
+    //           Center(
+    //             child: Row(
+    //               mainAxisAlignment: MainAxisAlignment.center,
+    //               children: [
+    //                 IconButton(
+    //                   onPressed: () {
+    //                     viewOrder(o);
+    //                   },
+    //                   icon: const Icon(Icons.info_rounded),
+    //                 ),
+    //                 IconButton(
+    //                   onPressed: () {
+    //                     updateOrder(o);
+    //                   },
+    //                   icon: const Icon(Icons.edit),
+    //                 ),
+    //                 IconButton(
+    //                   onPressed: () {
+    //                     copyOrder(o);
+    //                   },
+    //                   icon: const Icon(Icons.copy),
+    //                 ),
+    //                 IconButton(
+    //                   onPressed: () {
+    //                     removeOrder(o);
+    //                   },
+    //                   icon: const Icon(Icons.close_rounded, color: Colors.red),
+    //                 ),
+    //               ],
+    //             ),
+    //           ),
+    //         ),
+    //       ],
+    //     ),
+    // ];
   }
 
   void viewOrder(Order order) async {
