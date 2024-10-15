@@ -125,7 +125,10 @@ Future<void> setupDependencies() async {
       applyToAllPagesText: 'Áp dụng với tất cả các trang'.tr,
       acceptButtonText: Text('Chấp nhận'.tr),
       laterButtonText: Text('Để sau'.tr),
-      dismissButtonText: Text('Bỏ qua'.tr),
+      dismissButtonText: Text(
+        'Bỏ qua'.tr,
+        style: const TextStyle(color: Colors.grey),
+      ),
     ),
     skipConfig: SkipConfig(text: 'Bỏ Qua'.tr),
     nextConfig: NextConfig(text: 'Tiếp'.tr),
