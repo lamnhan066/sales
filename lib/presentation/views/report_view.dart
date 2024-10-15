@@ -3,6 +3,8 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:language_helper/language_helper.dart';
+import 'package:sales/core/extensions/data_time_extensions.dart';
+import 'package:sales/domain/entities/ranges.dart';
 import 'package:sales/presentation/riverpod/notifiers/report_provider.dart';
 import 'package:sales/presentation/riverpod/states/report_state.dart';
 import 'package:sales/presentation/widgets/common_components.dart';
@@ -53,6 +55,9 @@ class _ReportViewState extends ConsumerState<ReportView> {
 
   Toolbar _buildToolbar(BuildContext context, ReportNotifier notifier, ReportState state) {
     return Toolbar(
+      leadings: [
+        Text(_reportTitleText(state)),
+      ],
       trailings: [
         IconButton(
           onPressed: () => _updateFilters(context, notifier, state),
@@ -201,5 +206,17 @@ class _ReportViewState extends ConsumerState<ReportView> {
     if (result == true) {
       await notifier.updateFilters(newDateRange);
     }
+  }
+
+  String _reportTitleText(ReportState state) {
+    return (switch (state.reportDateRange) {
+      WeekDaysRanges() => 'Thống kê trong tuần hiện tại từ @{fromDate} đến @{toDate}',
+      MonthDaysRanges() => 'Thống kê trong tháng hiện tại từ @{fromDate} to @{toDate}',
+      _ => 'Thống kê từ @{fromDate} đến @{toDate}'
+    })
+        .trP({
+      'fromDate': state.reportDateRange.start.toddMMyyyy(),
+      'toDate': state.reportDateRange.end.toddMMyyyy(),
+    });
   }
 }
