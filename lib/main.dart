@@ -22,8 +22,8 @@ class App extends ConsumerWidget {
       locale: settingsState.currentlanguage.locale,
       supportedLocales: settingsState.supportedLanguages.map((e) => e.locale),
       themeMode: settingsState.brightness == Brightness.dark ? ThemeMode.dark : ThemeMode.light,
-      theme: ThemeData.light(),
-      darkTheme: ThemeData.dark(),
+      theme: ThemeData(colorSchemeSeed: Colors.blue, brightness: Brightness.light),
+      darkTheme: ThemeData(colorSchemeSeed: Colors.blue, brightness: Brightness.dark),
       home: const LoginView(),
     );
   }
