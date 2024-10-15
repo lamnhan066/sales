@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
+import 'package:sales/core/extensions/data_time_extensions.dart';
 
 extension DoubleRangesExtension on Ranges<double> {
   bool get isAllPrices => start == 0 && end == double.infinity;
@@ -41,22 +42,24 @@ class Ranges<T extends Object?> with EquatableMixin {
   List<Object> get props => [start ?? '', end ?? ''];
 }
 
-class SevenDaysRanges extends Ranges<DateTime> {
+class WeekDaysRanges extends Ranges<DateTime> {
   final DateTime date;
 
-  SevenDaysRanges(this.date) : super(_getStartDate(date), _getEndDate(date));
+  /// Khoảng ngày từ đầu tuần đến cuối tuần nhưng không vượt quá ngày hiện tại.
+  WeekDaysRanges(this.date) : super(_getStartDate(date), _getEndDate(date));
 
   static DateTime _getStartDate(DateTime date) {
     for (int i = 0;; i++) {
-      final previousDate = date.subtract(Duration(days: i));
+      final previousDate = date.subtract(Duration(days: i)).dateOnly();
       if (previousDate.weekday == 1) return previousDate;
     }
   }
 
   static DateTime _getEndDate(DateTime date) {
+    final today = DateTime.now().dateOnly();
     for (int i = 0;; i++) {
-      final nextDate = date.add(Duration(days: i));
-      if (nextDate.weekday == 1) return nextDate;
+      final nextDate = date.add(Duration(days: i)).dateOnly();
+      if (nextDate.weekday == 1 || nextDate == today) return today;
     }
   }
 }
@@ -64,20 +67,22 @@ class SevenDaysRanges extends Ranges<DateTime> {
 class MonthDaysRanges extends Ranges<DateTime> {
   final DateTime date;
 
+  /// Khoảng ngày từ đầu tháng cho đến cuối tháng nhưng không vượt quá ngày hiện tại.
   MonthDaysRanges(this.date) : super(_getStartDate(date), _getEndDate(date));
 
   static DateTime _getStartDate(DateTime date) {
     for (int i = 0;; i++) {
-      final previousDate = date.subtract(Duration(days: i));
+      final previousDate = date.subtract(Duration(days: i)).dateOnly();
       if (previousDate.day == 1) return previousDate;
     }
   }
 
   static DateTime _getEndDate(DateTime date) {
+    final today = DateTime.now().dateOnly();
     // Tìm ngày đầu của tháng tiếp theo nên cầu bắt đầu là 1 thay vì 0.
     for (int i = 1;; i++) {
-      final nextDate = date.add(Duration(days: i));
-      if (nextDate.day == 1) return nextDate;
+      final nextDate = date.add(Duration(days: i)).dateOnly();
+      if (nextDate.day == 1 || nextDate == today) return today;
     }
   }
 }
