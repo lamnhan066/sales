@@ -1,4 +1,5 @@
 import 'package:chart_sparkline/chart_sparkline.dart';
+import 'package:features_tour/features_tour.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:language_helper/language_helper.dart';
@@ -23,6 +24,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(dashboardNotifierProvider.notifier).loadDashboardData();
+      ref.read(dashboardNotifierProvider).tour.start(context);
     });
   }
 
@@ -77,10 +79,15 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
             const Spacer(),
             Row(
               children: [
-                IconButton(
-                  color: Theme.of(context).primaryColor,
-                  onPressed: () => _changeDate(state, notifier),
-                  icon: const Icon(Icons.calendar_month_rounded),
+                FeaturesTour(
+                  controller: state.tour,
+                  index: 1,
+                  introduce: Text('Nhấn vào đây để chọn ngày thống kê ở trang tổng quan'.tr),
+                  child: IconButton(
+                    color: Theme.of(context).primaryColor,
+                    onPressed: () => _changeDate(state, notifier),
+                    icon: const Icon(Icons.calendar_month_rounded),
+                  ),
                 ),
               ],
             ),

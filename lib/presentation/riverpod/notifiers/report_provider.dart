@@ -26,7 +26,7 @@ class ReportNotifier extends StateNotifier<ReportState> {
   })  : _getProfitUsecase = getProfitUsecase,
         _getRevenueUseCase = getRevenueUseCase,
         _getSoldProductsWithQuantityUsecase = getSoldProductsWithQuantityUsecase,
-        super(ReportState(reportDateRange: SevenDaysRanges(DateTime.now())));
+        super(ReportState(reportDateRange: WeekDaysRanges(DateTime.now())));
 
   Future<void> loadReportData() async {
     final soldProductsWithQuantity = await _getSoldProductsWithQuantityUsecase(state.reportDateRange);

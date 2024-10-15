@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:features_tour/features_tour.dart';
 import 'package:sales/domain/entities/product.dart';
 import 'package:sales/domain/entities/recent_orders_result.dart';
 
@@ -33,6 +34,8 @@ class DashboardState with EquatableMixin {
   /// Thông tin lỗi.
   final String error;
 
+  final FeaturesTourController tour;
+
   DashboardState({
     this.totalProductCount = 0,
     this.fiveLowStockProducts = const [],
@@ -44,6 +47,7 @@ class DashboardState with EquatableMixin {
     required this.reportDateTime,
     this.isLoading = true,
     this.error = '',
+    required this.tour,
   });
 
   DashboardState copyWith({
@@ -69,6 +73,7 @@ class DashboardState with EquatableMixin {
       reportDateTime: reportDateTime ?? this.reportDateTime,
       isLoading: isLoading ?? this.isLoading,
       error: error ?? this.error,
+      tour: tour,
     );
   }
 
@@ -83,7 +88,8 @@ class DashboardState with EquatableMixin {
       threeRecentOrders,
       dailyRevenueForMonth,
       isLoading,
-      error
+      error,
+      tour.pageName,
     ];
   }
 }

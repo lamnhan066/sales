@@ -1,3 +1,4 @@
+import 'package:features_tour/features_tour.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sales/core/usecases/usecase.dart';
 import 'package:sales/di.dart';
@@ -41,7 +42,10 @@ class DashboardNotifier extends StateNotifier<DashboardState> {
     required this.getDailyRevenueForMonthUseCase,
     required this.getThreeRecentOrdersUseCase,
     required this.getTotalProductCountUseCase,
-  }) : super(DashboardState(reportDateTime: DateTime.now()));
+  }) : super(DashboardState(
+          reportDateTime: DateTime.now(),
+          tour: FeaturesTourController('DashboardView'),
+        ));
 
   Future<void> loadDashboardData() async {
     state = state.copyWith(isLoading: true, error: '');
@@ -86,6 +90,6 @@ class DashboardNotifier extends StateNotifier<DashboardState> {
     if (date == null) return;
 
     state = state.copyWith(reportDateTime: date);
-    loadDashboardData();
+    await loadDashboardData();
   }
 }
