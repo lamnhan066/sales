@@ -216,7 +216,7 @@ class _ReportViewState extends ConsumerState<ReportView> {
   }
 
   String _reportTitleText(ReportState state) {
-    return (switch (state.reportDateRange) {
+    return switch (state.reportDateRange) {
       WeekDaysRanges() => 'Thống kê trong tuần hiện tại từ @{fromDate} đến @{toDate}'.trP({
           'fromDate': state.reportDateRange.start.toddMMyyyy(),
           'toDate': state.reportDateRange.end.toddMMyyyy(),
@@ -228,7 +228,7 @@ class _ReportViewState extends ConsumerState<ReportView> {
       _ => 'Thống kê từ @{fromDate} đến @{toDate}'.trP({
           'fromDate': state.reportDateRange.start.toddMMyyyy(),
           'toDate': state.reportDateRange.end.toddMMyyyy(),
-        })
-    });
+        }),
+    };
   }
 }
