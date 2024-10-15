@@ -84,7 +84,6 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                   index: 1,
                   introduce: Text('Nhấn vào đây để chọn ngày thống kê ở trang tổng quan'.tr),
                   child: IconButton(
-                    color: Theme.of(context).primaryColor,
                     onPressed: () => _changeDate(state, notifier),
                     icon: const Icon(Icons.calendar_month_rounded),
                   ),
