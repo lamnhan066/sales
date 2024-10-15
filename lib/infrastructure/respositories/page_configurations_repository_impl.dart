@@ -8,7 +8,7 @@ class PageConfigurationsRepositoryImpl implements PageConfigurationsRepository {
 
   @override
   Future<int> getItemPerPage() async {
-    return _prefs.getInt('ItemPerPage') ?? 0;
+    return _prefs.getInt('ItemPerPage') ?? 10;
   }
 
   @override

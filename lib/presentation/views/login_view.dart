@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/domain/entities/server_configurations.dart';
 import 'package:sales/presentation/riverpod/notifiers/login_provider.dart';
+import 'package:sales/presentation/riverpod/notifiers/settings_provider.dart';
 import 'package:sales/presentation/views/home_view.dart';
 
 class LoginView extends ConsumerStatefulWidget {
@@ -26,6 +27,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final loginState = ref.watch(loginProvider);
       final loginNotifier = ref.read(loginProvider.notifier);
+      ref.read(settingsProvider.notifier).initialize();
 
       if (loginState.showAutoLoginDialog && loginState.rememberMe) {
         WidgetsBinding.instance.addPostFrameCallback((_) {

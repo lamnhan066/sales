@@ -16,7 +16,7 @@ class SettingsState with EquatableMixin {
     this.currentlanguage = LanguageCodes.vi,
     this.supportedLanguages = const {LanguageCodes.vi},
     this.brightness = Brightness.light,
-    this.itemPerPage = 0,
+    this.itemPerPage = 10,
     this.backupRestoreStatus = '',
     this.error = '',
     this.isLoading = false,
