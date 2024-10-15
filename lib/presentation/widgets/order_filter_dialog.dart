@@ -37,7 +37,10 @@ class _OrderFilterDialogState extends State<OrderFilterDialog> {
       children: [
         Column(
           children: [
-            Text('Lọc theo khoảng thời gian'.tr),
+            Text(
+              'Lọc theo khoảng thời gian'.tr,
+              style: const TextStyle(fontSize: 18),
+            ),
             Row(
               children: [
                 Expanded(
