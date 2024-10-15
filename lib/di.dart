@@ -1,4 +1,6 @@
+import 'package:features_tour/features_tour.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/core/usecases/usecase.dart';
@@ -110,6 +112,25 @@ Future<void> setupDependencies() async {
   _registerServices();
 
   await getIt<InitializeLanguageUseCase>()(NoParams());
+  FeaturesTour.setGlobalConfig(
+    childConfig: ChildConfig(
+      isAnimateChild: false,
+      zoomScale: 1,
+    ),
+    predialogConfig: PredialogConfig(
+      title: 'Giới Thiệu'.tr,
+      content: 'Trang này có một số chức năng mới mà bạn có thể muốn khám phá.\n\n'
+              'Bạn có muốn khám phá không?'
+          .tr,
+      applyToAllPagesText: 'Áp dụng với tất cả các trang'.tr,
+      acceptButtonText: Text('Chấp nhận'.tr),
+      laterButtonText: Text('Để sau'.tr),
+      dismissButtonText: Text('Bỏ qua'.tr),
+    ),
+    skipConfig: SkipConfig(text: 'Bỏ Qua'.tr),
+    nextConfig: NextConfig(text: 'Tiếp'.tr),
+    doneConfig: DoneConfig(text: 'Hoàn Thành'.tr),
+  );
 }
 
 void _registerUseCases() {

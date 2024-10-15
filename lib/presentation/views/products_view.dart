@@ -407,7 +407,7 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
 
     // Chỉ tải lại dữ liệu khi có sự thay đổi.
     if (result == true && (state.priceRange != tempPriceRange || state.categoryIdFilter != tempCategoryIdFilter)) {
-      notifier.updateFilters(priceRange: tempPriceRange, categoryIdFilter: tempCategoryIdFilter);
+      await notifier.updateFilters(priceRange: tempPriceRange, categoryIdFilter: tempCategoryIdFilter);
     }
   }
 
