@@ -64,7 +64,7 @@ class _ReportViewState extends ConsumerState<ReportView> {
         FeaturesTour(
           controller: state.tour,
           index: 1,
-          introduce: Text('Nhấn vào đây để hiển thị tuỳ chọn bộ lọc'.tr),
+          introduce: Text('Nhấn vào đây để hiển thị tuỳ chọn bộ lọc cho báo cáo'.tr),
           child: IconButton(
             onPressed: () => _updateFilters(context, notifier, state),
             icon: const Icon(Icons.calendar_month_rounded),
@@ -217,15 +217,15 @@ class _ReportViewState extends ConsumerState<ReportView> {
 
   String _reportTitleText(ReportState state) {
     return switch (state.reportDateRange) {
-      WeekDaysRanges() => 'Thống kê trong tuần hiện tại từ @{fromDate} đến @{toDate}'.trP({
+      WeekDaysRanges() => 'Báo cáo trong tuần hiện tại từ @{fromDate} đến @{toDate}'.trP({
           'fromDate': state.reportDateRange.start.toddMMyyyy(),
           'toDate': state.reportDateRange.end.toddMMyyyy(),
         }),
-      MonthDaysRanges() => 'Thống kê trong tháng hiện tại từ @{fromDate} to @{toDate}'.trP({
+      MonthDaysRanges() => 'Báo cáo trong tháng hiện tại từ @{fromDate} to @{toDate}'.trP({
           'fromDate': state.reportDateRange.start.toddMMyyyy(),
           'toDate': state.reportDateRange.end.toddMMyyyy(),
         }),
-      _ => 'Thống kê từ @{fromDate} đến @{toDate}'.trP({
+      _ => 'Báo cáo từ @{fromDate} đến @{toDate}'.trP({
           'fromDate': state.reportDateRange.start.toddMMyyyy(),
           'toDate': state.reportDateRange.end.toddMMyyyy(),
         }),
