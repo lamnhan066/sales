@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:features_tour/features_tour.dart';
 import 'package:sales/domain/entities/category.dart';
 import 'package:sales/domain/entities/product.dart';
 import 'package:sales/domain/entities/product_order_by.dart';
@@ -32,6 +33,8 @@ class ProductsState with EquatableMixin {
   /// Danh sách loại hàng.
   final List<Category> categories;
 
+  final FeaturesTourController tour;
+
   final bool isLoading;
   final String error;
 
@@ -47,6 +50,7 @@ class ProductsState with EquatableMixin {
     this.categoryIdFilter = -1,
     this.isLoading = false,
     this.error = '',
+    required this.tour,
   });
 
   ProductsState copyWith({
@@ -74,6 +78,7 @@ class ProductsState with EquatableMixin {
       categories: categories ?? this.categories,
       isLoading: isLoading ?? this.isLoading,
       error: error ?? this.error,
+      tour: tour,
     );
   }
 
@@ -91,6 +96,7 @@ class ProductsState with EquatableMixin {
       categories,
       isLoading,
       error,
+      tour.pageName,
     ];
   }
 }

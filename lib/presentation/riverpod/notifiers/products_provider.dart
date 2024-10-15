@@ -1,3 +1,4 @@
+import 'package:features_tour/features_tour.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sales/core/errors/failure.dart';
 import 'package:sales/core/usecases/usecase.dart';
@@ -83,7 +84,7 @@ class ProductsNotifier extends StateNotifier<ProductsState> {
         _getNextCategoryIdUseCase = getNextCategoryIdUseCase,
         _replaceDatabaseUsecase = replaceDatabaseUsecase,
         _getItemPerPageUseCase = getItemPerPageUseCase,
-        super(const ProductsState());
+        super(ProductsState(tour: FeaturesTourController('ProductsView')));
 
   Future<void> loadInitialData() async {
     int perPage = await _getItemPerPageUseCase(NoParams());

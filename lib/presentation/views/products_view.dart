@@ -2,6 +2,7 @@
 import 'dart:async';
 
 import 'package:boxw/boxw.dart';
+import 'package:features_tour/features_tour.dart';
 import 'package:flutter/material.dart' hide DataTable, DataRow, DataColumn, DataCell;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:language_helper/language_helper.dart';
@@ -42,6 +43,7 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
     searchTextFocus.addListener(searchFocusListener);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(productsProvider.notifier).loadInitialData();
+      ref.read(productsProvider).tour.start(context);
     });
   }
 
@@ -91,37 +93,62 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            FilledButton(
-              onPressed: () => addProduct(),
-              child: const Icon(Icons.add),
+            FeaturesTour(
+              controller: state.tour,
+              index: 1,
+              introduce: Text('Nhấn vào đây để thêm sản phẩm mới'.tr),
+              child: FilledButton(
+                onPressed: () => addProduct(),
+                child: const Icon(Icons.add),
+              ),
             ),
             Row(
               children: [
-                IconButton(
-                  onPressed: () => _loadDataFromExcel(context),
-                  icon: const Icon(Icons.upload_rounded),
+                FeaturesTour(
+                  controller: state.tour,
+                  index: 2,
+                  introduce: Text('Nhấn vào đây để tải lên dữ liệu từ Excel'.tr),
+                  child: IconButton(
+                    onPressed: () => _loadDataFromExcel(context),
+                    icon: const Icon(Icons.upload_rounded),
+                  ),
                 ),
                 SizedBox(
                   width: 200,
-                  child: BoxWInput(
-                    controller: searchTextController,
-                    focusNode: searchTextFocus,
-                    hintText: 'Tìm Kiếm'.tr,
-                    hintStyle: const TextStyle(color: Colors.grey),
-                    onChanged: (value) {
-                      startSearchAfterDelay(notifier, value);
-                    },
-                    suffixIcon: const Icon(Icons.search),
+                  child: FeaturesTour(
+                    controller: state.tour,
+                    index: 3,
+                    introduce: Text('Tìm kiếm sản phẩm theo tên tại đây'.tr),
+                    child: BoxWInput(
+                      controller: searchTextController,
+                      focusNode: searchTextFocus,
+                      hintText: 'Tìm Kiếm'.tr,
+                      hintStyle: const TextStyle(color: Colors.grey),
+                      onChanged: (value) {
+                        startSearchAfterDelay(notifier, value);
+                      },
+                      suffixIcon: const Icon(Icons.search),
+                    ),
                   ),
                 ),
-                IconButton(
-                  onPressed: () => showFilterDialog(),
-                  icon: const Icon(Icons.filter_alt_rounded),
+                FeaturesTour(
+                  controller: state.tour,
+                  index: 4,
+                  introduce: Text('Nhấn vào đây để hiển thị tuỳ chọn lọc sản phẩm'.tr),
+                  child: IconButton(
+                    onPressed: () => showFilterDialog(),
+                    icon: const Icon(Icons.filter_alt_rounded),
+                  ),
                 ),
                 const SizedBox(width: 6),
-                IconButton(
-                  onPressed: () => showSortDialog(),
-                  icon: const Icon(Icons.sort_rounded),
+                FeaturesTour(
+                  controller: state.tour,
+                  index: 5,
+                  introduce: Text('Nhấn vào đây để hiển thị tuỳ chọn sắp xếp sản phẩm'.tr),
+                  child: IconButton(
+                    onPressed: () => showSortDialog(),
+                    icon: const Icon(Icons.sort_rounded),
+                  ),
                 ),
               ],
             ),
@@ -193,37 +220,67 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
           DataCell(Text('${product.unitSalePrice}')),
           DataCell(Center(child: Text(category.name))),
           DataCell(Text('${product.count}')),
-          DataCell(Center(child: _buildActionButtons(product))),
+          DataCell(Center(child: _buildActionButtons(state, product, index))),
         ],
       );
     }).toList();
   }
 
-  Widget _buildActionButtons(Product product) {
+  Widget _buildActionButtons(ProductsState state, Product product, int index) {
     return widget.chooseProduct
-        ? IconButton(
-            onPressed: () {
-              Navigator.pop(context, product);
-            },
-            icon: const Icon(Icons.check_rounded),
+        ? FeaturesTour(
+            enabled: index == 0,
+            controller: state.tour,
+            index: 6,
+            introduce: Text('Nhấn vào đây để thêm sản phẩm vào giỏ hàng'.tr),
+            child: IconButton(
+              onPressed: () {
+                Navigator.pop(context, product);
+              },
+              icon: const Icon(Icons.check_rounded),
+            ),
           )
         : Row(
             children: [
-              IconButton(
-                onPressed: () => viewProduct(product),
-                icon: const Icon(Icons.info_rounded),
+              FeaturesTour(
+                enabled: index == 0,
+                controller: state.tour,
+                index: 7,
+                introduce: Text('Nhấn vào đây để xem chi tiết sản phẩm'.tr),
+                child: IconButton(
+                  onPressed: () => viewProduct(product),
+                  icon: const Icon(Icons.info_rounded),
+                ),
               ),
-              IconButton(
-                onPressed: () => updateProduct(product),
-                icon: const Icon(Icons.edit_rounded),
+              FeaturesTour(
+                enabled: index == 0,
+                controller: state.tour,
+                index: 8,
+                introduce: Text('Nhấn vào đây để cập nhật sản phẩm'.tr),
+                child: IconButton(
+                  onPressed: () => updateProduct(product),
+                  icon: const Icon(Icons.edit_rounded),
+                ),
               ),
-              IconButton(
-                onPressed: () => copyProduct(product),
-                icon: const Icon(Icons.copy_rounded),
+              FeaturesTour(
+                enabled: index == 0,
+                controller: state.tour,
+                index: 9,
+                introduce: Text('Nhấn vào đây để sao chép sản phẩm'.tr),
+                child: IconButton(
+                  onPressed: () => copyProduct(product),
+                  icon: const Icon(Icons.copy_rounded),
+                ),
               ),
-              IconButton(
-                onPressed: () => removeProduct(product),
-                icon: const Icon(Icons.close_rounded, color: Colors.red),
+              FeaturesTour(
+                enabled: index == 0,
+                controller: state.tour,
+                index: 10,
+                introduce: Text('Nhấn vào đây để xoá sản phẩm'.tr),
+                child: IconButton(
+                  onPressed: () => removeProduct(product),
+                  icon: const Icon(Icons.close_rounded, color: Colors.red),
+                ),
               ),
             ],
           );
