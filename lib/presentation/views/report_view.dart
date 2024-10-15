@@ -1,4 +1,5 @@
 import 'package:boxw/boxw.dart';
+import 'package:features_tour/features_tour.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -28,6 +29,7 @@ class _ReportViewState extends ConsumerState<ReportView> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(reportProvider.notifier).loadReportData();
+      ref.read(reportProvider).tour.start(context);
     });
   }
 
@@ -59,9 +61,14 @@ class _ReportViewState extends ConsumerState<ReportView> {
         Text(_reportTitleText(state)),
       ],
       trailings: [
-        IconButton(
-          onPressed: () => _updateFilters(context, notifier, state),
-          icon: const Icon(Icons.calendar_month_rounded),
+        FeaturesTour(
+          controller: state.tour,
+          index: 1,
+          introduce: Text('Nhấn vào đây để hiển thị tuỳ chọn bộ lọc'.tr),
+          child: IconButton(
+            onPressed: () => _updateFilters(context, notifier, state),
+            icon: const Icon(Icons.calendar_month_rounded),
+          ),
         ),
       ],
     );

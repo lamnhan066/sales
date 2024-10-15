@@ -1,3 +1,4 @@
+import 'package:features_tour/features_tour.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sales/di.dart';
 import 'package:sales/domain/entities/ranges.dart';
@@ -26,7 +27,10 @@ class ReportNotifier extends StateNotifier<ReportState> {
   })  : _getProfitUsecase = getProfitUsecase,
         _getRevenueUseCase = getRevenueUseCase,
         _getSoldProductsWithQuantityUsecase = getSoldProductsWithQuantityUsecase,
-        super(ReportState(reportDateRange: WeekDaysRanges(DateTime.now())));
+        super(ReportState(
+          reportDateRange: WeekDaysRanges(DateTime.now()),
+          tour: FeaturesTourController('ReportView'),
+        ));
 
   Future<void> loadReportData() async {
     final soldProductsWithQuantity = await _getSoldProductsWithQuantityUsecase(state.reportDateRange);
