@@ -9,6 +9,9 @@
 
 1. Trang Đăng nhập (Login):
 
+    - Thông tin đăng nhập:
+        - Tên đăng nhập: `postgres` (Đây cũng là tên đăng nhập mặc định của Postgres)
+        - Mật khẩu: `sales`
     - Nếu có thông tin đăng nhập lưu từ lần trước thì tự động đăng nhập và đi vào màn hình chính luôn.
     - Thông tin đăng nhập cần phải được mã hóa.
     - Màn hình đăng nhập cần hiển thị thông tin phiên bản của chương trình.
@@ -84,7 +87,7 @@
     - TODO: Sử dụng kiến trúc MVVM (0.5 điểm)
     - TODO: Làm rối mã nguồn (obfuscator) chống dịch ngược (0.25 điểm)
     - Sử dụng Dependency Injection (0.5 điểm)
-    - TODO: Hỗ trợ onboarding (0.5 điểm)
+    - Hỗ trợ onboarding (0.5 điểm)
     - TODO: Tạo ra các test case kiểm thử chức năng và giao diện (0.5 điểm)
     - TODO: In đơn hàng (0.5 điểm)
 
