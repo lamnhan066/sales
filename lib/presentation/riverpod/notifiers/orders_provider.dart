@@ -10,6 +10,7 @@ import 'package:sales/domain/entities/order_with_items_params.dart';
 import 'package:sales/domain/entities/product.dart';
 import 'package:sales/domain/entities/ranges.dart';
 import 'package:sales/domain/usecases/app/get_item_per_page_usecase.dart';
+import 'package:sales/domain/usecases/app/print_image_bytes_as_pdf_usecase.dart';
 import 'package:sales/domain/usecases/order_with_items/add_order_with_items_usecase.dart';
 import 'package:sales/domain/usecases/order_with_items/get_next_order_item_id_usecase.dart';
 import 'package:sales/domain/usecases/order_with_items/get_order_items_usecase.dart';
@@ -22,6 +23,7 @@ import 'package:sales/domain/usecases/orders/get_next_order_id_usecase.dart';
 import 'package:sales/domain/usecases/orders/get_orders_usecase.dart';
 import 'package:sales/domain/usecases/products/get_all_products_usecase.dart';
 import 'package:sales/presentation/riverpod/states/orders_state.dart';
+import 'package:screenshot/screenshot.dart';
 
 final ordersProvider = StateNotifierProvider<OrdersNotifier, OrdersState>((ref) {
   return OrdersNotifier(
@@ -37,6 +39,7 @@ final ordersProvider = StateNotifierProvider<OrdersNotifier, OrdersState>((ref) 
     getTemporaryOrderWithItemsUseCase: getIt(),
     saveTemporaryOrderWithItemsUseCase: getIt(),
     removeTemporaryOrderWithItemsUseCase: getIt(),
+    printImageBytesAsPdfUseCase: getIt(),
   );
 });
 
@@ -53,6 +56,7 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
   final GetTemporaryOrderWithItemsUseCase _getTemporaryOrderWithItemsUseCase;
   final SaveTemporaryOrderWithItemsUseCase _saveTemporaryOrderWithItemsUseCase;
   final RemoveTemporaryOrderWithItemsUseCase _removeTemporaryOrderWithItemsUseCase;
+  final PrintImageBytesAsPdfUseCase _printImageBytesAsPdfUseCase;
 
   OrdersNotifier({
     required GetOrdersUseCase getOrdersUseCase,
@@ -67,6 +71,7 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
     required GetTemporaryOrderWithItemsUseCase getTemporaryOrderWithItemsUseCase,
     required SaveTemporaryOrderWithItemsUseCase saveTemporaryOrderWithItemsUseCase,
     required RemoveTemporaryOrderWithItemsUseCase removeTemporaryOrderWithItemsUseCase,
+    required PrintImageBytesAsPdfUseCase printImageBytesAsPdfUseCase,
   })  : _getOrdersUseCase = getOrdersUseCase,
         _getOrderItemsUseCase = getOrderItemsUseCase,
         _getAllProductsUseCase = getAllProductsUseCase,
@@ -79,7 +84,8 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
         _getTemporaryOrderWithItemsUseCase = getTemporaryOrderWithItemsUseCase,
         _saveTemporaryOrderWithItemsUseCase = saveTemporaryOrderWithItemsUseCase,
         _removeTemporaryOrderWithItemsUseCase = removeTemporaryOrderWithItemsUseCase,
-        super(OrdersState(tour: FeaturesTourController('OrdersView')));
+        _printImageBytesAsPdfUseCase = printImageBytesAsPdfUseCase,
+        super(OrdersState(tour: FeaturesTourController('OrdersView'), screenshot: ScreenshotController()));
 
   Future<void> initialize() async {
     state = state.copyWith(isLoading: true);
@@ -175,5 +181,12 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
 
   Future<OrderWithItemsParams?> getTemporaryOrderWithItems() async {
     return await _getTemporaryOrderWithItemsUseCase(NoParams());
+  }
+
+  Future<void> printOrder(double pixelRatio) async {
+    final bytes = await state.screenshot.capture(pixelRatio: pixelRatio);
+    if (bytes != null) {
+      await _printImageBytesAsPdfUseCase(bytes);
+    }
   }
 }

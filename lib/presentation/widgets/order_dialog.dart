@@ -14,6 +14,7 @@ import 'package:sales/domain/entities/product.dart';
 import 'package:sales/presentation/riverpod/notifiers/orders_provider.dart';
 import 'package:sales/presentation/widgets/common_components.dart';
 import 'package:sales/presentation/widgets/order_form_dialog.dart';
+import 'package:screenshot/screenshot.dart';
 
 Future<void> viewOrderDialog({
   required BuildContext context,
@@ -176,29 +177,54 @@ Future<OrderResult?> _orderDialog({
         minWidth: AppConfigs.dialogMinWidth,
         maxWidth: dialogWidth,
       ),
-      content: OrderFormDialog(
-        form: form,
-        copy: copy,
-        isTemporary: isTemporary,
-        readOnly: readOnly,
-        tempOrder: resultOrder,
-        orderItems: orderItems,
-        products: products,
-        validateForm: validateForm,
-        addProduct: addProduct,
-        removeProduct: removeProduct,
-        onStatusChanged: statusChanged,
-        onQuantityChanged: quantityChanged,
+      content: Screenshot(
+        controller: notifier.debugState.screenshot,
+        child: OrderFormDialog(
+          form: form,
+          copy: copy,
+          isTemporary: isTemporary,
+          readOnly: readOnly,
+          tempOrder: resultOrder,
+          orderItems: orderItems,
+          products: products,
+          validateForm: validateForm,
+          addProduct: addProduct,
+          removeProduct: removeProduct,
+          onStatusChanged: statusChanged,
+          onQuantityChanged: quantityChanged,
+        ),
       ),
       buttons: (context) {
         return [
-          confirmCancelButtons(
-            context: context,
-            enableConfirmStream: readOnly ? null : formValidator.stream,
-            confirmText: 'OK'.tr,
-            cancelText: 'Huỷ'.tr,
-            hideCancel: readOnly,
-          )
+          if (!readOnly)
+            confirmCancelButtons(
+              context: context,
+              enableConfirmStream: readOnly ? null : formValidator.stream,
+              confirmText: 'OK'.tr,
+              cancelText: 'Huỷ'.tr,
+              hideCancel: readOnly,
+            )
+          else
+            Buttons(
+              axis: Axis.horizontal,
+              buttons: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 20),
+                  child: FilledButton(
+                    onPressed: () {
+                      Navigator.pop(context, true);
+                    },
+                    child: Text('OK'.tr),
+                  ),
+                ),
+                FilledButton(
+                  onPressed: () {
+                    notifier.printOrder(MediaQuery.of(context).devicePixelRatio);
+                  },
+                  child: const Icon(Icons.print_rounded),
+                ),
+              ],
+            )
         ];
       },
     );

@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:features_tour/features_tour.dart';
 import 'package:sales/domain/entities/order.dart';
 import 'package:sales/domain/entities/ranges.dart';
+import 'package:screenshot/screenshot.dart';
 
 class OrdersState with EquatableMixin {
   /// Danh sách đơn hàng.
@@ -21,6 +22,7 @@ class OrdersState with EquatableMixin {
   Ranges<DateTime?>? _dateRange;
 
   final FeaturesTourController tour;
+  final ScreenshotController screenshot;
 
   final bool isLoading;
   final String error;
@@ -34,6 +36,7 @@ class OrdersState with EquatableMixin {
     this.isLoading = false,
     this.error = '',
     required this.tour,
+    required this.screenshot,
   }) : _dateRange = dateRange;
 
   OrdersState copyWith({
@@ -52,6 +55,7 @@ class OrdersState with EquatableMixin {
       isLoading: isLoading ?? this.isLoading,
       error: error ?? this.error,
       tour: tour,
+      screenshot: screenshot,
     ).._dateRange = dateRange;
   }
 
