@@ -24,6 +24,7 @@ import 'package:sales/domain/repositories/order_item_repository.dart';
 import 'package:sales/domain/repositories/order_repository.dart';
 import 'package:sales/domain/repositories/order_with_items_repository.dart';
 import 'package:sales/domain/repositories/page_configurations_repository.dart';
+import 'package:sales/domain/repositories/print_repository.dart';
 import 'package:sales/domain/repositories/product_repository.dart';
 import 'package:sales/domain/repositories/report_repository.dart';
 import 'package:sales/domain/repositories/server_configurations_repository.dart';
@@ -37,6 +38,7 @@ import 'package:sales/domain/usecases/app/get_current_language_usecase.dart';
 import 'package:sales/domain/usecases/app/get_item_per_page_usecase.dart';
 import 'package:sales/domain/usecases/app/get_supported_languages_usecase.dart';
 import 'package:sales/domain/usecases/app/initialize_language_usecase.dart';
+import 'package:sales/domain/usecases/app/print_image_bytes_as_pdf_usecase.dart';
 import 'package:sales/domain/usecases/app/set_brightness_usecase.dart';
 import 'package:sales/domain/usecases/auth/auto_login_usecase.dart';
 import 'package:sales/domain/usecases/auth/get_cached_credentials_usecase.dart';
@@ -100,6 +102,7 @@ import 'package:sales/infrastructure/respositories/order_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/order_with_items_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/page_configurations_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/postgres_configurations_repository_impl.dart';
+import 'package:sales/infrastructure/respositories/print_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/product_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/report_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/temporary_data_repository_impl.dart';
@@ -153,6 +156,7 @@ void _registerUseCases() {
   _registerProductUseCases();
   _registerReportUseCases();
   _registerBackupRestoreUseCases();
+  _registerPrintUseCases();
 }
 
 void _registerRepositories() {
@@ -171,6 +175,7 @@ void _registerRepositories() {
   getIt.registerLazySingleton<BrightnessRepository>(() => BrightnessRepositoryImpl(getIt()));
   getIt.registerLazySingleton<BackupRestoreRepository>(() => BackupRestoreRepositoryImpl(getIt()));
   getIt.registerLazySingleton<TemporaryDataRepository>(() => TemporaryDataRepositoryImpl(getIt()));
+  getIt.registerLazySingleton<PrintRepository>(() => PrintRepositoryImpl());
 }
 
 void _registerDatabase() {
@@ -268,6 +273,10 @@ void _registerDatabaseUseCases() {
 void _registerBackupRestoreUseCases() {
   getIt.registerLazySingleton<BackupDatabaseUseCase>(() => BackupDatabaseUseCase(getIt()));
   getIt.registerLazySingleton<RestoreDatabaseUseCase>(() => RestoreDatabaseUseCase(getIt()));
+}
+
+void _registerPrintUseCases() {
+  getIt.registerLazySingleton<PrintImageBytesAsPdfUseCase>(() => PrintImageBytesAsPdfUseCase(getIt()));
 }
 
 void _registerServices() {
