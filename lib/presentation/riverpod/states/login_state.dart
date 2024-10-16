@@ -16,13 +16,13 @@ class LoginState with EquatableMixin {
   LoginState({
     required this.username,
     required this.password,
-    this.isLoggedIn = false,
     this.rememberMe = false,
     this.error = '',
+    this.version = const AppVersion(version: '1.0.0'),
     this.serverConfigurations = const ServerConfigurations(),
     this.showAutoLoginDialog = false,
+    this.isLoggedIn = false,
     this.isLoading = false,
-    this.version = const AppVersion(version: '1.0.0'),
   });
 
   LoginState copyWith({
