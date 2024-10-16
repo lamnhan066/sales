@@ -10,8 +10,8 @@
 1. Trang Đăng nhập (Login):
 
     - Thông tin đăng nhập:
-        - Tên đăng nhập: `postgres` (Đây cũng là tên đăng nhập mặc định của Postgres)
-        - Mật khẩu: `sales`
+    - Tên đăng nhập: `postgres` (Đây cũng là tên đăng nhập mặc định của Postgres).
+    - Mật khẩu: `sales`.
     - Nếu có thông tin đăng nhập lưu từ lần trước thì tự động đăng nhập và đi vào màn hình chính luôn.
     - Thông tin đăng nhập cần phải được mã hóa.
     - Màn hình đăng nhập cần hiển thị thông tin phiên bản của chương trình.
@@ -78,31 +78,31 @@
 
 ### Các Chức Năng Tự Chọn
 
-    - Auto save khi tạo đơn hàng, thêm mới sản phẩm (0.25)
-    - Tự động thay đổi sắp xếp hợp lí các thành phần theo độ rộng màn hình (responsive layout) (0.5 điểm)
-    - TODO: Bổ sung khuyến mãi giảm giá (1 điểm)
-    - TODO: Thêm chế độ dùng thử - cho phép xài full phần mềm trong 15 ngày. Hết 15 ngày bắt đăng kí (mã code hay cách kích hoạt nào đó) (0.5 điểm)
-    - Backup / restore database (0.25 điểm)
-    - TODO: Làm rối mã nguồn (obfuscator) chống dịch ngược (0.25 điểm)
-    - Sử dụng Dependency Injection (0.5 điểm)
-    - Hỗ trợ onboarding (0.5 điểm)
-    - TODO: Tạo ra các test case kiểm thử chức năng và giao diện (0.5 điểm)
-    - In đơn hàng PDF (0.5 điểm):
-        - In đơn hàng chỉ có ở chế độ "Xem chi tiết đơn hàng".
+- Auto save khi tạo đơn hàng, thêm mới sản phẩm (0.25)
+- Tự động thay đổi sắp xếp hợp lí các thành phần theo độ rộng màn hình (responsive layout) (0.5 điểm)
+- TODO: Bổ sung khuyến mãi giảm giá (1 điểm)
+- TODO: Thêm chế độ dùng thử - cho phép xài full phần mềm trong 15 ngày. Hết 15 ngày bắt đăng kí (mã code hay cách kích hoạt nào đó) (0.5 điểm)
+- Backup / restore database (0.25 điểm)
+- TODO: Làm rối mã nguồn (obfuscator) chống dịch ngược (0.25 điểm)
+- Sử dụng Dependency Injection (0.5 điểm)
+- Hỗ trợ onboarding (0.5 điểm)
+- TODO: Tạo ra các test case kiểm thử chức năng và giao diện (0.5 điểm)
+- In đơn hàng PDF (0.5 điểm):
+  - In đơn hàng chỉ có ở chế độ "Xem chi tiết đơn hàng".
 
 ### Phần Tự Tìm Hiểu
 
-    - **Sử dụng kiến trúc Clean Architecture**.
-    - Màn hình Đăng Nhập:
-        - Khi ứng dụng tiến hành tự động đăng nhập thì một hộp thoại sẽ hiện ra để người dùng có thể huỷ trong vòng 3s.
-    - Màn hình Sản Phẩm:
-        - Sao chép một sản phẩm.
-        - Tạo một khoảng delay khi người dùng nhập vào ô tìm kiếm để đảm bảo người dùng hoàn thiện nhập liệu nhằm giảm số lần request lên server.
-    - Màn hình Đơn Hàng:
-        - Sao chép một đơn hàng.
-    - Màn hình Cài Đặt:
-        - Chọn ngôn ngữ: Anh, Việt.
-        - Chế độ sáng/tối.
-    - CSDL:
-        - Sử dụng Postgres.app để quản lý server.
-        - Sử dụng pgAdmin 4 để quản lý dữ liệu.
+- **Sử dụng kiến trúc Clean Architecture**.
+- Màn hình Đăng Nhập:
+  - Khi ứng dụng tiến hành tự động đăng nhập thì một hộp thoại sẽ hiện ra để người dùng có thể huỷ trong vòng 3s.
+- Màn hình Sản Phẩm:
+  - Sao chép một sản phẩm.
+  - Tạo một khoảng delay khi người dùng nhập vào ô tìm kiếm để đảm bảo người dùng hoàn thiện nhập liệu nhằm giảm số lần request lên server.
+- Màn hình Đơn Hàng:
+  - Sao chép một đơn hàng.
+- Màn hình Cài Đặt:
+  - Chọn ngôn ngữ: Anh, Việt.
+  - Chế độ sáng/tối.
+- CSDL:
+  - Sử dụng Postgres.app để quản lý server.
+  - Sử dụng pgAdmin 4 để quản lý dữ liệu.
