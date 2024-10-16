@@ -81,12 +81,16 @@
 - Auto save khi tạo đơn hàng, thêm mới sản phẩm (0.25)
 - Tự động thay đổi sắp xếp hợp lí các thành phần theo độ rộng màn hình (responsive layout) (0.5 điểm)
 - TODO: Bổ sung khuyến mãi giảm giá (1 điểm)
-- TODO: Thêm chế độ dùng thử - cho phép xài full phần mềm trong 15 ngày. Hết 15 ngày bắt đăng kí (mã code hay cách kích hoạt nào đó) (0.5 điểm)
-- Backup / restore database (0.25 điểm)
-- TODO: Làm rối mã nguồn (obfuscator) chống dịch ngược (0.25 điểm)
+- Thêm chế độ dùng thử - cho phép xài full phần mềm trong 15 ngày. Hết 15 ngày bắt đăng kí (mã code hay cách kích hoạt nào đó) (0.5 điểm):
+  - Kiểm tra người dùng có đã sử dụng trial chưa, nếu chưa thì hiển thị hộp thoại để kích hoạt.
+  - Nếu người dùng đã hết hạn dùng thử thì hiển thị hộp thoại để người dùng nhập mã kích hoạt. Khi người dùng nhập đúng mã là `22880253` thì người dùng sẽ được sử dụng thêm 30 ngày.
+- Backup / restore database (0.25 điểm):
+  - Backup: Encode toàn bộ dữ liệu sang dạng JSON và lưu dạng tệp vào ổ cứng.
+  - Restore: Chọn tệp đã sao lưu và decode để có thể lưu vào CSDL.
+- Làm rối mã nguồn (obfuscator) chống dịch ngược (0.25 điểm):
+  - Sử dụng trình obfusactor của framework.
 - Sử dụng Dependency Injection (0.5 điểm)
 - Hỗ trợ onboarding (0.5 điểm)
-- TODO: Tạo ra các test case kiểm thử chức năng và giao diện (0.5 điểm)
 - In đơn hàng PDF (0.5 điểm):
   - In đơn hàng chỉ có ở chế độ "Xem chi tiết đơn hàng".
 
