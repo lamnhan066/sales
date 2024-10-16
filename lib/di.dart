@@ -20,6 +20,7 @@ import 'package:sales/domain/repositories/brightness_repository.dart';
 import 'package:sales/domain/repositories/category_repository.dart';
 import 'package:sales/domain/repositories/data_importer_repository.dart';
 import 'package:sales/domain/repositories/language_repository.dart';
+import 'package:sales/domain/repositories/license_repository.dart';
 import 'package:sales/domain/repositories/order_item_repository.dart';
 import 'package:sales/domain/repositories/order_repository.dart';
 import 'package:sales/domain/repositories/order_with_items_repository.dart';
@@ -58,6 +59,10 @@ import 'package:sales/domain/usecases/data_services/load_server_configuration_us
 import 'package:sales/domain/usecases/data_services/load_server_connection_usecase.dart';
 import 'package:sales/domain/usecases/data_services/replace_database_usecase.dart';
 import 'package:sales/domain/usecases/data_services/save_server_configuration_usecase.dart';
+import 'package:sales/domain/usecases/license/active_license_usecase.dart';
+import 'package:sales/domain/usecases/license/active_trial_license_usecase.dart';
+import 'package:sales/domain/usecases/license/can_active_trial_license_usecase.dart';
+import 'package:sales/domain/usecases/license/get_license_usecase.dart';
 import 'package:sales/domain/usecases/order_with_items/add_all_orders_with_items_usecase.dart';
 import 'package:sales/domain/usecases/order_with_items/add_order_with_items_usecase.dart';
 import 'package:sales/domain/usecases/order_with_items/get_all_orders_with_items_usecase.dart';
@@ -96,6 +101,7 @@ import 'package:sales/infrastructure/respositories/backup_restore_repository_imp
 import 'package:sales/infrastructure/respositories/brightness_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/category_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/language_repository_impl.dart';
+import 'package:sales/infrastructure/respositories/license_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/local_auth_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/order_item_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/order_repository_impl.dart';
@@ -157,6 +163,7 @@ void _registerUseCases() {
   _registerReportUseCases();
   _registerBackupRestoreUseCases();
   _registerPrintUseCases();
+  _registerLicenseUseCases();
 }
 
 void _registerRepositories() {
@@ -176,6 +183,7 @@ void _registerRepositories() {
   getIt.registerLazySingleton<BackupRestoreRepository>(() => BackupRestoreRepositoryImpl(getIt()));
   getIt.registerLazySingleton<TemporaryDataRepository>(() => TemporaryDataRepositoryImpl(getIt()));
   getIt.registerLazySingleton<PrintRepository>(() => PrintRepositoryImpl());
+  getIt.registerLazySingleton<LicenseRepository>(() => LicenseRepositoryImpl(getIt()));
 }
 
 void _registerDatabase() {
@@ -277,6 +285,13 @@ void _registerBackupRestoreUseCases() {
 
 void _registerPrintUseCases() {
   getIt.registerLazySingleton<PrintImageBytesAsPdfUseCase>(() => PrintImageBytesAsPdfUseCase(getIt()));
+}
+
+void _registerLicenseUseCases() {
+  getIt.registerLazySingleton<ActiveLicenseUseCase>(() => ActiveLicenseUseCase(getIt()));
+  getIt.registerLazySingleton<ActiveTrialLicenseUseCase>(() => ActiveTrialLicenseUseCase(getIt()));
+  getIt.registerLazySingleton<CanActiveTrialLicenseUseCase>(() => CanActiveTrialLicenseUseCase(getIt()));
+  getIt.registerLazySingleton<GetLicenseUseCase>(() => GetLicenseUseCase(getIt()));
 }
 
 void _registerServices() {
