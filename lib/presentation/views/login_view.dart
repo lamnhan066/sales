@@ -21,21 +21,15 @@ class LoginView extends ConsumerStatefulWidget {
 class _LoginViewState extends ConsumerState<LoginView> {
   final usernameTextController = TextEditingController();
   final passwordTextController = TextEditingController();
+  bool isShowingAutoCheckAndLogin = false;
 
   @override
   void initState() {
     super.initState();
-    ref.read(loginProvider.notifier).resetOnIntial();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final loginState = ref.watch(loginProvider);
-      final loginNotifier = ref.read(loginProvider.notifier);
-
       ref.read(settingsProvider.notifier).initialize();
-
-      if (loginState.showAutoLoginDialog && loginState.rememberMe) {
-        _checkAndLoginAutomatically(context, loginNotifier);
-      }
+      ref.read(loginProvider.notifier).initialize();
     });
   }
 
@@ -47,6 +41,12 @@ class _LoginViewState extends ConsumerState<LoginView> {
     if (loginState.isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (loginState.showAutoLoginDialog && loginState.rememberMe) {
+        _checkAndLoginAutomatically(context, loginNotifier);
+      }
+    });
 
     usernameTextController.text = loginState.username;
     passwordTextController.text = loginState.password;
@@ -225,6 +225,11 @@ class _LoginViewState extends ConsumerState<LoginView> {
 
   /// Tự động kiểm tra và đăng nhập.
   Future<void> _checkAndLoginAutomatically(BuildContext context, LoginNotifier loginNotifier) async {
+    if (isShowingAutoCheckAndLogin) {
+      return;
+    }
+    isShowingAutoCheckAndLogin = true;
+
     Timer? timer;
     final isAutomaticallyLogin = await boxWDialog<bool>(
       context: context,
@@ -261,6 +266,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
         _navigateToHomeView();
       }
     }
+    isShowingAutoCheckAndLogin = false;
   }
 
   Widget _buildLicense(LoginNotifier notifier, LoginState state) {

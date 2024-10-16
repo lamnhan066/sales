@@ -78,11 +78,9 @@ class LoginNotifier extends StateNotifier<LoginState> {
         _activeTrialLicenseUseCase = activeTrialLicenseUseCase,
         _canActiveTrialLicenseUseCase = canActiveTrialLicenseUseCase,
         _getLicenseUseCase = getLicenseUseCase,
-        super(LoginState(username: '', password: '')) {
-    initial();
-  }
+        super(LoginState(username: '', password: ''));
 
-  Future<void> initial() async {
+  Future<void> initialize() async {
     final credentials = await _getCachedLoginCredentialsLoginUseCase(NoParams());
     final isLoggedIn = await _checkLoginStateUseCase(NoParams());
     await loadServerConfigurations();
@@ -101,10 +99,6 @@ class LoginNotifier extends StateNotifier<LoginState> {
         isLoggedIn: isLoggedIn,
       );
     }
-  }
-
-  Future<void> resetOnIntial() async {
-    state = state.copyWith(isLoggedIn: false, showAutoLoginDialog: true);
   }
 
   Future<bool> login() async {
