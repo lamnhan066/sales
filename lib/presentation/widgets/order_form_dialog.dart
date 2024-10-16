@@ -18,6 +18,7 @@ class OrderFormDialog extends StatefulWidget {
     super.key,
     required this.form,
     required this.copy,
+    required this.isTemporary,
     required this.readOnly,
     required this.tempOrder,
     required this.orderItems,
@@ -31,6 +32,7 @@ class OrderFormDialog extends StatefulWidget {
 
   final GlobalKey<FormState> form;
   final bool copy;
+  final bool isTemporary;
   final bool readOnly;
   final Order tempOrder;
   final List<OrderItem> orderItems;
@@ -75,14 +77,18 @@ class _OrderFormDialogState extends State<OrderFormDialog> {
   void initialize() {
     orderItems = [...widget.orderItems];
     for (final product in widget.products) {
-      final index = orderItems.indexWhere((e) => e.productId == product.id);
-      final isOrderedProduct = index != -1;
-      if (isOrderedProduct) {
-        isNotEnoughQuantityInStock = widget.copy && orderItems[index].quantity > product.count;
-
-        maxProductQuantity[product.id] = product.count + orderItems[index].quantity;
-      } else {
+      if (widget.isTemporary) {
         maxProductQuantity[product.id] = product.count;
+      } else {
+        final index = orderItems.indexWhere((e) => e.productId == product.id);
+        final isOrderedProduct = index != -1;
+        if (isOrderedProduct) {
+          isNotEnoughQuantityInStock = widget.copy && orderItems[index].quantity > product.count;
+
+          maxProductQuantity[product.id] = product.count + orderItems[index].quantity;
+        } else {
+          maxProductQuantity[product.id] = product.count;
+        }
       }
     }
     removeExistedAndOutOfStockProducts();

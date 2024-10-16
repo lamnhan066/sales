@@ -9,127 +9,107 @@ import 'package:sales/domain/entities/order.dart';
 import 'package:sales/domain/entities/order_item.dart';
 import 'package:sales/domain/entities/order_result.dart';
 import 'package:sales/domain/entities/order_status.dart';
+import 'package:sales/domain/entities/order_with_items_params.dart';
 import 'package:sales/domain/entities/product.dart';
+import 'package:sales/presentation/riverpod/notifiers/orders_provider.dart';
 import 'package:sales/presentation/widgets/common_components.dart';
 import 'package:sales/presentation/widgets/order_form_dialog.dart';
 
 Future<void> viewOrderDialog({
   required BuildContext context,
+  required OrdersNotifier notifier,
   required Order order,
-  required Future<List<Product>> Function() getProducts,
-  required Future<int> Function() nextOrderItemId,
-  required Future<int> Function() nextOrderId,
-  required Future<List<OrderItem>> Function(int orderId) getOrderItems,
 }) {
   return _orderDialog(
     context: context,
+    notifier: notifier,
     title: 'Thông Tin Đơn'.tr,
     order: order,
     copy: false,
     readOnly: true,
-    getNextOrderItemId: nextOrderItemId,
-    getNextOrderId: nextOrderId,
-    getOrderItems: getOrderItems,
-    getProducts: getProducts,
   );
 }
 
 Future<OrderResult?> addOrderDialog({
   required BuildContext context,
-  required Future<List<Product>> Function() getProducts,
-  required Future<int> Function() nextOrderItemId,
-  required Future<int> Function() nextOrderId,
-  required Future<List<OrderItem>> Function(int orderId) getOrderItems,
+  required OrdersNotifier notifier,
 }) {
   return _orderDialog(
     context: context,
+    notifier: notifier,
     title: 'Thêm Đơn'.tr,
     order: null,
     copy: true,
-    getNextOrderItemId: nextOrderItemId,
-    getNextOrderId: nextOrderId,
-    getOrderItems: getOrderItems,
-    getProducts: getProducts,
   );
 }
 
 Future<OrderResult?> updateOrderDialog({
   required BuildContext context,
-  required Future<List<Product>> Function() getProducts,
+  required OrdersNotifier notifier,
   required Order order,
-  required Future<int> Function() nextOrderItemId,
-  required Future<int> Function() nextOrderId,
-  required Future<List<OrderItem>> Function(int orderId) getOrderItems,
 }) {
   return _orderDialog(
     context: context,
+    notifier: notifier,
     title: 'Sửa Đơn'.tr,
     order: order,
     copy: false,
-    getNextOrderItemId: nextOrderItemId,
-    getNextOrderId: nextOrderId,
-    getOrderItems: getOrderItems,
-    getProducts: getProducts,
   );
 }
 
 Future<OrderResult?> copyOrderDialog({
   required BuildContext context,
-  required Future<List<Product>> Function() getProducts,
+  required OrdersNotifier notifier,
   required Order order,
-  required Future<int> Function() nextOrderItemId,
-  required Future<int> Function() nextOrderId,
-  required Future<List<OrderItem>> Function(int orderId) getOrderItems,
 }) {
   return _orderDialog(
     context: context,
+    notifier: notifier,
     title: 'Chép Đơn'.tr,
     order: order,
     copy: true,
-    getProducts: getProducts,
-    getNextOrderItemId: nextOrderItemId,
-    getNextOrderId: nextOrderId,
-    getOrderItems: getOrderItems,
   );
 }
 
 Future<OrderResult?> _orderDialog({
   required BuildContext context,
-  required Future<List<Product>> Function() getProducts,
+  required OrdersNotifier notifier,
   required String title,
   required Order? order,
   required bool copy,
-  required Future<int> Function() getNextOrderItemId,
-  required Future<int> Function() getNextOrderId,
-  required Future<List<OrderItem>> Function(int orderId) getOrderItems,
   bool readOnly = false,
 }) async {
   // Đếm id cho orderItem trong quá trình thêm, chỉnh sửa và sao chép đơn hàng.
-  int orderItemId = await getNextOrderItemId();
+  int orderItemId = await notifier.getNextOrderItemId();
+  final temporaryOrderWithItems = await notifier.getTemporaryOrderWithItems();
+  final isTemporary = temporaryOrderWithItems != null;
 
-  Order tempOrder = order ??
+  Order resultOrder = order ??
+      temporaryOrderWithItems?.order ??
       Order(
         id: 0,
         status: OrderStatus.created,
         date: DateTime.now(),
       );
   final List<OrderItem> orderItems = [];
-  final products = await getProducts();
+  final products = await notifier.getProducts();
   final isNewOrder = order == null || copy;
 
   if (order != null) {
-    orderItems.addAll(await getOrderItems(tempOrder.id));
+    orderItems.addAll(await notifier.getOrderItems(resultOrder.id));
+  } else if (temporaryOrderWithItems != null) {
+    orderItems.addAll(temporaryOrderWithItems.orderItems);
   }
 
   if (isNewOrder) {
-    final id = await getNextOrderId();
-    tempOrder = tempOrder.copyWith(id: id, date: DateTime.now());
+    final id = await notifier.getNextOrderId();
+    resultOrder = resultOrder.copyWith(id: id, date: DateTime.now());
   }
 
   if (copy) {
-    tempOrder = tempOrder.copyWith(status: OrderStatus.created);
+    resultOrder = resultOrder.copyWith(status: OrderStatus.created);
     for (int i = 0; i < orderItems.length; i++) {
-      orderItems[i] = orderItems[i].copyWith(orderId: tempOrder.id, id: orderItemId);
+      orderItems[i] = orderItems[i].copyWith(orderId: resultOrder.id, id: orderItemId);
       orderItemId++;
     }
   }
@@ -144,7 +124,7 @@ Future<OrderResult?> _orderDialog({
   /// Điều chỉnh lại `id` của order item để khớp với database, tránh tình
   /// trạng khi xoá orderItem thì `id` sẽ bị lệch.
   Future<void> regenerateOrderItemIds() async {
-    orderItemId = await getNextOrderItemId();
+    orderItemId = await notifier.getNextOrderItemId();
     for (int i = 0; i < orderItems.length; i++) {
       orderItems[i] = orderItems[i].copyWith(id: orderItemId);
       orderItemId++;
@@ -163,7 +143,7 @@ Future<OrderResult?> _orderDialog({
         quantity,
       ),
       productId: product.id,
-      orderId: tempOrder.id,
+      orderId: resultOrder.id,
     );
     orderItemId++;
     orderItems.add(orderItem);
@@ -172,7 +152,7 @@ Future<OrderResult?> _orderDialog({
   }
 
   Future<void> statusChanged(OrderStatus status) async {
-    tempOrder = tempOrder.copyWith(status: status);
+    resultOrder = resultOrder.copyWith(status: status);
   }
 
   Future<void> removeProduct(Product product) async {
@@ -199,8 +179,9 @@ Future<OrderResult?> _orderDialog({
       content: OrderFormDialog(
         form: form,
         copy: copy,
+        isTemporary: isTemporary,
         readOnly: readOnly,
-        tempOrder: tempOrder,
+        tempOrder: resultOrder,
         orderItems: orderItems,
         products: products,
         validateForm: validateForm,
@@ -225,8 +206,13 @@ Future<OrderResult?> _orderDialog({
     await formValidator.close();
 
     if (result == true) {
-      return OrderResult(order: tempOrder, orderItems: orderItems);
+      await notifier.removeTemporaryOrderWithItems();
+      return OrderResult(order: resultOrder, orderItems: orderItems);
     }
+
+    await notifier.saveTemporaryOrderWithItems(
+      OrderWithItemsParams(order: resultOrder, orderItems: orderItems),
+    );
   }
 
   return null;

@@ -312,11 +312,8 @@ class _OrdersViewState extends ConsumerState<OrdersView> {
     final notifier = ref.read(ordersProvider.notifier);
     viewOrderDialog(
       context: context,
+      notifier: notifier,
       order: order,
-      getProducts: notifier.getProducts,
-      nextOrderItemId: notifier.getNextOrderItemId,
-      nextOrderId: notifier.getNextOrderId,
-      getOrderItems: notifier.getOrderItems,
     );
   }
 
@@ -324,11 +321,8 @@ class _OrdersViewState extends ConsumerState<OrdersView> {
     final notifier = ref.read(ordersProvider.notifier);
     final result = await updateOrderDialog(
       context: context,
+      notifier: notifier,
       order: order,
-      getProducts: notifier.getProducts,
-      nextOrderItemId: notifier.getNextOrderItemId,
-      nextOrderId: notifier.getNextOrderId,
-      getOrderItems: notifier.getOrderItems,
     );
 
     if (result != null) {
@@ -340,11 +334,8 @@ class _OrdersViewState extends ConsumerState<OrdersView> {
     final notifier = ref.read(ordersProvider.notifier);
     final result = await copyOrderDialog(
       context: context,
+      notifier: notifier,
       order: order,
-      getProducts: notifier.getProducts,
-      nextOrderItemId: notifier.getNextOrderItemId,
-      nextOrderId: notifier.getNextOrderId,
-      getOrderItems: notifier.getOrderItems,
     );
 
     if (result != null) {
@@ -371,10 +362,7 @@ class _OrdersViewState extends ConsumerState<OrdersView> {
     final notifier = ref.read(ordersProvider.notifier);
     final result = await addOrderDialog(
       context: context,
-      getProducts: notifier.getProducts,
-      nextOrderItemId: notifier.getNextOrderItemId,
-      nextOrderId: notifier.getNextOrderId,
-      getOrderItems: notifier.getOrderItems,
+      notifier: notifier,
     );
 
     if (result != null) {

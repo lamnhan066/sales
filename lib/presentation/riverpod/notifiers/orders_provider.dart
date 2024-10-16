@@ -13,7 +13,10 @@ import 'package:sales/domain/usecases/app/get_item_per_page_usecase.dart';
 import 'package:sales/domain/usecases/order_with_items/add_order_with_items_usecase.dart';
 import 'package:sales/domain/usecases/order_with_items/get_next_order_item_id_usecase.dart';
 import 'package:sales/domain/usecases/order_with_items/get_order_items_usecase.dart';
+import 'package:sales/domain/usecases/order_with_items/get_temporary_order_with_items_usecase.dart';
 import 'package:sales/domain/usecases/order_with_items/remove_order_with_items_usecase.dart';
+import 'package:sales/domain/usecases/order_with_items/remove_temporary_order_with_items_usecase.dart';
+import 'package:sales/domain/usecases/order_with_items/save_temporary_order_with_items_usecase.dart';
 import 'package:sales/domain/usecases/order_with_items/update_order_with_items_usecase.dart';
 import 'package:sales/domain/usecases/orders/get_next_order_id_usecase.dart';
 import 'package:sales/domain/usecases/orders/get_orders_usecase.dart';
@@ -31,6 +34,9 @@ final ordersProvider = StateNotifierProvider<OrdersNotifier, OrdersState>((ref) 
     updateOrderWithItemsUseCase: getIt(),
     removeOrderWithItemsUseCase: getIt(),
     getItemPerPageUseCase: getIt(),
+    getTemporaryOrderWithItemsUseCase: getIt(),
+    saveTemporaryOrderWithItemsUseCase: getIt(),
+    removeTemporaryOrderWithItemsUseCase: getIt(),
   );
 });
 
@@ -44,6 +50,9 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
   final UpdateOrderWithItemsUseCase _updateOrderWithItemsUseCase;
   final RemoveOrderWithItemsUseCase _removeOrderWithItemsUseCase;
   final GetItemPerPageUseCase _getItemPerPageUseCase;
+  final GetTemporaryOrderWithItemsUseCase _getTemporaryOrderWithItemsUseCase;
+  final SaveTemporaryOrderWithItemsUseCase _saveTemporaryOrderWithItemsUseCase;
+  final RemoveTemporaryOrderWithItemsUseCase _removeTemporaryOrderWithItemsUseCase;
 
   OrdersNotifier({
     required GetOrdersUseCase getOrdersUseCase,
@@ -55,6 +64,9 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
     required UpdateOrderWithItemsUseCase updateOrderWithItemsUseCase,
     required RemoveOrderWithItemsUseCase removeOrderWithItemsUseCase,
     required GetItemPerPageUseCase getItemPerPageUseCase,
+    required GetTemporaryOrderWithItemsUseCase getTemporaryOrderWithItemsUseCase,
+    required SaveTemporaryOrderWithItemsUseCase saveTemporaryOrderWithItemsUseCase,
+    required RemoveTemporaryOrderWithItemsUseCase removeTemporaryOrderWithItemsUseCase,
   })  : _getOrdersUseCase = getOrdersUseCase,
         _getOrderItemsUseCase = getOrderItemsUseCase,
         _getAllProductsUseCase = getAllProductsUseCase,
@@ -64,6 +76,9 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
         _updateOrderWithItemsUseCase = updateOrderWithItemsUseCase,
         _removeOrderWithItemsUseCase = removeOrderWithItemsUseCase,
         _getItemPerPageUseCase = getItemPerPageUseCase,
+        _getTemporaryOrderWithItemsUseCase = getTemporaryOrderWithItemsUseCase,
+        _saveTemporaryOrderWithItemsUseCase = saveTemporaryOrderWithItemsUseCase,
+        _removeTemporaryOrderWithItemsUseCase = removeTemporaryOrderWithItemsUseCase,
         super(OrdersState(tour: FeaturesTourController('OrdersView')));
 
   Future<void> initialize() async {
@@ -148,5 +163,17 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
   Future<void> removeOrderWithItems(Order order) async {
     await _removeOrderWithItemsUseCase(order);
     await fetchOrders();
+  }
+
+  Future<void> saveTemporaryOrderWithItems(OrderWithItemsParams params) async {
+    await _saveTemporaryOrderWithItemsUseCase(params);
+  }
+
+  Future<void> removeTemporaryOrderWithItems() async {
+    await _removeTemporaryOrderWithItemsUseCase(NoParams());
+  }
+
+  Future<OrderWithItemsParams?> getTemporaryOrderWithItems() async {
+    return await _getTemporaryOrderWithItemsUseCase(NoParams());
   }
 }
