@@ -80,25 +80,24 @@
 
     - Auto save khi tạo đơn hàng, thêm mới sản phẩm (0.25)
     - Tự động thay đổi sắp xếp hợp lí các thành phần theo độ rộng màn hình (responsive layout) (0.5 điểm)
-    - TODO: Chương trình có khả năng mở rộng động theo kiến trúc plugin (1 điểm)
     - TODO: Bổ sung khuyến mãi giảm giá (1 điểm)
     - TODO: Thêm chế độ dùng thử - cho phép xài full phần mềm trong 15 ngày. Hết 15 ngày bắt đăng kí (mã code hay cách kích hoạt nào đó) (0.5 điểm)
     - Backup / restore database (0.25 điểm)
-    - TODO: Sử dụng kiến trúc MVVM (0.5 điểm)
     - TODO: Làm rối mã nguồn (obfuscator) chống dịch ngược (0.25 điểm)
     - Sử dụng Dependency Injection (0.5 điểm)
     - Hỗ trợ onboarding (0.5 điểm)
     - TODO: Tạo ra các test case kiểm thử chức năng và giao diện (0.5 điểm)
-    - TODO: In đơn hàng (0.5 điểm)
+    - In đơn hàng PDF (0.5 điểm):
+        - In đơn hàng chỉ có ở chế độ "Xem chi tiết đơn hàng".
 
 ### Phần Tự Tìm Hiểu
 
-    - Sử dụng kiến trúc Clean Architecture.
+    - **Sử dụng kiến trúc Clean Architecture**.
     - Màn hình Đăng Nhập:
         - Khi ứng dụng tiến hành tự động đăng nhập thì một hộp thoại sẽ hiện ra để người dùng có thể huỷ trong vòng 3s.
     - Màn hình Sản Phẩm:
         - Sao chép một sản phẩm.
-        - Tạo một khoảng delay khi người dùng nhập vào ô tìm kiếm để đảm bảo người dùng hoàn thiện nhập liệu nhằm giảm số lần request lên server và giảm nháy màn hình khi tải dữ liệu.
+        - Tạo một khoảng delay khi người dùng nhập vào ô tìm kiếm để đảm bảo người dùng hoàn thiện nhập liệu nhằm giảm số lần request lên server.
     - Màn hình Đơn Hàng:
         - Sao chép một đơn hàng.
     - Màn hình Cài Đặt:
