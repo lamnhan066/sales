@@ -3,8 +3,11 @@ import 'package:language_helper/language_helper.dart';
 import 'package:sales/core/errors/failure.dart';
 import 'package:sales/core/usecases/usecase.dart';
 import 'package:sales/di.dart';
+import 'package:sales/domain/entities/license.dart';
+import 'package:sales/domain/entities/license_params.dart';
 import 'package:sales/domain/entities/login_credentials.dart';
 import 'package:sales/domain/entities/server_configurations.dart';
+import 'package:sales/domain/entities/user.dart';
 import 'package:sales/domain/usecases/app/get_app_version_usecase.dart';
 import 'package:sales/domain/usecases/auth/auto_login_usecase.dart';
 import 'package:sales/domain/usecases/auth/get_cached_credentials_usecase.dart';
@@ -13,6 +16,10 @@ import 'package:sales/domain/usecases/auth/login_usecase.dart';
 import 'package:sales/domain/usecases/data_services/load_server_configuration_usecase.dart';
 import 'package:sales/domain/usecases/data_services/load_server_connection_usecase.dart';
 import 'package:sales/domain/usecases/data_services/save_server_configuration_usecase.dart';
+import 'package:sales/domain/usecases/license/active_license_usecase.dart';
+import 'package:sales/domain/usecases/license/active_trial_license_usecase.dart';
+import 'package:sales/domain/usecases/license/can_active_trial_license_usecase.dart';
+import 'package:sales/domain/usecases/license/get_license_usecase.dart';
 import 'package:sales/presentation/riverpod/states/login_state.dart';
 
 final loginProvider = StateNotifierProvider<LoginNotifier, LoginState>((ref) {
@@ -25,6 +32,10 @@ final loginProvider = StateNotifierProvider<LoginNotifier, LoginState>((ref) {
     checkLoginStateUseCase: getIt(),
     getCachedLoginCredentialsLoginUseCase: getIt(),
     loadServerConnectionUsecase: getIt(),
+    canActiveTrialLicenseUseCase: getIt(),
+    activeLicenseUseCase: getIt(),
+    activeTrialLicenseUseCase: getIt(),
+    getLicenseUseCase: getIt(),
   );
 });
 
@@ -37,6 +48,10 @@ class LoginNotifier extends StateNotifier<LoginState> {
   final GetLoginStateUseCase _checkLoginStateUseCase;
   final GetCachedCredentialsUseCase _getCachedLoginCredentialsLoginUseCase;
   final LoadServerConnectionUsecase _loadServerConnectionUsecase;
+  final GetLicenseUseCase _getLicenseUseCase;
+  final CanActiveTrialLicenseUseCase _canActiveTrialLicenseUseCase;
+  final ActiveTrialLicenseUseCase _activeTrialLicenseUseCase;
+  final ActiveLicenseUseCase _activeLicenseUseCase;
 
   LoginNotifier({
     required LoginUseCase loginUseCase,
@@ -47,6 +62,10 @@ class LoginNotifier extends StateNotifier<LoginState> {
     required GetLoginStateUseCase checkLoginStateUseCase,
     required GetCachedCredentialsUseCase getCachedLoginCredentialsLoginUseCase,
     required LoadServerConnectionUsecase loadServerConnectionUsecase,
+    required GetLicenseUseCase getLicenseUseCase,
+    required CanActiveTrialLicenseUseCase canActiveTrialLicenseUseCase,
+    required ActiveTrialLicenseUseCase activeTrialLicenseUseCase,
+    required ActiveLicenseUseCase activeLicenseUseCase,
   })  : _getAppVersionUseCase = getAppVersionUseCase,
         _autoLoginUseCase = autoLoginUseCase,
         _loginUseCase = loginUseCase,
@@ -55,25 +74,37 @@ class LoginNotifier extends StateNotifier<LoginState> {
         _checkLoginStateUseCase = checkLoginStateUseCase,
         _getCachedLoginCredentialsLoginUseCase = getCachedLoginCredentialsLoginUseCase,
         _loadServerConnectionUsecase = loadServerConnectionUsecase,
+        _activeLicenseUseCase = activeLicenseUseCase,
+        _activeTrialLicenseUseCase = activeTrialLicenseUseCase,
+        _canActiveTrialLicenseUseCase = canActiveTrialLicenseUseCase,
+        _getLicenseUseCase = getLicenseUseCase,
         super(LoginState(username: '', password: '')) {
-    intitial();
+    initial();
   }
 
-  void intitial() async {
+  Future<void> initial() async {
     final credentials = await _getCachedLoginCredentialsLoginUseCase(NoParams());
     final isLoggedIn = await _checkLoginStateUseCase(NoParams());
     await loadServerConfigurations();
     final rememberMe = _loginUseCase.isRememberMe();
     if (rememberMe) {
+      final license = await _getLicenseUseCase(
+        User(username: credentials?.username ?? '', password: credentials?.password ?? ''),
+      );
       state = state.copyWith(
         username: credentials?.username,
         password: credentials?.password,
         isLoading: false,
         rememberMe: true,
+        license: license,
         showAutoLoginDialog: true,
         isLoggedIn: isLoggedIn,
       );
     }
+  }
+
+  Future<void> resetOnIntial() async {
+    state = state.copyWith(isLoggedIn: false, showAutoLoginDialog: true);
   }
 
   Future<bool> login() async {
@@ -84,9 +115,19 @@ class LoginNotifier extends StateNotifier<LoginState> {
         password: state.password,
         rememberMe: state.rememberMe,
       );
-      await _loginUseCase.call(credentials);
+      final user = await _loginUseCase.call(credentials);
+      state = state.copyWith(isLoggedIn: true);
+      final license = await _getLicenseUseCase(user);
+      if (license is NoLicense || license.isExpired) {
+        state = state.copyWith(error: 'Vui lòng kích hoạt bản quyền để tiếp tục sử dụng'.tr, license: license);
+        return false;
+      }
       await reloadServer();
-      state = state.copyWith(username: '', password: '', isLoggedIn: true);
+      if (state.rememberMe) {
+        state = state.copyWith(license: license, isLoggedIn: true);
+      } else {
+        state = state.copyWith(username: '', password: '', license: license, isLoggedIn: true);
+      }
 
       return true;
     } on Failure catch (e) {
@@ -100,9 +141,19 @@ class LoginNotifier extends StateNotifier<LoginState> {
 
   Future<bool> autoLogin() async {
     try {
-      await _autoLoginUseCase.call(NoParams());
+      final user = await _autoLoginUseCase.call(NoParams());
+      state = state.copyWith(isLoggedIn: true);
+      final license = await _getLicenseUseCase(user);
+      if (license is NoLicense || license.isExpired) {
+        state = state.copyWith(error: 'Vui lòng kích hoạt bản quyền để tiếp tục sử dụng'.tr, license: license);
+        return false;
+      }
       await reloadServer();
-      state = state.copyWith(username: '', password: '', isLoggedIn: true);
+      if (state.rememberMe) {
+        state = state.copyWith(license: license, isLoggedIn: true);
+      } else {
+        state = state.copyWith(username: '', password: '', license: license, isLoggedIn: true);
+      }
 
       return true;
     } on Failure catch (e) {
@@ -153,5 +204,32 @@ class LoginNotifier extends StateNotifier<LoginState> {
     final configs = configurations.copyWith(username: state.username, password: state.password);
     state = state.copyWith(serverConfigurations: configs);
     await _saveServerConfigurationUseCase.call(configs);
+  }
+
+  Future<bool> canActiveTrial() {
+    return _canActiveTrialLicenseUseCase(state.user);
+  }
+
+  Future<void> activeTrial() async {
+    if (!await canActiveTrial()) {
+      state = state.copyWith(licenseError: 'Không thể kích hoạt bản dùng thử'.tr);
+      return;
+    }
+
+    final license = await _activeTrialLicenseUseCase(state.user);
+    if (license is! NoLicense) {
+      state = state.copyWith(license: license, licenseError: '');
+    } else {
+      state = state.copyWith(license: license, licenseError: 'Không thể kích hoạt bản dùng thử'.tr);
+    }
+  }
+
+  Future<void> active(String code) async {
+    final license = await _activeLicenseUseCase(LicenseParams(user: state.user, code: code));
+    if (license is! NoLicense) {
+      state = state.copyWith(license: license, licenseError: '');
+    } else {
+      state = state.copyWith(license: license, licenseError: 'Không thể kích hoạt với mã đã nhập'.tr);
+    }
   }
 }

@@ -4,9 +4,11 @@ import 'package:boxw/boxw.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:language_helper/language_helper.dart';
+import 'package:sales/domain/entities/license.dart';
 import 'package:sales/domain/entities/server_configurations.dart';
 import 'package:sales/presentation/riverpod/notifiers/login_provider.dart';
 import 'package:sales/presentation/riverpod/notifiers/settings_provider.dart';
+import 'package:sales/presentation/riverpod/states/login_state.dart';
 import 'package:sales/presentation/views/home_view.dart';
 
 class LoginView extends ConsumerStatefulWidget {
@@ -23,16 +25,16 @@ class _LoginViewState extends ConsumerState<LoginView> {
   @override
   void initState() {
     super.initState();
+    ref.read(loginProvider.notifier).resetOnIntial();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       final loginState = ref.watch(loginProvider);
       final loginNotifier = ref.read(loginProvider.notifier);
+
       ref.read(settingsProvider.notifier).initialize();
 
       if (loginState.showAutoLoginDialog && loginState.rememberMe) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          _checkAndLoginAutomatically(context, loginNotifier);
-        });
+        _checkAndLoginAutomatically(context, loginNotifier);
       }
     });
   }
@@ -118,6 +120,8 @@ class _LoginViewState extends ConsumerState<LoginView> {
                     ),
                   ),
                 ),
+                const Divider(),
+                _buildLicense(loginNotifier, loginState),
                 const Spacer(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -257,6 +261,102 @@ class _LoginViewState extends ConsumerState<LoginView> {
         _navigateToHomeView();
       }
     }
+  }
+
+  Widget _buildLicense(LoginNotifier notifier, LoginState state) {
+    return !state.isLoggedIn
+        ? const SizedBox.shrink()
+        : Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: switch (state.license) {
+              NoLicense() => FutureBuilder<bool>(
+                  future: notifier.canActiveTrial(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    String code = '';
+
+                    return snapshot.data!
+                        ? Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  'Bạn có 15 ngày để dùng thử.\nVui lòng nhấn Kích Hoạt để tiếp tục'.tr,
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              FilledButton(
+                                onPressed: () {
+                                  notifier.activeTrial();
+                                },
+                                child: Text('Kích Hoạt'.tr),
+                              ),
+                              Text(
+                                state.licenseError,
+                                style: const TextStyle(color: Colors.red),
+                              ),
+                            ],
+                          )
+                        : StatefulBuilder(builder: (context, setState) {
+                            return Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    'Bạn đã hết thời gian dùng thử.\nVui lòng nhập mã để kích hoạt ứng dụng'.tr,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                                BoxWInput(
+                                  title: 'Mã kích hoạt'.tr,
+                                  onChanged: (value) {
+                                    code = value;
+                                  },
+                                ),
+                                FilledButton(
+                                  onPressed: code.isEmpty
+                                      ? null
+                                      : () {
+                                          notifier.active(code);
+                                        },
+                                  child: Text('Kích Hoạt'.tr),
+                                ),
+                                Text(
+                                  state.licenseError,
+                                  style: const TextStyle(color: Colors.red),
+                                ),
+                              ],
+                            );
+                          });
+                  },
+                ),
+              TrialLicense() => Column(
+                  children: [
+                    Text('Bạn đang sử dụng bản dùng thử. Còn @{day} ngày.'.trP({
+                      'day': state.license.remainingDays,
+                    })),
+                    FilledButton(
+                      onPressed: null,
+                      child: Text('Kích Hoạt'.tr),
+                    ),
+                  ],
+                ),
+              ActiveLicense() => Column(
+                  children: [
+                    Text('Bạn đang sử dụng bản quyền. Còn @{day} ngày.'.trP({
+                      'day': state.license.remainingDays,
+                    })),
+                    FilledButton(
+                      onPressed: null,
+                      child: Text('Kích Hoạt'.tr),
+                    ),
+                  ],
+                ),
+            },
+          );
   }
 
   void _navigateToHomeView() {

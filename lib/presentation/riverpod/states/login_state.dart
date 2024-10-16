@@ -1,6 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:sales/domain/entities/app_version.dart';
+import 'package:sales/domain/entities/license.dart';
 import 'package:sales/domain/entities/server_configurations.dart';
+import 'package:sales/domain/entities/user.dart';
 
 class LoginState with EquatableMixin {
   final String username;
@@ -8,10 +10,14 @@ class LoginState with EquatableMixin {
   final bool rememberMe;
   final String error;
   final AppVersion version;
+  final License license;
+  final String licenseError;
   final ServerConfigurations serverConfigurations;
   final bool showAutoLoginDialog;
   final bool isLoggedIn;
   final bool isLoading;
+
+  User get user => User(username: username, password: password);
 
   LoginState({
     required this.username,
@@ -19,8 +25,10 @@ class LoginState with EquatableMixin {
     this.rememberMe = false,
     this.error = '',
     this.version = const AppVersion(version: '1.0.0'),
+    this.license = const NoLicense(),
+    this.licenseError = '',
     this.serverConfigurations = const ServerConfigurations(),
-    this.showAutoLoginDialog = false,
+    this.showAutoLoginDialog = true,
     this.isLoggedIn = false,
     this.isLoading = false,
   });
@@ -31,6 +39,8 @@ class LoginState with EquatableMixin {
     bool? rememberMe,
     String? error,
     AppVersion? version,
+    License? license,
+    String? licenseError,
     ServerConfigurations? serverConfigurations,
     bool? showAutoLoginDialog,
     bool? isLoggedIn,
@@ -42,6 +52,8 @@ class LoginState with EquatableMixin {
       rememberMe: rememberMe ?? this.rememberMe,
       error: error ?? this.error,
       version: version ?? this.version,
+      license: license ?? this.license,
+      licenseError: licenseError ?? this.licenseError,
       serverConfigurations: serverConfigurations ?? this.serverConfigurations,
       showAutoLoginDialog: showAutoLoginDialog ?? this.showAutoLoginDialog,
       isLoggedIn: isLoggedIn ?? this.isLoggedIn,
@@ -57,6 +69,8 @@ class LoginState with EquatableMixin {
       rememberMe,
       error,
       version,
+      license,
+      licenseError,
       serverConfigurations,
       showAutoLoginDialog,
       isLoggedIn,
