@@ -29,8 +29,8 @@ class _ReportFilterDialogState extends State<ReportFilterDialog> {
   void initState() {
     _dateRange = widget.initialDateRange;
     _dateRangeType = switch (_dateRange) {
-      WeekDaysRanges _ => ReportDateRangeType.week,
-      MonthDaysRanges _ => ReportDateRangeType.month,
+      SevenDaysRanges _ => ReportDateRangeType.week,
+      ThirtyDaysRanges _ => ReportDateRangeType.month,
       _ => ReportDateRangeType.custom,
     };
     startController.text = _dateRange.start.toddMMyyyy();
@@ -47,7 +47,7 @@ class _ReportFilterDialogState extends State<ReportFilterDialog> {
           style: const TextStyle(fontSize: 18),
         ),
         RadioListTile<ReportDateRangeType>(
-          title: Text('Tuần hiện tại'.tr),
+          title: Text('7 ngày gần đây nhất'.tr),
           value: ReportDateRangeType.week,
           groupValue: _dateRangeType,
           onChanged: (value) {
@@ -55,12 +55,12 @@ class _ReportFilterDialogState extends State<ReportFilterDialog> {
               setState(() {
                 _dateRangeType = value;
               });
-              _changeDateRange(WeekDaysRanges(DateTime.now()));
+              _changeDateRange(SevenDaysRanges(DateTime.now()));
             }
           },
         ),
         RadioListTile<ReportDateRangeType>(
-          title: Text('Tháng hiện tại'.tr),
+          title: Text('30 ngày gần đây nhất'.tr),
           value: ReportDateRangeType.month,
           groupValue: _dateRangeType,
           onChanged: (value) {
@@ -68,7 +68,7 @@ class _ReportFilterDialogState extends State<ReportFilterDialog> {
               setState(() {
                 _dateRangeType = value;
               });
-              _changeDateRange(MonthDaysRanges(DateTime.now()));
+              _changeDateRange(ThirtyDaysRanges(DateTime.now()));
             }
           },
         ),

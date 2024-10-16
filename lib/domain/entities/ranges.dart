@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
-import 'package:sales/core/extensions/data_time_extensions.dart';
 
 extension DoubleRangesExtension on Ranges<double> {
   bool get isAllPrices => start == 0 && end == double.infinity;
@@ -42,47 +41,16 @@ class Ranges<T extends Object?> with EquatableMixin {
   List<Object> get props => [start ?? '', end ?? ''];
 }
 
-class WeekDaysRanges extends Ranges<DateTime> {
+class SevenDaysRanges extends Ranges<DateTime> {
   final DateTime date;
 
-  /// Khoảng ngày từ đầu tuần đến cuối tuần nhưng không vượt quá ngày hiện tại.
-  WeekDaysRanges(this.date) : super(_getStartDate(date), _getEndDate(date));
-
-  static DateTime _getStartDate(DateTime date) {
-    for (int i = 0;; i++) {
-      final previousDate = date.subtract(Duration(days: i)).dateOnly();
-      if (previousDate.weekday == 1) return previousDate;
-    }
-  }
-
-  static DateTime _getEndDate(DateTime date) {
-    final today = DateTime.now().dateOnly();
-    for (int i = 0;; i++) {
-      final nextDate = date.add(Duration(days: i)).dateOnly();
-      if (nextDate.weekday == 1 || nextDate == today) return today;
-    }
-  }
+  /// Khoảng thời gian bảy ngày cho đến ngày hiện tại là [date].
+  SevenDaysRanges(this.date) : super(date.subtract(const Duration(days: 7)), date);
 }
 
-class MonthDaysRanges extends Ranges<DateTime> {
+class ThirtyDaysRanges extends Ranges<DateTime> {
   final DateTime date;
 
-  /// Khoảng ngày từ đầu tháng cho đến cuối tháng nhưng không vượt quá ngày hiện tại.
-  MonthDaysRanges(this.date) : super(_getStartDate(date), _getEndDate(date));
-
-  static DateTime _getStartDate(DateTime date) {
-    for (int i = 0;; i++) {
-      final previousDate = date.subtract(Duration(days: i)).dateOnly();
-      if (previousDate.day == 1) return previousDate;
-    }
-  }
-
-  static DateTime _getEndDate(DateTime date) {
-    final today = DateTime.now().dateOnly();
-    // Tìm ngày đầu của tháng tiếp theo nên cầu bắt đầu là 1 thay vì 0.
-    for (int i = 1;; i++) {
-      final nextDate = date.add(Duration(days: i)).dateOnly();
-      if (nextDate.day == 1 || nextDate == today) return today;
-    }
-  }
+  /// Khoảng thời gian 30 ngày cho đến ngày hiện tại là [date].
+  ThirtyDaysRanges(this.date) : super(date.subtract(const Duration(days: 30)), date);
 }

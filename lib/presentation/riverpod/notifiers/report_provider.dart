@@ -28,7 +28,7 @@ class ReportNotifier extends StateNotifier<ReportState> {
         _getRevenueUseCase = getRevenueUseCase,
         _getSoldProductsWithQuantityUsecase = getSoldProductsWithQuantityUsecase,
         super(ReportState(
-          reportDateRange: WeekDaysRanges(DateTime.now()),
+          reportDateRange: SevenDaysRanges(DateTime.now()),
           tour: FeaturesTourController('ReportView'),
         ));
 
