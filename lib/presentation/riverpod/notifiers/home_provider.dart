@@ -38,6 +38,5 @@ class HomeNotifier extends StateNotifier<HomeState> {
 
   void logout() {
     _logoutUseCase(NoParams());
-    _prefs.clear();
   }
 }
