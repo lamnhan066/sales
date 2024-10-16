@@ -161,7 +161,6 @@ class _LoginViewState extends ConsumerState<LoginView> {
     );
   }
 
-  // TODO: Hàm này chưa hoạt động được đúng như mong đợi vì `settings` trống.
   Future<void> _showConfigurationDialog(
     BuildContext context,
     LoginNotifier configureServerNotifier,

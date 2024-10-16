@@ -878,8 +878,6 @@ class DataTable extends StatelessWidget {
       );
     }
 
-    // TODO(dkwingsmt): Only wrap Inkwell if onSort != null. Blocked by
-    // https://github.com/flutter/flutter/issues/51152
     label = InkWell(
       onTap: onSort,
       overlayColor: overlayColor,
@@ -1307,7 +1305,7 @@ class _SortArrowState extends State<_SortArrow> with TickerProviderStateMixin {
     if (status.isCompleted) {
       assert(_orientationAnimation.value == math.pi);
       _orientationOffset += math.pi;
-      _orientationController.value = 0.0; // TODO(ianh): This triggers a pointless rebuild.
+      _orientationController.value = 0.0;
     }
   }
 
