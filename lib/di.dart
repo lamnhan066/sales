@@ -27,6 +27,7 @@ import 'package:sales/domain/repositories/page_configurations_repository.dart';
 import 'package:sales/domain/repositories/product_repository.dart';
 import 'package:sales/domain/repositories/report_repository.dart';
 import 'package:sales/domain/repositories/server_configurations_repository.dart';
+import 'package:sales/domain/repositories/temporary_data_repository.dart';
 import 'package:sales/domain/services/database_service.dart';
 import 'package:sales/domain/usecases/app/change_item_per_page_usecase.dart';
 import 'package:sales/domain/usecases/app/change_language_usecase.dart';
@@ -60,7 +61,10 @@ import 'package:sales/domain/usecases/order_with_items/add_order_with_items_usec
 import 'package:sales/domain/usecases/order_with_items/get_all_orders_with_items_usecase.dart';
 import 'package:sales/domain/usecases/order_with_items/get_next_order_item_id_usecase.dart';
 import 'package:sales/domain/usecases/order_with_items/get_order_items_usecase.dart';
+import 'package:sales/domain/usecases/order_with_items/get_temporary_order_with_items_usecase.dart';
 import 'package:sales/domain/usecases/order_with_items/remove_order_with_items_usecase.dart';
+import 'package:sales/domain/usecases/order_with_items/remove_temporary_order_with_items_usecase.dart';
+import 'package:sales/domain/usecases/order_with_items/save_temporary_order_with_items_usecase.dart';
 import 'package:sales/domain/usecases/order_with_items/update_order_with_items_usecase.dart';
 import 'package:sales/domain/usecases/orders/get_next_order_id_usecase.dart';
 import 'package:sales/domain/usecases/orders/get_orders_usecase.dart';
@@ -69,8 +73,11 @@ import 'package:sales/domain/usecases/products/add_product_usecase.dart';
 import 'package:sales/domain/usecases/products/get_all_products_usecase.dart';
 import 'package:sales/domain/usecases/products/get_next_product_id_and_sku_usecase.dart';
 import 'package:sales/domain/usecases/products/get_products_usecase.dart';
+import 'package:sales/domain/usecases/products/get_temporary_product_usecase.dart';
 import 'package:sales/domain/usecases/products/get_total_product_count_usecase.dart';
 import 'package:sales/domain/usecases/products/remove_product_usecase.dart';
+import 'package:sales/domain/usecases/products/remove_temporary_product_usecase.dart';
+import 'package:sales/domain/usecases/products/save_temporary_product_usecase.dart';
 import 'package:sales/domain/usecases/products/update_product_usecase.dart';
 import 'package:sales/domain/usecases/reports/get_daily_order_count_usecase.dart';
 import 'package:sales/domain/usecases/reports/get_daily_revenue_for_month_usecase.dart';
@@ -95,6 +102,7 @@ import 'package:sales/infrastructure/respositories/page_configurations_repositor
 import 'package:sales/infrastructure/respositories/postgres_configurations_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/product_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/report_repository_impl.dart';
+import 'package:sales/infrastructure/respositories/temporary_data_repository_impl.dart';
 import 'package:sales/infrastructure/services/database_service_impl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -162,6 +170,7 @@ void _registerRepositories() {
   getIt.registerLazySingleton<PageConfigurationsRepository>(() => PageConfigurationsRepositoryImpl(getIt()));
   getIt.registerLazySingleton<BrightnessRepository>(() => BrightnessRepositoryImpl(getIt()));
   getIt.registerLazySingleton<BackupRestoreRepository>(() => BackupRestoreRepositoryImpl(getIt()));
+  getIt.registerLazySingleton<TemporaryDataRepository>(() => TemporaryDataRepositoryImpl(getIt()));
 }
 
 void _registerDatabase() {
@@ -206,6 +215,9 @@ void _registerProductUseCases() {
   getIt.registerLazySingleton<GetNextProductIdAndSkuUseCase>(() => GetNextProductIdAndSkuUseCase(getIt()));
   getIt.registerLazySingleton<GetAllProductsUseCase>(() => GetAllProductsUseCase(getIt()));
   getIt.registerLazySingleton<AddAllProductsUseCase>(() => AddAllProductsUseCase(getIt()));
+  getIt.registerLazySingleton<SaveTemporaryProductUseCase>(() => SaveTemporaryProductUseCase(getIt()));
+  getIt.registerLazySingleton<GetTemporaryProductUseCase>(() => GetTemporaryProductUseCase(getIt()));
+  getIt.registerLazySingleton<RemoveTemporaryProductUseCase>(() => RemoveTemporaryProductUseCase(getIt()));
 }
 
 void _registerOrderUseCases() {
@@ -218,6 +230,10 @@ void _registerOrderUseCases() {
   getIt.registerLazySingleton<RemoveOrderWithItemsUseCase>(() => RemoveOrderWithItemsUseCase(getIt()));
   getIt.registerLazySingleton<GetAllOrdersWithItemsUseCase>(() => GetAllOrdersWithItemsUseCase(getIt()));
   getIt.registerLazySingleton<AddAllOrdersWithItemsUseCase>(() => AddAllOrdersWithItemsUseCase(getIt()));
+  getIt.registerLazySingleton<SaveTemporaryOrderWithItemsUseCase>(() => SaveTemporaryOrderWithItemsUseCase(getIt()));
+  getIt.registerLazySingleton<GetTemporaryOrderWithItemsUseCase>(() => GetTemporaryOrderWithItemsUseCase(getIt()));
+  getIt
+      .registerLazySingleton<RemoveTemporaryOrderWithItemsUseCase>(() => RemoveTemporaryOrderWithItemsUseCase(getIt()));
 }
 
 void _registerCategoryUseCases() {
