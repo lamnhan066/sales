@@ -488,32 +488,68 @@ class MemoryStorageImpl implements MemoryStorage {
   }
 
   @override
-  Future<Map<ProductModel, int>> getSoldProductsWithQuantity(Ranges<DateTime> dateRange) {
-    // TODO: implement getSoldProductsWithQuantity
-    throw UnimplementedError();
+  Future<Map<ProductModel, int>> getSoldProductsWithQuantity(Ranges<DateTime> dateRange) async {
+    final products = await getProducts();
+    final items = await getAllOrderItems();
+    return {for (var e in products.items) e: items.where((i) => i.productId == e.id).length};
   }
 
   @override
-  Future<int> getRevenue(Ranges<DateTime> params) {
-    // TODO: implement getRevenue
-    throw UnimplementedError();
+  Future<int> getRevenue(Ranges<DateTime> dateRange) async {
+    final items = await getAllOrderItems();
+    final orders = (await getOrders()).items.where((e) {
+      if (e.date.isAfter(dateRange.start) && e.date.isBefore(dateRange.end)) {
+        return true;
+      }
+      return false;
+    });
+    int result = 0;
+    for (final order in orders) {
+      final tempItems = items.where((e) => e.orderId == order.id);
+      for (final item in tempItems) {
+        result += item.totalPrice;
+      }
+    }
+    return result;
   }
 
   @override
-  Future<int> getProfit(Ranges<DateTime> params) {
-    // TODO: implement getProfit
-    throw UnimplementedError();
+  Future<int> getProfit(Ranges<DateTime> dateRange) async {
+    final items = await getOrderItems();
+    final products = await getProducts();
+    final orders = (await getOrders()).items.where((e) {
+      if (e.date.isAfter(dateRange.start) && e.date.isBefore(dateRange.end)) {
+        return true;
+      }
+      return false;
+    });
+    int result = 0;
+    for (final order in orders) {
+      final tempItems = items.where((e) => e.orderId == order.id);
+
+      for (final item in tempItems) {
+        final tempProduct = products.items.firstWhere((e) => e.id == item.productId);
+        result += item.totalPrice - tempProduct.unitSalePrice * item.quantity;
+      }
+    }
+    return result;
   }
 
   @override
-  Future<void> addAllOrdersWithItems(List<OrderWithItemsParamsModel> orderWithItems) {
-    // TODO: implement addAllOrdersWithItems
-    throw UnimplementedError();
+  Future<void> addAllOrdersWithItems(List<OrderWithItemsParamsModel> orderWithItems) async {
+    for (final item in orderWithItems) {
+      await addOrderWithItems(item);
+    }
   }
 
   @override
-  Future<List<OrderWithItemsParamsModel>> getAllOrdersWithItems() {
-    // TODO: implement getAllOrdersWithItems
-    throw UnimplementedError();
+  Future<List<OrderWithItemsParamsModel>> getAllOrdersWithItems() async {
+    final orders = await getOrders();
+    final result = <OrderWithItemsParamsModel>[];
+    for (final order in orders.items) {
+      final orderItems = await getOrderItems(GetOrderItemsParams(orderId: order.id));
+      result.add(OrderWithItemsParamsModel(order: order, orderItems: orderItems));
+    }
+    return result;
   }
 }
