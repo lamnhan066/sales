@@ -20,7 +20,10 @@ import 'package:sales/domain/usecases/data_services/replace_database_usecase.dar
 import 'package:sales/domain/usecases/products/add_product_usecase.dart';
 import 'package:sales/domain/usecases/products/get_next_product_id_and_sku_usecase.dart';
 import 'package:sales/domain/usecases/products/get_products_usecase.dart';
+import 'package:sales/domain/usecases/products/get_temporary_product_usecase.dart';
 import 'package:sales/domain/usecases/products/remove_product_usecase.dart';
+import 'package:sales/domain/usecases/products/remove_temporary_product_usecase.dart';
+import 'package:sales/domain/usecases/products/save_temporary_product_usecase.dart';
 import 'package:sales/domain/usecases/products/update_product_usecase.dart';
 import 'package:sales/presentation/riverpod/states/products_state.dart';
 
@@ -39,6 +42,9 @@ final productsProvider = StateNotifierProvider<ProductsNotifier, ProductsState>(
     replaceDatabaseUsecase: getIt(),
     importDataUseCase: getIt(),
     getItemPerPageUseCase: getIt(),
+    saveTemporaryProductUseCase: getIt(),
+    getTemporaryProductUseCase: getIt(),
+    removeTemporaryProductUseCase: getIt(),
   );
 });
 
@@ -56,6 +62,9 @@ class ProductsNotifier extends StateNotifier<ProductsState> {
   final ReplaceDatabaseUsecase _replaceDatabaseUsecase;
   final ImportDataUseCase _importDataUseCase;
   final GetItemPerPageUseCase _getItemPerPageUseCase;
+  final SaveTemporaryProductUseCase _saveTemporaryProductUseCase;
+  final GetTemporaryProductUseCase _getTemporaryProductUseCase;
+  final RemoveTemporaryProductUseCase _removeTemporaryProductUseCase;
 
   ProductsNotifier({
     required GetAllCategoriesUsecCase getAllCategoriesUsecCase,
@@ -71,6 +80,9 @@ class ProductsNotifier extends StateNotifier<ProductsState> {
     required ReplaceDatabaseUsecase replaceDatabaseUsecase,
     required ImportDataUseCase importDataUseCase,
     required GetItemPerPageUseCase getItemPerPageUseCase,
+    required SaveTemporaryProductUseCase saveTemporaryProductUseCase,
+    required GetTemporaryProductUseCase getTemporaryProductUseCase,
+    required RemoveTemporaryProductUseCase removeTemporaryProductUseCase,
   })  : _importDataUseCase = importDataUseCase,
         _updateCategoryUseCase = updateCategoryUseCase,
         _removeCategoryUseCase = removeCategoryUseCase,
@@ -84,6 +96,9 @@ class ProductsNotifier extends StateNotifier<ProductsState> {
         _getNextCategoryIdUseCase = getNextCategoryIdUseCase,
         _replaceDatabaseUsecase = replaceDatabaseUsecase,
         _getItemPerPageUseCase = getItemPerPageUseCase,
+        _saveTemporaryProductUseCase = saveTemporaryProductUseCase,
+        _getTemporaryProductUseCase = getTemporaryProductUseCase,
+        _removeTemporaryProductUseCase = removeTemporaryProductUseCase,
         super(ProductsState(tour: FeaturesTourController('ProductsView')));
 
   Future<void> loadInitialData() async {
@@ -245,5 +260,17 @@ class ProductsNotifier extends StateNotifier<ProductsState> {
 
     state = state.copyWith(perPage: itemPerPage);
     await fetchProducts(resetPage: true);
+  }
+
+  Future<Product?> getTemporaryProduct() {
+    return _getTemporaryProductUseCase(NoParams());
+  }
+
+  Future<void> saveTemporaryProduct(Product product) {
+    return _saveTemporaryProductUseCase(product);
+  }
+
+  Future<void> removeTemporaryProduct() {
+    return _removeTemporaryProductUseCase(NoParams());
   }
 }

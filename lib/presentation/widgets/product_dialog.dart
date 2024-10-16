@@ -100,7 +100,9 @@ Future<Product?> _productDialog({
   bool readOnly = false,
   required List<Category> categories,
 }) async {
-  Product tempProduct = product?.copyWith(imagePath: [...product.imagePath]) ??
+  final temporaryProduct = await notifier.getTemporaryProduct();
+  Product resultProduct = product?.copyWith(imagePath: [...product.imagePath]) ??
+      temporaryProduct ??
       Product(
         id: 0,
         sku: '',
@@ -114,7 +116,7 @@ Future<Product?> _productDialog({
       );
   if (generateIdSku || product == null) {
     final idSku = await notifier.getNextProductIdAndSku();
-    tempProduct = tempProduct.copyWith(id: idSku.id, sku: idSku.sku);
+    resultProduct = resultProduct.copyWith(id: idSku.id, sku: idSku.sku);
   }
 
   final form = GlobalKey<FormState>();
@@ -142,12 +144,12 @@ Future<Product?> _productDialog({
         child: ProductFormDialog(
           notifier: notifier,
           form: form,
-          tempProduct: tempProduct,
+          tempProduct: resultProduct,
           validateForm: validateForm,
           categories: categories,
           readOnly: readOnly,
           onChanged: (product) {
-            tempProduct = product;
+            resultProduct = product;
           },
         ),
       ),
@@ -167,8 +169,11 @@ Future<Product?> _productDialog({
     await formValidator.close();
 
     if (result == true) {
-      return tempProduct;
+      await notifier.removeTemporaryProduct();
+      return resultProduct;
     }
+
+    await notifier.saveTemporaryProduct(resultProduct);
   }
 
   return null;
