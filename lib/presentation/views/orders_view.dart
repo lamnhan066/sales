@@ -246,18 +246,22 @@ class _OrdersViewState extends ConsumerState<OrdersView> {
 
   void viewOrder(Order order) async {
     final notifier = ref.read(ordersProvider.notifier);
+    final state = ref.watch(ordersProvider);
     viewOrderDialog(
       context: context,
       notifier: notifier,
+      state: state,
       order: order,
     );
   }
 
   Future<void> updateOrder(Order order) async {
     final notifier = ref.read(ordersProvider.notifier);
+    final state = ref.watch(ordersProvider);
     final result = await updateOrderDialog(
       context: context,
       notifier: notifier,
+      state: state,
       order: order,
     );
 
@@ -268,9 +272,11 @@ class _OrdersViewState extends ConsumerState<OrdersView> {
 
   Future<void> copyOrder(Order order) async {
     final notifier = ref.read(ordersProvider.notifier);
+    final state = ref.watch(ordersProvider);
     final result = await copyOrderDialog(
       context: context,
       notifier: notifier,
+      state: state,
       order: order,
     );
 
@@ -296,8 +302,10 @@ class _OrdersViewState extends ConsumerState<OrdersView> {
 
   Future<void> addOrder() async {
     final notifier = ref.read(ordersProvider.notifier);
+    final state = ref.watch(ordersProvider);
     final result = await addOrderDialog(
       context: context,
+      state: state,
       notifier: notifier,
     );
 

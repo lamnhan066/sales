@@ -12,6 +12,7 @@ import 'package:sales/domain/entities/order_status.dart';
 import 'package:sales/domain/entities/order_with_items_params.dart';
 import 'package:sales/domain/entities/product.dart';
 import 'package:sales/presentation/riverpod/notifiers/orders_provider.dart';
+import 'package:sales/presentation/riverpod/states/orders_state.dart';
 import 'package:sales/presentation/widgets/common_components.dart';
 import 'package:sales/presentation/widgets/order_form_dialog.dart';
 import 'package:screenshot/screenshot.dart';
@@ -19,11 +20,13 @@ import 'package:screenshot/screenshot.dart';
 Future<void> viewOrderDialog({
   required BuildContext context,
   required OrdersNotifier notifier,
+  required OrdersState state,
   required Order order,
 }) {
   return _orderDialog(
     context: context,
     notifier: notifier,
+    state: state,
     title: 'Thông Tin Đơn'.tr,
     order: order,
     copy: false,
@@ -34,10 +37,12 @@ Future<void> viewOrderDialog({
 Future<OrderResult?> addOrderDialog({
   required BuildContext context,
   required OrdersNotifier notifier,
+  required OrdersState state,
 }) {
   return _orderDialog(
     context: context,
     notifier: notifier,
+    state: state,
     title: 'Thêm Đơn'.tr,
     order: null,
     copy: true,
@@ -47,11 +52,13 @@ Future<OrderResult?> addOrderDialog({
 Future<OrderResult?> updateOrderDialog({
   required BuildContext context,
   required OrdersNotifier notifier,
+  required OrdersState state,
   required Order order,
 }) {
   return _orderDialog(
     context: context,
     notifier: notifier,
+    state: state,
     title: 'Sửa Đơn'.tr,
     order: order,
     copy: false,
@@ -61,11 +68,13 @@ Future<OrderResult?> updateOrderDialog({
 Future<OrderResult?> copyOrderDialog({
   required BuildContext context,
   required OrdersNotifier notifier,
+  required OrdersState state,
   required Order order,
 }) {
   return _orderDialog(
     context: context,
     notifier: notifier,
+    state: state,
     title: 'Chép Đơn'.tr,
     order: order,
     copy: true,
@@ -75,6 +84,7 @@ Future<OrderResult?> copyOrderDialog({
 Future<OrderResult?> _orderDialog({
   required BuildContext context,
   required OrdersNotifier notifier,
+  required OrdersState state,
   required String title,
   required Order? order,
   required bool copy,
@@ -178,7 +188,7 @@ Future<OrderResult?> _orderDialog({
         maxWidth: dialogWidth,
       ),
       content: Screenshot(
-        controller: notifier.debugState.screenshot,
+        controller: state.screenshot,
         child: OrderFormDialog(
           form: form,
           copy: copy,
