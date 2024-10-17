@@ -1,4 +1,6 @@
-const en = <String, dynamic>{
+import 'package:language_helper/language_helper.dart';
+
+final en = <String, dynamic>{
   ///===========================================================================
   /// Path: ./lib/core/utils/price_utils.dart
   ///===========================================================================
@@ -168,9 +170,20 @@ const en = <String, dynamic>{
   // 'Nhập Excel': 'Import Excel',  // Duplicated
   'Có @{count} sản phẩm trong dữ liệu cần nhập. '
       'Dữ liệu mới sẽ thay thế dữ liệu cũ và không thể hoàn tác.\n\n'
-      'Bạn có muốn tiếp tục không?': 'There are @{count} products in the data to be imported. '
-      'The new data will replace the old data and cannot be undone.\n\n'
-      'Do you want to continue?',
+      'Bạn có muốn tiếp tục không?': LanguageConditions(
+    param: 'count',
+    conditions: {
+      '0': 'There are 0 products in the data to be imported. '
+          'The new data will replace the old data and cannot be undone.\n\n'
+          'Do you want to continue?',
+      '1': 'There is 1 product in the data to be imported. '
+          'The new data will replace the old data and cannot be undone.\n\n'
+          'Do you want to continue?',
+      '_': 'There are @{count} products in the data to be imported. '
+          'The new data will replace the old data and cannot be undone.\n\n'
+          'Do you want to continue?',
+    },
+  ),
   // 'Đồng ý': 'Agree',  // Duplicated
   // 'Huỷ': 'Cancel',  // Duplicated
   // 'Thông báo': 'Notification',  // Duplicated
@@ -237,18 +250,31 @@ const en = <String, dynamic>{
   /// Path: ./lib/presentation/views/dashboard_view.dart
   ///===========================================================================
   "@path_./lib/presentation/views/dashboard_view.dart": '',
-  'Nhấn vào đây để chọn ngày thống kê ở trang tổng quan':
-      'Click here to select the date for statistics on the dashboard',
+  'Nhấn vào đây để chọn ngày thống kê ở trang tổng quan': 'Click here to select a date for statistics on the dashboard',
   'Biểu đồ doanh thu theo ngày trong tháng @{month}': 'Revenue chart by day in the month of @{month}',
   'Chi tiết 3 đơn hàng gần nhất': 'Details of the 3 most recent orders',
   'Top 5 sản phẩm bán chạy': 'Top 5 best-selling products',
-  'Top 5 sản phẩm sắp hết hàng (số lượng < 5)': 'Top 5 products running out of stock (quantity < 5)',
-  'Tổng doanh thu trong ngày': 'Total daily revenue',
+  'Top 5 sản phẩm sắp hết hàng (số lượng < 5)': 'Top 5 products running low on stock (quantity < 5)',
+  'Tổng doanh thu trong ngày': 'Total revenue for the day',
   '@{dailyRevenue} đồng': '@{dailyRevenue} VND',
-  'Tổng số đơn hàng trong ngày': 'Total orders in a day',
-  '@{count} đơn': '@{count} orders',
-  'Tổng số sản phẩm': 'Total products',
-  '@{count} sản phẩm': '@{count} products',
+  'Tổng số đơn hàng trong ngày': 'Total number of orders for the day',
+  '@{count} đơn': LanguageConditions(
+    param: 'count',
+    conditions: {
+      '0': '0 orders',
+      '1': '1 order',
+      '_': '@{count} orders',
+    },
+  ),
+  'Tổng số sản phẩm': 'Total number of products',
+  '@{count} sản phẩm': LanguageConditions(
+    param: 'count',
+    conditions: {
+      '0': '0 products',
+      '1': '1 product',
+      '_': '@{count} products',
+    },
+  ),
 
   ///===========================================================================
   /// Path: ./lib/presentation/views/orders_view.dart
