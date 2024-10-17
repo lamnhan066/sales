@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/core/extensions/data_time_extensions.dart';
+import 'package:sales/core/extensions/price_extensions.dart';
 import 'package:sales/domain/entities/ranges.dart';
 import 'package:sales/presentation/riverpod/notifiers/report_provider.dart';
 import 'package:sales/presentation/riverpod/states/report_state.dart';
@@ -112,8 +113,8 @@ class _ReportViewState extends ConsumerState<ReportView> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('Doanh thu: ${state.revenue}'),
-              Text('Lợi nhuận: ${state.profit}'),
+              Text('Doanh thu: ${state.revenue.toPriceDigit()}'),
+              Text('Lợi nhuận: ${state.profit.toPriceDigit()}'),
             ],
           ),
         ),

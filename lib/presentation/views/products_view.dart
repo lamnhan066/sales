@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/core/constants/app_configs.dart';
 import 'package:sales/core/errors/failure.dart';
+import 'package:sales/core/extensions/price_extensions.dart';
 import 'package:sales/domain/entities/data_import_result.dart';
 import 'package:sales/domain/entities/product.dart';
 import 'package:sales/domain/entities/product_order_by.dart';
@@ -221,9 +222,8 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
           DataCell(Center(child: Text('${(state.page - 1) * state.perPage + index + 1}'))),
           DataCell(Center(child: Text(product.sku))),
           DataCell(Center(child: Text(product.name))),
-          // TODO: Giá nhập nên hiện theo dạng phân cách hàng ngàn bằng dấu phẩy
-          DataCell(Text('${product.importPrice}')),
-          DataCell(Text('${product.unitSalePrice}')),
+          DataCell(Text(product.importPrice.toPriceDigit())),
+          DataCell(Text(product.unitSalePrice.toPriceDigit())),
           DataCell(Center(child: Text(category.name))),
           DataCell(Text('${product.count}')),
           DataCell(Center(child: _buildActionButtons(state, product, index))),

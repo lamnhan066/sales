@@ -4,6 +4,7 @@ import 'package:boxw/boxw.dart';
 import 'package:flutter/material.dart' hide DataTable, DataRow, DataColumn, DataCell;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:language_helper/language_helper.dart';
+import 'package:sales/core/extensions/price_extensions.dart';
 import 'package:sales/core/utils/date_time_utils.dart';
 import 'package:sales/domain/entities/order.dart';
 import 'package:sales/domain/entities/order_item.dart';
@@ -330,13 +331,13 @@ class _OrderFormDialogState extends State<OrderFormDialog> {
                                           ),
                                           DataCell(
                                             Text(
-                                              '${item.unitSalePrice.toInt()}',
+                                              item.unitSalePrice.toPriceDigit(),
                                               textAlign: TextAlign.center,
                                             ),
                                           ),
                                           DataCell(
                                             Text(
-                                              '${item.totalPrice}',
+                                              item.totalPrice.toPriceDigit(),
                                               textAlign: TextAlign.center,
                                             ),
                                           ),
@@ -375,7 +376,7 @@ class _OrderFormDialogState extends State<OrderFormDialog> {
                                         ),
                                         DataCell(
                                           Text(
-                                            '$total',
+                                            total.toPriceDigit(),
                                             textAlign: TextAlign.center,
                                           ),
                                         ),

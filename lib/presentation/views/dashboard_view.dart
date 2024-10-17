@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/core/constants/app_configs.dart';
 import 'package:sales/core/extensions/data_time_extensions.dart';
+import 'package:sales/core/extensions/price_extensions.dart';
 import 'package:sales/core/utils/date_time_utils.dart';
 import 'package:sales/presentation/riverpod/notifiers/dashboard_provider.dart';
 import 'package:sales/presentation/riverpod/states/dashboard_state.dart';
@@ -119,6 +120,11 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                   xLabels: [
                     for (int i = 1; i <= dashboardState.dailyRevenueForMonth.length; i++) '$i',
                   ],
+                  xLabelsStyle: TextStyle(
+                    color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : Colors.black87,
+                    fontSize: 10.0,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
@@ -160,7 +166,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
 
                                   // TODO: Chỉnh sửa cách hiển thị đơn hàng để đẹp hơn
                                   return Text(
-                                    '${product.name} - ${orderItem.quantity} - ${orderItem.totalPrice}',
+                                    '${product.name} - ${orderItem.quantity} - ${orderItem.totalPrice.toPriceDigit()}',
                                   );
                                 },
                               ),
@@ -225,7 +231,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
             divider,
             Text(
               '@{dailyRevenue} đồng'.trP({
-                'dailyRevenue': dashboardState.dailyRevenue,
+                'dailyRevenue': dashboardState.dailyRevenue.toPriceDigit(),
               }),
               style: const TextStyle(fontSize: 18),
             ),
