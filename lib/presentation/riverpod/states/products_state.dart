@@ -35,12 +35,14 @@ class ProductsState with EquatableMixin {
 
   final FeaturesTourController tour;
 
+  final bool hasDraft;
+  final bool isShownDraftDialog;
+
   final bool isLoading;
   final String error;
 
   const ProductsState({
     this.products = const [],
-    this.categories = const [],
     this.perPage = 10,
     this.page = 1,
     this.totalPage = 0,
@@ -48,9 +50,12 @@ class ProductsState with EquatableMixin {
     this.searchText = '',
     this.priceRange = const Ranges(0, double.infinity),
     this.categoryIdFilter = -1,
+    this.categories = const [],
+    required this.tour,
+    this.hasDraft = false,
+    this.isShownDraftDialog = false,
     this.isLoading = false,
     this.error = '',
-    required this.tour,
   });
 
   ProductsState copyWith({
@@ -63,6 +68,9 @@ class ProductsState with EquatableMixin {
     Ranges<double>? priceRange,
     int? categoryIdFilter,
     List<Category>? categories,
+    FeaturesTourController? tour,
+    bool? hasDraft,
+    bool? isShownDraftDialog,
     bool? isLoading,
     String? error,
   }) {
@@ -76,14 +84,16 @@ class ProductsState with EquatableMixin {
       priceRange: priceRange ?? this.priceRange,
       categoryIdFilter: categoryIdFilter ?? this.categoryIdFilter,
       categories: categories ?? this.categories,
+      tour: tour ?? this.tour,
+      hasDraft: hasDraft ?? this.hasDraft,
+      isShownDraftDialog: isShownDraftDialog ?? this.isShownDraftDialog,
       isLoading: isLoading ?? this.isLoading,
       error: error ?? this.error,
-      tour: tour,
     );
   }
 
   @override
-  List<Object?> get props {
+  List<Object> get props {
     return [
       products,
       perPage,
@@ -94,9 +104,11 @@ class ProductsState with EquatableMixin {
       priceRange,
       categoryIdFilter,
       categories,
+      tour,
+      hasDraft,
+      isShownDraftDialog,
       isLoading,
       error,
-      tour.pageName,
     ];
   }
 }

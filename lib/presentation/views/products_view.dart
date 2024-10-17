@@ -58,6 +58,14 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
     final productState = ref.watch(productsProvider);
     final productNotifier = ref.read(productsProvider.notifier);
 
+    if (productState.isLoading) {
+      return const SizedBox.shrink();
+    }
+
+    if (productState.error.isNotEmpty) {
+      return Center(child: Text('Error: ${productState.error}'));
+    }
+
     searchTextController.text = productState.searchText;
     if (lastSearchFocusState) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -65,12 +73,10 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
       });
     }
 
-    if (productState.isLoading) {
-      return const SizedBox.shrink();
-    }
-
-    if (productState.error.isNotEmpty) {
-      return Center(child: Text('Error: ${productState.error}'));
+    if (productState.hasDraft) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _showHasDraftDialog(context, productNotifier, productState);
+      });
     }
 
     return Scaffold(
@@ -613,5 +619,31 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
             },
             child: Text('Trở về'.tr),
           );
+  }
+
+  Future<void> _showHasDraftDialog(
+    BuildContext context,
+    ProductsNotifier productNotifier,
+    ProductsState productState,
+  ) async {
+    if (!productNotifier.canShowProductDialog()) {
+      return;
+    }
+
+    final result = await boxWConfirm(
+      context: context,
+      title: 'Sản Phẩm Nháp'.tr,
+      content: 'Hiện tại bạn đang có một sản phẩm nháp, bạn có muốn tiếp tục chỉnh sửa và thêm sản phẩm không?'.tr,
+      confirmText: 'Tiếp tục'.tr,
+      cancelText: 'Huỷ đơn'.tr,
+    );
+
+    if (result == true) {
+      await addProduct();
+    } else {
+      await productNotifier.removeTemporaryProduct();
+    }
+
+    productNotifier.closeProductDialog();
   }
 }

@@ -112,7 +112,12 @@ class ProductsNotifier extends StateNotifier<ProductsState> {
     } on Failure catch (e) {
       error = e.message;
     }
-    state = state.copyWith(isLoading: false, error: error);
+    final draftProduct = await _getTemporaryProductUseCase(NoParams());
+    bool hasDraft = false;
+    if (draftProduct != null) {
+      hasDraft = true;
+    }
+    state = state.copyWith(hasDraft: hasDraft, isLoading: false, error: error);
   }
 
   Future<void> addProduct(Product product) async {
@@ -270,7 +275,20 @@ class ProductsNotifier extends StateNotifier<ProductsState> {
     return _saveTemporaryProductUseCase(product);
   }
 
-  Future<void> removeTemporaryProduct() {
-    return _removeTemporaryProductUseCase(NoParams());
+  Future<void> removeTemporaryProduct() async {
+    await _removeTemporaryProductUseCase(NoParams());
+  }
+
+  bool canShowProductDialog() {
+    final canShow = state.isShownDraftDialog == false;
+    if (!canShow) {
+      return false;
+    }
+    state = state.copyWith(isShownDraftDialog: true);
+    return true;
+  }
+
+  void closeProductDialog() {
+    state = state.copyWith(isShownDraftDialog: false, hasDraft: false);
   }
 }
