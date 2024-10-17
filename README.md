@@ -74,6 +74,7 @@
     - Chọn ngôn ngữ: Anh, Việt.
     - Chế độ sáng tối.
     - Cài đặt số dòng mỗi trang khi phân trang.
+    - Cho phép lưu chức năng lần cuối mở.
     - Sao lưu/Khôi phục Database.
 
 ### Các Chức Năng Tự Chọn
