@@ -20,6 +20,7 @@ import 'package:sales/domain/repositories/brightness_repository.dart';
 import 'package:sales/domain/repositories/category_repository.dart';
 import 'package:sales/domain/repositories/data_importer_repository.dart';
 import 'package:sales/domain/repositories/language_repository.dart';
+import 'package:sales/domain/repositories/last_view_repository.dart';
 import 'package:sales/domain/repositories/license_repository.dart';
 import 'package:sales/domain/repositories/order_item_repository.dart';
 import 'package:sales/domain/repositories/order_repository.dart';
@@ -59,6 +60,10 @@ import 'package:sales/domain/usecases/data_services/load_server_configuration_us
 import 'package:sales/domain/usecases/data_services/load_server_connection_usecase.dart';
 import 'package:sales/domain/usecases/data_services/replace_database_usecase.dart';
 import 'package:sales/domain/usecases/data_services/save_server_configuration_usecase.dart';
+import 'package:sales/domain/usecases/last_view/get_last_view_usecase.dart';
+import 'package:sales/domain/usecases/last_view/get_save_last_view_usecase.dart';
+import 'package:sales/domain/usecases/last_view/set_last_view_usecase.dart';
+import 'package:sales/domain/usecases/last_view/set_save_last_view_usecase.dart';
 import 'package:sales/domain/usecases/license/active_license_usecase.dart';
 import 'package:sales/domain/usecases/license/active_trial_license_usecase.dart';
 import 'package:sales/domain/usecases/license/can_active_trial_license_usecase.dart';
@@ -101,6 +106,7 @@ import 'package:sales/infrastructure/respositories/backup_restore_repository_imp
 import 'package:sales/infrastructure/respositories/brightness_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/category_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/language_repository_impl.dart';
+import 'package:sales/infrastructure/respositories/last_view_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/license_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/local_auth_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/order_item_repository_impl.dart';
@@ -164,6 +170,7 @@ void _registerUseCases() {
   _registerBackupRestoreUseCases();
   _registerPrintUseCases();
   _registerLicenseUseCases();
+  _registerLastViewUseCases();
 }
 
 void _registerRepositories() {
@@ -184,6 +191,7 @@ void _registerRepositories() {
   getIt.registerLazySingleton<TemporaryDataRepository>(() => TemporaryDataRepositoryImpl(getIt()));
   getIt.registerLazySingleton<PrintRepository>(() => PrintRepositoryImpl());
   getIt.registerLazySingleton<LicenseRepository>(() => LicenseRepositoryImpl(getIt()));
+  getIt.registerLazySingleton<LastViewRepository>(() => LastViewRepositoryImpl(getIt()));
 }
 
 void _registerDatabase() {
@@ -292,6 +300,13 @@ void _registerLicenseUseCases() {
   getIt.registerLazySingleton<ActiveTrialLicenseUseCase>(() => ActiveTrialLicenseUseCase(getIt()));
   getIt.registerLazySingleton<CanActiveTrialLicenseUseCase>(() => CanActiveTrialLicenseUseCase(getIt()));
   getIt.registerLazySingleton<GetLicenseUseCase>(() => GetLicenseUseCase(getIt()));
+}
+
+void _registerLastViewUseCases() {
+  getIt.registerLazySingleton<GetLastViewUseCase>(() => GetLastViewUseCase(getIt()));
+  getIt.registerLazySingleton<GetSaveLastViewUsecase>(() => GetSaveLastViewUsecase(getIt()));
+  getIt.registerLazySingleton<SetLastViewUseCase>(() => SetLastViewUseCase(getIt()));
+  getIt.registerLazySingleton<SetSaveLastViewUseCase>(() => SetSaveLastViewUseCase(getIt()));
 }
 
 void _registerServices() {
