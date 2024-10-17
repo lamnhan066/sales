@@ -3,40 +3,57 @@ import 'package:sales/core/usecases/usecase.dart';
 import 'package:sales/di.dart';
 import 'package:sales/domain/entities/views_model.dart';
 import 'package:sales/domain/usecases/auth/logout_usecase.dart';
+import 'package:sales/domain/usecases/last_view/get_last_view_usecase.dart';
+import 'package:sales/domain/usecases/last_view/get_save_last_view_usecase.dart';
+import 'package:sales/domain/usecases/last_view/set_last_view_usecase.dart';
 import 'package:sales/presentation/riverpod/states/home_state.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 final homeProvider = StateNotifierProvider<HomeNotifier, HomeState>((ref) {
-  return HomeNotifier(prefs: getIt(), logoutUseCase: getIt());
+  return HomeNotifier(
+    logoutUseCase: getIt(),
+    getSaveLastViewUsecase: getIt(),
+    getLastViewUseCase: getIt(),
+    setLastViewUseCase: getIt(),
+  );
 });
 
 class HomeNotifier extends StateNotifier<HomeState> {
-  final SharedPreferences _prefs;
+  final GetSaveLastViewUsecase _getSaveLastViewUsecase;
+  final GetLastViewUseCase _getLastViewUseCase;
+  final SetLastViewUseCase _setLastViewUseCase;
   final LogoutUseCase _logoutUseCase;
 
   HomeNotifier({
-    required SharedPreferences prefs,
+    required GetSaveLastViewUsecase getSaveLastViewUsecase,
+    required GetLastViewUseCase getLastViewUseCase,
+    required SetLastViewUseCase setLastViewUseCase,
     required LogoutUseCase logoutUseCase,
-  })  : _prefs = prefs,
+  })  : _getLastViewUseCase = getLastViewUseCase,
+        _getSaveLastViewUsecase = getSaveLastViewUsecase,
+        _setLastViewUseCase = setLastViewUseCase,
         _logoutUseCase = logoutUseCase,
         super(HomeState(currentView: ViewsModel.dashboard, isLoading: true)) {
     _initialize();
   }
 
   Future<void> _initialize() async {
-    final lastView = _prefs.getString('LastView');
-    state = state.copyWith(
-      currentView: lastView == null ? ViewsModel.dashboard : ViewsModel.values.byName(lastView),
-      isLoading: false,
-    );
+    if (await _getSaveLastViewUsecase(NoParams())) {
+      final lastView = await _getLastViewUseCase(NoParams());
+      state = state.copyWith(
+        currentView: lastView,
+        isLoading: false,
+      );
+    } else {
+      state = state.copyWith(isLoading: false);
+    }
   }
 
-  void setView(ViewsModel view) {
-    _prefs.setString('LastView', view.name);
+  Future<void> setView(ViewsModel view) async {
     state = state.copyWith(currentView: view);
+    await _setLastViewUseCase(view);
   }
 
-  void logout() {
-    _logoutUseCase(NoParams());
+  Future<void> logout() async {
+    await _logoutUseCase(NoParams());
   }
 }
