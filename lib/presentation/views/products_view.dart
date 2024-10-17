@@ -632,10 +632,11 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
 
     final result = await boxWConfirm(
       context: context,
+      barrierDismissible: false,
       title: 'Sản Phẩm Nháp'.tr,
       content: 'Hiện tại bạn đang có một sản phẩm nháp, bạn có muốn tiếp tục chỉnh sửa và thêm sản phẩm không?'.tr,
       confirmText: 'Tiếp tục'.tr,
-      cancelText: 'Huỷ đơn'.tr,
+      cancelText: 'Huỷ sản phẩm'.tr,
     );
 
     if (result == true) {
