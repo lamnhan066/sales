@@ -24,6 +24,9 @@ class OrdersState with EquatableMixin {
   final FeaturesTourController tour;
   final ScreenshotController screenshot;
 
+  final bool hasDraft;
+  final bool isShownDraftDialog;
+
   final bool isLoading;
   final String error;
 
@@ -33,6 +36,8 @@ class OrdersState with EquatableMixin {
     this.page = 1,
     this.totalPage = 0,
     Ranges<DateTime?>? dateRange,
+    this.hasDraft = false,
+    this.isShownDraftDialog = false,
     this.isLoading = false,
     this.error = '',
     required this.tour,
@@ -44,6 +49,11 @@ class OrdersState with EquatableMixin {
     int? perPage,
     int? page,
     int? totalPage,
+    Ranges<DateTime?>? dateRange,
+    FeaturesTourController? tour,
+    ScreenshotController? screenshot,
+    bool? hasDraft,
+    bool? isShownDraftDialog,
     bool? isLoading,
     String? error,
   }) {
@@ -52,11 +62,14 @@ class OrdersState with EquatableMixin {
       perPage: perPage ?? this.perPage,
       page: page ?? this.page,
       totalPage: totalPage ?? this.totalPage,
+      dateRange: dateRange ?? this.dateRange,
+      tour: tour ?? this.tour,
+      screenshot: screenshot ?? this.screenshot,
+      hasDraft: hasDraft ?? this.hasDraft,
+      isShownDraftDialog: isShownDraftDialog ?? this.isShownDraftDialog,
       isLoading: isLoading ?? this.isLoading,
       error: error ?? this.error,
-      tour: tour,
-      screenshot: screenshot,
-    ).._dateRange = dateRange;
+    );
   }
 
   OrdersState updateDateRange(Ranges<DateTime?>? dateRange) {
@@ -75,6 +88,8 @@ class OrdersState with EquatableMixin {
       isLoading,
       error,
       tour.pageName,
+      hasDraft,
+      isShownDraftDialog,
     ];
   }
 }

@@ -90,7 +90,9 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
   Future<void> initialize() async {
     state = state.copyWith(isLoading: true);
     await fetchOrders(resetPage: true);
-    state = state.copyWith(isLoading: false);
+
+    final hasDraft = (await getTemporaryOrderWithItems()) != null;
+    state = state.copyWith(hasDraft: hasDraft, isLoading: false);
   }
 
   Future<void> fetchOrders({bool resetPage = false}) async {
@@ -188,5 +190,18 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
     if (bytes != null) {
       await _printImageBytesAsPdfUseCase(bytes);
     }
+  }
+
+  bool canShowDraftDialog() {
+    final canShow = state.isShownDraftDialog == false;
+    if (!canShow) {
+      return false;
+    }
+    state = state.copyWith(isShownDraftDialog: true);
+    return true;
+  }
+
+  void closeDraftDialog() {
+    state = state.copyWith(isShownDraftDialog: false, hasDraft: false);
   }
 }

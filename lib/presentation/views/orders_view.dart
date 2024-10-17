@@ -40,6 +40,12 @@ class _OrdersViewState extends ConsumerState<OrdersView> {
       return const SizedBox.shrink();
     }
 
+    if (ordersState.hasDraft) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _showHasDraftDialog(context, ordersNotifier, ordersState);
+      });
+    }
+
     return Scaffold(
       body: Column(
         children: [
@@ -357,5 +363,32 @@ class _OrdersViewState extends ConsumerState<OrdersView> {
     if (result == true) {
       await notifier.updateFilters(newDateRange);
     }
+  }
+
+  Future<void> _showHasDraftDialog(
+    BuildContext context,
+    OrdersNotifier notifier,
+    OrdersState state,
+  ) async {
+    if (!notifier.canShowDraftDialog()) {
+      return;
+    }
+
+    final result = await boxWConfirm(
+      context: context,
+      barrierDismissible: false,
+      title: 'Đơn Hàng Nháp'.tr,
+      content: 'Hiện tại bạn đang có một đơn hàng nháp, bạn có muốn tiếp tục chỉnh sửa và thêm đơn hàng không?'.tr,
+      confirmText: 'Tiếp tục'.tr,
+      cancelText: 'Huỷ đơn'.tr,
+    );
+
+    if (result == true && context.mounted) {
+      await addOrderDialog(context: context, notifier: notifier, state: state);
+    } else {
+      await notifier.removeTemporaryOrderWithItems();
+    }
+
+    notifier.closeDraftDialog();
   }
 }
