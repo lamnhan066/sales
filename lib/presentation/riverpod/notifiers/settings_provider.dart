@@ -16,6 +16,8 @@ import 'package:sales/domain/usecases/backup_restore/backup_database_usecase.dar
 import 'package:sales/domain/usecases/backup_restore/restore_database_usecase.dart';
 import 'package:sales/domain/usecases/categories/add_all_categories_usecase.dart';
 import 'package:sales/domain/usecases/categories/get_all_categories.dart';
+import 'package:sales/domain/usecases/last_view/get_save_last_view_usecase.dart';
+import 'package:sales/domain/usecases/last_view/set_save_last_view_usecase.dart';
 import 'package:sales/domain/usecases/order_with_items/add_all_orders_with_items_usecase.dart';
 import 'package:sales/domain/usecases/order_with_items/get_all_orders_with_items_usecase.dart';
 import 'package:sales/domain/usecases/products/add_all_products_usecase.dart';
@@ -39,6 +41,8 @@ final settingsProvider = StateNotifierProvider<SettingsNotifier, SettingsState>(
     addAllCategoriesUseCase: getIt(),
     addAllProductsUseCase: getIt(),
     addAllOrdersWithItemsUseCase: getIt(),
+    getSaveLastViewUsecase: getIt(),
+    setSaveLastViewUseCase: getIt(),
   );
 });
 
@@ -58,6 +62,8 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
   final AddAllCategoriesUseCase addAllCategoriesUseCase;
   final AddAllProductsUseCase addAllProductsUseCase;
   final AddAllOrdersWithItemsUseCase addAllOrdersWithItemsUseCase;
+  final GetSaveLastViewUsecase getSaveLastViewUsecase;
+  final SetSaveLastViewUseCase setSaveLastViewUseCase;
 
   SettingsNotifier({
     required this.getCurrentLanguageUseCase,
@@ -75,6 +81,8 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
     required this.addAllCategoriesUseCase,
     required this.addAllProductsUseCase,
     required this.addAllOrdersWithItemsUseCase,
+    required this.getSaveLastViewUsecase,
+    required this.setSaveLastViewUseCase,
   }) : super(SettingsState()) {
     initialize();
   }
@@ -86,12 +94,14 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
     final supportedLanguages = await getSupportedLanguagesUseCase(NoParams());
     final itemPerPage = await getItemPerPageUseCase(NoParams());
     final brightness = await getCurrentBrightnessUseCase(NoParams());
+    final saveLastView = await getSaveLastViewUsecase(NoParams());
 
     state = state.copyWith(
       currentlanguage: currentLanguage,
       supportedLanguages: supportedLanguages,
       itemPerPage: itemPerPage,
       brightness: brightness,
+      saveLastView: saveLastView,
       isLoading: false,
     );
   }
@@ -114,6 +124,12 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
 
     state = state.copyWith(itemPerPage: value);
     await changeItemPerPageUseCase(value);
+  }
+
+  Future<void> toggleSaveLastView() async {
+    final lastView = !state.saveLastView;
+    state = state.copyWith(saveLastView: lastView);
+    await setSaveLastViewUseCase(lastView);
   }
 
   Future<int> getItemPerPage() async {

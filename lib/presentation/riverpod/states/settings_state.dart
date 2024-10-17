@@ -8,6 +8,7 @@ class SettingsState with EquatableMixin {
   final Set<LanguageCodes> supportedLanguages;
   final Brightness brightness;
   final int itemPerPage;
+  final bool saveLastView;
   final String backupRestoreStatus;
   final String error;
   final bool isLoading;
@@ -17,6 +18,7 @@ class SettingsState with EquatableMixin {
     this.supportedLanguages = const {LanguageCodes.vi},
     this.brightness = Brightness.light,
     this.itemPerPage = 10,
+    this.saveLastView = true,
     this.backupRestoreStatus = '',
     this.error = '',
     this.isLoading = false,
@@ -27,6 +29,7 @@ class SettingsState with EquatableMixin {
     Set<LanguageCodes>? supportedLanguages,
     Brightness? brightness,
     int? itemPerPage,
+    bool? saveLastView,
     String? backupRestoreStatus,
     String? error,
     bool? isLoading,
@@ -36,6 +39,7 @@ class SettingsState with EquatableMixin {
       supportedLanguages: supportedLanguages ?? this.supportedLanguages,
       brightness: brightness ?? this.brightness,
       itemPerPage: itemPerPage ?? this.itemPerPage,
+      saveLastView: saveLastView ?? this.saveLastView,
       backupRestoreStatus: backupRestoreStatus ?? this.backupRestoreStatus,
       error: error ?? this.error,
       isLoading: isLoading ?? this.isLoading,
@@ -49,6 +53,7 @@ class SettingsState with EquatableMixin {
       supportedLanguages,
       brightness,
       itemPerPage,
+      saveLastView,
       backupRestoreStatus,
       error,
       isLoading,

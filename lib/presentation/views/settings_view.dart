@@ -25,12 +25,13 @@ class SettingsView extends ConsumerWidget {
     return Scaffold(
       body: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 600),
+          constraints: const BoxConstraints(maxWidth: 700),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               _buildLanguage(notifier, state),
               _buildBrightness(notifier, state),
+              _buildSaveLastView(notifier, state),
               _buildItemPerPage(notifier, state),
               _buildBackupRestore(notifier, state),
             ],
@@ -41,122 +42,99 @@ class SettingsView extends ConsumerWidget {
   }
 
   Widget _buildLanguage(SettingsNotifier notifier, SettingsState state) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
-        children: [
-          const Icon(Icons.language_rounded),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text('Ngôn Ngữ'.tr),
-          ),
-          const Spacer(),
-          SizedBox(
-            width: 200,
-            child: BoxWDropdown<LanguageCodes>(
-              items: state.supportedLanguages.map((e) {
-                return DropdownMenuItem(
-                  value: e,
-                  child: Text(e.nativeName),
-                );
-              }).toList(),
-              value: state.currentlanguage,
-              onChanged: (value) async {
-                if (value != null) {
-                  await notifier.changeLanguage(value);
-                }
-              },
-            ),
-          ),
-        ],
+    return ListTile(
+      leading: const Icon(Icons.language_rounded),
+      title: Text('Ngôn Ngữ'.tr),
+      trailing: SizedBox(
+        width: 200,
+        child: BoxWDropdown<LanguageCodes>(
+          margin: EdgeInsets.zero,
+          items: state.supportedLanguages.map((e) {
+            return DropdownMenuItem(
+              value: e,
+              child: Text(e.nativeName),
+            );
+          }).toList(),
+          value: state.currentlanguage,
+          onChanged: (value) async {
+            if (value != null) {
+              await notifier.changeLanguage(value);
+            }
+          },
+        ),
       ),
     );
   }
 
   Widget _buildBrightness(SettingsNotifier notifier, SettingsState state) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
-        children: [
-          const Icon(Icons.dark_mode_rounded),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text('Chế Độ Tối'.tr),
-          ),
-          const Spacer(),
-          Checkbox(
-            value: state.brightness == Brightness.dark,
-            onChanged: (value) async {
-              if (value != null) {
-                await notifier.setBrightness(value == true ? Brightness.dark : Brightness.light);
-              }
-            },
-          ),
-        ],
+    return ListTile(
+      leading: const Icon(Icons.dark_mode_rounded),
+      title: Text('Chế Độ Tối'.tr),
+      trailing: Checkbox(
+        value: state.brightness == Brightness.dark,
+        onChanged: (value) async {
+          if (value != null) {
+            await notifier.setBrightness(value == true ? Brightness.dark : Brightness.light);
+          }
+        },
+      ),
+    );
+  }
+
+  Widget _buildSaveLastView(SettingsNotifier notifier, SettingsState state) {
+    return ListTile(
+      leading: const Icon(Icons.bookmark_rounded),
+      title: Text('Lưu màn hình cuối cho lần mở tiếp theo'.tr),
+      subtitle: Text('Mặc định sẽ mở trang Tổng Quan'.tr),
+      trailing: Checkbox(
+        value: state.saveLastView,
+        onChanged: (value) async {
+          if (value != null) {
+            await notifier.toggleSaveLastView();
+          }
+        },
       ),
     );
   }
 
   Widget _buildItemPerPage(SettingsNotifier notifier, SettingsState state) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
-        children: [
-          const Icon(Icons.horizontal_split_rounded),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text('Số dòng mỗi trang khi phân trang'.tr),
-          ),
-          const Spacer(),
-          SizedBox(
-            width: 100,
-            child: BoxWNumberField(
-              initial: state.itemPerPage,
-              min: 1,
-              onChanged: (value) async {
-                if (value != null) {
-                  await notifier.updateItemPerPage(value);
-                }
-              },
-            ),
-          ),
-        ],
+    return ListTile(
+      leading: const Icon(Icons.horizontal_split_rounded),
+      title: Text('Số dòng mỗi trang khi phân trang'.tr),
+      trailing: SizedBox(
+        width: 100,
+        child: BoxWNumberField(
+          initial: state.itemPerPage,
+          min: 1,
+          onChanged: (value) async {
+            if (value != null) {
+              await notifier.updateItemPerPage(value);
+            }
+          },
+        ),
       ),
     );
   }
 
   Widget _buildBackupRestore(SettingsNotifier notifier, SettingsState state) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+    return ListTile(
+      leading: const Icon(Icons.backup_rounded),
+      title: Text('Sao Lưu và Khôi Phục'.tr),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Row(
-            children: [
-              const Icon(Icons.backup_rounded),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Text('Sao Lưu và Khôi Phục'.tr),
-              ),
-              const Spacer(),
-              FilledButton(
-                onPressed: () {
-                  notifier.backup();
-                },
-                child: Text('Sao Lưu'.tr),
-              ),
-              const SizedBox(width: 6),
-              FilledButton(
-                onPressed: () {
-                  notifier.restore();
-                },
-                child: Text('Khôi Phục'.tr),
-              ),
-            ],
+          FilledButton(
+            onPressed: () {
+              notifier.backup();
+            },
+            child: Text('Sao Lưu'.tr),
           ),
-          Text(
-            state.backupRestoreStatus,
-            style: const TextStyle(color: Colors.blue),
+          const SizedBox(width: 6),
+          FilledButton(
+            onPressed: () {
+              notifier.restore();
+            },
+            child: Text('Khôi Phục'.tr),
           ),
         ],
       ),
