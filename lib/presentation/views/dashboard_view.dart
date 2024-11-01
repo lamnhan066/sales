@@ -1,14 +1,17 @@
 import 'package:chart_sparkline/chart_sparkline.dart';
 import 'package:features_tour/features_tour.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide DataTable, DataRow, DataColumn, DataCell;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/core/constants/app_configs.dart';
 import 'package:sales/core/extensions/data_time_extensions.dart';
 import 'package:sales/core/extensions/price_extensions.dart';
 import 'package:sales/core/utils/date_time_utils.dart';
+import 'package:sales/domain/entities/order_item.dart';
+import 'package:sales/domain/entities/product.dart';
 import 'package:sales/presentation/riverpod/notifiers/dashboard_provider.dart';
 import 'package:sales/presentation/riverpod/states/dashboard_state.dart';
+import 'package:sales/presentation/widgets/data_table_plus.dart';
 
 /// Màn hình tổng quan.
 class DashboardView extends ConsumerStatefulWidget {
@@ -45,26 +48,40 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     const Widget divider = SizedBox(width: 100, child: Divider());
 
     return Scaffold(
-      body: Column(
-        children: [
-          _buildToolbar(context, dashboardState, dashboardNotifier),
-          SingleChildScrollView(
-            child: Column(
-              children: [
-                Wrap(
-                  children: [
-                    _buildTotalProducts(divider, dashboardState),
-                    _buildDailyOrders(divider, dashboardState),
-                    _buildDailyRevenue(divider, dashboardState),
-                  ],
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _buildToolbar(context, dashboardState, dashboardNotifier),
+            Expanded(
+              child: SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: 700),
+                  child: Column(
+                    children: [
+                      Wrap(
+                        children: [
+                          _buildTotalProducts(divider, dashboardState),
+                          _buildDailyOrders(divider, dashboardState),
+                          _buildDailyRevenue(divider, dashboardState),
+                        ],
+                      ),
+                      _buildSalesReport(divider, dashboardState),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: _buildThreeRecentOrdersDetails(divider, dashboardState),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: _buildDailyRevenueForMonth(dashboardState),
+                      ),
+                    ],
+                  ),
                 ),
-                _buildSalesReport(divider, dashboardState),
-                _buildThreeRecentOrdersDetails(divider, dashboardState),
-                _buildDailyRevenueForMonth(dashboardState),
-              ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -109,22 +126,19 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
           Card(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: SizedBox(
-                width: 600,
-                child: Sparkline(
-                  data: dashboardState.dailyRevenueForMonth.map((e) => e.toDouble()).toList(),
-                  gridLinesEnable: true,
-                  gridLinelabel: (gridLineValue) {
-                    return '${(gridLineValue / 1000).round()}k';
-                  },
-                  xLabels: [
-                    for (int i = 1; i <= dashboardState.dailyRevenueForMonth.length; i++) '$i',
-                  ],
-                  xLabelsStyle: TextStyle(
-                    color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : Colors.black87,
-                    fontSize: 10.0,
-                    fontWeight: FontWeight.bold,
-                  ),
+              child: Sparkline(
+                data: dashboardState.dailyRevenueForMonth.map((e) => e.toDouble()).toList(),
+                gridLinesEnable: true,
+                gridLinelabel: (gridLineValue) {
+                  return '${(gridLineValue / 1000).round()}k';
+                },
+                xLabels: [
+                  for (int i = 1; i <= dashboardState.dailyRevenueForMonth.length; i++) '$i',
+                ],
+                xLabelsStyle: TextStyle(
+                  color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : Colors.black87,
+                  fontSize: 10.0,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
@@ -145,7 +159,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
             Builder(builder: (context) {
               final orderItems = dashboardState.threeRecentOrders.orderItems;
               final products = dashboardState.threeRecentOrders.products;
-              return Row(
+              return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
@@ -158,18 +172,14 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                           children: [
                             Text(DateTimeUtils.formatDateTime(order.date)),
                             divider,
-                            for (int i = 0; i < orderItems[order]!.length; i++)
-                              Builder(
-                                builder: (_) {
-                                  final orderItem = orderItems[order]!.elementAt(i);
-                                  final product = products[order]!.elementAt(i);
-
-                                  // TODO: Chỉnh sửa cách hiển thị đơn hàng để đẹp hơn
-                                  return Text(
-                                    '${product.name} - ${orderItem.quantity} - ${orderItem.totalPrice.toPriceDigit()}',
-                                  );
-                                },
-                              ),
+                            DataTable(
+                              columns: _buildDataColumns(),
+                              rows: [
+                                for (int i = 0; i < orderItems[order]!.length; i++)
+                                  _buildDataRows(products[order]!, orderItems[order]!, i),
+                                _buildTotalPrice(products[order]!, orderItems[order]!),
+                              ],
+                            ),
                           ],
                         ),
                       ),
@@ -180,6 +190,61 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
           ],
         ),
       ),
+    );
+  }
+
+  List<DataColumn> _buildDataColumns() {
+    return <DataColumn>[
+      DataColumn(
+        label: Text('Tên Sản Phẩm'.tr),
+      ),
+      DataColumn(
+        numeric: true,
+        label: Text('Số Lượng'.tr),
+      ),
+      DataColumn(
+        numeric: true,
+        label: Text('Thành Tiền'.tr),
+      ),
+    ];
+  }
+
+  DataRow _buildDataRows(
+    List<Product> products,
+    List<OrderItem> orderItems,
+    int i,
+  ) {
+    final orderItem = orderItems.elementAt(i);
+    final product = products.elementAt(i);
+    return DataRow(
+      cells: [
+        DataCell(
+          Text(product.name),
+        ),
+        DataCell(
+          Text('${orderItem.quantity}'),
+        ),
+        DataCell(
+          Text(orderItem.totalPrice.toPriceDigit()),
+        ),
+      ],
+    );
+  }
+
+  DataRow _buildTotalPrice(
+    List<Product> products,
+    List<OrderItem> orderItems,
+  ) {
+    int total = 0;
+    for (final orderItem in orderItems) {
+      total += orderItem.totalPrice;
+    }
+    return DataRow(
+      cells: [
+        DataCell(Text('')),
+        DataCell(Text('Tổng cộng')),
+        DataCell(Text('$total')),
+      ],
     );
   }
 
