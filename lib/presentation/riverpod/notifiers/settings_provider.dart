@@ -169,18 +169,22 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
   }
 
   Future<void> restore() async {
-    state = state.copyWith(backupRestoreStatus: 'Đang lấy dữ liệu đã sao lưu...'.tr);
-    final data = await restoreDatabaseUseCase(NoParams());
+    try {
+      state = state.copyWith(backupRestoreStatus: 'Đang lấy dữ liệu đã sao lưu...'.tr);
+      final data = await restoreDatabaseUseCase(NoParams());
 
-    state = state.copyWith(backupRestoreStatus: 'Đang tiến hành khôi phục Loại Hàng...'.tr);
-    await addAllCategoriesUseCase(data.categories);
+      state = state.copyWith(backupRestoreStatus: 'Đang tiến hành khôi phục Loại Hàng...'.tr);
+      await addAllCategoriesUseCase(data.categories);
 
-    state = state.copyWith(backupRestoreStatus: 'Đang tiến hành khôi phục Sản Phẩm...'.tr);
-    await addAllProductsUseCase(data.products);
+      state = state.copyWith(backupRestoreStatus: 'Đang tiến hành khôi phục Sản Phẩm...'.tr);
+      await addAllProductsUseCase(data.products);
 
-    state = state.copyWith(backupRestoreStatus: 'Đang tiến hành khôi phục Đơn Hàng và Chi Tiết Đơn hàng...'.tr);
-    await addAllOrdersWithItemsUseCase(data.orderWithItems);
+      state = state.copyWith(backupRestoreStatus: 'Đang tiến hành khôi phục Đơn Hàng và Chi Tiết Đơn hàng...'.tr);
+      await addAllOrdersWithItemsUseCase(data.orderWithItems);
 
-    state = state.copyWith(backupRestoreStatus: 'Khôi phục đã hoàn tất'.tr);
+      state = state.copyWith(backupRestoreStatus: 'Khôi phục đã hoàn tất'.tr);
+    } on Failure catch (e) {
+      state = state.copyWith(backupRestoreStatus: e.message);
+    }
   }
 }
