@@ -214,16 +214,22 @@ class LoginNotifier extends StateNotifier<LoginState> {
     if (license is! NoLicense) {
       state = state.copyWith(license: license, licenseError: '');
     } else {
-      state = state.copyWith(license: license, licenseError: 'Không thể kích hoạt bản dùng thử'.tr);
+      state = state.copyWith(
+        license: license,
+        licenseError: 'Không thể kích hoạt bản dùng thử'.tr,
+      );
     }
   }
 
   Future<void> active(String code) async {
     final license = await _activeLicenseUseCase(LicenseParams(user: state.user, code: code));
     if (license is! NoLicense) {
-      state = state.copyWith(license: license, licenseError: '');
+      state = state.copyWith(license: license, licenseError: '', error: '');
     } else {
-      state = state.copyWith(license: license, licenseError: 'Không thể kích hoạt với mã đã nhập'.tr);
+      state = state.copyWith(
+        license: license,
+        licenseError: 'Không thể kích hoạt với mã đã nhập'.tr,
+      );
     }
   }
 }
