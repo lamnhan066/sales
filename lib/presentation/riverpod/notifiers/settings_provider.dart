@@ -147,19 +147,19 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
   }
 
   Future<void> backup() async {
-    state = state.copyWith(backupRestoreStatus: 'Đang chuẩn bị dữ liệu...'.tr);
-    final products = await getAllProductsUseCase(NoParams());
-    final categories = await getAllCategoriesUsecCase(NoParams());
-    final ordersWithItems = await getAllOrdersWithItemsUseCase(NoParams());
-
-    state = state.copyWith(backupRestoreStatus: 'Chọn vị trí lưu và lưu bản sao lưu...'.tr);
-    final data = BackupData(
-      categories: categories,
-      products: products,
-      orderWithItems: ordersWithItems,
-    );
-
     try {
+      state = state.copyWith(backupRestoreStatus: 'Đang chuẩn bị dữ liệu...'.tr);
+      final products = await getAllProductsUseCase(NoParams());
+      final categories = await getAllCategoriesUsecCase(NoParams());
+      final ordersWithItems = await getAllOrdersWithItemsUseCase(NoParams());
+
+      state = state.copyWith(backupRestoreStatus: 'Chọn vị trí lưu và lưu bản sao lưu...'.tr);
+      final data = BackupData(
+        categories: categories,
+        products: products,
+        orderWithItems: ordersWithItems,
+      );
+
       await backupDatabaseUseCase(data);
 
       state = state.copyWith(backupRestoreStatus: 'Sao lưu đã hoàn tất tại'.tr);
