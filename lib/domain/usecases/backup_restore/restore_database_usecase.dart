@@ -12,7 +12,7 @@ class RestoreDatabaseUseCase implements UseCase<BackupData, NoParams> {
   @override
   Future<BackupData> call(NoParams params) async {
     try {
-      return _repository.restore();
+      return await _repository.restore();
     } on BackupException catch (e) {
       throw BackupFailure(e.message);
     }
