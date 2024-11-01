@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:language_helper/language_helper.dart';
+import 'package:sales/core/errors/failure.dart';
 import 'package:sales/core/usecases/usecase.dart';
 import 'package:sales/di.dart';
 import 'package:sales/domain/entities/backup_data.dart';
@@ -158,8 +159,13 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
       orderWithItems: ordersWithItems,
     );
 
-    await backupDatabaseUseCase(data);
-    state = state.copyWith(backupRestoreStatus: 'Sao lưu đã hoàn tất tại'.tr);
+    try {
+      await backupDatabaseUseCase(data);
+
+      state = state.copyWith(backupRestoreStatus: 'Sao lưu đã hoàn tất tại'.tr);
+    } on Failure catch (e) {
+      state = state.copyWith(backupRestoreStatus: e.message);
+    }
   }
 
   Future<void> restore() async {

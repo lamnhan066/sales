@@ -23,3 +23,7 @@ class NetworkFailure extends Failure {
 class ImportFailure extends Failure {
   const ImportFailure(super.message, [super.details]);
 }
+
+class BackupFailure extends Failure {
+  const BackupFailure(super.message, [super.details]);
+}
