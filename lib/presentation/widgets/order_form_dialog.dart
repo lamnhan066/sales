@@ -224,12 +224,6 @@ class _OrderFormDialogState extends State<OrderFormDialog> {
                                   dataRowMaxHeight: 68,
                                   columnSpacing: 20,
                                   horizontalMargin: 10,
-                                  columnWidthBuilder: (columnIndex) {
-                                    if (columnIndex == 1) {
-                                      return const IntrinsicColumnWidth(flex: 1);
-                                    }
-                                    return null;
-                                  },
                                   columns: [
                                     DataColumn(
                                       headingRowAlignment: MainAxisAlignment.center,
@@ -239,7 +233,7 @@ class _OrderFormDialogState extends State<OrderFormDialog> {
                                         style: const TextStyle(fontWeight: FontWeight.bold),
                                       ),
                                     ),
-                                    DataColumn(
+                                    FlexDataColumn(
                                       headingRowAlignment: MainAxisAlignment.center,
                                       label: Text(
                                         'Tên Sản Phẩm'.tr,

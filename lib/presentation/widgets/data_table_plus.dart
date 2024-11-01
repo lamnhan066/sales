@@ -15,8 +15,6 @@ import 'package:flutter/rendering.dart';
 /// Signature for [DataColumn.onSort] callback.
 typedef DataColumnSortCallback = void Function(int columnIndex, bool ascending);
 
-typedef DataColumnWidthBuilder = TableColumnWidth? Function(int columnIndex);
-
 /// Column configuration for a [DataTable].
 ///
 /// One column configuration must be provided for each column to
@@ -27,6 +25,7 @@ class DataColumn {
   /// Creates the configuration for a column of a [DataTable].
   const DataColumn({
     required this.label,
+    this.columnWidth,
     this.tooltip,
     this.numeric = false,
     this.onSort,
@@ -98,6 +97,46 @@ class DataColumn {
   ///
   /// If null, then defaults to [MainAxisAlignment.start].
   final MainAxisAlignment? headingRowAlignment;
+
+  /// How the horizontal extents of the column of this table should be determined.
+  ///
+  /// The [FixedColumnWidth] class can be used to specify a specific width in
+  /// pixels. That is the cheapest way to size a table's columns.
+  ///
+  /// The layout performance of the table depends critically on which column
+  /// sizing algorithms are used here. In particular, [IntrinsicColumnWidth] is
+  /// quite expensive because it needs to measure each cell in the column to
+  /// determine the intrinsic size of the column.
+  ///
+  /// If this is set to null, the table uses the default behavior instead.
+  /// By default, that uses `IntrinsicColumnWidth(flex: 1.0)` if the column
+  /// has only text and `IntrinsicColumnWidth()` for others.
+  final TableColumnWidth? columnWidth;
+}
+
+/// Column configuration for a [DataTable] using [FlexColumnWidth].
+///
+/// One column configuration must be provided for each column to
+/// display in the table. The list of [DataColumn] objects is passed
+/// as the `columns` argument to the [DataTable.new] constructor.
+class FlexDataColumn extends DataColumn {
+  /// Creates the configuration for a column of a [DataTable].
+  const FlexDataColumn({
+    required super.label,
+    this.flex = 1.0,
+    super.tooltip,
+    super.numeric = false,
+    super.onSort,
+    super.mouseCursor,
+    super.headingRowAlignment,
+  });
+
+  /// The fraction of the remaining space once all the other columns have
+  /// been laid out that this column should occupy.
+  final double flex;
+
+  @override
+  TableColumnWidth? get columnWidth => FlexColumnWidth(flex);
 }
 
 /// Row configuration and cell data for a [DataTable].
@@ -417,7 +456,6 @@ class DataTable extends StatelessWidget {
   DataTable({
     super.key,
     required this.columns,
-    this.columnWidthBuilder,
     this.sortColumnIndex,
     this.sortAscending = true,
     this.onSelectAll,
@@ -713,8 +751,6 @@ class DataTable extends StatelessWidget {
   /// Defaults to [Clip.none].
   final Clip clipBehavior;
 
-  final DataColumnWidthBuilder? columnWidthBuilder;
-
   // Set by the constructor to the index of the only Column that is
   // non-numeric, if there is exactly one, otherwise null.
   final int? _onlyTextColumn;
@@ -878,6 +914,8 @@ class DataTable extends StatelessWidget {
       );
     }
 
+    // TODO(dkwingsmt): Only wrap Inkwell if onSort != null. Blocked by
+    // https://github.com/flutter/flutter/issues/51152
     label = InkWell(
       onTap: onSort,
       overlayColor: overlayColor,
@@ -1094,9 +1132,8 @@ class DataTable extends StatelessWidget {
         end: paddingEnd,
       );
 
-      final TableColumnWidth? tableColumnWidth = columnWidthBuilder?.call(displayColumnIndex);
-      if (tableColumnWidth != null) {
-        tableColumns[displayColumnIndex] = tableColumnWidth;
+      if (column.columnWidth != null) {
+        tableColumns[displayColumnIndex] = column.columnWidth!;
       } else {
         if (dataColumnIndex == _onlyTextColumn) {
           tableColumns[displayColumnIndex] = const IntrinsicColumnWidth(flex: 1.0);
@@ -1104,6 +1141,7 @@ class DataTable extends StatelessWidget {
           tableColumns[displayColumnIndex] = const IntrinsicColumnWidth();
         }
       }
+
       final Set<WidgetState> headerStates = <WidgetState>{
         if (column.onSort == null) WidgetState.disabled,
       };
@@ -1305,7 +1343,7 @@ class _SortArrowState extends State<_SortArrow> with TickerProviderStateMixin {
     if (status.isCompleted) {
       assert(_orientationAnimation.value == math.pi);
       _orientationOffset += math.pi;
-      _orientationController.value = 0.0;
+      _orientationController.value = 0.0; // TODO(ianh): This triggers a pointless rebuild.
     }
   }
 

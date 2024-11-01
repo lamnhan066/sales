@@ -89,12 +89,6 @@ class _OrdersViewState extends ConsumerState<OrdersView> {
                     dataRowMaxHeight: 68,
                     columnSpacing: 30,
                     horizontalMargin: 10,
-                    columnWidthBuilder: (index) {
-                      if (index == 1) {
-                        return const IntrinsicColumnWidth(flex: 1);
-                      }
-                      return null;
-                    },
                     columns: _buildColumns(),
                     rows: _buildRows(ordersState, ordersNotifier),
                   ),
@@ -142,7 +136,7 @@ class _OrdersViewState extends ConsumerState<OrdersView> {
         headingRowAlignment: MainAxisAlignment.center,
         label: Text('STT'.tr, textAlign: TextAlign.center),
       ),
-      DataColumn(
+      FlexDataColumn(
         headingRowAlignment: MainAxisAlignment.center,
         label: Text('Ngày Giờ'.tr, textAlign: TextAlign.center),
       ),

@@ -169,16 +169,11 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
     return Expanded(
       child: SingleChildScrollView(
         child: DataTable(
+          showCheckboxColumn: true,
           dataRowMinHeight: 68,
           dataRowMaxHeight: 68,
           columnSpacing: 30,
           horizontalMargin: 10,
-          columnWidthBuilder: (index) {
-            if (index == 2) {
-              return const IntrinsicColumnWidth(flex: 1);
-            }
-            return null;
-          },
           columns: _buildDataColumns(context),
           rows: _buildDataRows(context, state, notifier),
         ),
@@ -190,7 +185,14 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
     return [
       _headerTextColumn('STT'.tr),
       _headerTextColumn('ID'.tr),
-      _headerTextColumn('Tên'.tr),
+      FlexDataColumn(
+        headingRowAlignment: MainAxisAlignment.center,
+        label: Text(
+          'Tên'.tr,
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ),
       _headerTextColumn('Giá nhập'.tr, numeric: true),
       _headerTextColumn('Giá bán'.tr, numeric: true),
       _headerTextColumn('Loại hàng'.tr),
@@ -218,6 +220,7 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
       final category = state.categories.firstWhere((c) => c.id == product.categoryId);
 
       return DataRow(
+        onSelectChanged: (value) => print(value),
         cells: [
           DataCell(Center(child: Text('${(state.page - 1) * state.perPage + index + 1}'))),
           DataCell(Center(child: Text(product.sku))),
