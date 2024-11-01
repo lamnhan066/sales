@@ -139,6 +139,26 @@ class FlexDataColumn extends DataColumn {
   TableColumnWidth? get columnWidth => FlexColumnWidth(flex);
 }
 
+class IntrinsicDataColumn extends DataColumn {
+  /// Creates the configuration for a column of a [DataTable].
+  const IntrinsicDataColumn({
+    required super.label,
+    this.flex,
+    super.tooltip,
+    super.numeric = false,
+    super.onSort,
+    super.mouseCursor,
+    super.headingRowAlignment,
+  });
+
+  /// The fraction of the remaining space once all the other columns have
+  /// been laid out that this column should occupy.
+  final double? flex;
+
+  @override
+  TableColumnWidth? get columnWidth => IntrinsicColumnWidth(flex: flex);
+}
+
 /// Row configuration and cell data for a [DataTable].
 ///
 /// One row configuration must be provided for each row to

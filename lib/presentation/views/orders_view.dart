@@ -136,7 +136,7 @@ class _OrdersViewState extends ConsumerState<OrdersView> {
         headingRowAlignment: MainAxisAlignment.center,
         label: Text('STT'.tr, textAlign: TextAlign.center),
       ),
-      FlexDataColumn(
+      IntrinsicDataColumn(
         headingRowAlignment: MainAxisAlignment.center,
         label: Text('Ngày Giờ'.tr, textAlign: TextAlign.center),
       ),

@@ -233,7 +233,8 @@ class _OrderFormDialogState extends State<OrderFormDialog> {
                                         style: const TextStyle(fontWeight: FontWeight.bold),
                                       ),
                                     ),
-                                    FlexDataColumn(
+                                    IntrinsicDataColumn(
+                                      flex: 1,
                                       headingRowAlignment: MainAxisAlignment.center,
                                       label: Text(
                                         'Tên Sản Phẩm'.tr,
