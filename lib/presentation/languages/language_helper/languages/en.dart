@@ -221,17 +221,19 @@ final en = <String, dynamic>{
   // 'Huỷ': 'Cancel',  // Duplicated
   'Đang tự động đăng nhập...': 'Logging in automatically...',
   // 'Huỷ': 'Cancel',  // Duplicated
-  'Bạn có 15 ngày để dùng thử.\nVui lòng nhấn Kích Hoạt để tiếp tục':
-      'You have 15 days to try.\nPlease press Activate to continue',
+  'Bạn đang sử dụng bản quyền. Còn @{day} ngày.': 'You are using a licensed version. @{day} days remaining.',
   'Kích Hoạt': 'Activate',
   'Bạn đã hết thời gian dùng thử.\nVui lòng nhập mã để kích hoạt ứng dụng':
-      'Your trial period has ended.\nPlease enter the code to activate the application',
-  'Mã kích hoạt': 'Activation code',
-  // 'Kích Hoạt': 'Activate',  // Duplicated
-  'Bạn đang sử dụng bản dùng thử. Còn @{day} ngày.': 'You are using the trial version. @{day} days remaining.',
-  // 'Kích Hoạt': 'Activate',  // Duplicated
-  'Bạn đang sử dụng bản quyền. Còn @{day} ngày.': 'You are using the licensed version. @{day} days remaining.',
-  // 'Kích Hoạt': 'Activate',  // Duplicated
+      'Your trial period has ended.\nPlease enter a code to activate the application.',
+  'Bạn đang sử dụng bản dùng thử. Còn @{day} ngày.': 'You are using a trial version. @{day} days remaining.',
+  // 'Kích Hoạt': 'Kích Hoạt',  // Duplicated
+  'Bạn đã hết thời gian sử dụng.\nVui lòng nhập mã để kích hoạt ứng dụng':
+      'Your usage period has ended.\nPlease enter a code to activate the application.',
+  'Bạn có 15 ngày để dùng thử.\nVui lòng nhấn Kích Hoạt để tiếp tục':
+      'You have 15 days to try.\nPlease press Activate to continue.',
+  // 'Kích Hoạt': 'Kích Hoạt',  // Duplicated
+  'Mã kích hoạt': 'Activation Code',
+  // 'Kích Hoạt': 'Kích Hoạt',  // Duplicated
 
   ///===========================================================================
   /// Path: ./lib/presentation/views/settings_view.dart
