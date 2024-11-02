@@ -2,6 +2,7 @@ import 'package:boxw/boxw.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:language_helper/language_helper.dart';
+import 'package:sales/presentation/riverpod/notifiers/app_settings_provider.dart';
 import 'package:sales/presentation/riverpod/notifiers/settings_provider.dart';
 import 'package:sales/presentation/riverpod/states/settings_state.dart';
 
@@ -29,8 +30,8 @@ class SettingsView extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              _buildLanguage(notifier, state),
-              _buildBrightness(notifier, state),
+              _buildLanguage(ref),
+              _buildBrightness(ref),
               _buildSaveLastView(notifier, state),
               _buildItemPerPage(notifier, state),
               _buildBackupRestore(notifier, state),
@@ -41,7 +42,9 @@ class SettingsView extends ConsumerWidget {
     );
   }
 
-  Widget _buildLanguage(SettingsNotifier notifier, SettingsState state) {
+  Widget _buildLanguage(WidgetRef ref) {
+    final themeNotifier = ref.read(appSettingsProvider.notifier);
+    final themeState = ref.watch(appSettingsProvider);
     return ListTile(
       leading: const Icon(Icons.language_rounded),
       title: Text('Ngôn Ngữ'.tr),
@@ -49,16 +52,16 @@ class SettingsView extends ConsumerWidget {
         width: 200,
         child: BoxWDropdown<LanguageCodes>(
           margin: EdgeInsets.zero,
-          items: state.supportedLanguages.map((e) {
+          items: themeState.supportedLanguages.map((e) {
             return DropdownMenuItem(
               value: e,
               child: Text(e.nativeName),
             );
           }).toList(),
-          value: state.currentlanguage,
+          value: themeState.currentlanguage,
           onChanged: (value) async {
             if (value != null) {
-              await notifier.changeLanguage(value);
+              await themeNotifier.changeLanguage(value);
             }
           },
         ),
@@ -66,15 +69,19 @@ class SettingsView extends ConsumerWidget {
     );
   }
 
-  Widget _buildBrightness(SettingsNotifier notifier, SettingsState state) {
+  Widget _buildBrightness(WidgetRef ref) {
+    final themeNotifier = ref.read(appSettingsProvider.notifier);
+    final themeState = ref.watch(appSettingsProvider);
     return ListTile(
       leading: const Icon(Icons.dark_mode_rounded),
       title: Text('Chế Độ Tối'.tr),
       trailing: Checkbox(
-        value: state.brightness == Brightness.dark,
+        value: themeState.brightness == Brightness.dark,
         onChanged: (value) async {
           if (value != null) {
-            await notifier.setBrightness(value == true ? Brightness.dark : Brightness.light);
+            await themeNotifier.setBrightness(
+              value == true ? Brightness.dark : Brightness.light,
+            );
           }
         },
       ),

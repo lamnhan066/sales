@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/di.dart';
-import 'package:sales/presentation/riverpod/notifiers/settings_provider.dart';
+import 'package:sales/presentation/riverpod/notifiers/app_settings_provider.dart';
 import 'package:sales/presentation/views/login_view.dart';
 
 void main() async {
@@ -16,12 +16,12 @@ class App extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final settingsState = ref.watch(settingsProvider);
+    final appSettingsState = ref.watch(appSettingsProvider);
     return MaterialApp(
       localizationsDelegates: LanguageHelper.instance.delegates,
-      locale: settingsState.currentlanguage.locale,
-      supportedLocales: settingsState.supportedLanguages.map((e) => e.locale),
-      themeMode: settingsState.brightness == Brightness.dark ? ThemeMode.dark : ThemeMode.light,
+      locale: appSettingsState.currentlanguage.locale,
+      supportedLocales: appSettingsState.supportedLanguages.map((e) => e.locale),
+      themeMode: appSettingsState.brightness == Brightness.dark ? ThemeMode.dark : ThemeMode.light,
       theme: ThemeData(colorSchemeSeed: Colors.blue, brightness: Brightness.light),
       darkTheme: ThemeData(colorSchemeSeed: Colors.blue, brightness: Brightness.dark),
       home: const LoginView(),

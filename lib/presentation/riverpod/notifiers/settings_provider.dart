@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/core/errors/failure.dart';
@@ -7,12 +5,7 @@ import 'package:sales/core/usecases/usecase.dart';
 import 'package:sales/di.dart';
 import 'package:sales/domain/entities/backup_data.dart';
 import 'package:sales/domain/usecases/app/change_item_per_page_usecase.dart';
-import 'package:sales/domain/usecases/app/change_language_usecase.dart';
-import 'package:sales/domain/usecases/app/get_current_brightness_usecase.dart';
-import 'package:sales/domain/usecases/app/get_current_language_usecase.dart';
 import 'package:sales/domain/usecases/app/get_item_per_page_usecase.dart';
-import 'package:sales/domain/usecases/app/get_supported_languages_usecase.dart';
-import 'package:sales/domain/usecases/app/set_brightness_usecase.dart';
 import 'package:sales/domain/usecases/backup_restore/backup_database_usecase.dart';
 import 'package:sales/domain/usecases/backup_restore/restore_database_usecase.dart';
 import 'package:sales/domain/usecases/categories/add_all_categories_usecase.dart';
@@ -27,13 +20,8 @@ import 'package:sales/presentation/riverpod/states/settings_state.dart';
 
 final settingsProvider = StateNotifierProvider<SettingsNotifier, SettingsState>((ref) {
   return SettingsNotifier(
-    getCurrentLanguageUseCase: getIt(),
-    getSupportedLanguagesUseCase: getIt(),
-    changeLanguageUseCase: getIt(),
     getItemPerPageUseCase: getIt(),
     changeItemPerPageUseCase: getIt(),
-    getCurrentBrightnessUseCase: getIt(),
-    setBrightnessUseCase: getIt(),
     backupDatabaseUseCase: getIt(),
     restoreDatabaseUseCase: getIt(),
     getAllProductsUseCase: getIt(),
@@ -48,13 +36,8 @@ final settingsProvider = StateNotifierProvider<SettingsNotifier, SettingsState>(
 });
 
 class SettingsNotifier extends StateNotifier<SettingsState> {
-  final GetCurrentLanguageUseCase getCurrentLanguageUseCase;
-  final GetSupportedLanguagesUseCase getSupportedLanguagesUseCase;
-  final ChangeLanguageUseCase changeLanguageUseCase;
   final ChangeItemPerPageUseCase changeItemPerPageUseCase;
   final GetItemPerPageUseCase getItemPerPageUseCase;
-  final GetCurrentBrightnessUseCase getCurrentBrightnessUseCase;
-  final SetBrightnessUseCase setBrightnessUseCase;
   final BackupDatabaseUseCase backupDatabaseUseCase;
   final RestoreDatabaseUseCase restoreDatabaseUseCase;
   final GetAllProductsUseCase getAllProductsUseCase;
@@ -67,13 +50,8 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
   final SetSaveLastViewUseCase setSaveLastViewUseCase;
 
   SettingsNotifier({
-    required this.getCurrentLanguageUseCase,
-    required this.getSupportedLanguagesUseCase,
-    required this.changeLanguageUseCase,
     required this.changeItemPerPageUseCase,
     required this.getItemPerPageUseCase,
-    required this.getCurrentBrightnessUseCase,
-    required this.setBrightnessUseCase,
     required this.backupDatabaseUseCase,
     required this.restoreDatabaseUseCase,
     required this.getAllProductsUseCase,
@@ -91,33 +69,14 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
   Future<void> initialize() async {
     state = state.copyWith(isLoading: true);
 
-    final currentLanguage = await getCurrentLanguageUseCase(NoParams());
-    final supportedLanguages = await getSupportedLanguagesUseCase(NoParams());
     final itemPerPage = await getItemPerPageUseCase(NoParams());
-    final brightness = await getCurrentBrightnessUseCase(NoParams());
     final saveLastView = await getSaveLastViewUsecase(NoParams());
 
     state = state.copyWith(
-      currentlanguage: currentLanguage,
-      supportedLanguages: supportedLanguages,
       itemPerPage: itemPerPage,
-      brightness: brightness,
       saveLastView: saveLastView,
       isLoading: false,
     );
-  }
-
-  Future<LanguageCodes> getCurrentLanguage() {
-    return getCurrentLanguageUseCase(NoParams());
-  }
-
-  Future<Set<LanguageCodes>> getSupportedLanguages() async {
-    return getSupportedLanguagesUseCase(NoParams());
-  }
-
-  Future<void> changeLanguage(LanguageCodes code) async {
-    state = state.copyWith(currentlanguage: code);
-    await changeLanguageUseCase(code);
   }
 
   Future<void> updateItemPerPage(int value) async {
@@ -135,15 +94,6 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
 
   Future<int> getItemPerPage() async {
     return getItemPerPageUseCase(NoParams());
-  }
-
-  Future<Brightness> getCurrentBrightness() {
-    return getCurrentBrightnessUseCase(NoParams());
-  }
-
-  Future<void> setBrightness(Brightness brightness) async {
-    state = state.copyWith(brightness: brightness);
-    await setBrightnessUseCase(brightness);
   }
 
   Future<void> backup() async {
