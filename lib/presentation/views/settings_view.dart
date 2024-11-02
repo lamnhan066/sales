@@ -124,27 +124,33 @@ class SettingsView extends ConsumerWidget {
   }
 
   Widget _buildBackupRestore(SettingsNotifier notifier, SettingsState state) {
-    return ListTile(
-      leading: const Icon(Icons.backup_rounded),
-      title: Text('Sao Lưu và Khôi Phục'.tr),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          FilledButton(
-            onPressed: () {
-              notifier.backup();
-            },
-            child: Text('Sao Lưu'.tr),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        ListTile(
+          leading: const Icon(Icons.backup_rounded),
+          title: Text('Sao Lưu và Khôi Phục'.tr),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              FilledButton(
+                onPressed: () {
+                  notifier.backup();
+                },
+                child: Text('Sao Lưu'.tr),
+              ),
+              const SizedBox(width: 6),
+              FilledButton(
+                onPressed: () {
+                  notifier.restore();
+                },
+                child: Text('Khôi Phục'.tr),
+              ),
+            ],
           ),
-          const SizedBox(width: 6),
-          FilledButton(
-            onPressed: () {
-              notifier.restore();
-            },
-            child: Text('Khôi Phục'.tr),
-          ),
-        ],
-      ),
+        ),
+        if (state.backupRestoreStatus.isNotEmpty) Text(state.backupRestoreStatus),
+      ],
     );
   }
 }
