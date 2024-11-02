@@ -1,4 +1,3 @@
-import 'package:boxw/boxw.dart';
 import 'package:chart_sparkline/chart_sparkline.dart';
 import 'package:features_tour/features_tour.dart';
 import 'package:flutter/material.dart' hide DataTable, DataRow, DataColumn, DataCell;
@@ -60,8 +59,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                   constraints: BoxConstraints(maxWidth: 700),
                   child: Column(
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      Wrap(
                         children: [
                           _buildTotalProducts(divider, dashboardState),
                           _buildDailyOrders(divider, dashboardState),
@@ -124,10 +122,8 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
             'Biểu đồ doanh thu theo ngày trong tháng @{month}'.trP(
               {'month': dashboardState.reportDateTime.tommyyyy()},
             ),
-            style: TextStyle(fontWeight: FontWeight.bold),
           ),
-          BoxWRect(
-            borderColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+          Card(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Sparkline(
@@ -158,10 +154,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            Text(
-              'Chi tiết 3 đơn hàng gần nhất'.tr,
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-            ),
+            Text('Chi tiết 3 đơn hàng gần nhất'.tr),
             divider,
             Builder(builder: (context) {
               final orderItems = dashboardState.threeRecentOrders.orderItems;
@@ -172,22 +165,14 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   for (final order in orderItems.keys)
-                    BoxWRect(
-                      borderColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                    Card(
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Column(
                           children: [
-                            Text(
-                              DateTimeUtils.formatDateTime(order.date),
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
+                            Text(DateTimeUtils.formatDateTime(order.date)),
                             divider,
                             DataTable(
-                              dataRowMinHeight: 68,
-                              dataRowMaxHeight: 68,
-                              columnSpacing: 30,
-                              horizontalMargin: 10,
                               columns: _buildDataColumns(),
                               rows: [
                                 for (int i = 0; i < orderItems[order]!.length; i++)
@@ -210,9 +195,17 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
 
   List<DataColumn> _buildDataColumns() {
     return <DataColumn>[
-      DataColumn(label: Text('Tên Sản Phẩm'.tr)),
-      DataColumn(numeric: true, label: Text('Số Lượng'.tr)),
-      DataColumn(numeric: true, label: Text('Thành Tiền'.tr)),
+      DataColumn(
+        label: Text('Tên Sản Phẩm'.tr),
+      ),
+      DataColumn(
+        numeric: true,
+        label: Text('Số Lượng'.tr),
+      ),
+      DataColumn(
+        numeric: true,
+        label: Text('Thành Tiền'.tr),
+      ),
     ];
   }
 
@@ -264,31 +257,15 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Top 5 sản phẩm bán chạy'.tr,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                ),
+                Text('Top 5 sản phẩm bán chạy'.tr),
                 divider,
-                DataTable(
-                  dataRowMinHeight: 68,
-                  dataRowMaxHeight: 68,
-                  columnSpacing: 30,
-                  horizontalMargin: 10,
-                  columns: [
-                    IntrinsicDataColumn(label: Text('Tên sản phẩm')),
-                    DataColumn(numeric: true, label: Text('Số lượng')),
-                  ],
-                  rows: [
-                    for (final product in dashboardState.fiveHighestSalesProducts.entries)
-                      DataRow(cells: [
-                        DataCell(Text(product.key.name)),
-                        DataCell(Text('${product.value}')),
-                      ]),
-                  ],
-                ),
+                for (final product in dashboardState.fiveHighestSalesProducts.entries)
+                  Text(
+                    '${product.key.name}: ${product.value}',
+                    style: const TextStyle(fontSize: 16),
+                  ),
               ],
             ),
           ),
@@ -297,31 +274,10 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  'Top 5 sản phẩm sắp hết hàng'.tr,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                ),
+                Text('Top 5 sản phẩm sắp hết hàng (số lượng < 5)'.tr),
                 divider,
-                DataTable(
-                  dataRowMinHeight: 68,
-                  dataRowMaxHeight: 68,
-                  columnSpacing: 30,
-                  horizontalMargin: 10,
-                  columns: [
-                    IntrinsicDataColumn(label: Text('Tên sản phẩm')),
-                    DataColumn(numeric: true, label: Text('Số lượng')),
-                  ],
-                  rows: [
-                    for (final product in dashboardState.fiveLowStockProducts)
-                      DataRow(cells: [
-                        DataCell(Text(product.name)),
-                        DataCell(Text('${product.count}')),
-                      ]),
-                  ],
-                ),
+                for (final product in dashboardState.fiveLowStockProducts) Text('${product.name}: ${product.count}'),
               ],
             ),
           ),
@@ -336,10 +292,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            Text(
-              'Tổng doanh thu trong ngày'.tr,
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-            ),
+            Text('Tổng doanh thu trong ngày'.tr),
             divider,
             Text(
               '@{dailyRevenue} đồng'.trP({
@@ -359,10 +312,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            Text(
-              'Tổng số đơn hàng trong ngày'.tr,
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-            ),
+            Text('Tổng số đơn hàng trong ngày'.tr),
             divider,
             Text(
               '@{count} đơn'.trP({'count': dashboardState.dailyOrderCount}),
@@ -380,10 +330,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            Text(
-              'Tổng số sản phẩm'.tr,
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-            ),
+            Text('Tổng số sản phẩm'.tr),
             divider,
             Text(
               '@{count} sản phẩm'.trP({'count': dashboardState.totalProductCount}),
