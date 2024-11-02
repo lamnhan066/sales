@@ -56,11 +56,30 @@ class _LoginViewState extends ConsumerState<LoginView> {
         children: [
           Expanded(
             child: ColoredBox(
-              color: Colors.purple,
+              color: Colors.blue,
               child: Center(
-                child: Text(
-                  'Chào mừng bạn trở lại!'.tr,
-                  style: const TextStyle(color: Colors.white),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: CircleAvatar(
+                        radius: 120,
+                        backgroundColor: Colors.white,
+                        child: Padding(
+                          padding: const EdgeInsets.all(30.0),
+                          child: Image.asset('assets/images/logo.png'),
+                        ),
+                      ),
+                    ),
+                    Text(
+                      'Chào mừng bạn trở lại!'.tr,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 22,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
