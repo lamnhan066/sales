@@ -552,17 +552,26 @@ class LocalPostgresStorageImpl implements LocalPostgresStorage {
       SELECT 
         *
       FROM 
-        orders
+        (
+          SELECT 
+            *
+          FROM 
+            orders
+          WHERE 
+            o_deleted = FALSE
+          ORDER BY
+            o_date DESC
+          LIMIT
+            3
+        ) AS recent_orders
       JOIN
-        order_items ON oi_order_id = o_id
+        order_items ON oi_order_id = recent_orders.o_id
       JOIN
         products ON oi_product_id = p_id
       WHERE 
-        o_deleted = FALSE AND oi_deleted = FALSE AND p_deleted = FALSE
+        oi_deleted = FALSE AND p_deleted = FALSE
       ORDER BY
         o_date DESC
-      LIMIT
-        3
     ''';
     final result = await _connection.execute(sql);
     final Map<OrderModel, List<ProductModel>> products = {};
