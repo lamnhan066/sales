@@ -134,16 +134,12 @@ class SettingsView extends ConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               FilledButton(
-                onPressed: () {
-                  notifier.backup();
-                },
+                onPressed: notifier.backup,
                 child: Text('Sao Lưu'.tr),
               ),
               const SizedBox(width: 6),
               FilledButton(
-                onPressed: () {
-                  notifier.restore();
-                },
+                onPressed: notifier.restore,
                 child: Text('Khôi Phục'.tr),
               ),
             ],
