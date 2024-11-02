@@ -243,7 +243,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
       cells: [
         DataCell(Text('')),
         DataCell(Text('Tổng cộng')),
-        DataCell(Text('$total')),
+        DataCell(Text(total.toPriceDigit())),
       ],
     );
   }
