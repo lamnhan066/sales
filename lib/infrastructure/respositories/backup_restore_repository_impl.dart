@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:language_helper/language_helper.dart';
+import 'package:sales/core/extensions/data_time_extensions.dart';
 import 'package:sales/domain/entities/backup_data.dart';
 import 'package:sales/domain/repositories/backup_restore_repository.dart';
 import 'package:sales/infrastructure/exceptions/backup_exception.dart';
@@ -15,9 +16,10 @@ class BackupRestoreRepositoryImpl implements BackupRestoreRepository {
   @override
   Future<File> backup(BackupData params) async {
     final data = utf8.encode(params.toJson());
+    final now = DateTime.now();
     final path = await _filePicker.saveFile(
       dialogTitle: 'Lưu Bản Sao Lưu'.tr,
-      fileName: 'sales.bak',
+      fileName: 'sales_${now.toyyMMddHHmmss()}.bak',
     );
 
     if (path == null) {
