@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:sales/core/extensions/int_extensions.dart';
 
 extension DateTimeExtensions on DateTime {
   /// dd/MM/yyyy
   String toddMMyyyy() {
-    final dd = '$day'.padLeft(2, '0');
-    final mm = '$month'.padLeft(2, '0');
+    final dd = day.to2Digits();
+    final mm = month.to2Digits();
     return '$dd/$mm/$year';
   }
 
@@ -15,15 +16,15 @@ extension DateTimeExtensions on DateTime {
 
   /// MM-yyyy
   String tommyyyy() {
-    final mm = '$month'.padLeft(2, '0');
+    final mm = month.to2Digits();
     return '$mm-$year';
   }
 
   // HH:mm:ss dd/MM/yyyy
   String toHHmmssddMMyyyy() {
-    final hh = '$hour'.padLeft(2, '0');
-    final mm = '$minute'.padLeft(2, '0');
-    final ss = '$second'.padLeft(2, '0');
+    final hh = hour.to2Digits();
+    final mm = minute.to2Digits();
+    final ss = second.to2Digits();
     return '$hh:$mm:$ss ${toddMMyyyy()}';
   }
 
