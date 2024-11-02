@@ -185,6 +185,7 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
       _headerTextColumn('STT'.tr),
       _headerTextColumn('ID'.tr),
       IntrinsicDataColumn(
+        flex: 1,
         headingRowAlignment: MainAxisAlignment.center,
         label: Text(
           'Tên'.tr,
