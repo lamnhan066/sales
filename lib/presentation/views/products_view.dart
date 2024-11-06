@@ -104,9 +104,12 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
               controller: state.tour,
               index: 1,
               introduce: Text('Nhấn vào đây để thêm sản phẩm mới'.tr),
-              child: FilledButton(
-                onPressed: () => addProduct(),
-                child: const Icon(Icons.add),
+              child: Tooltip(
+                message: 'Thêm sản phẩm mới'.tr,
+                child: FilledButton(
+                  onPressed: () => addProduct(),
+                  child: const Icon(Icons.add),
+                ),
               ),
             ),
             Row(
@@ -115,18 +118,24 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
                   controller: state.tour,
                   index: 1.5,
                   introduce: Text('Nhấn vào đây để tải xuống mẫu dữ liệu'.tr),
-                  child: IconButton(
-                    onPressed: () => _downloadTemplate(notifier),
-                    icon: const Icon(Icons.download_rounded),
+                  child: Tooltip(
+                    message: 'Tải xuống dữ liệu mẫu'.tr,
+                    child: IconButton(
+                      onPressed: () => _downloadTemplate(notifier),
+                      icon: const Icon(Icons.download_rounded),
+                    ),
                   ),
                 ),
                 FeaturesTour(
                   controller: state.tour,
                   index: 2,
                   introduce: Text('Nhấn vào đây để tải lên dữ liệu từ Excel'.tr),
-                  child: IconButton(
-                    onPressed: () => _loadDataFromExcel(context),
-                    icon: const Icon(Icons.upload_rounded),
+                  child: Tooltip(
+                    message: 'Tải lên dữ liệu từ Excel'.tr,
+                    child: IconButton(
+                      onPressed: () => _loadDataFromExcel(context),
+                      icon: const Icon(Icons.upload_rounded),
+                    ),
                   ),
                 ),
                 SizedBox(
