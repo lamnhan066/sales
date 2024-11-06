@@ -7,7 +7,6 @@ import 'package:sales/domain/repositories/data_importer_repository.dart';
 import 'package:sales/infrastructure/utils/excel_picker.dart';
 
 class ExcelDataImporterImpl implements DataImporterRepository {
-  // TODO: Hiển thị dialog để người dùng có thể tải xuống mẫu hoặc dữ liệu hiện tại
   @override
   Future<DataImportResult?> importData() async {
     final excel = await ExcelPicker.getExcelFile();

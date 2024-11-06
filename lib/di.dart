@@ -55,6 +55,7 @@ import 'package:sales/domain/usecases/categories/get_all_categories.dart';
 import 'package:sales/domain/usecases/categories/get_next_category_id_usecase.dart';
 import 'package:sales/domain/usecases/categories/remove_category_usecase.dart';
 import 'package:sales/domain/usecases/categories/update_category_usecase.dart';
+import 'package:sales/domain/usecases/data_services/download_template_usecase.dart';
 import 'package:sales/domain/usecases/data_services/import_data_usecase.dart';
 import 'package:sales/domain/usecases/data_services/load_server_configuration_usecase.dart';
 import 'package:sales/domain/usecases/data_services/load_server_connection_usecase.dart';
@@ -284,6 +285,7 @@ void _registerDatabaseUseCases() {
   getIt.registerLazySingleton<LoadServerConnectionUsecase>(() => LoadServerConnectionUsecase(getIt()));
   getIt.registerLazySingleton<ReplaceDatabaseUsecase>(() => ReplaceDatabaseUsecase(getIt()));
   getIt.registerLazySingleton<ImportDataUseCase>(() => ImportDataUseCase(getIt()));
+  getIt.registerLazySingleton<DownloadTemplateUseCase>(() => DownloadTemplateUseCase(getIt()));
 }
 
 void _registerBackupRestoreUseCases() {
@@ -311,6 +313,10 @@ void _registerLastViewUseCases() {
 
 void _registerServices() {
   getIt.registerLazySingleton<DatabaseService>(
-    () => DatabaseServiceImpl(coreDatabase: getIt(), dataSyncDatabase: getIt()),
+    () => DatabaseServiceImpl(
+      coreDatabase: getIt(),
+      dataSyncDatabase: getIt(),
+      filePicker: getIt(),
+    ),
   );
 }

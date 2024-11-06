@@ -18,4 +18,7 @@ abstract class DatabaseService {
   /// Việc thay thế này sẽ dẫn đến dữ liệu ở database bị xoá hoàn toàn
   /// và được thay thế mới.
   Future<void> replaceDatabase(DataImportResult data);
+
+  /// Tải về dữ liệu mẫu.
+  Future<void> downloadTemplate();
 }

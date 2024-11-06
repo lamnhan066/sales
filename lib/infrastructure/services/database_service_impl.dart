@@ -1,3 +1,7 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/services.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/data/database/core_database.dart';
 import 'package:sales/data/database/data_sync_database.dart';
@@ -10,12 +14,15 @@ import 'package:sales/infrastructure/exceptions/server_exception.dart';
 class DatabaseServiceImpl implements DatabaseService {
   final CoreDatabase _coreDatabase;
   final DataSyncDatabase _dataSyncDatabase;
+  final FilePicker _filePicker;
 
   const DatabaseServiceImpl({
     required CoreDatabase coreDatabase,
     required DataSyncDatabase dataSyncDatabase,
+    required FilePicker filePicker,
   })  : _coreDatabase = coreDatabase,
-        _dataSyncDatabase = dataSyncDatabase;
+        _dataSyncDatabase = dataSyncDatabase,
+        _filePicker = filePicker;
 
   @override
   Future<void> initial() async {
@@ -43,5 +50,25 @@ class DatabaseServiceImpl implements DatabaseService {
     final categories = data.categories.map((e) => e.toData()).toList();
     final products = data.products.map((e) => e.toData()).toList();
     return _dataSyncDatabase.replace(categories, products);
+  }
+
+  @override
+  Future<void> downloadTemplate() async {
+    final path = await _filePicker.saveFile(
+      dialogTitle: 'Lưu Danh Sách Sản Phẩm Mẫu'.tr,
+      fileName: 'product_template.xlsx',
+    );
+
+    if (path == null) {
+      throw ServerException('Không có đường dẫn được chọn'.tr);
+    }
+
+    try {
+      final file = File(path);
+      final data = await rootBundle.load('assets/templates/products.xlsx');
+      file.writeAsBytesSync(data.buffer.asUint8List());
+    } catch (e) {
+      throw ServerException('Không thể ghi sản phẩm mẫu vào tệp'.tr);
+    }
   }
 }

@@ -113,6 +113,15 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
               children: [
                 FeaturesTour(
                   controller: state.tour,
+                  index: 1.5,
+                  introduce: Text('Nhấn vào đây để tải xuống mẫu dữ liệu'.tr),
+                  child: IconButton(
+                    onPressed: () => _downloadTemplate(notifier),
+                    icon: const Icon(Icons.download_rounded),
+                  ),
+                ),
+                FeaturesTour(
+                  controller: state.tour,
                   index: 2,
                   introduce: Text('Nhấn vào đây để tải lên dữ liệu từ Excel'.tr),
                   child: IconButton(
@@ -576,6 +585,10 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
         await notifier.replaceDatabase(data);
       }
     }
+  }
+
+  Future<void> _downloadTemplate(ProductsNotifier notifier) async {
+    await notifier.downloadProductTemplate();
   }
 
   Future<void> goToPage() async {

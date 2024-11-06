@@ -15,6 +15,7 @@ import 'package:sales/domain/usecases/categories/get_all_categories.dart';
 import 'package:sales/domain/usecases/categories/get_next_category_id_usecase.dart';
 import 'package:sales/domain/usecases/categories/remove_category_usecase.dart';
 import 'package:sales/domain/usecases/categories/update_category_usecase.dart';
+import 'package:sales/domain/usecases/data_services/download_template_usecase.dart';
 import 'package:sales/domain/usecases/data_services/import_data_usecase.dart';
 import 'package:sales/domain/usecases/data_services/replace_database_usecase.dart';
 import 'package:sales/domain/usecases/products/add_product_usecase.dart';
@@ -45,6 +46,7 @@ final productsProvider = StateNotifierProvider<ProductsNotifier, ProductsState>(
     saveTemporaryProductUseCase: getIt(),
     getTemporaryProductUseCase: getIt(),
     removeTemporaryProductUseCase: getIt(),
+    downloadTemplateUseCase: getIt(),
   );
 });
 
@@ -65,6 +67,7 @@ class ProductsNotifier extends StateNotifier<ProductsState> {
   final SaveTemporaryProductUseCase _saveTemporaryProductUseCase;
   final GetTemporaryProductUseCase _getTemporaryProductUseCase;
   final RemoveTemporaryProductUseCase _removeTemporaryProductUseCase;
+  final DownloadTemplateUseCase _downloadTemplateUseCase;
 
   ProductsNotifier({
     required GetAllCategoriesUsecCase getAllCategoriesUsecCase,
@@ -83,6 +86,7 @@ class ProductsNotifier extends StateNotifier<ProductsState> {
     required SaveTemporaryProductUseCase saveTemporaryProductUseCase,
     required GetTemporaryProductUseCase getTemporaryProductUseCase,
     required RemoveTemporaryProductUseCase removeTemporaryProductUseCase,
+    required DownloadTemplateUseCase downloadTemplateUseCase,
   })  : _importDataUseCase = importDataUseCase,
         _updateCategoryUseCase = updateCategoryUseCase,
         _removeCategoryUseCase = removeCategoryUseCase,
@@ -99,6 +103,7 @@ class ProductsNotifier extends StateNotifier<ProductsState> {
         _saveTemporaryProductUseCase = saveTemporaryProductUseCase,
         _getTemporaryProductUseCase = getTemporaryProductUseCase,
         _removeTemporaryProductUseCase = removeTemporaryProductUseCase,
+        _downloadTemplateUseCase = downloadTemplateUseCase,
         super(ProductsState(tour: FeaturesTourController('ProductsView')));
 
   Future<void> loadInitialData() async {
@@ -290,5 +295,9 @@ class ProductsNotifier extends StateNotifier<ProductsState> {
 
   void closeProductDialog() {
     state = state.copyWith(isShownDraftDialog: false, hasDraft: false);
+  }
+
+  Future<void> downloadProductTemplate() async {
+    await _downloadTemplateUseCase(NoParams());
   }
 }
