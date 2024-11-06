@@ -70,6 +70,9 @@ final en = <String, dynamic>{
   ///===========================================================================
   "@path_./lib/infrastructure/services/database_service_impl.dart": '',
   'Không thể kết nối được với máy chủ': 'Unable to connect to the server',
+  'Lưu Danh Sách Sản Phẩm Mẫu': 'Save Template Product List',
+  // 'Không có đường dẫn được chọn': 'Không có đường dẫn được chọn',  // Duplicated
+  'Không thể ghi sản phẩm mẫu vào tệp': 'Cannot write template product to file',
 
   ///===========================================================================
   /// Path: ./lib/domain/usecases/data_services/import_data_usecase.dart
@@ -127,7 +130,11 @@ final en = <String, dynamic>{
   ///===========================================================================
   "@path_./lib/presentation/views/products_view.dart": '',
   'Nhấn vào đây để thêm sản phẩm mới': 'Click here to add a new product',
+  'Thêm sản phẩm mới': 'Add new product',
+  'Nhấn vào đây để tải xuống mẫu dữ liệu': 'Click here to download sample data',
+  'Tải xuống dữ liệu mẫu': 'Download sample data',
   'Nhấn vào đây để tải lên dữ liệu từ Excel': 'Click here to upload data from Excel',
+  'Tải lên dữ liệu từ Excel': 'Upload data from Excel',
   'Tìm kiếm sản phẩm theo tên tại đây': 'Search for products by name here',
   'Tìm Kiếm': 'Search',
   'Nhấn vào đây để hiển thị tuỳ chọn lọc sản phẩm': 'Click here to display product filter options',
@@ -255,8 +262,11 @@ final en = <String, dynamic>{
   'Nhấn vào đây để chọn ngày thống kê ở trang tổng quan': 'Click here to select a date for statistics on the dashboard',
   'Biểu đồ doanh thu theo ngày trong tháng @{month}': 'Revenue chart by day in the month of @{month}',
   'Chi tiết 3 đơn hàng gần nhất': 'Details of the 3 most recent orders',
-  'Top 5 sản phẩm bán chạy': 'Top 5 best-selling products',
-  'Top 5 sản phẩm sắp hết hàng (số lượng < 5)': 'Top 5 products running low on stock (quantity < 5)',
+  'Tên Sản Phẩm': 'Product Name',
+  'Số Lượng': 'Quantity',
+  'Thành Tiền': 'Total Amount',
+  'Top 5 sản phẩm bán chạy': 'Top 5 Bestselling Products',
+  'Top 5 sản phẩm sắp hết hàng': 'Top 5 Products Nearly Out of Stock',
   'Tổng doanh thu trong ngày': 'Total revenue for the day',
   '@{dailyRevenue} đồng': '@{dailyRevenue} VND',
   'Tổng số đơn hàng trong ngày': 'Total number of orders for the day',
@@ -373,10 +383,10 @@ final en = <String, dynamic>{
   'Trạng thái': 'Status',
   // 'Trạng thái': 'Status',  // Duplicated
   // 'STT': 'No.',  // Duplicated
-  'Tên Sản Phẩm': 'Product Name',
-  'Số Lượng': 'Quantity',
+  // 'Tên Sản Phẩm': 'Product Name',
+  // 'Số Lượng': 'Quantity',
   'Đơn Giá': 'Unit Price',
-  'Thành Tiền': 'Total Price',
+  // 'Thành Tiền': 'Total Price',
   'Hành Động': 'Action',
 
   ///===========================================================================
