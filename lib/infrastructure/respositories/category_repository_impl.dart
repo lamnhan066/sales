@@ -1,5 +1,5 @@
-import 'package:sales/data/database/category_database.dart';
 import 'package:sales/data/mappers/category_mapper_extension.dart';
+import 'package:sales/data/repositories/category_database.dart';
 import 'package:sales/domain/entities/category.dart';
 import 'package:sales/domain/repositories/category_repository.dart';
 

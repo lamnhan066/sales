@@ -1,6 +1,6 @@
-import 'package:sales/data/database/order_with_items_database.dart';
 import 'package:sales/data/mappers/order_mapper_extension.dart';
 import 'package:sales/data/mappers/order_with_items_params_mapper_extension.dart';
+import 'package:sales/data/repositories/order_with_items_database.dart';
 import 'package:sales/domain/entities/order.dart';
 import 'package:sales/domain/entities/order_with_items_params.dart';
 import 'package:sales/domain/repositories/order_with_items_repository.dart';

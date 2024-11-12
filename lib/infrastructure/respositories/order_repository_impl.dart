@@ -1,6 +1,6 @@
-import 'package:sales/data/database/order_database.dart';
 import 'package:sales/data/mappers/get_result_mapper_extension.dart';
 import 'package:sales/data/mappers/order_mapper_extension.dart';
+import 'package:sales/data/repositories/order_database.dart';
 import 'package:sales/domain/entities/get_order_params.dart';
 import 'package:sales/domain/entities/get_result.dart';
 import 'package:sales/domain/entities/order.dart';

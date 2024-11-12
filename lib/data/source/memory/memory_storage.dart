@@ -1,12 +1,12 @@
 import 'dart:math';
 
-import 'package:sales/data/database/database.dart';
 import 'package:sales/data/models/category_model.dart';
 import 'package:sales/data/models/get_orders_result_model.dart';
 import 'package:sales/data/models/order_item_model.dart';
 import 'package:sales/data/models/order_model.dart';
 import 'package:sales/data/models/order_with_items_model.dart';
 import 'package:sales/data/models/product_model.dart';
+import 'package:sales/data/repositories/database.dart';
 import 'package:sales/domain/entities/get_order_items_params.dart';
 import 'package:sales/domain/entities/get_order_params.dart';
 import 'package:sales/domain/entities/get_product_params.dart';

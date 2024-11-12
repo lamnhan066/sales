@@ -1,5 +1,5 @@
-import 'package:sales/data/database/product_database.dart';
 import 'package:sales/data/mappers/product_mapper_extension.dart';
+import 'package:sales/data/repositories/product_database.dart';
 import 'package:sales/domain/entities/get_product_params.dart';
 import 'package:sales/domain/entities/get_result.dart';
 import 'package:sales/domain/entities/product.dart';

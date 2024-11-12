@@ -1,6 +1,6 @@
-import 'package:sales/data/database/report_database.dart';
 import 'package:sales/data/mappers/get_orders_result_mapper_extension.dart';
 import 'package:sales/data/mappers/product_mapper_extension.dart';
+import 'package:sales/data/repositories/report_database.dart';
 import 'package:sales/domain/entities/product.dart';
 import 'package:sales/domain/entities/ranges.dart';
 import 'package:sales/domain/entities/recent_orders_result.dart';
