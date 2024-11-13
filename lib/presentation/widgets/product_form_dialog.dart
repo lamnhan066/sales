@@ -1,9 +1,9 @@
-import 'dart:io';
-import 'dart:ui';
-
 import 'package:boxw/boxw.dart';
+import 'package:easy_image_viewer/easy_image_viewer.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:language_helper/language_helper.dart';
+import 'package:sales/core/utils/resolve_image_source.dart';
 import 'package:sales/domain/entities/category.dart';
 import 'package:sales/domain/entities/product.dart';
 import 'package:sales/presentation/riverpod/notifiers/products_provider.dart';
@@ -302,7 +302,10 @@ class _ProductFormDialogState extends State<ProductFormDialog> {
                                       ),
                                       child: GestureDetector(
                                         onTap: () {
-                                          // TODO(lamnhan066): Mở trình xem ảnh khi nhấn vào ảnh
+                                          showImageViewer(
+                                            context,
+                                            resolveImageSource(source).image,
+                                          );
                                         },
                                         child: widget.readOnly
                                             ? _ResolveImage(source: source)
@@ -375,6 +378,6 @@ class _ResolveImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return source.startsWith('http') ? Image.network(source) : Image.file(File(source));
+    return resolveImageSource(source);
   }
 }
