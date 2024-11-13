@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/domain/entities/license.dart';
 import 'package:sales/domain/entities/server_configurations.dart';
+import 'package:sales/presentation/riverpod/notifiers/app_settings_provider.dart';
 import 'package:sales/presentation/riverpod/notifiers/login_provider.dart';
 import 'package:sales/presentation/riverpod/notifiers/settings_provider.dart';
 import 'package:sales/presentation/riverpod/states/login_state.dart';
@@ -29,6 +30,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await (
+        ref.read(appSettingsProvider.notifier).initialize(),
         ref.read(settingsProvider.notifier).initialize(),
         ref.read(loginProvider.notifier).initialize(),
       ).wait;
