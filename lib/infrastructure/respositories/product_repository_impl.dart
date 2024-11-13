@@ -1,12 +1,12 @@
 import 'package:sales/data/mappers/product_mapper_extension.dart';
-import 'package:sales/data/repositories/product_database.dart';
+import 'package:sales/data/repositories/product_database_repository.dart';
 import 'package:sales/domain/entities/get_product_params.dart';
 import 'package:sales/domain/entities/get_result.dart';
 import 'package:sales/domain/entities/product.dart';
 import 'package:sales/domain/repositories/product_repository.dart';
 
 class ProductRepositoryImpl implements ProductRepository {
-  final ProductDatabase _database;
+  final ProductDatabaseRepository _database;
 
   const ProductRepositoryImpl(this._database);
 

@@ -1,10 +1,10 @@
 import 'package:sales/data/mappers/category_mapper_extension.dart';
-import 'package:sales/data/repositories/category_database.dart';
+import 'package:sales/data/repositories/category_database_repository.dart';
 import 'package:sales/domain/entities/category.dart';
 import 'package:sales/domain/repositories/category_repository.dart';
 
 class CategoryRepositoryImpl implements CategoryRepository {
-  final CategoryDatabase _database;
+  final CategoryDatabaseRepository _database;
 
   const CategoryRepositoryImpl(this._database);
 

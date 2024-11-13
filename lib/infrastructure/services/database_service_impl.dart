@@ -5,20 +5,20 @@ import 'package:flutter/services.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/data/mappers/category_mapper_extension.dart';
 import 'package:sales/data/mappers/product_mapper_extension.dart';
-import 'package:sales/data/repositories/core_database.dart';
-import 'package:sales/data/repositories/data_sync_database.dart';
+import 'package:sales/data/repositories/core_database_repository.dart';
+import 'package:sales/data/repositories/data_sync_database_repository.dart';
 import 'package:sales/domain/entities/data_import_result.dart';
 import 'package:sales/domain/services/database_service.dart';
 import 'package:sales/infrastructure/exceptions/server_exception.dart';
 
 class DatabaseServiceImpl implements DatabaseService {
-  final CoreDatabase _coreDatabase;
-  final DataSyncDatabase _dataSyncDatabase;
+  final CoreDatabaseRepository _coreDatabase;
+  final DataSyncDatabaseRepository _dataSyncDatabase;
   final FilePicker _filePicker;
 
   const DatabaseServiceImpl({
-    required CoreDatabase coreDatabase,
-    required DataSyncDatabase dataSyncDatabase,
+    required CoreDatabaseRepository coreDatabase,
+    required DataSyncDatabaseRepository dataSyncDatabase,
     required FilePicker filePicker,
   })  : _coreDatabase = coreDatabase,
         _dataSyncDatabase = dataSyncDatabase,
