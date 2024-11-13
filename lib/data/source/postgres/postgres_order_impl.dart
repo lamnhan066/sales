@@ -8,7 +8,7 @@ import 'package:sales/domain/entities/get_order_params.dart';
 import 'package:sales/domain/entities/get_result.dart';
 
 class PostgresOrderImpl implements OrderDatabaseRepository {
-  PostgresOrderImpl(this._core);
+  const PostgresOrderImpl(this._core);
 
   final CoreDatabaseRepository _core;
   Connection get _connection => (_core as PostgresCoreImpl).connection;

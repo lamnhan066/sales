@@ -6,7 +6,7 @@ import 'package:sales/data/source/postgres/postgres_core_impl.dart';
 import 'package:sales/domain/entities/get_order_items_params.dart';
 
 class PostgresOrderItemImpl implements OrderItemDatabaseRepository {
-  PostgresOrderItemImpl(this._core);
+  const PostgresOrderItemImpl(this._core);
 
   final CoreDatabaseRepository _core;
   Connection get _connection => (_core as PostgresCoreImpl).connection;

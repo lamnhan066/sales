@@ -11,7 +11,7 @@ import 'package:sales/data/source/postgres/postgres_core_impl.dart';
 import 'package:sales/domain/entities/get_order_items_params.dart';
 
 class PostgresOrderWithItemsImpl implements OrderWithItemsDatabaseRepository {
-  PostgresOrderWithItemsImpl(this._core, this._product, this._order, this._orderItem);
+  const PostgresOrderWithItemsImpl(this._core, this._product, this._order, this._orderItem);
 
   final CoreDatabaseRepository _core;
   final ProductDatabaseRepository _product;

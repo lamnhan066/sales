@@ -6,11 +6,11 @@ import 'package:sales/data/repositories/data_sync_database_repository.dart';
 import 'package:sales/data/repositories/product_database_repository.dart';
 
 class PostgresDataSyncImpl implements DataSyncDatabaseRepository {
+  const PostgresDataSyncImpl(this._core, this._category, this._product);
+
   final CoreDatabaseRepository _core;
   final CategoryDatabaseRepository _category;
   final ProductDatabaseRepository _product;
-
-  const PostgresDataSyncImpl(this._core, this._category, this._product);
 
   @override
   Future<void> merge(List<CategoryModel> categories, List<ProductModel> products) async {

@@ -5,7 +5,7 @@ import 'package:sales/data/repositories/core_database_repository.dart';
 import 'package:sales/data/source/postgres/postgres_core_impl.dart';
 
 class PostgresCategoryImpl implements CategoryDatabaseRepository {
-  PostgresCategoryImpl(this._core);
+  const PostgresCategoryImpl(this._core);
 
   final CoreDatabaseRepository _core;
   Connection get _connection => (_core as PostgresCoreImpl).connection;
