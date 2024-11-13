@@ -1,7 +1,7 @@
 import 'package:sales/data/models/order_model.dart';
 import 'package:sales/data/models/order_with_items_model.dart';
 
-abstract interface class OrderWithItemsDatabase {
+abstract interface class OrderWithItemsDatabaseRepository {
   /// Thêm OrderModel cùng với OrderItems
   Future<void> addOrderWithItems(OrderWithItemsParamsModel params);
 

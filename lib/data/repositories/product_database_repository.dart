@@ -2,7 +2,7 @@ import 'package:sales/data/models/product_model.dart';
 import 'package:sales/domain/entities/get_product_params.dart';
 import 'package:sales/domain/entities/get_result.dart';
 
-abstract interface class ProductDatabase {
+abstract interface class ProductDatabaseRepository {
   /// Thêm sản phẩm mới.
   Future<void> addProduct(ProductModel product);
 

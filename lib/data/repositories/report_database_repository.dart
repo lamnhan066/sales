@@ -2,7 +2,7 @@ import 'package:sales/data/models/get_orders_result_model.dart';
 import 'package:sales/data/models/product_model.dart';
 import 'package:sales/domain/entities/ranges.dart';
 
-abstract interface class ReportDatabase {
+abstract interface class ReportDatabaseRepository {
   /// Lấy số lượng đơn đặt hàng hằng ngày.
   Future<int> getDailyOrderCount(DateTime dateTime);
 

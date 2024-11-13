@@ -1,13 +1,6 @@
 import 'package:sales/data/models/category_model.dart';
-import 'package:sales/data/models/product_model.dart';
 
-abstract interface class CategoryDatabase {
-  /// Thay thế dữ liệu đang có với dữ liệu mới.
-  ///
-  /// Việc thay thế này sẽ dẫn đến dữ liệu ở database bị xoá hoàn toàn
-  /// và được thay thế mới.
-  Future<void> replace(List<CategoryModel> categories, List<ProductModel> products);
-
+abstract interface class CategoryDatabaseRepository {
   /// Thêm loại hàng mới.
   Future<void> addCategory(CategoryModel category);
 

@@ -1,7 +1,7 @@
 import 'package:sales/data/models/category_model.dart';
 import 'package:sales/data/models/product_model.dart';
 
-abstract interface class DataSyncDatabase {
+abstract interface class DataSyncDatabaseRepository {
   /// Nhập dữ liệu với vào dữ liệu hiện tại.
   ///
   /// Việc nhập này sẽ tiến hành tạo `id` và `sku` mới, do đó dữ liệu đã nhập

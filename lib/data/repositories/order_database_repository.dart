@@ -2,9 +2,9 @@ import 'package:sales/data/models/order_model.dart';
 import 'package:sales/domain/entities/get_order_params.dart';
 import 'package:sales/domain/entities/get_result.dart';
 
-abstract interface class OrderDatabase {
+abstract interface class OrderDatabaseRepository {
   /// Thêm đơn đặt hàng.
-  Future<void> addOrder(OrderModel order);
+  Future<int> addOrder(OrderModel order);
 
   /// Cập nhật đơn đặt hàng.
   Future<void> updateOrder(OrderModel order);

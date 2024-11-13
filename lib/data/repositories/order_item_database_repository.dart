@@ -1,7 +1,7 @@
 import 'package:sales/data/models/order_item_model.dart';
 import 'package:sales/domain/entities/get_order_items_params.dart';
 
-abstract interface class OrderItemDatabase {
+abstract interface class OrderItemDatabaseRepository {
   /// Thêm chi tiết sản phẩm đã đặt hàng.
   Future<void> addOrderItem(OrderItemModel orderItem);
 
