@@ -112,8 +112,16 @@ class _ReportViewState extends ConsumerState<ReportView> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('Doanh thu: ${state.revenue.toPriceDigit()}'),
-              Text('Lợi nhuận: ${state.profit.toPriceDigit()}'),
+              Text(
+                'Doanh thu: @{price}'.trP({
+                  'price': state.revenue.toPriceDigit(),
+                }),
+              ),
+              Text(
+                'Lợi nhuận: @{price}'.trP({
+                  'price': state.profit.toPriceDigit(),
+                }),
+              ),
             ],
           ),
         ),

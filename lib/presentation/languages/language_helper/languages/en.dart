@@ -322,6 +322,8 @@ final en = <String, dynamic>{
   'Nhấn vào đây để hiển thị tuỳ chọn bộ lọc cho báo cáo': 'Click here to display filter options for the report',
   'Sản phẩm và số lượng bán tương ứng:': 'Products and corresponding sales quantities:',
   'Doanh thu và lợi nhuận:': 'Revenue and profit:',
+  'Doanh thu: @{price}': 'Revenue: @{price}',
+  'Lợi nhuận: @{price}': 'Profit: @{price}',
   // 'Bộ lọc': 'Filter',  // Duplicated
   // 'OK': 'OK',  // Duplicated
   // 'Huỷ': 'Cancel',  // Duplicated
