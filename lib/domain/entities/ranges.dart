@@ -7,10 +7,16 @@ extension DoubleRangesExtension on Ranges<double> {
 }
 
 class Ranges<T extends Object?> with EquatableMixin {
-  final T start;
-  final T end;
 
   const Ranges(this.start, this.end);
+
+  factory Ranges.fromMap(Map<String, dynamic> map) {
+    return Ranges<T>(map['start'] as T, map['end'] as T);
+  }
+
+  factory Ranges.fromJson(String source) => Ranges.fromMap(json.decode(source));
+  final T start;
+  final T end;
 
   Ranges<T> copyWith({
     T? start,
@@ -26,13 +32,7 @@ class Ranges<T extends Object?> with EquatableMixin {
     };
   }
 
-  factory Ranges.fromMap(Map<String, dynamic> map) {
-    return Ranges<T>(map['start'] as T, map['end'] as T);
-  }
-
   String toJson() => json.encode(toMap());
-
-  factory Ranges.fromJson(String source) => Ranges.fromMap(json.decode(source));
 
   @override
   String toString() => 'Ranges(start: $start, end: $end)';
@@ -42,15 +42,15 @@ class Ranges<T extends Object?> with EquatableMixin {
 }
 
 class SevenDaysRanges extends Ranges<DateTime> {
-  final DateTime date;
 
   /// Khoảng thời gian bảy ngày cho đến ngày hiện tại là [date].
   SevenDaysRanges(this.date) : super(date.subtract(const Duration(days: 7)), date);
+  final DateTime date;
 }
 
 class ThirtyDaysRanges extends Ranges<DateTime> {
-  final DateTime date;
 
   /// Khoảng thời gian 30 ngày cho đến ngày hiện tại là [date].
   ThirtyDaysRanges(this.date) : super(date.subtract(const Duration(days: 30)), date);
+  final DateTime date;
 }

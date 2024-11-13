@@ -5,6 +5,28 @@ import 'package:sales/domain/entities/product_order_by.dart';
 import 'package:sales/domain/entities/ranges.dart';
 
 class GetProductParams with EquatableMixin {
+
+  const GetProductParams({
+    this.page = 1,
+    this.perPage = 10,
+    this.orderBy = ProductOrderBy.none,
+    this.searchText = '',
+    this.priceRange = const Ranges(0, double.infinity),
+    this.categoryIdFilter = -1,
+  });
+
+  factory GetProductParams.fromMap(Map<String, dynamic> map) {
+    return GetProductParams(
+      page: map['page']?.toInt() ?? 0,
+      perPage: map['perPage']?.toInt() ?? 0,
+      orderBy: ProductOrderBy.values.byName(map['orderBy'].trim()),
+      searchText: map['searchText'] ?? '',
+      priceRange: Ranges<double>.fromMap(map['priceRange']),
+      categoryIdFilter: map['categoryIdFilter']?.toInt(),
+    );
+  }
+
+  factory GetProductParams.fromJson(String source) => GetProductParams.fromMap(json.decode(source));
   final int page;
   final int perPage;
   final ProductOrderBy orderBy;
@@ -16,15 +38,6 @@ class GetProductParams with EquatableMixin {
 
   bool get isUseCategoryFilter => categoryIdFilter != -1;
   bool get isUsePriceRangeFilter => !priceRange.isAllPrices;
-
-  const GetProductParams({
-    this.page = 1,
-    this.perPage = 10,
-    this.orderBy = ProductOrderBy.none,
-    this.searchText = '',
-    this.priceRange = const Ranges(0, double.infinity),
-    this.categoryIdFilter = -1,
-  });
 
   GetProductParams copyWith({
     int? page,
@@ -55,20 +68,7 @@ class GetProductParams with EquatableMixin {
     };
   }
 
-  factory GetProductParams.fromMap(Map<String, dynamic> map) {
-    return GetProductParams(
-      page: map['page']?.toInt() ?? 0,
-      perPage: map['perPage']?.toInt() ?? 0,
-      orderBy: ProductOrderBy.values.byName(map['orderBy'].trim()),
-      searchText: map['searchText'] ?? '',
-      priceRange: Ranges<double>.fromMap(map['priceRange']),
-      categoryIdFilter: map['categoryIdFilter']?.toInt(),
-    );
-  }
-
   String toJson() => json.encode(toMap());
-
-  factory GetProductParams.fromJson(String source) => GetProductParams.fromMap(json.decode(source));
 
   @override
   String toString() {

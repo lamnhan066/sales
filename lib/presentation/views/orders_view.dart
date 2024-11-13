@@ -1,6 +1,6 @@
 import 'package:boxw/boxw.dart';
 import 'package:features_tour/features_tour.dart';
-import 'package:flutter/material.dart' hide DataTable, DataRow, DataColumn, DataCell;
+import 'package:flutter/material.dart' hide DataCell, DataColumn, DataRow, DataTable;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/core/extensions/data_time_extensions.dart';
@@ -96,30 +96,20 @@ class _OrdersViewState extends ConsumerState<OrdersView> {
               ),
             ),
           Padding(
-            padding: const EdgeInsets.all(12.0),
+            padding: const EdgeInsets.all(12),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 IconButton(
-                  onPressed: ordersState.page == 1
-                      ? null
-                      : () {
-                          ordersNotifier.goToPreviousPage();
-                        },
+                  onPressed: ordersState.page == 1 ? null : ordersNotifier.goToPreviousPage,
                   icon: const Icon(Icons.arrow_back_ios_rounded),
                 ),
                 IconButton(
-                  onPressed: () {
-                    choosePage();
-                  },
+                  onPressed: choosePage,
                   icon: Text('${ordersState.page}/${ordersState.totalPage}'),
                 ),
                 IconButton(
-                  onPressed: ordersState.page == ordersState.totalPage
-                      ? null
-                      : () {
-                          ordersNotifier.goToNextPage();
-                        },
+                  onPressed: ordersState.page == ordersState.totalPage ? null : ordersNotifier.goToNextPage,
                   icon: const Icon(Icons.arrow_forward_ios_rounded),
                 ),
               ],
@@ -245,10 +235,10 @@ class _OrdersViewState extends ConsumerState<OrdersView> {
     }).toList();
   }
 
-  void viewOrder(Order order) async {
+  Future<void> viewOrder(Order order) async {
     final notifier = ref.read(ordersProvider.notifier);
     final state = ref.watch(ordersProvider);
-    viewOrderDialog(
+    await viewOrderDialog(
       context: context,
       notifier: notifier,
       state: state,
@@ -355,7 +345,7 @@ class _OrdersViewState extends ConsumerState<OrdersView> {
       },
     );
 
-    if (result == true) {
+    if (result ?? false) {
       await notifier.updateFilters(newDateRange);
     }
   }

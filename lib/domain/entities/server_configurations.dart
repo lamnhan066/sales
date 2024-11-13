@@ -4,17 +4,6 @@ import 'package:equatable/equatable.dart';
 
 /// Cấu hình cho Postgres
 class ServerConfigurations with EquatableMixin {
-  /// Host.
-  final String host;
-
-  /// Database.
-  final String database;
-
-  /// Username.
-  final String username;
-
-  /// Password.
-  final String password;
 
   /// Cấu hình cho Postgres
   const ServerConfigurations({
@@ -38,6 +27,17 @@ class ServerConfigurations with EquatableMixin {
   factory ServerConfigurations.fromJson(String source) => ServerConfigurations.fromMap(
         json.decode(source) as Map<String, dynamic>,
       );
+  /// Host.
+  final String host;
+
+  /// Database.
+  final String database;
+
+  /// Username.
+  final String username;
+
+  /// Password.
+  final String password;
 
   /// Sao chép.
   ServerConfigurations copyWith({

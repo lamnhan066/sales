@@ -4,9 +4,9 @@ import 'package:sales/domain/services/database_service.dart';
 import 'package:sales/infrastructure/exceptions/server_exception.dart';
 
 class LoadServerConnectionUsecase implements UseCase<void, NoParams> {
-  final DatabaseService _service;
 
   const LoadServerConnectionUsecase(this._service);
+  final DatabaseService _service;
 
   @override
   Future<void> call(NoParams params) async {

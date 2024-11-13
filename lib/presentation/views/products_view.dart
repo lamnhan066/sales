@@ -3,7 +3,7 @@ import 'dart:async';
 
 import 'package:boxw/boxw.dart';
 import 'package:features_tour/features_tour.dart';
-import 'package:flutter/material.dart' hide DataTable, DataRow, DataColumn, DataCell;
+import 'package:flutter/material.dart' hide DataCell, DataColumn, DataRow, DataTable;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/core/constants/app_configs.dart';
@@ -107,7 +107,7 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
               child: Tooltip(
                 message: 'Thêm sản phẩm mới'.tr,
                 child: FilledButton(
-                  onPressed: () => addProduct(),
+                  onPressed: addProduct,
                   child: const Icon(Icons.add),
                 ),
               ),
@@ -161,7 +161,7 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
                   index: 4,
                   introduce: Text('Nhấn vào đây để hiển thị tuỳ chọn lọc sản phẩm'.tr),
                   child: IconButton(
-                    onPressed: () => showFilterDialog(),
+                    onPressed: showFilterDialog,
                     icon: const Icon(Icons.filter_alt_rounded),
                   ),
                 ),
@@ -171,7 +171,7 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
                   index: 5,
                   introduce: Text('Nhấn vào đây để hiển thị tuỳ chọn sắp xếp sản phẩm'.tr),
                   child: IconButton(
-                    onPressed: () => showSortDialog(),
+                    onPressed: showSortDialog,
                     icon: const Icon(Icons.sort_rounded),
                   ),
                 ),
@@ -314,7 +314,7 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
 
   Widget _buildPaginationControls(BuildContext context, ProductsState state, ProductsNotifier notifier) {
     return Padding(
-      padding: const EdgeInsets.all(12.0),
+      padding: const EdgeInsets.all(12),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -323,7 +323,7 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
             icon: const Icon(Icons.arrow_back_ios_rounded),
           ),
           TextButton(
-            onPressed: state.totalPage <= 1 ? null : () => goToPage(),
+            onPressed: state.totalPage <= 1 ? null : goToPage,
             child: Text('${state.page}/${state.totalPage}'),
           ),
           IconButton(
@@ -459,7 +459,7 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
 
     var tempPriceRange = state.priceRange;
     var tempCategoryIdFilter = state.categoryIdFilter;
-    final result = await boxWDialog(
+    final result = await boxWDialog<bool>(
       context: context,
       title: 'Bộ lọc'.tr,
       content: ProductFilterDialog(
@@ -489,7 +489,7 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
     );
 
     // Chỉ tải lại dữ liệu khi có sự thay đổi.
-    if (result == true && (state.priceRange != tempPriceRange || state.categoryIdFilter != tempCategoryIdFilter)) {
+    if ((result ?? false) && (state.priceRange != tempPriceRange || state.categoryIdFilter != tempCategoryIdFilter)) {
       await notifier.updateFilters(priceRange: tempPriceRange, categoryIdFilter: tempCategoryIdFilter);
     }
   }
@@ -499,7 +499,7 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
     final state = ref.watch(productsProvider);
     final notifier = ref.read(productsProvider.notifier);
     var tempOrderBy = state.orderBy;
-    final result = await boxWDialog(
+    final result = await boxWDialog<bool>(
       context: context,
       title: 'Sắp xếp'.tr,
       content: Column(
@@ -539,8 +539,8 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
     );
 
     // Chỉ tải lại dữ liệu khi có sự thay đổi.
-    if (result == true && tempOrderBy != state.orderBy) {
-      notifier.updateOrderBy(tempOrderBy);
+    if ((result ?? false) && tempOrderBy != state.orderBy) {
+      await notifier.updateOrderBy(tempOrderBy);
     }
   }
 
@@ -611,7 +611,7 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
   }
 
   Future<bool?> confirmAddCategory(BuildContext context) async {
-    return await boxWConfirm(
+    return boxWConfirm(
       context: context,
       title: 'Thông báo'.tr,
       content: 'Bạn cần có it nhất một loại hàng để có thể thêm sản phẩm.\n\n'

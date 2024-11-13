@@ -5,19 +5,6 @@ import 'package:sales/domain/entities/server_configurations.dart';
 import 'package:sales/domain/entities/user.dart';
 
 class LoginState with EquatableMixin {
-  final String username;
-  final String password;
-  final bool rememberMe;
-  final String error;
-  final AppVersion version;
-  final License license;
-  final String licenseError;
-  final ServerConfigurations serverConfigurations;
-  final bool showAutoLoginDialog;
-  final bool isLoggedIn;
-  final bool isLoading;
-
-  User get user => User(username: username, password: password);
 
   LoginState({
     required this.username,
@@ -32,6 +19,19 @@ class LoginState with EquatableMixin {
     this.isLoggedIn = false,
     this.isLoading = false,
   });
+  final String username;
+  final String password;
+  final bool rememberMe;
+  final String error;
+  final AppVersion version;
+  final License license;
+  final String licenseError;
+  final ServerConfigurations serverConfigurations;
+  final bool showAutoLoginDialog;
+  final bool isLoggedIn;
+  final bool isLoading;
+
+  User get user => User(username: username, password: password);
 
   LoginState copyWith({
     String? username,

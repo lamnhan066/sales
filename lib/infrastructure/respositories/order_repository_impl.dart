@@ -7,9 +7,9 @@ import 'package:sales/domain/entities/order.dart';
 import 'package:sales/domain/repositories/order_repository.dart';
 
 class OrderRepositoryImpl implements OrderRepository {
-  final OrderDatabaseRepository _database;
 
   const OrderRepositoryImpl(this._database);
+  final OrderDatabaseRepository _database;
 
   @override
   Future<void> addOrder(Order order) {

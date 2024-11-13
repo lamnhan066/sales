@@ -28,7 +28,6 @@ class SettingsView extends ConsumerWidget {
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 700),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               _buildLanguage(ref),
               _buildBrightness(ref),

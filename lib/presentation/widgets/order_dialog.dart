@@ -91,18 +91,18 @@ Future<OrderResult?> _orderDialog({
   bool readOnly = false,
 }) async {
   // Đếm id cho orderItem trong quá trình thêm, chỉnh sửa và sao chép đơn hàng.
-  int orderItemId = await notifier.getNextOrderItemId();
+  var orderItemId = await notifier.getNextOrderItemId();
   final temporaryOrderWithItems = await notifier.getTemporaryOrderWithItems();
   final isTemporary = temporaryOrderWithItems != null;
 
-  Order resultOrder = order ??
+  var resultOrder = order ??
       temporaryOrderWithItems?.order ??
       Order(
         id: 0,
         status: OrderStatus.created,
         date: DateTime.now(),
       );
-  final List<OrderItem> orderItems = [];
+  final orderItems = <OrderItem>[];
   final products = await notifier.getProducts();
   final isNewOrder = order == null || copy;
 
@@ -119,7 +119,7 @@ Future<OrderResult?> _orderDialog({
 
   if (copy) {
     resultOrder = resultOrder.copyWith(status: OrderStatus.created);
-    for (int i = 0; i < orderItems.length; i++) {
+    for (var i = 0; i < orderItems.length; i++) {
       orderItems[i] = orderItems[i].copyWith(orderId: resultOrder.id, id: orderItemId);
       orderItemId++;
     }
@@ -136,7 +136,7 @@ Future<OrderResult?> _orderDialog({
   /// trạng khi xoá orderItem thì `id` sẽ bị lệch.
   Future<void> regenerateOrderItemIds() async {
     orderItemId = await notifier.getNextOrderItemId();
-    for (int i = 0; i < orderItems.length; i++) {
+    for (var i = 0; i < orderItems.length; i++) {
       orderItems[i] = orderItems[i].copyWith(id: orderItemId);
       orderItemId++;
     }
@@ -180,7 +180,7 @@ Future<OrderResult?> _orderDialog({
 
   if (context.mounted) {
     final dialogWidth = MediaQuery.sizeOf(context).width * AppConfigs.dialogWidthRatio;
-    final result = await boxWDialog(
+    final result = await boxWDialog<bool>(
       context: context,
       title: title,
       constrains: BoxConstraints(
@@ -234,14 +234,14 @@ Future<OrderResult?> _orderDialog({
                   child: const Icon(Icons.print_rounded),
                 ),
               ],
-            )
+            ),
         ];
       },
     );
 
     await formValidator.close();
 
-    if (result == true) {
+    if (result ?? false) {
       await notifier.removeTemporaryOrderWithItems();
       return OrderResult(order: resultOrder, orderItems: orderItems);
     }

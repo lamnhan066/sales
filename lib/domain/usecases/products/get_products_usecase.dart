@@ -5,9 +5,9 @@ import 'package:sales/domain/entities/product.dart';
 import 'package:sales/domain/repositories/product_repository.dart';
 
 class GetProductsUseCase implements UseCase<GetResult<Product>, GetProductParams> {
-  final ProductRepository _repository;
 
   const GetProductsUseCase(this._repository);
+  final ProductRepository _repository;
 
   @override
   Future<GetResult<Product>> call([GetProductParams params = const GetProductParams()]) {

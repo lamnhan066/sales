@@ -1,8 +1,8 @@
 abstract class Failure implements Exception {
-  final String message;
-  final dynamic details;
 
   const Failure(this.message, [this.details]);
+  final String message;
+  final dynamic details;
 
   @override
   String toString() => 'Failure(message: $message, details: $details)';

@@ -6,9 +6,9 @@ import 'package:sales/domain/repositories/auth_repository.dart';
 import 'package:sales/infrastructure/exceptions/credentials_exception.dart';
 
 class LoginUseCase implements UseCase<User, LoginCredentials> {
-  final AuthRepository repository;
 
   LoginUseCase(this.repository);
+  final AuthRepository repository;
 
   @override
   Future<User> call(LoginCredentials credentials) async {

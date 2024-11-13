@@ -6,9 +6,7 @@ import 'package:sales/domain/entities/ranges.dart';
 
 class OrderFilterDialog extends StatefulWidget {
   const OrderFilterDialog({
-    super.key,
-    required this.initialDateRange,
-    required this.onDateRangeChanged,
+    required this.initialDateRange, required this.onDateRangeChanged, super.key,
   });
 
   final Ranges<DateTime?>? initialDateRange;

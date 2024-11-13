@@ -3,9 +3,9 @@ import 'package:sales/domain/repositories/last_view_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LastViewRepositoryImpl implements LastViewRepository {
-  final SharedPreferences _prefs;
 
   const LastViewRepositoryImpl(this._prefs);
+  final SharedPreferences _prefs;
 
   @override
   Future<ViewsModel> getLastView() async {

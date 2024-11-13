@@ -44,20 +44,6 @@ final ordersProvider = StateNotifierProvider<OrdersNotifier, OrdersState>((ref) 
 });
 
 class OrdersNotifier extends StateNotifier<OrdersState> {
-  final GetOrdersUseCase _getOrdersUseCase;
-  final GetAllProductsUseCase _getAllProductsUseCase;
-  final GetOrderItemsUseCase _getOrderItemsUseCase;
-  final GetNextOrderIdUseCase _getNextOrderIdUseCase;
-  final GetNextOrderItemIdUseCase _getNextOrderItemIdUseCase;
-  final AddOrderWithItemsUseCase _addOrderWithItemsUseCase;
-  final UpdateOrderWithItemsUseCase _updateOrderWithItemsUseCase;
-  final RemoveOrderWithItemsUseCase _removeOrderWithItemsUseCase;
-  final GetItemPerPageUseCase _getItemPerPageUseCase;
-  final GetTemporaryOrderWithItemsUseCase _getTemporaryOrderWithItemsUseCase;
-  final SaveTemporaryOrderWithItemsUseCase _saveTemporaryOrderWithItemsUseCase;
-  final RemoveTemporaryOrderWithItemsUseCase _removeTemporaryOrderWithItemsUseCase;
-  final PrintImageBytesAsPdfUseCase _printImageBytesAsPdfUseCase;
-
   OrdersNotifier({
     required GetOrdersUseCase getOrdersUseCase,
     required GetAllProductsUseCase getAllProductsUseCase,
@@ -86,6 +72,19 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
         _removeTemporaryOrderWithItemsUseCase = removeTemporaryOrderWithItemsUseCase,
         _printImageBytesAsPdfUseCase = printImageBytesAsPdfUseCase,
         super(OrdersState(tour: FeaturesTourController('OrdersView'), screenshot: ScreenshotController()));
+  final GetOrdersUseCase _getOrdersUseCase;
+  final GetAllProductsUseCase _getAllProductsUseCase;
+  final GetOrderItemsUseCase _getOrderItemsUseCase;
+  final GetNextOrderIdUseCase _getNextOrderIdUseCase;
+  final GetNextOrderItemIdUseCase _getNextOrderItemIdUseCase;
+  final AddOrderWithItemsUseCase _addOrderWithItemsUseCase;
+  final UpdateOrderWithItemsUseCase _updateOrderWithItemsUseCase;
+  final RemoveOrderWithItemsUseCase _removeOrderWithItemsUseCase;
+  final GetItemPerPageUseCase _getItemPerPageUseCase;
+  final GetTemporaryOrderWithItemsUseCase _getTemporaryOrderWithItemsUseCase;
+  final SaveTemporaryOrderWithItemsUseCase _saveTemporaryOrderWithItemsUseCase;
+  final RemoveTemporaryOrderWithItemsUseCase _removeTemporaryOrderWithItemsUseCase;
+  final PrintImageBytesAsPdfUseCase _printImageBytesAsPdfUseCase;
 
   Future<void> initialize() async {
     state = state.copyWith(isLoading: true);
@@ -96,12 +95,12 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
   }
 
   Future<void> fetchOrders({bool resetPage = false}) async {
-    int perpage = await _getItemPerPageUseCase(NoParams());
-    int page = state.page;
+    final perpage = await _getItemPerPageUseCase(NoParams());
+    var page = state.page;
     if (resetPage) page = 1;
 
     state = state.copyWith(page: page, perPage: perpage);
-    String error = '';
+    var error = '';
     try {
       final result = await _getOrdersUseCase(
         GetOrderParams(page: state.page, perpage: state.perPage, dateRange: state.dateRange),
@@ -182,7 +181,7 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
   }
 
   Future<OrderWithItemsParams?> getTemporaryOrderWithItems() async {
-    return await _getTemporaryOrderWithItemsUseCase(NoParams());
+    return _getTemporaryOrderWithItemsUseCase(NoParams());
   }
 
   Future<void> printOrder(double pixelRatio) async {

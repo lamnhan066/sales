@@ -21,9 +21,9 @@ enum ProductOrderBy {
   /// Sắp xếp theo số lượng giảm dần.
   countDesc('p_count DESC');
 
-  /// Lệnh SQL tương ứng.
-  final String sql;
-
   /// Sắp xếp sản phẩm.
   const ProductOrderBy(this.sql);
+
+  /// Lệnh SQL tương ứng.
+  final String sql;
 }

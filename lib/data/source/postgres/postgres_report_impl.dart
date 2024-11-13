@@ -30,7 +30,7 @@ class PostgresReportImpl implements ReportDatabaseRepository {
   @override
   Future<int> getDailyRevenue(DateTime dateTime) async {
     final orders = await _order.getOrders(GetOrderParams(dateRange: Ranges(dateTime, dateTime)));
-    int total = 0;
+    var total = 0;
     for (final order in orders.items) {
       final items = await _orderItem.getOrderItems(GetOrderItemsParams(orderId: order.id));
       for (final item in items) {
@@ -69,7 +69,7 @@ class PostgresReportImpl implements ReportDatabaseRepository {
       mapResult[day] = mapResult[day]! + total;
     }
     final listResult = <int>[];
-    for (int i = 1; i <= dateTime.day; i++) {
+    for (var i = 1; i <= dateTime.day; i++) {
       listResult.add(mapResult[i] ?? 0);
     }
     return listResult;
@@ -94,7 +94,7 @@ class PostgresReportImpl implements ReportDatabaseRepository {
     ''';
     final result = await _connection.execute(sql);
     final columns = result.map((e) => e.toColumnMap());
-    Map<ProductModel, int> maps = {};
+    final maps = <ProductModel, int>{};
     for (final column in columns) {
       maps.addAll({ProductModel.fromMap(column): column['total_quantity']});
     }
@@ -111,7 +111,7 @@ class PostgresReportImpl implements ReportDatabaseRepository {
 
   @override
   Future<int> getProfit(Ranges<DateTime> params) async {
-    String sql = '''
+    const sql = '''
       SELECT
           SUM((oi_unit_sale_price - p_import_price) * oi_quantity) AS profit
       FROM
@@ -134,7 +134,7 @@ class PostgresReportImpl implements ReportDatabaseRepository {
 
   @override
   Future<int> getRevenue(Ranges<DateTime> params) async {
-    String sql = '''
+    const sql = '''
       SELECT
           SUM(oi_total_price) AS total_price
       FROM
@@ -155,7 +155,7 @@ class PostgresReportImpl implements ReportDatabaseRepository {
 
   @override
   Future<Map<ProductModel, int>> getSoldProductsWithQuantity(Ranges<DateTime> dateRange) async {
-    String sql = '''
+    const sql = '''
       SELECT
           *, SUM(oi_quantity) AS total_quantity
       FROM
@@ -218,8 +218,8 @@ class PostgresReportImpl implements ReportDatabaseRepository {
         o_date DESC
     ''';
     final result = await _connection.execute(sql);
-    final Map<OrderModel, List<ProductModel>> products = {};
-    final Map<OrderModel, List<OrderItemModel>> orderItems = {};
+    final products = <OrderModel, List<ProductModel>>{};
+    final orderItems = <OrderModel, List<OrderItemModel>>{};
     for (final row in result) {
       final rowMap = row.toColumnMap();
       final order = OrderModel.fromMap(rowMap);

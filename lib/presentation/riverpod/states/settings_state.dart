@@ -1,11 +1,6 @@
 import 'package:equatable/equatable.dart';
 
 class SettingsState with EquatableMixin {
-  final int itemPerPage;
-  final bool saveLastView;
-  final String backupRestoreStatus;
-  final String error;
-  final bool isLoading;
 
   SettingsState({
     this.itemPerPage = 10,
@@ -14,6 +9,11 @@ class SettingsState with EquatableMixin {
     this.error = '',
     this.isLoading = false,
   });
+  final int itemPerPage;
+  final bool saveLastView;
+  final String backupRestoreStatus;
+  final String error;
+  final bool isLoading;
 
   SettingsState copyWith({
     int? itemPerPage,

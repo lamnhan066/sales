@@ -5,9 +5,9 @@ import 'package:sales/domain/repositories/backup_restore_repository.dart';
 import 'package:sales/infrastructure/exceptions/backup_exception.dart';
 
 class RestoreDatabaseUseCase implements UseCase<BackupData, NoParams> {
-  final BackupRestoreRepository _repository;
 
   const RestoreDatabaseUseCase(this._repository);
+  final BackupRestoreRepository _repository;
 
   @override
   Future<BackupData> call(NoParams params) async {

@@ -36,18 +36,6 @@ final settingsProvider = StateNotifierProvider<SettingsNotifier, SettingsState>(
 });
 
 class SettingsNotifier extends StateNotifier<SettingsState> {
-  final ChangeItemPerPageUseCase changeItemPerPageUseCase;
-  final GetItemPerPageUseCase getItemPerPageUseCase;
-  final BackupDatabaseUseCase backupDatabaseUseCase;
-  final RestoreDatabaseUseCase restoreDatabaseUseCase;
-  final GetAllProductsUseCase getAllProductsUseCase;
-  final GetAllCategoriesUsecCase getAllCategoriesUsecCase;
-  final GetAllOrdersWithItemsUseCase getAllOrdersWithItemsUseCase;
-  final AddAllCategoriesUseCase addAllCategoriesUseCase;
-  final AddAllProductsUseCase addAllProductsUseCase;
-  final AddAllOrdersWithItemsUseCase addAllOrdersWithItemsUseCase;
-  final GetSaveLastViewUsecase getSaveLastViewUsecase;
-  final SetSaveLastViewUseCase setSaveLastViewUseCase;
 
   SettingsNotifier({
     required this.changeItemPerPageUseCase,
@@ -65,6 +53,18 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
   }) : super(SettingsState()) {
     initialize();
   }
+  final ChangeItemPerPageUseCase changeItemPerPageUseCase;
+  final GetItemPerPageUseCase getItemPerPageUseCase;
+  final BackupDatabaseUseCase backupDatabaseUseCase;
+  final RestoreDatabaseUseCase restoreDatabaseUseCase;
+  final GetAllProductsUseCase getAllProductsUseCase;
+  final GetAllCategoriesUsecCase getAllCategoriesUsecCase;
+  final GetAllOrdersWithItemsUseCase getAllOrdersWithItemsUseCase;
+  final AddAllCategoriesUseCase addAllCategoriesUseCase;
+  final AddAllProductsUseCase addAllProductsUseCase;
+  final AddAllOrdersWithItemsUseCase addAllOrdersWithItemsUseCase;
+  final GetSaveLastViewUsecase getSaveLastViewUsecase;
+  final SetSaveLastViewUseCase setSaveLastViewUseCase;
 
   Future<void> initialize() async {
     state = state.copyWith(isLoading: true);

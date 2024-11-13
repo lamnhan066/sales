@@ -6,6 +6,22 @@ import 'package:sales/domain/entities/product_order_by.dart';
 import 'package:sales/domain/entities/ranges.dart';
 
 class ProductsState with EquatableMixin {
+
+  const ProductsState({
+    required this.tour, this.products = const [],
+    this.perPage = 10,
+    this.page = 1,
+    this.totalPage = 0,
+    this.orderBy = ProductOrderBy.none,
+    this.searchText = '',
+    this.priceRange = const Ranges(0, double.infinity),
+    this.categoryIdFilter = -1,
+    this.categories = const [],
+    this.hasDraft = false,
+    this.isShownDraftDialog = false,
+    this.isLoading = false,
+    this.error = '',
+  });
   /// Danh sách sản phẩm.
   final List<Product> products;
 
@@ -40,23 +56,6 @@ class ProductsState with EquatableMixin {
 
   final bool isLoading;
   final String error;
-
-  const ProductsState({
-    this.products = const [],
-    this.perPage = 10,
-    this.page = 1,
-    this.totalPage = 0,
-    this.orderBy = ProductOrderBy.none,
-    this.searchText = '',
-    this.priceRange = const Ranges(0, double.infinity),
-    this.categoryIdFilter = -1,
-    this.categories = const [],
-    required this.tour,
-    this.hasDraft = false,
-    this.isShownDraftDialog = false,
-    this.isLoading = false,
-    this.error = '',
-  });
 
   ProductsState copyWith({
     List<Product>? products,

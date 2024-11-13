@@ -3,26 +3,6 @@ import 'dart:convert';
 import 'package:equatable/equatable.dart';
 
 class OrderItem with EquatableMixin {
-  /// Id.
-  final int id;
-
-  /// Số lượng.
-  final int quantity;
-
-  /// Đơn giá.
-  final int unitSalePrice;
-
-  /// Thành tiền.
-  final int totalPrice;
-
-  /// Id của Product.
-  final int productId;
-
-  /// Id của Order.
-  final int orderId;
-
-  /// Đánh dấu xoá.
-  final bool deleted;
 
   /// Chi tiết đơn hàng.
   OrderItem({
@@ -50,6 +30,26 @@ class OrderItem with EquatableMixin {
 
   /// JSON -> OrderItem.
   factory OrderItem.fromJson(String source) => OrderItem.fromMap(json.decode(source) as Map<String, dynamic>);
+  /// Id.
+  final int id;
+
+  /// Số lượng.
+  final int quantity;
+
+  /// Đơn giá.
+  final int unitSalePrice;
+
+  /// Thành tiền.
+  final int totalPrice;
+
+  /// Id của Product.
+  final int productId;
+
+  /// Id của Order.
+  final int orderId;
+
+  /// Đánh dấu xoá.
+  final bool deleted;
 
   /// Sao chép.
   OrderItem copyWith({

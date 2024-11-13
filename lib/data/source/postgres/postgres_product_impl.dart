@@ -47,7 +47,7 @@ class PostgresProductImpl implements ProductDatabaseRepository {
 
   @override
   Future<List<ProductModel>> getAllProducts() async {
-    String sql = 'SELECT * FROM products';
+    const sql = 'SELECT * FROM products';
     final result = await _connection.execute(Sql.named(sql));
 
     return result.map((e) => ProductModel.fromMap(e.toColumnMap())).toList();
@@ -75,8 +75,8 @@ class PostgresProductImpl implements ProductDatabaseRepository {
 
   @override
   Future<GetResult<ProductModel>> getProducts([GetProductParams params = const GetProductParams()]) async {
-    String sql = 'FROM products WHERE p_deleted=FALSE';
-    final Map<String, Object> parameters = {};
+    var sql = 'FROM products WHERE p_deleted=FALSE';
+    final parameters = <String, Object>{};
 
     if (params.isUseCategoryFilter) {
       sql += ' AND p_category_id = @categoryId';
@@ -99,7 +99,7 @@ class PostgresProductImpl implements ProductDatabaseRepository {
       }
     }
 
-    // TODO: Tìm cách normalize trước khi query để hiển thị kết quả tốt hơn
+    // TODO(lamnhan066): Tìm cách normalize trước khi query để hiển thị kết quả tốt hơn
     if (params.searchText.isNotEmpty) {
       sql += ' AND LOWER(p_name) LIKE LOWER(@searchText)';
       parameters.addAll({'searchText': '%${params.searchText}%'});
@@ -107,7 +107,7 @@ class PostgresProductImpl implements ProductDatabaseRepository {
 
     // Lấy tổng số sản phẩm.
     final countResult = await _connection.execute(Sql.named('SELECT COUNT(*) $sql'), parameters: parameters);
-    final totalCount = countResult.first.first as int;
+    final totalCount = countResult.first.first! as int;
 
     sql += ' ORDER BY ${params.orderBy.sql} LIMIT @limit OFFSET @offset';
     parameters.addAll({
@@ -148,17 +148,20 @@ class PostgresProductImpl implements ProductDatabaseRepository {
     WHERE 
         p_id=@id
     ''';
-    await (session ?? _connection).execute(Sql.named(sql), parameters: {
-      'id': product.id,
-      'sku': product.sku,
-      'name': product.name,
-      'imagePath': TypedValue(Type.varCharArray, product.imagePath),
-      'importPrice': product.importPrice,
-      'unitSalePrice': product.unitSalePrice,
-      'count': product.count,
-      'description': product.description,
-      'categoryId': product.categoryId,
-      'deleted': product.deleted,
-    });
+    await (session ?? _connection).execute(
+      Sql.named(sql),
+      parameters: {
+        'id': product.id,
+        'sku': product.sku,
+        'name': product.name,
+        'imagePath': TypedValue(Type.varCharArray, product.imagePath),
+        'importPrice': product.importPrice,
+        'unitSalePrice': product.unitSalePrice,
+        'count': product.count,
+        'description': product.description,
+        'categoryId': product.categoryId,
+        'deleted': product.deleted,
+      },
+    );
   }
 }

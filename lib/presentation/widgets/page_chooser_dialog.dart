@@ -14,7 +14,7 @@ Future<int?> pageChooser({
   required int page,
   required int totalPage,
 }) async {
-  int tempPage = page;
+  var tempPage = page;
   final validatorController = StreamController<bool>();
   String? validator(String? p) {
     if (p == null) return 'Bạn cần nhập số trang'.tr;
@@ -29,7 +29,7 @@ Future<int?> pageChooser({
     return null;
   }
 
-  final result = await boxWDialog(
+  final result = await boxWDialog<bool>(
     context: context,
     title: 'Chọn trang'.tr,
     content: BoxWInput(
@@ -53,14 +53,14 @@ Future<int?> pageChooser({
           enableConfirmStream: validatorController.stream,
           confirmText: 'OK'.tr,
           cancelText: 'Huỷ'.tr,
-        )
+        ),
       ];
     },
   );
 
   await validatorController.close();
 
-  if (result == true && tempPage != page) {
+  if ((result ?? false) && tempPage != page) {
     return tempPage;
   }
 

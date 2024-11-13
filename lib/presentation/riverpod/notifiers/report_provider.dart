@@ -16,9 +16,6 @@ final reportProvider = StateNotifierProvider<ReportNotifier, ReportState>((ref) 
 });
 
 class ReportNotifier extends StateNotifier<ReportState> {
-  final GetSoldProductsWithQuantityUsecase _getSoldProductsWithQuantityUsecase;
-  final GetRevenueUseCase _getRevenueUseCase;
-  final GetProfitUseCase _getProfitUsecase;
 
   ReportNotifier({
     required GetSoldProductsWithQuantityUsecase getSoldProductsWithQuantityUsecase,
@@ -30,7 +27,10 @@ class ReportNotifier extends StateNotifier<ReportState> {
         super(ReportState(
           reportDateRange: SevenDaysRanges(DateTime.now()),
           tour: FeaturesTourController('ReportView'),
-        ));
+        ),);
+  final GetSoldProductsWithQuantityUsecase _getSoldProductsWithQuantityUsecase;
+  final GetRevenueUseCase _getRevenueUseCase;
+  final GetProfitUseCase _getProfitUsecase;
 
   Future<void> loadReportData() async {
     final soldProductsWithQuantity = await _getSoldProductsWithQuantityUsecase(state.reportDateRange);

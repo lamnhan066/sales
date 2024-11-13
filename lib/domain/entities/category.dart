@@ -4,17 +4,6 @@ import 'package:equatable/equatable.dart';
 
 /// Loại hàng.
 class Category with EquatableMixin {
-  /// Id.
-  final int id;
-
-  /// Tên.
-  final String name;
-
-  /// Mô tả.
-  final String description;
-
-  /// Xoá.
-  final bool deleted;
 
   /// Loại hàng.
   Category({
@@ -36,6 +25,17 @@ class Category with EquatableMixin {
 
   /// Chuyển từ json sang Category.
   factory Category.fromJson(String source) => Category.fromMap(json.decode(source) as Map<String, dynamic>);
+  /// Id.
+  final int id;
+
+  /// Tên.
+  final String name;
+
+  /// Mô tả.
+  final String description;
+
+  /// Xoá.
+  final bool deleted;
 
   /// Sao chép.
   Category copyWith({

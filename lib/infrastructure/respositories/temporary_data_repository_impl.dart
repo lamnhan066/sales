@@ -4,9 +4,9 @@ import 'package:sales/domain/repositories/temporary_data_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TemporaryDataRepositoryImpl implements TemporaryDataRepository {
-  final SharedPreferences _prefs;
 
   const TemporaryDataRepositoryImpl(this._prefs);
+  final SharedPreferences _prefs;
 
   @override
   Future<OrderWithItemsParams?> getOrder() async {

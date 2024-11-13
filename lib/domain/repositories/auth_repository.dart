@@ -1,6 +1,6 @@
 import 'package:sales/domain/entities/login_credentials.dart';
 
-import '../entities/user.dart';
+import 'package:sales/domain/entities/user.dart';
 
 abstract class AuthRepository {
   Future<User> login(LoginCredentials credentials);

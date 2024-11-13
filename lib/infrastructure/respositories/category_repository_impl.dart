@@ -4,9 +4,9 @@ import 'package:sales/domain/entities/category.dart';
 import 'package:sales/domain/repositories/category_repository.dart';
 
 class CategoryRepositoryImpl implements CategoryRepository {
-  final CategoryDatabaseRepository _database;
 
   const CategoryRepositoryImpl(this._database);
+  final CategoryDatabaseRepository _database;
 
   @override
   Future<void> addCategory(Category category) {

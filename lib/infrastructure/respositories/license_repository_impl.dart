@@ -5,9 +5,9 @@ import 'package:sales/domain/repositories/license_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LicenseRepositoryImpl implements LicenseRepository {
-  final SharedPreferences _prefs;
 
   const LicenseRepositoryImpl(this._prefs);
+  final SharedPreferences _prefs;
 
   @override
   Future<License> active(LicenseParams params) async {

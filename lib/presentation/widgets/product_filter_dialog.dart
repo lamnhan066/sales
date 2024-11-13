@@ -7,12 +7,7 @@ import 'package:sales/domain/entities/ranges.dart';
 
 class ProductFilterDialog extends StatefulWidget {
   const ProductFilterDialog({
-    super.key,
-    required this.initialPriceRange,
-    required this.intialCategoryId,
-    required this.categories,
-    required this.onPriceRangeChanged,
-    required this.onCategoryIdChanged,
+    required this.initialPriceRange, required this.intialCategoryId, required this.categories, required this.onPriceRangeChanged, required this.onCategoryIdChanged, super.key,
   });
 
   final Ranges<double> initialPriceRange;
@@ -85,7 +80,7 @@ class _ProductFilterDialogState extends State<ProductFilterDialog> {
                     widget.onPriceRangeChanged(values);
                   },
                   child: const Padding(
-                    padding: EdgeInsets.all(8.0),
+                    padding: EdgeInsets.all(8),
                     child: Text(
                       '0',
                       style: TextStyle(fontSize: 13),
@@ -129,7 +124,7 @@ class _ProductFilterDialogState extends State<ProductFilterDialog> {
                     widget.onPriceRangeChanged(values);
                   },
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(8),
                     child: Text(
                       PriceUtils.getPriceRangeText(double.infinity),
                       style: const TextStyle(fontSize: 13),

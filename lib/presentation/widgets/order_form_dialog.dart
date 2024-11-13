@@ -1,7 +1,7 @@
 // ignore_for_file: function_lines_of_code, cyclomatic_complexity
 
 import 'package:boxw/boxw.dart';
-import 'package:flutter/material.dart' hide DataTable, DataRow, DataColumn, DataCell;
+import 'package:flutter/material.dart' hide DataCell, DataColumn, DataRow, DataTable;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/core/extensions/price_extensions.dart';
@@ -16,7 +16,6 @@ import 'package:sales/presentation/widgets/data_table_plus.dart';
 
 class OrderFormDialog extends StatefulWidget {
   const OrderFormDialog({
-    super.key,
     required this.form,
     required this.copy,
     required this.isTemporary,
@@ -29,6 +28,7 @@ class OrderFormDialog extends StatefulWidget {
     required this.removeProduct,
     required this.onStatusChanged,
     required this.onQuantityChanged,
+    super.key,
   });
 
   final GlobalKey<FormState> form;
@@ -95,9 +95,9 @@ class _OrderFormDialogState extends State<OrderFormDialog> {
     removeExistedAndOutOfStockProducts();
   }
 
-  void onAddPressed() async {
+  Future<void> onAddPressed() async {
     final size = MediaQuery.sizeOf(context);
-    final selected = await boxWDialog(
+    final selected = await boxWDialog<Product>(
       context: context,
       showCloseButton: true,
       constrains: BoxConstraints(maxWidth: size.width - 50, maxHeight: size.height - 50),
@@ -123,7 +123,7 @@ class _OrderFormDialogState extends State<OrderFormDialog> {
     }
   }
 
-  void onRemovePressed(int orderItemId, Product product) async {
+  Future<void> onRemovePressed(int orderItemId, Product product) async {
     await widget.removeProduct(product);
     setState(() {
       orderItems.removeWhere((item) => product.id == item.productId);
@@ -138,7 +138,7 @@ class _OrderFormDialogState extends State<OrderFormDialog> {
       setState(() {
         orderItems[index] = orderItem.copyWith(
           quantity: value,
-          totalPrice: (value * orderItem.unitSalePrice).toInt(),
+          totalPrice: value * orderItem.unitSalePrice,
         );
         widget.onQuantityChanged(orderItems[index]);
       });
@@ -214,7 +214,7 @@ class _OrderFormDialogState extends State<OrderFormDialog> {
                         children: [
                           Builder(
                             builder: (_) {
-                              int total = 0;
+                              var total = 0;
                               for (final order in orderItems) {
                                 total += order.totalPrice;
                               }
@@ -289,13 +289,15 @@ class _OrderFormDialogState extends State<OrderFormDialog> {
                                         cells: [
                                           DataCell(
                                             Center(
-                                              child: Consumer(builder: (context, ref, child) {
-                                                final ordersState = ref.watch(ordersProvider);
-                                                return Text(
-                                                  '${(ordersState.page - 1) * ordersState.perPage + orderItems.indexOf(item) + 1}',
-                                                  textAlign: TextAlign.center,
-                                                );
-                                              }),
+                                              child: Consumer(
+                                                builder: (context, ref, child) {
+                                                  final ordersState = ref.watch(ordersProvider);
+                                                  return Text(
+                                                    '${(ordersState.page - 1) * ordersState.perPage + orderItems.indexOf(item) + 1}',
+                                                    textAlign: TextAlign.center,
+                                                  );
+                                                },
+                                              ),
                                             ),
                                           ),
                                           DataCell(
@@ -357,9 +359,9 @@ class _OrderFormDialogState extends State<OrderFormDialog> {
                                       ),
                                     DataRow(
                                       cells: [
-                                        const DataCell(SizedBox.shrink()),
-                                        const DataCell(SizedBox.shrink()),
-                                        const DataCell(SizedBox.shrink()),
+                                        DataCell.empty,
+                                        DataCell.empty,
+                                        DataCell.empty,
                                         const DataCell(
                                           Center(
                                             child: Text(

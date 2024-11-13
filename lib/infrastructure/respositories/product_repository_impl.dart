@@ -6,9 +6,9 @@ import 'package:sales/domain/entities/product.dart';
 import 'package:sales/domain/repositories/product_repository.dart';
 
 class ProductRepositoryImpl implements ProductRepository {
-  final ProductDatabaseRepository _database;
 
   const ProductRepositoryImpl(this._database);
+  final ProductDatabaseRepository _database;
 
   @override
   Future<Product> getProductById(int id) async {

@@ -59,7 +59,7 @@ class PostgresOrderWithItemsImpl implements OrderWithItemsDatabaseRepository {
       final orderItemModel = OrderItemModel.fromMap(map);
 
       OrderWithItemsParamsModel? item;
-      for (int i = 0; i < data.length; i++) {
+      for (var i = 0; i < data.length; i++) {
         if (data[i].order == orderModel) {
           item = data[i];
           break;

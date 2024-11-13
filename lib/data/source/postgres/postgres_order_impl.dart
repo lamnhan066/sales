@@ -33,12 +33,12 @@ class PostgresOrderImpl implements OrderDatabaseRepository {
       },
     );
 
-    return result.first.first as int;
+    return result.first.first! as int;
   }
 
   @override
   Future<List<OrderModel>> getAllOrders({Session? session}) async {
-    String sql = 'SELECT * FROM orders';
+    const sql = 'SELECT * FROM orders';
     final result = await (session ?? _connection).execute(sql);
 
     return result.map((e) => OrderModel.fromMap(e.toColumnMap())).toList();
@@ -56,13 +56,13 @@ class PostgresOrderImpl implements OrderDatabaseRepository {
 
   @override
   Future<GetResult<OrderModel>> getOrders([GetOrderParams params = const GetOrderParams()]) async {
-    String sql = 'FROM orders WHERE o_deleted=FALSE';
+    var sql = 'FROM orders WHERE o_deleted=FALSE';
 
     // Lọc theo ngày
     final start = params.dateRange?.start;
     final parameters = <String, Object>{};
     if (start != null) {
-      sql += " AND o_date >= @startDate";
+      sql += ' AND o_date >= @startDate';
       parameters.addAll({
         'startDate': TypedValue(Type.timestampTz, start.dateOnly()),
       });
@@ -70,7 +70,7 @@ class PostgresOrderImpl implements OrderDatabaseRepository {
 
     final end = params.dateRange?.end;
     if (end != null) {
-      sql += " AND o_date < @endDate";
+      sql += ' AND o_date < @endDate';
       parameters.addAll({
         'endDate': TypedValue(Type.timestampTz, end.dateOnly().add(const Duration(days: 1))),
       });
@@ -78,7 +78,7 @@ class PostgresOrderImpl implements OrderDatabaseRepository {
 
     // Lấy tổng số đơn hàng.
     final countResult = await _connection.execute(Sql.named('SELECT COUNT(*) $sql'), parameters: parameters);
-    final totalCount = countResult.first.first as int;
+    final totalCount = countResult.first.first! as int;
 
     sql += ' ORDER BY o_id LIMIT @limit OFFSET @offset';
     parameters.addAll({

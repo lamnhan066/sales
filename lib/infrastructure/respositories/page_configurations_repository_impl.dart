@@ -2,9 +2,9 @@ import 'package:sales/domain/repositories/page_configurations_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PageConfigurationsRepositoryImpl implements PageConfigurationsRepository {
-  final SharedPreferences _prefs;
 
   const PageConfigurationsRepositoryImpl(this._prefs);
+  final SharedPreferences _prefs;
 
   @override
   Future<int> getItemPerPage() async {

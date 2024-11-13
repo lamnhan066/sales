@@ -3,6 +3,12 @@ import 'dart:convert';
 import 'package:equatable/equatable.dart';
 
 sealed class License with EquatableMixin {
+
+  const License({
+    required this.activeDate,
+    required this.expiredDays,
+    required this.isTrial,
+  });
   final DateTime? activeDate;
   final int expiredDays;
   final bool isTrial;
@@ -13,12 +19,6 @@ sealed class License with EquatableMixin {
 
     return activeDate!.add(Duration(days: expiredDays)).difference(DateTime.now()).inDays;
   }
-
-  const License({
-    required this.activeDate,
-    required this.expiredDays,
-    required this.isTrial,
-  });
 
   Map<String, dynamic> toMap() {
     return {
@@ -33,7 +33,7 @@ sealed class License with EquatableMixin {
       return const NoLicense();
     }
 
-    final DateTime activeDate = DateTime.fromMillisecondsSinceEpoch(map['activateDate']);
+    final activeDate = DateTime.fromMillisecondsSinceEpoch(map['activateDate']);
     final int expiredDays = map['expiredDays']?.toInt() ?? 0;
     final bool isTrial = map['isTrial'] ?? false;
 

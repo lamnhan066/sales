@@ -5,13 +5,22 @@ import 'package:sales/domain/entities/order.dart';
 import 'package:sales/domain/entities/order_item.dart';
 
 class OrderWithItemsParams with EquatableMixin {
-  final Order order;
-  final List<OrderItem> orderItems;
 
   OrderWithItemsParams({
     required this.order,
     required this.orderItems,
   });
+
+  factory OrderWithItemsParams.fromMap(Map<String, dynamic> map) {
+    return OrderWithItemsParams(
+      order: Order.fromMap(map['order']),
+      orderItems: List<OrderItem>.from(map['orderItems']?.map((x) => OrderItem.fromMap(x))),
+    );
+  }
+
+  factory OrderWithItemsParams.fromJson(String source) => OrderWithItemsParams.fromMap(json.decode(source));
+  final Order order;
+  final List<OrderItem> orderItems;
 
   @override
   List<Object> get props => [order, orderItems];
@@ -23,14 +32,5 @@ class OrderWithItemsParams with EquatableMixin {
     };
   }
 
-  factory OrderWithItemsParams.fromMap(Map<String, dynamic> map) {
-    return OrderWithItemsParams(
-      order: Order.fromMap(map['order']),
-      orderItems: List<OrderItem>.from(map['orderItems']?.map((x) => OrderItem.fromMap(x))),
-    );
-  }
-
   String toJson() => json.encode(toMap());
-
-  factory OrderWithItemsParams.fromJson(String source) => OrderWithItemsParams.fromMap(json.decode(source));
 }

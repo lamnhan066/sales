@@ -82,7 +82,7 @@ Future<Category?> _categoryDialog(
   Category category, [
   bool readOnly = false,
 ]) async {
-  Category tempCategory = category;
+  var tempCategory = category;
   final result = await boxWDialog<bool>(
     context: context,
     title: title,

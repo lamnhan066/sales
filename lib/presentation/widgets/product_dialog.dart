@@ -97,11 +97,11 @@ Future<Product?> _productDialog({
   required String title,
   required Product? product,
   required bool generateIdSku,
-  bool readOnly = false,
   required List<Category> categories,
+  bool readOnly = false,
 }) async {
   final temporaryProduct = await notifier.getTemporaryProduct();
-  Product resultProduct = product?.copyWith(imagePath: [...product.imagePath]) ??
+  var resultProduct = product?.copyWith(imagePath: [...product.imagePath]) ??
       temporaryProduct ??
       Product(
         id: 0,
@@ -129,7 +129,7 @@ Future<Product?> _productDialog({
   if (readOnly) formValidator.add(true);
 
   if (context.mounted) {
-    final result = await boxWDialog(
+    final result = await boxWDialog<bool>(
       context: context,
       title: title,
       width: MediaQuery.sizeOf(context).width * AppConfigs.dialogWidthRatio,
@@ -168,7 +168,7 @@ Future<Product?> _productDialog({
 
     await formValidator.close();
 
-    if (result == true) {
+    if (result ?? false) {
       await notifier.removeTemporaryProduct();
       return resultProduct;
     }

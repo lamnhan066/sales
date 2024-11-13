@@ -12,35 +12,6 @@ extension ProductExtension on List<Product> {
 
 /// Sản phẩm.
 class Product with EquatableMixin {
-  /// Id.
-  final int id;
-
-  /// Sku.
-  final String sku;
-
-  /// Tên.
-  final String name;
-
-  /// Danh sách hình ảnh dạng URL hoặc đường dẫn của tệp.
-  final List<String> imagePath;
-
-  /// Giá nhập.
-  final int importPrice;
-
-  /// Số lượng.
-  final int count;
-
-  /// Giá bán.
-  final int unitSalePrice;
-
-  /// Mô tả.
-  final String description;
-
-  /// Mã loại hàng.
-  final int categoryId;
-
-  /// Đánh dấu xoá.
-  final bool deleted;
 
   /// Sản phẩm.
   Product({
@@ -74,6 +45,35 @@ class Product with EquatableMixin {
 
   /// JSON -> Product
   factory Product.fromJson(String source) => Product.fromMap(json.decode(source) as Map<String, dynamic>);
+  /// Id.
+  final int id;
+
+  /// Sku.
+  final String sku;
+
+  /// Tên.
+  final String name;
+
+  /// Danh sách hình ảnh dạng URL hoặc đường dẫn của tệp.
+  final List<String> imagePath;
+
+  /// Giá nhập.
+  final int importPrice;
+
+  /// Số lượng.
+  final int count;
+
+  /// Giá bán.
+  final int unitSalePrice;
+
+  /// Mô tả.
+  final String description;
+
+  /// Mã loại hàng.
+  final int categoryId;
+
+  /// Đánh dấu xoá.
+  final bool deleted;
 
   /// Sao chép.
   Product copyWith({

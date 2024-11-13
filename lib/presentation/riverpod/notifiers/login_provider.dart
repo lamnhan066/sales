@@ -40,18 +40,6 @@ final loginProvider = StateNotifierProvider<LoginNotifier, LoginState>((ref) {
 });
 
 class LoginNotifier extends StateNotifier<LoginState> {
-  final LoginUseCase _loginUseCase;
-  final AutoLoginUseCase _autoLoginUseCase;
-  final GetAppVersionUseCase _getAppVersionUseCase;
-  final LoadServerConfigurationUseCase _loadServerConfigurationUseCase;
-  final SaveServerConfigurationUseCase _saveServerConfigurationUseCase;
-  final GetLoginStateUseCase _checkLoginStateUseCase;
-  final GetCachedCredentialsUseCase _getCachedLoginCredentialsLoginUseCase;
-  final LoadServerConnectionUsecase _loadServerConnectionUsecase;
-  final GetLicenseUseCase _getLicenseUseCase;
-  final CanActiveTrialLicenseUseCase _canActiveTrialLicenseUseCase;
-  final ActiveTrialLicenseUseCase _activeTrialLicenseUseCase;
-  final ActiveLicenseUseCase _activeLicenseUseCase;
 
   LoginNotifier({
     required LoginUseCase loginUseCase,
@@ -79,6 +67,18 @@ class LoginNotifier extends StateNotifier<LoginState> {
         _canActiveTrialLicenseUseCase = canActiveTrialLicenseUseCase,
         _getLicenseUseCase = getLicenseUseCase,
         super(LoginState(username: '', password: ''));
+  final LoginUseCase _loginUseCase;
+  final AutoLoginUseCase _autoLoginUseCase;
+  final GetAppVersionUseCase _getAppVersionUseCase;
+  final LoadServerConfigurationUseCase _loadServerConfigurationUseCase;
+  final SaveServerConfigurationUseCase _saveServerConfigurationUseCase;
+  final GetLoginStateUseCase _checkLoginStateUseCase;
+  final GetCachedCredentialsUseCase _getCachedLoginCredentialsLoginUseCase;
+  final LoadServerConnectionUsecase _loadServerConnectionUsecase;
+  final GetLicenseUseCase _getLicenseUseCase;
+  final CanActiveTrialLicenseUseCase _canActiveTrialLicenseUseCase;
+  final ActiveTrialLicenseUseCase _activeTrialLicenseUseCase;
+  final ActiveLicenseUseCase _activeLicenseUseCase;
 
   Future<void> initialize() async {
     final credentials = await _getCachedLoginCredentialsLoginUseCase(NoParams());

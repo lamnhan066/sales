@@ -5,11 +5,11 @@ import 'package:sales/data/repositories/core_database_repository.dart';
 import 'package:sales/domain/repositories/server_configurations_repository.dart';
 
 class PostgresCoreImpl implements CoreDatabaseRepository {
-  final ServerConfigurationsRepository _serverConfigurationRepository;
   PostgresCoreImpl(this._serverConfigurationRepository);
+  final ServerConfigurationsRepository _serverConfigurationRepository;
 
-  Connection? _connection;
-  Connection get connection => _connection!;
+  late Connection _connection;
+  Connection get connection => _connection;
 
   @override
   Future<void> initial() async {

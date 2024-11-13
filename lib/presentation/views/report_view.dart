@@ -41,7 +41,6 @@ class _ReportViewState extends ConsumerState<ReportView> {
 
     return Scaffold(
       body: Column(
-        mainAxisSize: MainAxisSize.max,
         children: [
           _buildToolbar(context, notifier, state),
           ConstrainedBox(
@@ -154,7 +153,7 @@ class _ReportViewState extends ConsumerState<ReportView> {
       final isTouched = i == touchedIndex;
       final fontSize = isTouched ? 25.0 : 16.0;
       final radius = isTouched ? 60.0 : 50.0;
-      const shadows = [Shadow(color: Colors.black, blurRadius: 2)];
+      const shadows = [Shadow(blurRadius: 2)];
 
       final bigPie = (state.revenue - state.profit) / state.revenue;
       final smallPie = state.profit / state.revenue;
@@ -213,7 +212,7 @@ class _ReportViewState extends ConsumerState<ReportView> {
       },
     );
 
-    if (result == true) {
+    if (result ?? false) {
       await notifier.updateFilters(newDateRange);
     }
   }

@@ -5,9 +5,9 @@ import 'package:sales/domain/entities/order_item.dart';
 import 'package:sales/domain/repositories/order_item_repository.dart';
 
 class OrderItemRepositoryImpl implements OrderItemRepository {
-  final OrderItemDatabaseRepository _database;
 
   const OrderItemRepositoryImpl(this._database);
+  final OrderItemDatabaseRepository _database;
 
   @override
   Future<int> getNextOrderItemId() {

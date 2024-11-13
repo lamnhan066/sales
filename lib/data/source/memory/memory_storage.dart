@@ -69,8 +69,9 @@ class MemoryStorageImpl implements MemoryStorage {
 
   @override
   Future<void> addAllCategories(List<CategoryModel> categories) async {
-    _categories.clear();
-    _categories.addAll(categories);
+    _categories
+      ..clear()
+      ..addAll(categories);
   }
 
   @override
@@ -94,8 +95,9 @@ class MemoryStorageImpl implements MemoryStorage {
 
   @override
   Future<void> addAllProducts(List<ProductModel> products) async {
-    _products.clear();
-    _products.addAll(products);
+    _products
+      ..clear()
+      ..addAll(products);
   }
 
   @override
@@ -110,13 +112,13 @@ class MemoryStorageImpl implements MemoryStorage {
       }
 
       // Lọc theo mức giá.
-      bool priceFilter = true;
+      var priceFilter = true;
       if (params.isUsePriceRangeFilter) {
         priceFilter = product.importPrice >= params.priceRange.start && product.importPrice <= params.priceRange.end;
       }
 
       // Tìm kiếm.
-      bool search = true;
+      var search = true;
       if (params.searchText.isNotEmpty) {
         search = product.name.normalize().toLowerCase().contains(params.searchText);
       }
@@ -190,8 +192,9 @@ class MemoryStorageImpl implements MemoryStorage {
 
   @override
   Future<void> addAllOrders(List<OrderModel> orders) async {
-    _orders.clear();
-    _orders.addAll(orders);
+    _orders
+      ..clear()
+      ..addAll(orders);
   }
 
   @override
@@ -223,8 +226,9 @@ class MemoryStorageImpl implements MemoryStorage {
 
   @override
   Future<void> addAllOrderItems(List<OrderItemModel> orderItems) async {
-    _orderItems.clear();
-    _orderItems.addAll(orderItems);
+    _orderItems
+      ..clear()
+      ..addAll(orderItems);
   }
 
   @override
@@ -284,7 +288,7 @@ class MemoryStorageImpl implements MemoryStorage {
       (o) => o.date.year == dateTime.year && o.date.month == dateTime.month && o.date.day == dateTime.day,
     );
     final orderItems = await getAllOrderItems();
-    int revenue = 0;
+    var revenue = 0;
     for (final item in orderItems) {
       for (final order in dailyOrders) {
         if (item.orderId == order.id) {
@@ -309,10 +313,10 @@ class MemoryStorageImpl implements MemoryStorage {
         }
       }
     }
-    final entries = orderedProductQuantities.entries.toList();
-    entries.sort(
-      (MapEntry<ProductModel, int> a, MapEntry<ProductModel, int> b) => a.value.compareTo(b.value),
-    );
+    final entries = orderedProductQuantities.entries
+      ..toList().sort(
+        (MapEntry<ProductModel, int> a, MapEntry<ProductModel, int> b) => a.value.compareTo(b.value),
+      );
 
     return Map<ProductModel, int>.fromEntries(entries);
   }
@@ -335,12 +339,12 @@ class MemoryStorageImpl implements MemoryStorage {
     final revenues = <int>[];
 
     final now = DateTime.now();
-    for (int i = 1; i <= 31; i++) {
+    for (var i = 1; i <= 31; i++) {
       if (DateTime(dateTime.year, dateTime.month, i).isAfter(now)) {
         break;
       }
 
-      int revenue = 0;
+      var revenue = 0;
       final dailyOrders = monthlyOrders.where((order) => order.date.day == i);
       for (final order in dailyOrders) {
         for (final item in orderItems) {
@@ -418,7 +422,7 @@ class MemoryStorageImpl implements MemoryStorage {
   Future<void> merge(List<CategoryModel> categories, List<ProductModel> products) async {
     final tempCategories = await getAllCategories();
     final cIndex = tempCategories.length;
-    for (int i = 0; i < categories.length; i++) {
+    for (var i = 0; i < categories.length; i++) {
       final c = categories.elementAt(i).copyWith(id: cIndex + i);
       tempCategories.add(c);
     }
@@ -426,7 +430,7 @@ class MemoryStorageImpl implements MemoryStorage {
 
     final tempProducts = await getAllProducts();
     final pIndex = tempProducts.length;
-    for (int i = 0; i < products.length; i++) {
+    for (var i = 0; i < products.length; i++) {
       final newIndex = pIndex + i;
       final p = products.elementAt(i).copyWith(
             id: newIndex,
@@ -516,7 +520,7 @@ class MemoryStorageImpl implements MemoryStorage {
   Future<Map<ProductModel, int>> getSoldProductsWithQuantity(Ranges<DateTime> dateRange) async {
     final products = await getProducts();
     final items = await getAllOrderItems();
-    return {for (var e in products.items) e: items.where((i) => i.productId == e.id).length};
+    return {for (final e in products.items) e: items.where((i) => i.productId == e.id).length};
   }
 
   @override
@@ -528,7 +532,7 @@ class MemoryStorageImpl implements MemoryStorage {
       }
       return false;
     });
-    int result = 0;
+    var result = 0;
     for (final order in orders) {
       final tempItems = items.where((e) => e.orderId == order.id);
       for (final item in tempItems) {
@@ -548,7 +552,7 @@ class MemoryStorageImpl implements MemoryStorage {
       }
       return false;
     });
-    int result = 0;
+    var result = 0;
     for (final order in orders) {
       final tempItems = items.where((e) => e.orderId == order.id);
 

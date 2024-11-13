@@ -5,17 +5,6 @@ import 'package:sales/domain/entities/order_status.dart';
 
 /// Đơn hàng.
 class Order with EquatableMixin {
-  /// Id.
-  final int id;
-
-  /// Trạng thái.
-  final OrderStatus status;
-
-  /// Ngày đặt hàng.
-  final DateTime date;
-
-  /// Đánh dấu xoá.
-  final bool deleted;
 
   /// Đơn hàng.
   Order({
@@ -37,6 +26,17 @@ class Order with EquatableMixin {
 
   /// JSON -> Order
   factory Order.fromJson(String source) => Order.fromMap(json.decode(source) as Map<String, dynamic>);
+  /// Id.
+  final int id;
+
+  /// Trạng thái.
+  final OrderStatus status;
+
+  /// Ngày đặt hàng.
+  final DateTime date;
+
+  /// Đánh dấu xoá.
+  final bool deleted;
 
   /// Sao chép.
   Order copyWith({

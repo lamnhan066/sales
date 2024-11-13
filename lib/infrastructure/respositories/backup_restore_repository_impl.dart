@@ -9,9 +9,9 @@ import 'package:sales/domain/repositories/backup_restore_repository.dart';
 import 'package:sales/infrastructure/exceptions/backup_exception.dart';
 
 class BackupRestoreRepositoryImpl implements BackupRestoreRepository {
-  final FilePicker _filePicker;
 
   const BackupRestoreRepositoryImpl(this._filePicker);
+  final FilePicker _filePicker;
 
   @override
   Future<File> backup(BackupData params) async {

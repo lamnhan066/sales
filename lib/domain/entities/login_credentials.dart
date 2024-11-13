@@ -4,13 +4,6 @@ import 'package:sales/core/utils/entropy_generator.dart';
 import 'package:sales/domain/entities/credentials.dart';
 
 class LoginCredentials implements Credentials {
-  @override
-  final String username;
-  @override
-  final String password;
-  @override
-  final String entropy;
-  final bool rememberMe;
 
   /// Thông tin đăng nhập.
   ///
@@ -22,6 +15,24 @@ class LoginCredentials implements Credentials {
     String? entropy,
     this.rememberMe = false,
   }) : entropy = entropy ?? EntropyGenerator.generateEntropy();
+
+  factory LoginCredentials.fromMap(Map<String, dynamic> map) {
+    return LoginCredentials(
+      username: map['username'] ?? '',
+      password: map['password'] ?? '',
+      entropy: map['entropy'] ?? '',
+      rememberMe: map['rememberMe'] ?? false,
+    );
+  }
+
+  factory LoginCredentials.fromJson(String source) => LoginCredentials.fromMap(json.decode(source));
+  @override
+  final String username;
+  @override
+  final String password;
+  @override
+  final String entropy;
+  final bool rememberMe;
 
   LoginCredentials copyWith({
     String? username,
@@ -46,18 +57,7 @@ class LoginCredentials implements Credentials {
     };
   }
 
-  factory LoginCredentials.fromMap(Map<String, dynamic> map) {
-    return LoginCredentials(
-      username: map['username'] ?? '',
-      password: map['password'] ?? '',
-      entropy: map['entropy'] ?? '',
-      rememberMe: map['rememberMe'] ?? false,
-    );
-  }
-
   String toJson() => json.encode(toMap());
-
-  factory LoginCredentials.fromJson(String source) => LoginCredentials.fromMap(json.decode(source));
 
   @override
   String toString() {

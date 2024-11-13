@@ -7,9 +7,9 @@ import 'package:sales/domain/entities/recent_orders_result.dart';
 import 'package:sales/domain/repositories/report_repository.dart';
 
 class ReportRepositoryImpl implements ReportRepository {
-  final ReportDatabaseRepository _database;
 
   const ReportRepositoryImpl(this._database);
+  final ReportDatabaseRepository _database;
 
   @override
   Future<int> getDailyOrderCount(DateTime dateTime) {

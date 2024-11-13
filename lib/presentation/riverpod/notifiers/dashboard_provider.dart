@@ -26,13 +26,6 @@ final dashboardNotifierProvider = StateNotifierProvider<DashboardNotifier, Dashb
 });
 
 class DashboardNotifier extends StateNotifier<DashboardState> {
-  final GetDailyOrderCountUseCase getDailyOrderCountUseCase;
-  final GetDailyRevenueUseCase getDailyRevenueUseCase;
-  final GetFiveHighestSalesProductsUseCase getFiveHighestSalesProductsUseCase;
-  final GetFiveLowStockProductsUseCase getFiveLowStockProductsUseCase;
-  final GetDailyRevenueForMonth getDailyRevenueForMonthUseCase;
-  final GetThreeRecentOrdersUseCase getThreeRecentOrdersUseCase;
-  final GetTotalProductCountUseCase getTotalProductCountUseCase;
 
   DashboardNotifier({
     required this.getDailyOrderCountUseCase,
@@ -45,7 +38,14 @@ class DashboardNotifier extends StateNotifier<DashboardState> {
   }) : super(DashboardState(
           reportDateTime: DateTime.now(),
           tour: FeaturesTourController('DashboardView'),
-        ));
+        ),);
+  final GetDailyOrderCountUseCase getDailyOrderCountUseCase;
+  final GetDailyRevenueUseCase getDailyRevenueUseCase;
+  final GetFiveHighestSalesProductsUseCase getFiveHighestSalesProductsUseCase;
+  final GetFiveLowStockProductsUseCase getFiveLowStockProductsUseCase;
+  final GetDailyRevenueForMonth getDailyRevenueForMonthUseCase;
+  final GetThreeRecentOrdersUseCase getThreeRecentOrdersUseCase;
+  final GetTotalProductCountUseCase getTotalProductCountUseCase;
 
   Future<void> loadDashboardData() async {
     state = state.copyWith(isLoading: true, error: '');

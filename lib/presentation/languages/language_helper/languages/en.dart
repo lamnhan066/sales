@@ -4,13 +4,13 @@ final en = <String, dynamic>{
   ///===========================================================================
   /// Path: ./lib/core/utils/price_utils.dart
   ///===========================================================================
-  "@path_./lib/core/utils/price_utils.dart": '',
+  '@path_./lib/core/utils/price_utils.dart': '',
   'Tối đa': 'Maximum',
 
   ///===========================================================================
   /// Path: ./lib/di.dart
   ///===========================================================================
-  "@path_./lib/di.dart": '',
+  '@path_./lib/di.dart': '',
   'Giới Thiệu': 'Introduction',
   'Trang này có một số chức năng mới mà bạn có thể muốn khám phá.\n\n'
       'Bạn có muốn khám phá không?': 'This page has some new features that you might want to explore.\n\n'
@@ -26,14 +26,14 @@ final en = <String, dynamic>{
   ///===========================================================================
   /// Path: ./lib/infrastructure/respositories/local_auth_repository_impl.dart
   ///===========================================================================
-  "@path_./lib/infrastructure/respositories/local_auth_repository_impl.dart": '',
+  '@path_./lib/infrastructure/respositories/local_auth_repository_impl.dart': '',
   'Sai tên đăng nhập hoặc mật khẩu': 'Incorrect username or password',
   'Không có thông tin đăng nhập được lưu': 'No login information is saved',
 
   ///===========================================================================
   /// Path: ./lib/infrastructure/respositories/backup_restore_repository_impl.dart
   ///===========================================================================
-  "@path_./lib/infrastructure/respositories/backup_restore_repository_impl.dart": '',
+  '@path_./lib/infrastructure/respositories/backup_restore_repository_impl.dart': '',
   'Lưu Bản Sao Lưu': 'Save Backup',
   'Không có đường dẫn được chọn': 'No path selected',
   'Không thể ghi bản sao lưu vào tệp': 'Cannot write the backup to file',
@@ -44,31 +44,31 @@ final en = <String, dynamic>{
   ///===========================================================================
   /// Path: ./lib/infrastructure/exceptions/backup_exception.dart
   ///===========================================================================
-  "@path_./lib/infrastructure/exceptions/backup_exception.dart": '',
+  '@path_./lib/infrastructure/exceptions/backup_exception.dart': '',
   'Sao lưu lỗi': 'Backup Error',
 
   ///===========================================================================
   /// Path: ./lib/infrastructure/exceptions/server_exception.dart
   ///===========================================================================
-  "@path_./lib/infrastructure/exceptions/server_exception.dart": '',
+  '@path_./lib/infrastructure/exceptions/server_exception.dart': '',
   'Lỗi máy chủ': 'Server Error',
 
   ///===========================================================================
   /// Path: ./lib/infrastructure/exceptions/restore_exception.dart
   ///===========================================================================
-  "@path_./lib/infrastructure/exceptions/restore_exception.dart": '',
+  '@path_./lib/infrastructure/exceptions/restore_exception.dart': '',
   'Khôi phục lỗi': 'Restore Error',
 
   ///===========================================================================
   /// Path: ./lib/infrastructure/exceptions/data_import_exception.dart
   ///===========================================================================
-  "@path_./lib/infrastructure/exceptions/data_import_exception.dart": '',
+  '@path_./lib/infrastructure/exceptions/data_import_exception.dart': '',
   'Lỗi nhập dữ liệu': 'Data Import Error',
 
   ///===========================================================================
   /// Path: ./lib/infrastructure/services/database_service_impl.dart
   ///===========================================================================
-  "@path_./lib/infrastructure/services/database_service_impl.dart": '',
+  '@path_./lib/infrastructure/services/database_service_impl.dart': '',
   'Không thể kết nối được với máy chủ': 'Unable to connect to the server',
   'Lưu Danh Sách Sản Phẩm Mẫu': 'Save Template Product List',
   // 'Không có đường dẫn được chọn': 'Không có đường dẫn được chọn',  // Duplicated
@@ -77,14 +77,14 @@ final en = <String, dynamic>{
   ///===========================================================================
   /// Path: ./lib/domain/usecases/data_services/import_data_usecase.dart
   ///===========================================================================
-  "@path_./lib/domain/usecases/data_services/import_data_usecase.dart": '',
+  '@path_./lib/domain/usecases/data_services/import_data_usecase.dart': '',
   'Đã có lỗi xảy ra khi nhập dữ liệu, vui lòng kiểm tra lại dữ liệu mẫu':
       'An error occurred while importing data, please check the sample data',
 
   ///===========================================================================
   /// Path: ./lib/domain/entities/order_status.dart
   ///===========================================================================
-  "@path_./lib/domain/entities/order_status.dart": '',
+  '@path_./lib/domain/entities/order_status.dart': '',
   'Đã tạo': 'Created',
   'Đã thanh toán': 'Paid',
   'Đã huỷ': 'Cancelled',
@@ -92,7 +92,7 @@ final en = <String, dynamic>{
   ///===========================================================================
   /// Path: ./lib/presentation/riverpod/notifiers/login_provider.dart
   ///===========================================================================
-  "@path_./lib/presentation/riverpod/notifiers/login_provider.dart": '',
+  '@path_./lib/presentation/riverpod/notifiers/login_provider.dart': '',
   'Vui lòng kích hoạt bản quyền để tiếp tục sử dụng': 'Please activate the license to continue using',
   'Đã có lỗi không xác định!': 'An unknown error occurred!',
   // 'Vui lòng kích hoạt bản quyền để tiếp tục sử dụng': 'Please activate the license to continue using',  // Duplicated
@@ -104,7 +104,7 @@ final en = <String, dynamic>{
   ///===========================================================================
   /// Path: ./lib/presentation/riverpod/notifiers/settings_provider.dart
   ///===========================================================================
-  "@path_./lib/presentation/riverpod/notifiers/settings_provider.dart": '',
+  '@path_./lib/presentation/riverpod/notifiers/settings_provider.dart': '',
   'Đang chuẩn bị dữ liệu...': 'Preparing data...',
   'Chọn vị trí lưu và lưu bản sao lưu...': 'Select the save location and save the backup...',
   'Sao lưu đã hoàn tất tại': 'Backup completed at',
@@ -117,7 +117,7 @@ final en = <String, dynamic>{
   ///===========================================================================
   /// Path: ./lib/presentation/views/home_view.dart
   ///===========================================================================
-  "@path_./lib/presentation/views/home_view.dart": '',
+  '@path_./lib/presentation/views/home_view.dart': '',
   'Tổng Quan': 'Overview',
   'Đơn Hàng': 'Orders',
   'Sản Phẩm': 'Products',
@@ -128,7 +128,7 @@ final en = <String, dynamic>{
   ///===========================================================================
   /// Path: ./lib/presentation/views/products_view.dart
   ///===========================================================================
-  "@path_./lib/presentation/views/products_view.dart": '',
+  '@path_./lib/presentation/views/products_view.dart': '',
   'Nhấn vào đây để thêm sản phẩm mới': 'Click here to add a new product',
   'Thêm sản phẩm mới': 'Add new product',
   'Nhấn vào đây để tải xuống mẫu dữ liệu': 'Click here to download sample data',
@@ -177,7 +177,7 @@ final en = <String, dynamic>{
   // 'Nhập Excel': 'Import Excel',  // Duplicated
   'Có @{count} sản phẩm trong dữ liệu cần nhập. '
       'Dữ liệu mới sẽ thay thế dữ liệu cũ và không thể hoàn tác.\n\n'
-      'Bạn có muốn tiếp tục không?': LanguageConditions(
+      'Bạn có muốn tiếp tục không?': const LanguageConditions(
     param: 'count',
     conditions: {
       '0': 'There are 0 products in the data to be imported. '
@@ -214,7 +214,7 @@ final en = <String, dynamic>{
   ///===========================================================================
   /// Path: ./lib/presentation/views/login_view.dart
   ///===========================================================================
-  "@path_./lib/presentation/views/login_view.dart": '',
+  '@path_./lib/presentation/views/login_view.dart': '',
   'Chào mừng bạn trở lại!': 'Welcome back!',
   'Đăng nhập': 'Login',
   'Chào mừng bạn đã trở lại! Vui lòng đăng nhập để tiếp tục': 'Welcome back! Please log in to continue',
@@ -245,7 +245,7 @@ final en = <String, dynamic>{
   ///===========================================================================
   /// Path: ./lib/presentation/views/settings_view.dart
   ///===========================================================================
-  "@path_./lib/presentation/views/settings_view.dart": '',
+  '@path_./lib/presentation/views/settings_view.dart': '',
   'Ngôn Ngữ': 'Language',
   'Chế Độ Tối': 'Dark Mode',
   'Lưu màn hình cuối cho lần mở tiếp theo': 'Save the last screen for the next time',
@@ -258,7 +258,7 @@ final en = <String, dynamic>{
   ///===========================================================================
   /// Path: ./lib/presentation/views/dashboard_view.dart
   ///===========================================================================
-  "@path_./lib/presentation/views/dashboard_view.dart": '',
+  '@path_./lib/presentation/views/dashboard_view.dart': '',
   'Nhấn vào đây để chọn ngày thống kê ở trang tổng quan': 'Click here to select a date for statistics on the dashboard',
   'Biểu đồ doanh thu theo ngày trong tháng @{month}': 'Revenue chart by day in the month of @{month}',
   'Chi tiết 3 đơn hàng gần nhất': 'Details of the 3 most recent orders',
@@ -270,7 +270,7 @@ final en = <String, dynamic>{
   'Tổng doanh thu trong ngày': 'Total revenue for the day',
   '@{dailyRevenue} đồng': '@{dailyRevenue} VND',
   'Tổng số đơn hàng trong ngày': 'Total number of orders for the day',
-  '@{count} đơn': LanguageConditions(
+  '@{count} đơn': const LanguageConditions(
     param: 'count',
     conditions: {
       '0': '0 orders',
@@ -279,7 +279,7 @@ final en = <String, dynamic>{
     },
   ),
   'Tổng số sản phẩm': 'Total number of products',
-  '@{count} sản phẩm': LanguageConditions(
+  '@{count} sản phẩm': const LanguageConditions(
     param: 'count',
     conditions: {
       '0': '0 products',
@@ -291,7 +291,7 @@ final en = <String, dynamic>{
   ///===========================================================================
   /// Path: ./lib/presentation/views/orders_view.dart
   ///===========================================================================
-  "@path_./lib/presentation/views/orders_view.dart": '',
+  '@path_./lib/presentation/views/orders_view.dart': '',
   'Nhấn vào đây để thêm đơn hàng': 'Click here to add an order',
   'Nhấn vào đây để mở tuỳ chọn lọc đơn hàng': 'Click here to open order filter options',
   // 'STT': 'No.',  // Duplicated
@@ -318,7 +318,7 @@ final en = <String, dynamic>{
   ///===========================================================================
   /// Path: ./lib/presentation/views/report_view.dart
   ///===========================================================================
-  "@path_./lib/presentation/views/report_view.dart": '',
+  '@path_./lib/presentation/views/report_view.dart': '',
   'Nhấn vào đây để hiển thị tuỳ chọn bộ lọc cho báo cáo': 'Click here to display filter options for the report',
   'Sản phẩm và số lượng bán tương ứng:': 'Products and corresponding sales quantities:',
   'Doanh thu và lợi nhuận:': 'Revenue and profit:',
@@ -334,7 +334,7 @@ final en = <String, dynamic>{
   ///===========================================================================
   /// Path: ./lib/presentation/widgets/image_dialog.dart
   ///===========================================================================
-  "@path_./lib/presentation/widgets/image_dialog.dart": '',
+  '@path_./lib/presentation/widgets/image_dialog.dart': '',
   'Thêm Ảnh': 'Add Image',
   'Thêm': 'Add',
   // 'Huỷ': 'Cancel',  // Duplicated
@@ -350,7 +350,7 @@ final en = <String, dynamic>{
   ///===========================================================================
   /// Path: ./lib/presentation/widgets/category_dialog.dart
   ///===========================================================================
-  "@path_./lib/presentation/widgets/category_dialog.dart": '',
+  '@path_./lib/presentation/widgets/category_dialog.dart': '',
   'Chi Tiết Loại Hàng': 'Category Details',
   'Thêm Loại Hàng': 'Add Category',
   'Sửa Loại Hàng': 'Edit Category',
@@ -366,7 +366,7 @@ final en = <String, dynamic>{
   ///===========================================================================
   /// Path: ./lib/presentation/widgets/order_filter_dialog.dart
   ///===========================================================================
-  "@path_./lib/presentation/widgets/order_filter_dialog.dart": '',
+  '@path_./lib/presentation/widgets/order_filter_dialog.dart': '',
   'Lọc theo khoảng thời gian': 'Filter by time period',
   'Từ': 'From',
   'Đến': 'To',
@@ -374,7 +374,7 @@ final en = <String, dynamic>{
   ///===========================================================================
   /// Path: ./lib/presentation/widgets/order_form_dialog.dart
   ///===========================================================================
-  "@path_./lib/presentation/widgets/order_form_dialog.dart": '',
+  '@path_./lib/presentation/widgets/order_form_dialog.dart': '',
   'Chọn Sản Phẩm': 'Select Product',
   'Có sản phẩm không đủ số lượng trong kho nên không thể Sao chép.\n'
       'Vui lòng cập nhật thêm sản phẩm để tiếp tục!': 'Some products do not have enough stock to duplicate.\n'
@@ -392,7 +392,7 @@ final en = <String, dynamic>{
   ///===========================================================================
   /// Path: ./lib/presentation/widgets/product_form_dialog.dart
   ///===========================================================================
-  "@path_./lib/presentation/widgets/product_form_dialog.dart": '',
+  '@path_./lib/presentation/widgets/product_form_dialog.dart': '',
   'Mã sản phẩm': 'Product Code',
   'Tên sản phẩm': 'Product Name',
   // 'Giá nhập': 'Purchase Price',  // Duplicated
@@ -410,7 +410,7 @@ final en = <String, dynamic>{
   ///===========================================================================
   /// Path: ./lib/presentation/widgets/order_dialog.dart
   ///===========================================================================
-  "@path_./lib/presentation/widgets/order_dialog.dart": '',
+  '@path_./lib/presentation/widgets/order_dialog.dart': '',
   'Thông Tin Đơn': 'Order Information',
   'Thêm Đơn': 'Add Order',
   'Sửa Đơn': 'Edit Order',
@@ -422,7 +422,7 @@ final en = <String, dynamic>{
   ///===========================================================================
   /// Path: ./lib/presentation/widgets/page_chooser_dialog.dart
   ///===========================================================================
-  "@path_./lib/presentation/widgets/page_chooser_dialog.dart": '',
+  '@path_./lib/presentation/widgets/page_chooser_dialog.dart': '',
   'Bạn cần nhập số trang': 'You need to enter a page number',
   'Số trang phải là số nguyên': 'The page number must be an integer',
   'Số trang phải >= 1': 'The page number must be >= 1',
@@ -434,7 +434,7 @@ final en = <String, dynamic>{
   ///===========================================================================
   /// Path: ./lib/presentation/widgets/product_dialog.dart
   ///===========================================================================
-  "@path_./lib/presentation/widgets/product_dialog.dart": '',
+  '@path_./lib/presentation/widgets/product_dialog.dart': '',
   'Thông Tin Sản Phẩm': 'Product Information',
   'Thêm Sản Phẩm': 'Add Product',
   'Sửa Sản Phẩm': 'Edit Product',
@@ -449,7 +449,7 @@ final en = <String, dynamic>{
   ///===========================================================================
   /// Path: ./lib/presentation/widgets/report_filter_dialog.dart
   ///===========================================================================
-  "@path_./lib/presentation/widgets/report_filter_dialog.dart": '',
+  '@path_./lib/presentation/widgets/report_filter_dialog.dart': '',
   // 'Lọc theo khoảng thời gian': 'Filter by time period',  // Duplicated
   '7 ngày gần đây nhất': 'Last 7 days',
   '30 ngày gần đây nhất': 'Last 30 days',
@@ -460,7 +460,7 @@ final en = <String, dynamic>{
   ///===========================================================================
   /// Path: ./lib/presentation/widgets/product_filter_dialog.dart
   ///===========================================================================
-  "@path_./lib/presentation/widgets/product_filter_dialog.dart": '',
+  '@path_./lib/presentation/widgets/product_filter_dialog.dart': '',
   'Lọc theo mức giá': 'Filter by price range',
   // 'Từ': 'From',  // Duplicated
   'Không được bỏ trống': 'Cannot be empty',

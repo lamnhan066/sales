@@ -3,9 +3,9 @@ import 'package:sales/domain/repositories/language_repository.dart';
 import 'package:sales/presentation/languages/language_helper/language_data.dart';
 
 class LanguageRepositoryImpl implements LanguageRepository {
-  final LanguageHelper _languageHelper;
 
   const LanguageRepositoryImpl(this._languageHelper);
+  final LanguageHelper _languageHelper;
 
   @override
   Future<void> initialize() async {

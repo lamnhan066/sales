@@ -133,9 +133,10 @@ final getIt = GetIt.instance;
 
 Future<void> setupDependencies() async {
   final preferences = await SharedPreferences.getInstance();
-  getIt.registerSingleton<SharedPreferences>(preferences);
-  getIt.registerSingleton<LanguageHelper>(LanguageHelper.instance);
-  getIt.registerLazySingleton<FilePicker>(() => FilePicker.platform);
+  getIt
+    ..registerSingleton<SharedPreferences>(preferences)
+    ..registerSingleton<LanguageHelper>(LanguageHelper.instance)
+    ..registerLazySingleton<FilePicker>(() => FilePicker.platform);
 
   _registerRepositories();
   _registerLocalPostgresDatabase();
@@ -182,124 +183,133 @@ void _registerUseCases() {
 }
 
 void _registerRepositories() {
-  getIt.registerLazySingleton<AuthRepository>(() => LocalAuthRepositoryImpl(getIt()));
-  getIt.registerLazySingleton<ServerConfigurationsRepository>(() => PostgresConfigurationsRepositoryImpl(getIt()));
-  getIt.registerLazySingleton<AppVersionRepository>(() => AppVersionRepositoryImpl());
-  getIt.registerLazySingleton<ProductRepository>(() => ProductRepositoryImpl(getIt()));
-  getIt.registerLazySingleton<OrderRepository>(() => OrderRepositoryImpl(getIt()));
-  getIt.registerLazySingleton<OrderItemRepository>(() => OrderItemRepositoryImpl(getIt()));
-  getIt.registerLazySingleton<OrderWithItemsRepository>(() => OrderWithItemsRepositoryImpl(getIt()));
-  getIt.registerLazySingleton<CategoryRepository>(() => CategoryRepositoryImpl(getIt()));
-  getIt.registerLazySingleton<ReportRepository>(() => ReportRepositoryImpl(getIt()));
-  getIt.registerLazySingleton<DataImporterRepository>(() => ExcelDataImporterImpl());
-  getIt.registerLazySingleton<LanguageRepository>(() => LanguageRepositoryImpl(getIt()));
-  getIt.registerLazySingleton<PageConfigurationsRepository>(() => PageConfigurationsRepositoryImpl(getIt()));
-  getIt.registerLazySingleton<BrightnessRepository>(() => BrightnessRepositoryImpl(getIt()));
-  getIt.registerLazySingleton<BackupRestoreRepository>(() => BackupRestoreRepositoryImpl(getIt()));
-  getIt.registerLazySingleton<TemporaryDataRepository>(() => TemporaryDataRepositoryImpl(getIt()));
-  getIt.registerLazySingleton<PrintRepository>(() => PrintRepositoryImpl());
-  getIt.registerLazySingleton<LicenseRepository>(() => LicenseRepositoryImpl(getIt()));
-  getIt.registerLazySingleton<LastViewRepository>(() => LastViewRepositoryImpl(getIt()));
+  getIt
+    ..registerLazySingleton<AuthRepository>(() => LocalAuthRepositoryImpl(getIt()))
+    ..registerLazySingleton<ServerConfigurationsRepository>(() => PostgresConfigurationsRepositoryImpl(getIt()))
+    ..registerLazySingleton<AppVersionRepository>(AppVersionRepositoryImpl.new)
+    ..registerLazySingleton<ProductRepository>(() => ProductRepositoryImpl(getIt()))
+    ..registerLazySingleton<OrderRepository>(() => OrderRepositoryImpl(getIt()))
+    ..registerLazySingleton<OrderItemRepository>(() => OrderItemRepositoryImpl(getIt()))
+    ..registerLazySingleton<OrderWithItemsRepository>(() => OrderWithItemsRepositoryImpl(getIt()))
+    ..registerLazySingleton<CategoryRepository>(() => CategoryRepositoryImpl(getIt()))
+    ..registerLazySingleton<ReportRepository>(() => ReportRepositoryImpl(getIt()))
+    ..registerLazySingleton<DataImporterRepository>(ExcelDataImporterImpl.new)
+    ..registerLazySingleton<LanguageRepository>(() => LanguageRepositoryImpl(getIt()))
+    ..registerLazySingleton<PageConfigurationsRepository>(() => PageConfigurationsRepositoryImpl(getIt()))
+    ..registerLazySingleton<BrightnessRepository>(() => BrightnessRepositoryImpl(getIt()))
+    ..registerLazySingleton<BackupRestoreRepository>(() => BackupRestoreRepositoryImpl(getIt()))
+    ..registerLazySingleton<TemporaryDataRepository>(() => TemporaryDataRepositoryImpl(getIt()))
+    ..registerLazySingleton<PrintRepository>(PrintRepositoryImpl.new)
+    ..registerLazySingleton<LicenseRepository>(() => LicenseRepositoryImpl(getIt()))
+    ..registerLazySingleton<LastViewRepository>(() => LastViewRepositoryImpl(getIt()));
 }
 
 void _registerLocalPostgresDatabase() {
-  getIt.registerLazySingleton<CoreDatabaseRepository>(() => PostgresCoreImpl(getIt()));
-  getIt.registerLazySingleton<CategoryDatabaseRepository>(() => PostgresCategoryImpl(getIt()));
-  getIt.registerLazySingleton<DataSyncDatabaseRepository>(
-    () => PostgresDataSyncImpl(getIt(), getIt(), getIt()),
-  );
-  getIt.registerLazySingleton<ProductDatabaseRepository>(() => PostgresProductImpl(getIt()));
-  getIt.registerLazySingleton<OrderDatabaseRepository>(() => PostgresOrderImpl(getIt()));
-  getIt.registerLazySingleton<OrderItemDatabaseRepository>(() => PostgresOrderItemImpl(getIt()));
-  getIt.registerLazySingleton<OrderWithItemsDatabaseRepository>(
-    () => PostgresOrderWithItemsImpl(getIt(), getIt(), getIt(), getIt()),
-  );
-  getIt.registerLazySingleton<ReportDatabaseRepository>(() => PostgresReportImpl(getIt(), getIt(), getIt()));
+  getIt
+    ..registerLazySingleton<CoreDatabaseRepository>(() => PostgresCoreImpl(getIt()))
+    ..registerLazySingleton<CategoryDatabaseRepository>(() => PostgresCategoryImpl(getIt()))
+    ..registerLazySingleton<DataSyncDatabaseRepository>(
+      () => PostgresDataSyncImpl(getIt(), getIt(), getIt()),
+    )
+    ..registerLazySingleton<ProductDatabaseRepository>(() => PostgresProductImpl(getIt()))
+    ..registerLazySingleton<OrderDatabaseRepository>(() => PostgresOrderImpl(getIt()))
+    ..registerLazySingleton<OrderItemDatabaseRepository>(() => PostgresOrderItemImpl(getIt()))
+    ..registerLazySingleton<OrderWithItemsDatabaseRepository>(
+      () => PostgresOrderWithItemsImpl(getIt(), getIt(), getIt(), getIt()),
+    )
+    ..registerLazySingleton<ReportDatabaseRepository>(() => PostgresReportImpl(getIt(), getIt(), getIt()));
 }
 
 void _registerAppUseCases() {
-  getIt.registerLazySingleton<GetAppVersionUseCase>(() => GetAppVersionUseCase(getIt()));
-  getIt.registerLazySingleton<InitializeLanguageUseCase>(() => InitializeLanguageUseCase(getIt()));
-  getIt.registerLazySingleton<GetCurrentLanguageUseCase>(() => GetCurrentLanguageUseCase(getIt()));
-  getIt.registerLazySingleton<GetSupportedLanguagesUseCase>(() => GetSupportedLanguagesUseCase(getIt()));
-  getIt.registerLazySingleton<ChangeLanguageUseCase>(() => ChangeLanguageUseCase(getIt()));
-  getIt.registerLazySingleton<ChangeItemPerPageUseCase>(() => ChangeItemPerPageUseCase(getIt()));
-  getIt.registerLazySingleton<GetItemPerPageUseCase>(() => GetItemPerPageUseCase(getIt()));
-  getIt.registerLazySingleton<GetCurrentBrightnessUseCase>(() => GetCurrentBrightnessUseCase(getIt()));
-  getIt.registerLazySingleton<SetBrightnessUseCase>(() => SetBrightnessUseCase(getIt()));
+  getIt
+    ..registerLazySingleton<GetAppVersionUseCase>(() => GetAppVersionUseCase(getIt()))
+    ..registerLazySingleton<InitializeLanguageUseCase>(() => InitializeLanguageUseCase(getIt()))
+    ..registerLazySingleton<GetCurrentLanguageUseCase>(() => GetCurrentLanguageUseCase(getIt()))
+    ..registerLazySingleton<GetSupportedLanguagesUseCase>(() => GetSupportedLanguagesUseCase(getIt()))
+    ..registerLazySingleton<ChangeLanguageUseCase>(() => ChangeLanguageUseCase(getIt()))
+    ..registerLazySingleton<ChangeItemPerPageUseCase>(() => ChangeItemPerPageUseCase(getIt()))
+    ..registerLazySingleton<GetItemPerPageUseCase>(() => GetItemPerPageUseCase(getIt()))
+    ..registerLazySingleton<GetCurrentBrightnessUseCase>(() => GetCurrentBrightnessUseCase(getIt()))
+    ..registerLazySingleton<SetBrightnessUseCase>(() => SetBrightnessUseCase(getIt()));
 }
 
 void _registerAuthUseCases() {
-  getIt.registerLazySingleton<AutoLoginUseCase>(() => AutoLoginUseCase(getIt()));
-  getIt.registerLazySingleton<LoginUseCase>(() => LoginUseCase(getIt()));
-  getIt.registerLazySingleton<LogoutUseCase>(() => LogoutUseCase(getIt()));
-  getIt.registerLazySingleton<GetLoginStateUseCase>(() => GetLoginStateUseCase(getIt()));
-  getIt.registerLazySingleton<GetCachedCredentialsUseCase>(() => GetCachedCredentialsUseCase(getIt()));
+  getIt
+    ..registerLazySingleton<AutoLoginUseCase>(() => AutoLoginUseCase(getIt()))
+    ..registerLazySingleton<LoginUseCase>(() => LoginUseCase(getIt()))
+    ..registerLazySingleton<LogoutUseCase>(() => LogoutUseCase(getIt()))
+    ..registerLazySingleton<GetLoginStateUseCase>(() => GetLoginStateUseCase(getIt()))
+    ..registerLazySingleton<GetCachedCredentialsUseCase>(() => GetCachedCredentialsUseCase(getIt()));
 }
 
 void _registerProductUseCases() {
-  getIt.registerLazySingleton<GetTotalProductCountUseCase>(() => GetTotalProductCountUseCase(getIt()));
-  getIt.registerLazySingleton<GetProductsUseCase>(() => GetProductsUseCase(getIt()));
-  getIt.registerLazySingleton<AddProductUseCase>(() => AddProductUseCase(getIt()));
-  getIt.registerLazySingleton<UpdateProductUseCase>(() => UpdateProductUseCase(getIt()));
-  getIt.registerLazySingleton<RemoveProductUseCase>(() => RemoveProductUseCase(getIt()));
-  getIt.registerLazySingleton<GetNextProductIdAndSkuUseCase>(() => GetNextProductIdAndSkuUseCase(getIt()));
-  getIt.registerLazySingleton<GetAllProductsUseCase>(() => GetAllProductsUseCase(getIt()));
-  getIt.registerLazySingleton<AddAllProductsUseCase>(() => AddAllProductsUseCase(getIt()));
-  getIt.registerLazySingleton<SaveTemporaryProductUseCase>(() => SaveTemporaryProductUseCase(getIt()));
-  getIt.registerLazySingleton<GetTemporaryProductUseCase>(() => GetTemporaryProductUseCase(getIt()));
-  getIt.registerLazySingleton<RemoveTemporaryProductUseCase>(() => RemoveTemporaryProductUseCase(getIt()));
+  getIt
+    ..registerLazySingleton<GetTotalProductCountUseCase>(() => GetTotalProductCountUseCase(getIt()))
+    ..registerLazySingleton<GetProductsUseCase>(() => GetProductsUseCase(getIt()))
+    ..registerLazySingleton<AddProductUseCase>(() => AddProductUseCase(getIt()))
+    ..registerLazySingleton<UpdateProductUseCase>(() => UpdateProductUseCase(getIt()))
+    ..registerLazySingleton<RemoveProductUseCase>(() => RemoveProductUseCase(getIt()))
+    ..registerLazySingleton<GetNextProductIdAndSkuUseCase>(() => GetNextProductIdAndSkuUseCase(getIt()))
+    ..registerLazySingleton<GetAllProductsUseCase>(() => GetAllProductsUseCase(getIt()))
+    ..registerLazySingleton<AddAllProductsUseCase>(() => AddAllProductsUseCase(getIt()))
+    ..registerLazySingleton<SaveTemporaryProductUseCase>(() => SaveTemporaryProductUseCase(getIt()))
+    ..registerLazySingleton<GetTemporaryProductUseCase>(() => GetTemporaryProductUseCase(getIt()))
+    ..registerLazySingleton<RemoveTemporaryProductUseCase>(() => RemoveTemporaryProductUseCase(getIt()));
 }
 
 void _registerOrderUseCases() {
-  getIt.registerLazySingleton<GetOrdersUseCase>(() => GetOrdersUseCase(getIt()));
-  getIt.registerLazySingleton<GetOrderItemsUseCase>(() => GetOrderItemsUseCase(getIt()));
-  getIt.registerLazySingleton<GetNextOrderIdUseCase>(() => GetNextOrderIdUseCase(getIt()));
-  getIt.registerLazySingleton<GetNextOrderItemIdUseCase>(() => GetNextOrderItemIdUseCase(getIt()));
-  getIt.registerLazySingleton<AddOrderWithItemsUseCase>(() => AddOrderWithItemsUseCase(getIt()));
-  getIt.registerLazySingleton<UpdateOrderWithItemsUseCase>(() => UpdateOrderWithItemsUseCase(getIt()));
-  getIt.registerLazySingleton<RemoveOrderWithItemsUseCase>(() => RemoveOrderWithItemsUseCase(getIt()));
-  getIt.registerLazySingleton<GetAllOrdersWithItemsUseCase>(() => GetAllOrdersWithItemsUseCase(getIt()));
-  getIt.registerLazySingleton<AddAllOrdersWithItemsUseCase>(() => AddAllOrdersWithItemsUseCase(getIt()));
-  getIt.registerLazySingleton<SaveTemporaryOrderWithItemsUseCase>(() => SaveTemporaryOrderWithItemsUseCase(getIt()));
-  getIt.registerLazySingleton<GetTemporaryOrderWithItemsUseCase>(() => GetTemporaryOrderWithItemsUseCase(getIt()));
   getIt
-      .registerLazySingleton<RemoveTemporaryOrderWithItemsUseCase>(() => RemoveTemporaryOrderWithItemsUseCase(getIt()));
+    ..registerLazySingleton<GetOrdersUseCase>(() => GetOrdersUseCase(getIt()))
+    ..registerLazySingleton<GetOrderItemsUseCase>(() => GetOrderItemsUseCase(getIt()))
+    ..registerLazySingleton<GetNextOrderIdUseCase>(() => GetNextOrderIdUseCase(getIt()))
+    ..registerLazySingleton<GetNextOrderItemIdUseCase>(() => GetNextOrderItemIdUseCase(getIt()))
+    ..registerLazySingleton<AddOrderWithItemsUseCase>(() => AddOrderWithItemsUseCase(getIt()))
+    ..registerLazySingleton<UpdateOrderWithItemsUseCase>(() => UpdateOrderWithItemsUseCase(getIt()))
+    ..registerLazySingleton<RemoveOrderWithItemsUseCase>(() => RemoveOrderWithItemsUseCase(getIt()))
+    ..registerLazySingleton<GetAllOrdersWithItemsUseCase>(() => GetAllOrdersWithItemsUseCase(getIt()))
+    ..registerLazySingleton<AddAllOrdersWithItemsUseCase>(() => AddAllOrdersWithItemsUseCase(getIt()))
+    ..registerLazySingleton<SaveTemporaryOrderWithItemsUseCase>(() => SaveTemporaryOrderWithItemsUseCase(getIt()))
+    ..registerLazySingleton<GetTemporaryOrderWithItemsUseCase>(() => GetTemporaryOrderWithItemsUseCase(getIt()))
+    ..registerLazySingleton<RemoveTemporaryOrderWithItemsUseCase>(() => RemoveTemporaryOrderWithItemsUseCase(getIt()));
 }
 
 void _registerCategoryUseCases() {
-  getIt.registerLazySingleton<AddCategoryUseCase>(() => AddCategoryUseCase(getIt()));
-  getIt.registerLazySingleton<RemoveCategoryUseCase>(() => RemoveCategoryUseCase(getIt()));
-  getIt.registerLazySingleton<UpdateCategoryUseCase>(() => UpdateCategoryUseCase(getIt()));
-  getIt.registerLazySingleton<GetAllCategoriesUsecCase>(() => GetAllCategoriesUsecCase(getIt()));
-  getIt.registerLazySingleton<GetNextCategoryIdUseCase>(() => GetNextCategoryIdUseCase(getIt()));
-  getIt.registerLazySingleton<AddAllCategoriesUseCase>(() => AddAllCategoriesUseCase(getIt()));
+  getIt
+    ..registerLazySingleton<AddCategoryUseCase>(() => AddCategoryUseCase(getIt()))
+    ..registerLazySingleton<RemoveCategoryUseCase>(() => RemoveCategoryUseCase(getIt()))
+    ..registerLazySingleton<UpdateCategoryUseCase>(() => UpdateCategoryUseCase(getIt()))
+    ..registerLazySingleton<GetAllCategoriesUsecCase>(() => GetAllCategoriesUsecCase(getIt()))
+    ..registerLazySingleton<GetNextCategoryIdUseCase>(() => GetNextCategoryIdUseCase(getIt()))
+    ..registerLazySingleton<AddAllCategoriesUseCase>(() => AddAllCategoriesUseCase(getIt()));
 }
 
 void _registerReportUseCases() {
-  getIt.registerLazySingleton<GetDailyOrderCountUseCase>(() => GetDailyOrderCountUseCase(getIt()));
-  getIt.registerLazySingleton<GetDailyRevenueUseCase>(() => GetDailyRevenueUseCase(getIt()));
-  getIt.registerLazySingleton<GetFiveHighestSalesProductsUseCase>(() => GetFiveHighestSalesProductsUseCase(getIt()));
-  getIt.registerLazySingleton<GetFiveLowStockProductsUseCase>(() => GetFiveLowStockProductsUseCase(getIt()));
-  getIt.registerLazySingleton<GetDailyRevenueForMonth>(() => GetDailyRevenueForMonth(getIt()));
-  getIt.registerLazySingleton<GetThreeRecentOrdersUseCase>(() => GetThreeRecentOrdersUseCase(getIt()));
-  getIt.registerLazySingleton<GetSoldProductsWithQuantityUsecase>(() => GetSoldProductsWithQuantityUsecase(getIt()));
-  getIt.registerLazySingleton<GetRevenueUseCase>(() => GetRevenueUseCase(getIt()));
-  getIt.registerLazySingleton<GetProfitUseCase>(() => GetProfitUseCase(getIt()));
+  getIt
+    ..registerLazySingleton<GetDailyOrderCountUseCase>(() => GetDailyOrderCountUseCase(getIt()))
+    ..registerLazySingleton<GetDailyRevenueUseCase>(() => GetDailyRevenueUseCase(getIt()))
+    ..registerLazySingleton<GetFiveHighestSalesProductsUseCase>(() => GetFiveHighestSalesProductsUseCase(getIt()))
+    ..registerLazySingleton<GetFiveLowStockProductsUseCase>(() => GetFiveLowStockProductsUseCase(getIt()))
+    ..registerLazySingleton<GetDailyRevenueForMonth>(() => GetDailyRevenueForMonth(getIt()))
+    ..registerLazySingleton<GetThreeRecentOrdersUseCase>(() => GetThreeRecentOrdersUseCase(getIt()))
+    ..registerLazySingleton<GetSoldProductsWithQuantityUsecase>(() => GetSoldProductsWithQuantityUsecase(getIt()))
+    ..registerLazySingleton<GetRevenueUseCase>(() => GetRevenueUseCase(getIt()))
+    ..registerLazySingleton<GetProfitUseCase>(() => GetProfitUseCase(getIt()));
 }
 
 void _registerDatabaseUseCases() {
-  getIt.registerLazySingleton<LoadServerConfigurationUseCase>(() => LoadServerConfigurationUseCase(getIt()));
-  getIt.registerLazySingleton<SaveServerConfigurationUseCase>(() => SaveServerConfigurationUseCase(getIt()));
-  getIt.registerLazySingleton<LoadServerConnectionUsecase>(() => LoadServerConnectionUsecase(getIt()));
-  getIt.registerLazySingleton<ReplaceDatabaseUsecase>(() => ReplaceDatabaseUsecase(getIt()));
-  getIt.registerLazySingleton<ImportDataUseCase>(() => ImportDataUseCase(getIt()));
-  getIt.registerLazySingleton<DownloadTemplateUseCase>(() => DownloadTemplateUseCase(getIt()));
+  getIt
+    ..registerLazySingleton<LoadServerConfigurationUseCase>(() => LoadServerConfigurationUseCase(getIt()))
+    ..registerLazySingleton<SaveServerConfigurationUseCase>(() => SaveServerConfigurationUseCase(getIt()))
+    ..registerLazySingleton<LoadServerConnectionUsecase>(() => LoadServerConnectionUsecase(getIt()))
+    ..registerLazySingleton<ReplaceDatabaseUsecase>(() => ReplaceDatabaseUsecase(getIt()))
+    ..registerLazySingleton<ImportDataUseCase>(() => ImportDataUseCase(getIt()))
+    ..registerLazySingleton<DownloadTemplateUseCase>(() => DownloadTemplateUseCase(getIt()));
 }
 
 void _registerBackupRestoreUseCases() {
-  getIt.registerLazySingleton<BackupDatabaseUseCase>(() => BackupDatabaseUseCase(getIt()));
-  getIt.registerLazySingleton<RestoreDatabaseUseCase>(() => RestoreDatabaseUseCase(getIt()));
+  getIt
+    ..registerLazySingleton<BackupDatabaseUseCase>(() => BackupDatabaseUseCase(getIt()))
+    ..registerLazySingleton<RestoreDatabaseUseCase>(() => RestoreDatabaseUseCase(getIt()));
 }
 
 void _registerPrintUseCases() {
@@ -307,17 +317,19 @@ void _registerPrintUseCases() {
 }
 
 void _registerLicenseUseCases() {
-  getIt.registerLazySingleton<ActiveLicenseUseCase>(() => ActiveLicenseUseCase(getIt()));
-  getIt.registerLazySingleton<ActiveTrialLicenseUseCase>(() => ActiveTrialLicenseUseCase(getIt()));
-  getIt.registerLazySingleton<CanActiveTrialLicenseUseCase>(() => CanActiveTrialLicenseUseCase(getIt()));
-  getIt.registerLazySingleton<GetLicenseUseCase>(() => GetLicenseUseCase(getIt()));
+  getIt
+    ..registerLazySingleton<ActiveLicenseUseCase>(() => ActiveLicenseUseCase(getIt()))
+    ..registerLazySingleton<ActiveTrialLicenseUseCase>(() => ActiveTrialLicenseUseCase(getIt()))
+    ..registerLazySingleton<CanActiveTrialLicenseUseCase>(() => CanActiveTrialLicenseUseCase(getIt()))
+    ..registerLazySingleton<GetLicenseUseCase>(() => GetLicenseUseCase(getIt()));
 }
 
 void _registerLastViewUseCases() {
-  getIt.registerLazySingleton<GetLastViewUseCase>(() => GetLastViewUseCase(getIt()));
-  getIt.registerLazySingleton<GetSaveLastViewUsecase>(() => GetSaveLastViewUsecase(getIt()));
-  getIt.registerLazySingleton<SetLastViewUseCase>(() => SetLastViewUseCase(getIt()));
-  getIt.registerLazySingleton<SetSaveLastViewUseCase>(() => SetSaveLastViewUseCase(getIt()));
+  getIt
+    ..registerLazySingleton<GetLastViewUseCase>(() => GetLastViewUseCase(getIt()))
+    ..registerLazySingleton<GetSaveLastViewUsecase>(() => GetSaveLastViewUsecase(getIt()))
+    ..registerLazySingleton<SetLastViewUseCase>(() => SetLastViewUseCase(getIt()))
+    ..registerLazySingleton<SetSaveLastViewUseCase>(() => SetSaveLastViewUseCase(getIt()));
 }
 
 void _registerServices() {

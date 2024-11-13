@@ -4,9 +4,9 @@ import 'package:sales/domain/entities/order_item.dart';
 import 'package:sales/domain/repositories/order_item_repository.dart';
 
 class GetOrderItemsUseCase implements UseCase<List<OrderItem>, GetOrderItemsParams> {
-  final OrderItemRepository _repository;
 
   const GetOrderItemsUseCase(this._repository);
+  final OrderItemRepository _repository;
 
   @override
   Future<List<OrderItem>> call(GetOrderItemsParams params) {

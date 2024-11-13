@@ -4,6 +4,18 @@ import 'package:sales/domain/entities/product.dart';
 import 'package:sales/domain/entities/recent_orders_result.dart';
 
 class DashboardState with EquatableMixin {
+
+  DashboardState({
+    required this.reportDateTime, required this.tour, this.totalProductCount = 0,
+    this.fiveLowStockProducts = const [],
+    this.fiveHighestSalesProducts = const {},
+    this.dailyOrderCount = 0,
+    this.dailyRevenue = 0,
+    this.threeRecentOrders = const RecentOrdersResult(),
+    this.dailyRevenueForMonth = const [],
+    this.isLoading = true,
+    this.error = '',
+  });
   /// Tổng tất cả sản phẩm.
   final int totalProductCount;
 
@@ -35,20 +47,6 @@ class DashboardState with EquatableMixin {
   final String error;
 
   final FeaturesTourController tour;
-
-  DashboardState({
-    this.totalProductCount = 0,
-    this.fiveLowStockProducts = const [],
-    this.fiveHighestSalesProducts = const {},
-    this.dailyOrderCount = 0,
-    this.dailyRevenue = 0,
-    this.threeRecentOrders = const RecentOrdersResult(orderItems: {}, products: {}),
-    this.dailyRevenueForMonth = const [],
-    required this.reportDateTime,
-    this.isLoading = true,
-    this.error = '',
-    required this.tour,
-  });
 
   DashboardState copyWith({
     int? totalProductCount,

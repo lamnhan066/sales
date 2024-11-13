@@ -1,7 +1,7 @@
 import 'package:boxw/boxw.dart';
 import 'package:chart_sparkline/chart_sparkline.dart';
 import 'package:features_tour/features_tour.dart';
-import 'package:flutter/material.dart' hide DataTable, DataRow, DataColumn, DataCell;
+import 'package:flutter/material.dart' hide DataCell, DataColumn, DataRow, DataTable;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/core/constants/app_configs.dart';
@@ -57,7 +57,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
             Expanded(
               child: SingleChildScrollView(
                 child: ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: 700),
+                  constraints: const BoxConstraints(maxWidth: 700),
                   child: Column(
                     children: [
                       Row(
@@ -124,12 +124,12 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
             'Biểu đồ doanh thu theo ngày trong tháng @{month}'.trP(
               {'month': dashboardState.reportDateTime.tommyyyy()},
             ),
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
           BoxWRect(
             borderColor: Theme.of(context).colorScheme.surfaceContainerHighest,
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8),
               child: Sparkline(
                 data: dashboardState.dailyRevenueForMonth.map((e) => e.toDouble()).toList(),
                 gridLinesEnable: true,
@@ -141,7 +141,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                 ],
                 xLabelsStyle: TextStyle(
                   color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : Colors.black87,
-                  fontSize: 10.0,
+                  fontSize: 10,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -155,12 +155,12 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
   Card _buildThreeRecentOrdersDetails(Widget divider, DashboardState dashboardState) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(8),
         child: Column(
           children: [
             Text(
               'Chi tiết 3 đơn hàng gần nhất'.tr,
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
             ),
             divider,
             Builder(builder: (context) {
@@ -175,12 +175,12 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                     BoxWRect(
                       borderColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                       child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(8),
                         child: Column(
                           children: [
                             Text(
                               DateTimeUtils.formatDateTime(order.date),
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                              style: const TextStyle(fontWeight: FontWeight.bold),
                             ),
                             divider,
                             DataTable(
@@ -201,7 +201,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                     ),
                 ],
               );
-            }),
+            },),
           ],
         ),
       ),
@@ -242,14 +242,14 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     List<Product> products,
     List<OrderItem> orderItems,
   ) {
-    int total = 0;
+    var total = 0;
     for (final orderItem in orderItems) {
       total += orderItem.totalPrice;
     }
     return DataRow(
       cells: [
-        DataCell(Text('')),
-        DataCell(Text('Tổng cộng')),
+        const DataCell(Text('')),
+        const DataCell(Text('Tổng cộng')),
         DataCell(Text(total.toPriceDigit())),
       ],
     );
@@ -262,14 +262,13 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
       children: [
         Card(
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
                   'Top 5 sản phẩm bán chạy'.tr,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                 ),
                 divider,
                 DataTable(
@@ -277,7 +276,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                   dataRowMaxHeight: 68,
                   columnSpacing: 30,
                   horizontalMargin: 10,
-                  columns: [
+                  columns: const [
                     IntrinsicDataColumn(label: Text('Tên sản phẩm')),
                     DataColumn(numeric: true, label: Text('Số lượng')),
                   ],
@@ -286,7 +285,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                       DataRow(cells: [
                         DataCell(Text(product.key.name)),
                         DataCell(Text('${product.value}')),
-                      ]),
+                      ],),
                   ],
                 ),
               ],
@@ -295,14 +294,13 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
         ),
         Card(
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
                   'Top 5 sản phẩm sắp hết hàng'.tr,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                 ),
                 divider,
                 DataTable(
@@ -310,7 +308,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                   dataRowMaxHeight: 68,
                   columnSpacing: 30,
                   horizontalMargin: 10,
-                  columns: [
+                  columns: const [
                     IntrinsicDataColumn(label: Text('Tên sản phẩm')),
                     DataColumn(numeric: true, label: Text('Số lượng')),
                   ],
@@ -319,7 +317,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                       DataRow(cells: [
                         DataCell(Text(product.name)),
                         DataCell(Text('${product.count}')),
-                      ]),
+                      ],),
                   ],
                 ),
               ],
@@ -333,12 +331,12 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
   Card _buildDailyRevenue(Widget divider, DashboardState dashboardState) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(8),
         child: Column(
           children: [
             Text(
               'Tổng doanh thu trong ngày'.tr,
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
             ),
             divider,
             Text(
@@ -356,12 +354,12 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
   Card _buildDailyOrders(Widget divider, DashboardState dashboardState) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(8),
         child: Column(
           children: [
             Text(
               'Tổng số đơn hàng trong ngày'.tr,
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
             ),
             divider,
             Text(
@@ -377,12 +375,12 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
   Card _buildTotalProducts(Widget divider, DashboardState dashboardState) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(8),
         child: Column(
           children: [
             Text(
               'Tổng số sản phẩm'.tr,
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
             ),
             divider,
             Text(

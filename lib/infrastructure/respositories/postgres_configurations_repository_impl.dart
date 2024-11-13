@@ -3,9 +3,9 @@ import 'package:sales/domain/repositories/server_configurations_repository.dart'
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PostgresConfigurationsRepositoryImpl implements ServerConfigurationsRepository {
-  final SharedPreferences sharedPreferences;
 
   PostgresConfigurationsRepositoryImpl(this.sharedPreferences);
+  final SharedPreferences sharedPreferences;
 
   @override
   Future<ServerConfigurations> loadConfigurations() async {

@@ -2,17 +2,15 @@ import 'package:language_helper/language_helper.dart';
 import 'package:sales/core/utils/password_cryptor.dart';
 import 'package:sales/domain/entities/login_credentials.dart';
 import 'package:sales/domain/entities/user.dart';
+import 'package:sales/domain/repositories/auth_repository.dart';
 import 'package:sales/infrastructure/exceptions/credentials_exception.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../domain/repositories/auth_repository.dart';
-
 class LocalAuthRepositoryImpl implements AuthRepository {
+  LocalAuthRepositoryImpl(this.prefs);
   final SharedPreferences prefs;
 
   bool _isLoggedIn = false;
-
-  LocalAuthRepositoryImpl(this.prefs);
 
   @override
   Future<User> login(LoginCredentials credentials) async {
@@ -54,17 +52,14 @@ class LocalAuthRepositoryImpl implements AuthRepository {
       return null;
     }
 
-    var credentials = LoginCredentials.fromJson(prefs.getString('LoginCredentials')!);
+    final credentials = LoginCredentials.fromJson(prefs.getString('LoginCredentials')!);
     final decryptedPassword = PasswordCryptor.decryptPassword(credentials);
-    credentials = credentials.copyWith(password: decryptedPassword);
-
-    return credentials;
+    return credentials.copyWith(password: decryptedPassword);
   }
 
   Future<void> saveRememberedCredentials(LoginCredentials credentials) async {
     final encryptedPassword = PasswordCryptor.encryptPassword(credentials);
-    credentials = credentials.copyWith(password: encryptedPassword);
-    await prefs.setString('LoginCredentials', credentials.toJson());
+    await prefs.setString('LoginCredentials', credentials.copyWith(password: encryptedPassword).toJson());
   }
 
   Future<void> removeRememberedCredentials() async {

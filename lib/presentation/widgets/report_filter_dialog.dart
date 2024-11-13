@@ -7,9 +7,7 @@ import 'package:sales/domain/entities/report_date_range_type.dart';
 
 class ReportFilterDialog extends StatefulWidget {
   const ReportFilterDialog({
-    super.key,
-    required this.initialDateRange,
-    required this.onDateRangeChanged,
+    required this.initialDateRange, required this.onDateRangeChanged, super.key,
   });
 
   final Ranges<DateTime> initialDateRange;
@@ -134,8 +132,8 @@ class _ReportFilterDialogState extends State<ReportFilterDialog> {
                 icon: const Icon(Icons.calendar_month_rounded),
               ),
             ],
-          )
-        ]
+          ),
+        ],
       ],
     );
   }

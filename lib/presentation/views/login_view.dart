@@ -28,8 +28,10 @@ class _LoginViewState extends ConsumerState<LoginView> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      ref.read(settingsProvider.notifier).initialize();
-      ref.read(loginProvider.notifier).initialize();
+      await (
+        ref.read(settingsProvider.notifier).initialize(),
+        ref.read(loginProvider.notifier).initialize(),
+      ).wait;
     });
   }
 
@@ -62,12 +64,12 @@ class _LoginViewState extends ConsumerState<LoginView> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.all(12.0),
+                      padding: const EdgeInsets.all(12),
                       child: CircleAvatar(
                         radius: 120,
                         backgroundColor: Colors.white,
                         child: Padding(
-                          padding: const EdgeInsets.all(30.0),
+                          padding: const EdgeInsets.all(30),
                           child: Image.asset('assets/images/logo.png'),
                         ),
                       ),
@@ -93,13 +95,13 @@ class _LoginViewState extends ConsumerState<LoginView> {
                 ),
                 BoxWInput(
                   controller: usernameTextController,
-                  onChanged: (value) => loginNotifier.updateUsername(value),
+                  onChanged: loginNotifier.updateUsername,
                   title: 'Tên tài khoản'.tr,
                 ),
                 BoxWInput(
                   obscureText: true,
                   controller: passwordTextController,
-                  onChanged: (value) => loginNotifier.updatePassword(value),
+                  onChanged: loginNotifier.updatePassword,
                   title: 'Mật khẩu'.tr,
                 ),
                 if (loginState.error.isNotEmpty)
@@ -110,9 +112,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: GestureDetector(
-                    onTap: () {
-                      loginNotifier.toggleRememberMe();
-                    },
+                    onTap: loginNotifier.toggleRememberMe,
                     child: Row(
                       children: [
                         Checkbox(
@@ -125,7 +125,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(8),
                   child: SizedBox(
                     width: double.infinity,
                     child: FilledButton(
@@ -185,8 +185,8 @@ class _LoginViewState extends ConsumerState<LoginView> {
     LoginNotifier configureServerNotifier,
     ServerConfigurations settings,
   ) async {
-    ServerConfigurations newSettings = settings;
-    final result = await boxWDialog(
+    var newSettings = settings;
+    final result = await boxWDialog<bool>(
       context: context,
       title: 'Cấu Hình Máy Chủ'.tr,
       content: Column(
@@ -236,7 +236,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
       },
     );
 
-    if (result == true) {
+    if (result ?? false) {
       await configureServerNotifier.saveServerConfigurations(newSettings);
     }
   }
@@ -278,7 +278,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
     timer?.cancel();
     loginNotifier.closeAutoLoginDialog();
 
-    if (isAutomaticallyLogin == true) {
+    if (isAutomaticallyLogin ?? false) {
       final isLoggedIn = await loginNotifier.autoLogin();
       if (isLoggedIn) {
         _navigateToHomeView();
@@ -303,9 +303,11 @@ class _LoginViewState extends ConsumerState<LoginView> {
   Column _buildActiveLicense(LoginState state) {
     return Column(
       children: [
-        Text('Bạn đang sử dụng bản quyền. Còn @{day} ngày.'.trP({
-          'day': state.license.remainingDays,
-        })),
+        Text(
+          'Bạn đang sử dụng bản quyền. Còn @{day} ngày.'.trP({
+            'day': state.license.remainingDays,
+          }),
+        ),
         FilledButton(
           onPressed: null,
           child: Text('Kích Hoạt'.tr),
@@ -323,9 +325,11 @@ class _LoginViewState extends ConsumerState<LoginView> {
           )
         : Column(
             children: [
-              Text('Bạn đang sử dụng bản dùng thử. Còn @{day} ngày.'.trP({
-                'day': state.license.remainingDays,
-              })),
+              Text(
+                'Bạn đang sử dụng bản dùng thử. Còn @{day} ngày.'.trP({
+                  'day': state.license.remainingDays,
+                }),
+              ),
               FilledButton(
                 onPressed: null,
                 child: Text('Kích Hoạt'.tr),
@@ -357,7 +361,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(8),
           child: Text(
             'Bạn có 15 ngày để dùng thử.\nVui lòng nhấn Kích Hoạt để tiếp tục'.tr,
             textAlign: TextAlign.center,
@@ -382,44 +386,46 @@ class _LoginViewState extends ConsumerState<LoginView> {
     required LoginNotifier notifier,
     required LoginState state,
   }) {
-    String code = '';
-    return StatefulBuilder(builder: (context, setState) {
-      return Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              title,
-              textAlign: TextAlign.center,
+    var code = '';
+    return StatefulBuilder(
+      builder: (context, setState) {
+        return Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: Text(
+                title,
+                textAlign: TextAlign.center,
+              ),
             ),
-          ),
-          BoxWInput(
-            title: 'Mã kích hoạt'.tr,
-            onChanged: (value) {
-              setState(() => code = value);
-            },
-          ),
-          FilledButton(
-            onPressed: code.isEmpty
-                ? null
-                : () {
-                    notifier.active(code);
-                  },
-            child: Text('Kích Hoạt'.tr),
-          ),
-          Text(
-            state.licenseError,
-            style: const TextStyle(color: Colors.red),
-          ),
-        ],
-      );
-    });
+            BoxWInput(
+              title: 'Mã kích hoạt'.tr,
+              onChanged: (value) {
+                setState(() => code = value);
+              },
+            ),
+            FilledButton(
+              onPressed: code.isEmpty
+                  ? null
+                  : () {
+                      notifier.active(code);
+                    },
+              child: Text('Kích Hoạt'.tr),
+            ),
+            Text(
+              state.licenseError,
+              style: const TextStyle(color: Colors.red),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _navigateToHomeView() {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (_) => const HomeView()),
+      MaterialPageRoute<Widget>(builder: (_) => const HomeView()),
     );
   }
 }

@@ -13,7 +13,6 @@ import 'package:sales/presentation/widgets/image_dialog.dart';
 
 class ProductFormDialog extends StatefulWidget {
   const ProductFormDialog({
-    super.key,
     required this.notifier,
     required this.form,
     required this.categories,
@@ -21,6 +20,7 @@ class ProductFormDialog extends StatefulWidget {
     required this.tempProduct,
     required this.readOnly,
     required this.onChanged,
+    super.key,
   });
 
   final ProductsNotifier notifier;
@@ -302,7 +302,7 @@ class _ProductFormDialogState extends State<ProductFormDialog> {
                                       ),
                                       child: GestureDetector(
                                         onTap: () {
-                                          // TODO: Mở trình xem ảnh khi nhấn vào ảnh
+                                          // TODO(lamnhan066): Mở trình xem ảnh khi nhấn vào ảnh
                                         },
                                         child: widget.readOnly
                                             ? _ResolveImage(source: source)

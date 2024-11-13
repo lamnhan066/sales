@@ -68,7 +68,7 @@ class HomeView extends ConsumerWidget {
                     homeNotifier.logout();
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (_) => const LoginView()),
+                      MaterialPageRoute<Widget>(builder: (_) => const LoginView()),
                     );
                   },
                 ),
@@ -99,17 +99,18 @@ class HomeView extends ConsumerWidget {
         children: [
           if (bigScreen) buildDrawer(),
           Expanded(
-              child: Column(
-            children: [
-              AppBar(
-                title: Text(title(homeState.currentView)),
-                automaticallyImplyLeading: !bigScreen,
-              ),
-              Expanded(
-                child: buildContent(),
-              ),
-            ],
-          )),
+            child: Column(
+              children: [
+                AppBar(
+                  title: Text(title(homeState.currentView)),
+                  automaticallyImplyLeading: !bigScreen,
+                ),
+                Expanded(
+                  child: buildContent(),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );

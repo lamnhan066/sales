@@ -12,9 +12,6 @@ import 'package:sales/domain/services/database_service.dart';
 import 'package:sales/infrastructure/exceptions/server_exception.dart';
 
 class DatabaseServiceImpl implements DatabaseService {
-  final CoreDatabaseRepository _coreDatabase;
-  final DataSyncDatabaseRepository _dataSyncDatabase;
-  final FilePicker _filePicker;
 
   const DatabaseServiceImpl({
     required CoreDatabaseRepository coreDatabase,
@@ -23,6 +20,9 @@ class DatabaseServiceImpl implements DatabaseService {
   })  : _coreDatabase = coreDatabase,
         _dataSyncDatabase = dataSyncDatabase,
         _filePicker = filePicker;
+  final CoreDatabaseRepository _coreDatabase;
+  final DataSyncDatabaseRepository _dataSyncDatabase;
+  final FilePicker _filePicker;
 
   @override
   Future<void> initial() async {

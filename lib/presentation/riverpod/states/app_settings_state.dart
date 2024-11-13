@@ -4,15 +4,15 @@ import 'package:equatable/equatable.dart';
 import 'package:language_helper/language_helper.dart';
 
 class AppSettingsState with EquatableMixin {
-  final LanguageCodes currentlanguage;
-  final Set<LanguageCodes> supportedLanguages;
-  final Brightness brightness;
 
   const AppSettingsState({
     this.currentlanguage = LanguageCodes.vi,
     this.supportedLanguages = const {LanguageCodes.vi},
     this.brightness = Brightness.light,
   });
+  final LanguageCodes currentlanguage;
+  final Set<LanguageCodes> supportedLanguages;
+  final Brightness brightness;
 
   AppSettingsState copyWith({
     LanguageCodes? currentlanguage,

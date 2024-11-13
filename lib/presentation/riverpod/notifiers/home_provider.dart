@@ -18,10 +18,6 @@ final homeProvider = StateNotifierProvider<HomeNotifier, HomeState>((ref) {
 });
 
 class HomeNotifier extends StateNotifier<HomeState> {
-  final GetSaveLastViewUsecase _getSaveLastViewUsecase;
-  final GetLastViewUseCase _getLastViewUseCase;
-  final SetLastViewUseCase _setLastViewUseCase;
-  final LogoutUseCase _logoutUseCase;
 
   HomeNotifier({
     required GetSaveLastViewUsecase getSaveLastViewUsecase,
@@ -35,6 +31,10 @@ class HomeNotifier extends StateNotifier<HomeState> {
         super(HomeState(currentView: ViewsModel.dashboard, isLoading: true)) {
     _initialize();
   }
+  final GetSaveLastViewUsecase _getSaveLastViewUsecase;
+  final GetLastViewUseCase _getLastViewUseCase;
+  final SetLastViewUseCase _setLastViewUseCase;
+  final LogoutUseCase _logoutUseCase;
 
   Future<void> _initialize() async {
     if (await _getSaveLastViewUsecase(NoParams())) {

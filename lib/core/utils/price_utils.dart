@@ -13,7 +13,7 @@ class PriceUtils {
   }
 
   /// Tính toán tổng giá trị sản phẩm.
-  static calcTotalPrice(int importPrice, int unitSalePrice, int quantity) {
+  static int calcTotalPrice(int importPrice, int unitSalePrice, int quantity) {
     return unitSalePrice * quantity;
   }
 }

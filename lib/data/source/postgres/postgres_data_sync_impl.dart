@@ -16,7 +16,7 @@ class PostgresDataSyncImpl implements DataSyncDatabaseRepository {
   Future<void> merge(List<CategoryModel> categories, List<ProductModel> products) async {
     final tempCategories = await _category.getAllCategories();
     final cIndex = tempCategories.length;
-    for (int i = 0; i < categories.length; i++) {
+    for (var i = 0; i < categories.length; i++) {
       final c = categories.elementAt(i).copyWith(id: cIndex + i);
       tempCategories.add(c);
     }
@@ -24,7 +24,7 @@ class PostgresDataSyncImpl implements DataSyncDatabaseRepository {
 
     final tempProducts = await _product.getAllProducts();
     final pIndex = tempProducts.length;
-    for (int i = 0; i < products.length; i++) {
+    for (var i = 0; i < products.length; i++) {
       final newIndex = pIndex + i;
       final p = products.elementAt(i).copyWith(
             id: newIndex,

@@ -9,10 +9,10 @@ import 'package:language_helper/language_helper.dart';
 import 'package:sales/presentation/widgets/common_components.dart';
 
 Future<String> addImageDialog(BuildContext context) async {
-  String path = '';
+  var path = '';
   final pathStreamController = StreamController<bool>();
   final textController = TextEditingController();
-  final isAccepted = await boxWDialog(
+  final isAccepted = await boxWDialog<bool>(
     context: context,
     title: 'Thêm Ảnh'.tr,
     content: AddImageDialog(
@@ -37,7 +37,7 @@ Future<String> addImageDialog(BuildContext context) async {
 
   await pathStreamController.close();
 
-  if (isAccepted == true && path.isNotEmpty) {
+  if ((isAccepted ?? false) && path.isNotEmpty) {
     return path;
   }
 
@@ -58,9 +58,9 @@ Future<bool> removeImageDialog(BuildContext context) async {
 
 class AddImageDialog extends StatelessWidget {
   const AddImageDialog({
-    super.key,
     required this.pathController,
     required this.onChanged,
+    super.key,
   });
 
   final TextEditingController pathController;

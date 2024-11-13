@@ -13,7 +13,7 @@ class PostgresOrderItemImpl implements OrderItemDatabaseRepository {
 
   @override
   Future<void> addAllOrderItems(List<OrderItemModel> orderItems) async {
-    _connection.runTx((session) async {
+    await _connection.runTx((session) async {
       for (final item in orderItems) {
         await addOrderItem(item, session);
       }
@@ -38,7 +38,7 @@ class PostgresOrderItemImpl implements OrderItemDatabaseRepository {
 
   @override
   Future<List<OrderItemModel>> getAllOrderItems([Session? session]) async {
-    var sql = 'SELECT * FROM order_items';
+    const sql = 'SELECT * FROM order_items';
     final result = await (session ?? _connection).execute(sql);
     return result.map((e) => OrderItemModel.fromMap(e.toColumnMap())).toList();
   }
@@ -55,17 +55,17 @@ class PostgresOrderItemImpl implements OrderItemDatabaseRepository {
 
   @override
   Future<List<OrderItemModel>> getOrderItems([GetOrderItemsParams? params, Session? session]) async {
-    String sql = 'SELECT * FROM order_items WHERE oi_deleted = FALSE';
-    Map<String, dynamic> parameters = {};
+    var sql = 'SELECT * FROM order_items WHERE oi_deleted = FALSE';
+    final parameters = <String, dynamic>{};
     if (params != null) {
       if (params.orderId != null) {
         sql += ' AND oi_order_id = @orderId';
-        parameters['orderId'] = TypedValue(Type.integer, params.orderId!);
+        parameters['orderId'] = TypedValue(Type.integer, params.orderId);
       }
 
       if (params.productId != null) {
         sql += ' AND oi_product_id = @productId';
-        parameters['productId'] = TypedValue(Type.integer, params.productId!);
+        parameters['productId'] = TypedValue(Type.integer, params.productId);
       }
     }
     final result = await (session ?? _connection).execute(Sql.named(sql), parameters: parameters);
@@ -81,14 +81,17 @@ class PostgresOrderItemImpl implements OrderItemDatabaseRepository {
   Future<void> updateOrderItem(OrderItemModel orderItem, [Session? session]) async {
     const sql =
         'UPDATE order_items SET oi_quantity = @quantity, oi_unit_sale_price = @unitSalePrice, oi_total_price = @totalPrice, oi_product_id = @productId, oi_order_id = @orderId, oi_deleted = @deleted WHERE oi_id = @id';
-    await (session ?? _connection).execute(Sql.named(sql), parameters: {
-      'id': orderItem.id,
-      'quantity': orderItem.quantity,
-      'unitSalePrice': orderItem.unitSalePrice,
-      'totalPrice': orderItem.totalPrice,
-      'productId': orderItem.productId,
-      'orderId': orderItem.orderId,
-      'deleted': orderItem.deleted,
-    });
+    await (session ?? _connection).execute(
+      Sql.named(sql),
+      parameters: {
+        'id': orderItem.id,
+        'quantity': orderItem.quantity,
+        'unitSalePrice': orderItem.unitSalePrice,
+        'totalPrice': orderItem.totalPrice,
+        'productId': orderItem.productId,
+        'orderId': orderItem.orderId,
+        'deleted': orderItem.deleted,
+      },
+    );
   }
 }

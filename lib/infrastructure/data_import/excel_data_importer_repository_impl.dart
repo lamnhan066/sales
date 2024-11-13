@@ -17,7 +17,7 @@ class ExcelDataImporterImpl implements DataImporterRepository {
     final firstSheet = excel.tables.entries.first.value;
     final products = <Product>[];
     final categories = <Category>[];
-    for (int i = 1; i < firstSheet.maxRows; i++) {
+    for (var i = 1; i < firstSheet.maxRows; i++) {
       final row = firstSheet.rows.elementAt(i);
       final categoryName = '${row.elementAt(7)?.value}';
       Category category;
@@ -42,7 +42,6 @@ class ExcelDataImporterImpl implements DataImporterRepository {
           count: int.parse('${row.elementAt(5)?.value}'),
           description: '${row.elementAt(6)?.value}',
           categoryId: category.id,
-          deleted: false,
         ),
       );
     }

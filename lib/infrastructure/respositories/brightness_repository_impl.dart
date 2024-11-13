@@ -4,13 +4,12 @@ import 'package:sales/domain/repositories/brightness_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class BrightnessRepositoryImpl implements BrightnessRepository {
-  final SharedPreferences _prefs;
-
   const BrightnessRepositoryImpl(this._prefs);
+  final SharedPreferences _prefs;
 
   @override
   Future<Brightness> getCurrentBrightness() async {
-    return _prefs.getBool('AppBrightness') == true ? Brightness.dark : Brightness.light;
+    return (_prefs.getBool('AppBrightness') ?? false) ? Brightness.dark : Brightness.light;
   }
 
   @override

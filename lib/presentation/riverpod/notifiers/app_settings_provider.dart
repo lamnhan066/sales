@@ -28,7 +28,7 @@ class AppSettingsProvider extends StateNotifier<AppSettingsState> {
     required this.changeLanguageUseCase,
     required this.setBrightnessUseCase,
     required this.getCurrentBrightnessUseCase,
-  }) : super(AppSettingsState());
+  }) : super(const AppSettingsState());
 
   final GetCurrentLanguageUseCase getCurrentLanguageUseCase;
   final GetSupportedLanguagesUseCase getSupportedLanguagesUseCase;

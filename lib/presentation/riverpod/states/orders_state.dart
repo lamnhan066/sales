@@ -5,6 +5,20 @@ import 'package:sales/domain/entities/ranges.dart';
 import 'package:screenshot/screenshot.dart';
 
 class OrdersState with EquatableMixin {
+  OrdersState({
+    required this.tour,
+    required this.screenshot,
+    this.orders = const [],
+    this.perPage = 10,
+    this.page = 1,
+    this.totalPage = 0,
+    Ranges<DateTime?>? dateRange,
+    this.hasDraft = false,
+    this.isShownDraftDialog = false,
+    this.isLoading = false,
+    this.error = '',
+  }) : _dateRange = dateRange;
+
   /// Danh sách đơn hàng.
   final List<Order> orders;
 
@@ -29,20 +43,6 @@ class OrdersState with EquatableMixin {
 
   final bool isLoading;
   final String error;
-
-  OrdersState({
-    this.orders = const [],
-    this.perPage = 10,
-    this.page = 1,
-    this.totalPage = 0,
-    Ranges<DateTime?>? dateRange,
-    this.hasDraft = false,
-    this.isShownDraftDialog = false,
-    this.isLoading = false,
-    this.error = '',
-    required this.tour,
-    required this.screenshot,
-  }) : _dateRange = dateRange;
 
   OrdersState copyWith({
     List<Order>? orders,
@@ -74,6 +74,7 @@ class OrdersState with EquatableMixin {
 
   OrdersState updateDateRange(Ranges<DateTime?>? dateRange) {
     _dateRange = dateRange;
+    // ignore: avoid_returning_this
     return this;
   }
 

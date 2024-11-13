@@ -5,9 +5,9 @@ import 'package:sales/domain/repositories/auth_repository.dart';
 import 'package:sales/infrastructure/exceptions/credentials_exception.dart';
 
 class AutoLoginUseCase implements UseCase<User, NoParams> {
-  final AuthRepository _repository;
 
   const AutoLoginUseCase(this._repository);
+  final AuthRepository _repository;
 
   @override
   Future<User> call(NoParams _) async {

@@ -51,23 +51,6 @@ final productsProvider = StateNotifierProvider<ProductsNotifier, ProductsState>(
 });
 
 class ProductsNotifier extends StateNotifier<ProductsState> {
-  final GetAllCategoriesUsecCase _getAllCategoriesUseCase;
-  final GetProductsUseCase _getProductsUseCase;
-  final AddProductUseCase _addProductUseCase;
-  final UpdateProductUseCase _updateProductUseCase;
-  final RemoveProductUseCase _removeProductUseCase;
-  final GetNextCategoryIdUseCase _getNextCategoryIdUseCase;
-  final AddCategoryUseCase _addCategoryUseCase;
-  final RemoveCategoryUseCase _removeCategoryUseCase;
-  final UpdateCategoryUseCase _updateCategoryUseCase;
-  final GetNextProductIdAndSkuUseCase _getNextProductIdAndSkuUseCase;
-  final ReplaceDatabaseUsecase _replaceDatabaseUsecase;
-  final ImportDataUseCase _importDataUseCase;
-  final GetItemPerPageUseCase _getItemPerPageUseCase;
-  final SaveTemporaryProductUseCase _saveTemporaryProductUseCase;
-  final GetTemporaryProductUseCase _getTemporaryProductUseCase;
-  final RemoveTemporaryProductUseCase _removeTemporaryProductUseCase;
-  final DownloadTemplateUseCase _downloadTemplateUseCase;
 
   ProductsNotifier({
     required GetAllCategoriesUsecCase getAllCategoriesUsecCase,
@@ -105,11 +88,28 @@ class ProductsNotifier extends StateNotifier<ProductsState> {
         _removeTemporaryProductUseCase = removeTemporaryProductUseCase,
         _downloadTemplateUseCase = downloadTemplateUseCase,
         super(ProductsState(tour: FeaturesTourController('ProductsView')));
+  final GetAllCategoriesUsecCase _getAllCategoriesUseCase;
+  final GetProductsUseCase _getProductsUseCase;
+  final AddProductUseCase _addProductUseCase;
+  final UpdateProductUseCase _updateProductUseCase;
+  final RemoveProductUseCase _removeProductUseCase;
+  final GetNextCategoryIdUseCase _getNextCategoryIdUseCase;
+  final AddCategoryUseCase _addCategoryUseCase;
+  final RemoveCategoryUseCase _removeCategoryUseCase;
+  final UpdateCategoryUseCase _updateCategoryUseCase;
+  final GetNextProductIdAndSkuUseCase _getNextProductIdAndSkuUseCase;
+  final ReplaceDatabaseUsecase _replaceDatabaseUsecase;
+  final ImportDataUseCase _importDataUseCase;
+  final GetItemPerPageUseCase _getItemPerPageUseCase;
+  final SaveTemporaryProductUseCase _saveTemporaryProductUseCase;
+  final GetTemporaryProductUseCase _getTemporaryProductUseCase;
+  final RemoveTemporaryProductUseCase _removeTemporaryProductUseCase;
+  final DownloadTemplateUseCase _downloadTemplateUseCase;
 
   Future<void> loadInitialData() async {
-    int perPage = await _getItemPerPageUseCase(NoParams());
+    final perPage = await _getItemPerPageUseCase(NoParams());
     state = state.copyWith(perPage: perPage, isLoading: true);
-    String error = '';
+    var error = '';
     try {
       final categories = await _getAllCategoriesUseCase(NoParams());
       state = state.copyWith(categories: categories);
@@ -118,7 +118,7 @@ class ProductsNotifier extends StateNotifier<ProductsState> {
       error = e.message;
     }
     final draftProduct = await _getTemporaryProductUseCase(NoParams());
-    bool hasDraft = false;
+    var hasDraft = false;
     if (draftProduct != null) {
       hasDraft = true;
     }
@@ -235,7 +235,7 @@ class ProductsNotifier extends StateNotifier<ProductsState> {
   }
 
   Future<DataImportResult?> importData() async {
-    return await _importDataUseCase(NoParams());
+    return _importDataUseCase(NoParams());
   }
 
   Future<void> fetchCategories() async {
@@ -254,7 +254,7 @@ class ProductsNotifier extends StateNotifier<ProductsState> {
         orderBy: state.orderBy,
         priceRange: state.priceRange,
         categoryIdFilter: state.categoryIdFilter,
-      ));
+      ),);
 
       state = state.copyWith(
         products: productsResult.items,
