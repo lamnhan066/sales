@@ -1,5 +1,6 @@
 import 'package:boxw/boxw.dart';
 import 'package:flutter/material.dart';
+import 'package:language_helper/language_helper.dart';
 
 /// Nút tắt
 class CircleCloseButton extends StatelessWidget {
@@ -36,10 +37,12 @@ class CircleCloseButton extends StatelessWidget {
 Buttons confirmCancelButtons({
   required BuildContext context,
   Stream<bool>? enableConfirmStream,
-  String confirmText = 'Confirm',
-  String cancelText = 'Cancel',
+  String? confirmText,
+  String? cancelText,
   bool hideCancel = false,
 }) {
+  final confirm = confirmText ??= 'Xác nhận'.tr;
+  final cancel = cancelText ??= 'Trở về'.tr;
   return Buttons(
     axis: Axis.horizontal,
     buttons: [
@@ -55,7 +58,7 @@ Buttons confirmCancelButtons({
                   : () {
                       Navigator.pop(context, true);
                     },
-              child: Text(confirmText),
+              child: Text(confirm),
             ),
           );
         },
@@ -67,7 +70,7 @@ Buttons confirmCancelButtons({
             onPressed: () {
               Navigator.pop(context);
             },
-            child: Text(cancelText),
+            child: Text(cancel),
           ),
         ),
     ],

@@ -43,7 +43,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     }
 
     if (dashboardState.error.isNotEmpty) {
-      return Center(child: Text('Error: ${dashboardState.error}'));
+      return Center(child: Text('Error: @{error}'.trP({'error': dashboardState.error})));
     }
 
     const Widget divider = SizedBox(width: 100, child: Divider());
@@ -163,45 +163,47 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
             ),
             divider,
-            Builder(builder: (context) {
-              final orderItems = dashboardState.threeRecentOrders.orderItems;
-              final products = dashboardState.threeRecentOrders.products;
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  for (final order in orderItems.keys)
-                    BoxWRect(
-                      borderColor: Theme.of(context).colorScheme.surfaceContainerHighest,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: Column(
-                          children: [
-                            Text(
-                              DateTimeUtils.formatDateTime(order.date),
-                              style: const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            divider,
-                            DataTable(
-                              dataRowMinHeight: 68,
-                              dataRowMaxHeight: 68,
-                              columnSpacing: 30,
-                              horizontalMargin: 10,
-                              columns: _buildDataColumns(),
-                              rows: [
-                                for (int i = 0; i < orderItems[order]!.length; i++)
-                                  _buildDataRows(products[order]!, orderItems[order]!, i),
-                                _buildTotalPrice(products[order]!, orderItems[order]!),
-                              ],
-                            ),
-                          ],
+            Builder(
+              builder: (context) {
+                final orderItems = dashboardState.threeRecentOrders.orderItems;
+                final products = dashboardState.threeRecentOrders.products;
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    for (final order in orderItems.keys)
+                      BoxWRect(
+                        borderColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: Column(
+                            children: [
+                              Text(
+                                DateTimeUtils.formatDateTime(order.date),
+                                style: const TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              divider,
+                              DataTable(
+                                dataRowMinHeight: 68,
+                                dataRowMaxHeight: 68,
+                                columnSpacing: 30,
+                                horizontalMargin: 10,
+                                columns: _buildDataColumns(),
+                                rows: [
+                                  for (int i = 0; i < orderItems[order]!.length; i++)
+                                    _buildDataRows(products[order]!, orderItems[order]!, i),
+                                  _buildTotalPrice(products[order]!, orderItems[order]!),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                ],
-              );
-            },),
+                  ],
+                );
+              },
+            ),
           ],
         ),
       ),
@@ -248,8 +250,8 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     }
     return DataRow(
       cells: [
-        const DataCell(Text('')),
-        const DataCell(Text('Tổng cộng')),
+        DataCell.empty,
+        DataCell(Text('Tổng cộng'.tr)),
         DataCell(Text(total.toPriceDigit())),
       ],
     );
@@ -276,16 +278,18 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                   dataRowMaxHeight: 68,
                   columnSpacing: 30,
                   horizontalMargin: 10,
-                  columns: const [
-                    IntrinsicDataColumn(label: Text('Tên sản phẩm')),
-                    DataColumn(numeric: true, label: Text('Số lượng')),
+                  columns: [
+                    IntrinsicDataColumn(label: Text('Tên sản phẩm'.tr)),
+                    DataColumn(numeric: true, label: Text('Số lượng'.tr)),
                   ],
                   rows: [
                     for (final product in dashboardState.fiveHighestSalesProducts.entries)
-                      DataRow(cells: [
-                        DataCell(Text(product.key.name)),
-                        DataCell(Text('${product.value}')),
-                      ],),
+                      DataRow(
+                        cells: [
+                          DataCell(Text(product.key.name)),
+                          DataCell(Text('${product.value}')),
+                        ],
+                      ),
                   ],
                 ),
               ],
@@ -308,16 +312,18 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                   dataRowMaxHeight: 68,
                   columnSpacing: 30,
                   horizontalMargin: 10,
-                  columns: const [
-                    IntrinsicDataColumn(label: Text('Tên sản phẩm')),
-                    DataColumn(numeric: true, label: Text('Số lượng')),
+                  columns: [
+                    IntrinsicDataColumn(label: Text('Tên sản phẩm'.tr)),
+                    DataColumn(numeric: true, label: Text('Số lượng'.tr)),
                   ],
                   rows: [
                     for (final product in dashboardState.fiveLowStockProducts)
-                      DataRow(cells: [
-                        DataCell(Text(product.name)),
-                        DataCell(Text('${product.count}')),
-                      ],),
+                      DataRow(
+                        cells: [
+                          DataCell(Text(product.name)),
+                          DataCell(Text('${product.count}')),
+                        ],
+                      ),
                   ],
                 ),
               ],

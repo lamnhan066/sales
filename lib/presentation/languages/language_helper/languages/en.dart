@@ -129,6 +129,7 @@ final en = <String, dynamic>{
   /// Path: ./lib/presentation/views/products_view.dart
   ///===========================================================================
   '@path_./lib/presentation/views/products_view.dart': '',
+  'Error: @{error}': 'Lỗi: @{error}',
   'Nhấn vào đây để thêm sản phẩm mới': 'Click here to add a new product',
   'Thêm sản phẩm mới': 'Add new product',
   'Nhấn vào đây để tải xuống mẫu dữ liệu': 'Click here to download sample data',
@@ -223,6 +224,7 @@ final en = <String, dynamic>{
   'Nhớ thông tin của tôi': 'Remember me',
   'Đăng Nhập': 'Login',
   'Cấu hình máy chủ': 'Server Configuration',
+  'Phiên bản: @{version}': 'Version: @{version}',
   'Cấu Hình Máy Chủ': 'Server Configuration',
   'Lưu': 'Save',
   // 'Huỷ': 'Cancel',  // Duplicated
@@ -259,14 +261,20 @@ final en = <String, dynamic>{
   /// Path: ./lib/presentation/views/dashboard_view.dart
   ///===========================================================================
   '@path_./lib/presentation/views/dashboard_view.dart': '',
+  // 'Error: @{error}': 'Error: @{error}',  // Duplicated
   'Nhấn vào đây để chọn ngày thống kê ở trang tổng quan': 'Click here to select a date for statistics on the dashboard',
   'Biểu đồ doanh thu theo ngày trong tháng @{month}': 'Revenue chart by day in the month of @{month}',
   'Chi tiết 3 đơn hàng gần nhất': 'Details of the 3 most recent orders',
   'Tên Sản Phẩm': 'Product Name',
   'Số Lượng': 'Quantity',
   'Thành Tiền': 'Total Amount',
+  'Tổng cộng': 'Total',
   'Top 5 sản phẩm bán chạy': 'Top 5 Bestselling Products',
+  'Tên sản phẩm': 'Product Name',
+// 'Số lượng': 'Số lượng',  // Duplicated
   'Top 5 sản phẩm sắp hết hàng': 'Top 5 Products Nearly Out of Stock',
+// 'Tên sản phẩm': 'Tên sản phẩm',  // Duplicated
+// 'Số lượng': 'Số lượng',  // Duplicated
   'Tổng doanh thu trong ngày': 'Total revenue for the day',
   '@{dailyRevenue} đồng': '@{dailyRevenue} VND',
   'Tổng số đơn hàng trong ngày': 'Total number of orders for the day',
@@ -294,6 +302,7 @@ final en = <String, dynamic>{
   '@path_./lib/presentation/views/orders_view.dart': '',
   'Nhấn vào đây để thêm đơn hàng': 'Click here to add an order',
   'Nhấn vào đây để mở tuỳ chọn lọc đơn hàng': 'Click here to open order filter options',
+  // 'Error: @{error}': 'Error: @{error}',  // Duplicated
   // 'STT': 'No.',  // Duplicated
   'Ngày Giờ': 'Date & Time',
   'Trạng Thái': 'Status',
@@ -396,7 +405,7 @@ final en = <String, dynamic>{
   ///===========================================================================
   '@path_./lib/presentation/widgets/product_form_dialog.dart': '',
   'Mã sản phẩm': 'Product Code',
-  'Tên sản phẩm': 'Product Name',
+  // 'Tên sản phẩm': 'Product Name',
   // 'Giá nhập': 'Purchase Price',  // Duplicated
   'Vui lòng chỉ nhập số': 'Please enter numbers only',
   // 'Giá bán': 'Selling Price',  // Duplicated
@@ -432,6 +441,13 @@ final en = <String, dynamic>{
   'Chọn trang': 'Select page',
   // 'OK': 'OK',  // Duplicated
   // 'Huỷ': 'Cancel',  // Duplicated
+
+  ///===========================================================================
+  /// Path: ./lib/presentation/widgets/common_components.dart
+  ///===========================================================================
+  '@path_./lib/presentation/widgets/common_components.dart': '',
+  // 'Xác nhận': 'Xác nhận',  // Duplicated
+  // 'Trở về': 'Trở về',  // Duplicated
 
   ///===========================================================================
   /// Path: ./lib/presentation/widgets/product_dialog.dart

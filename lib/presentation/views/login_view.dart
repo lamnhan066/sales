@@ -168,7 +168,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
                     Padding(
                       padding: const EdgeInsets.only(right: 8),
                       child: Text(
-                        'Phiên bản: ${loginState.version.version}',
+                        'Phiên bản: @{version}'.trP({'version': loginState.version.version}),
                         style: const TextStyle(color: Colors.grey),
                       ),
                     ),

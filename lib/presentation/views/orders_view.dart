@@ -78,7 +78,7 @@ class _OrdersViewState extends ConsumerState<OrdersView> {
           if (ordersState.isLoading)
             const Center(child: CircularProgressIndicator())
           else if (ordersState.error.isNotEmpty)
-            Center(child: Text('Error: ${ordersState.error}'))
+            Center(child: Text('Error: @{error}'.trP({'error': ordersState.error})))
           else
             Expanded(
               child: SingleChildScrollView(

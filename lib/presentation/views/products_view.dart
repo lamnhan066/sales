@@ -64,7 +64,7 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
     }
 
     if (productState.error.isNotEmpty) {
-      return Center(child: Text('Error: ${productState.error}'));
+      return Center(child: Text('Error: @{error}'.trP({'error': productState.error})));
     }
 
     searchTextController.text = productState.searchText;
