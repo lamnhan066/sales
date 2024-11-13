@@ -6,7 +6,14 @@ import 'package:sales/data/models/order_item_model.dart';
 import 'package:sales/data/models/order_model.dart';
 import 'package:sales/data/models/order_with_items_model.dart';
 import 'package:sales/data/models/product_model.dart';
-import 'package:sales/data/repositories/database.dart';
+import 'package:sales/data/repositories/category_database_repository.dart';
+import 'package:sales/data/repositories/core_database_repository.dart';
+import 'package:sales/data/repositories/data_sync_database_repository.dart';
+import 'package:sales/data/repositories/order_database_repository.dart';
+import 'package:sales/data/repositories/order_item_database_repository.dart';
+import 'package:sales/data/repositories/order_with_items_database_repository.dart';
+import 'package:sales/data/repositories/product_database_repository.dart';
+import 'package:sales/data/repositories/report_database_repository.dart';
 import 'package:sales/domain/entities/get_order_items_params.dart';
 import 'package:sales/domain/entities/get_order_params.dart';
 import 'package:sales/domain/entities/get_product_params.dart';
@@ -15,7 +22,16 @@ import 'package:sales/domain/entities/product_order_by.dart';
 import 'package:sales/domain/entities/ranges.dart';
 import 'package:string_normalizer/string_normalizer.dart';
 
-abstract class MemoryStorage implements Database {}
+abstract class MemoryStorage
+    implements
+        CoreDatabaseRepository,
+        DataSyncDatabaseRepository,
+        ProductDatabaseRepository,
+        CategoryDatabaseRepository,
+        OrderDatabaseRepository,
+        OrderItemDatabaseRepository,
+        OrderWithItemsDatabaseRepository,
+        ReportDatabaseRepository {}
 
 class MemoryStorageImpl implements MemoryStorage {
   final _categories = <CategoryModel>[];
@@ -28,6 +44,14 @@ class MemoryStorageImpl implements MemoryStorage {
 
   @override
   Future<void> dispose() async {}
+
+  @override
+  Future<void> clear() async {
+    _categories.clear();
+    _products.clear();
+    _orderItems.clear();
+    _orders.clear();
+  }
 
   @override
   Future<void> addCategory(CategoryModel category) async {
@@ -129,8 +153,9 @@ class MemoryStorageImpl implements MemoryStorage {
   }
 
   @override
-  Future<void> addOrder(OrderModel order) async {
+  Future<int> addOrder(OrderModel order) async {
     _orders.add(order);
+    return order.id;
   }
 
   @override
