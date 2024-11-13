@@ -4,15 +4,22 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/core/usecases/usecase.dart';
-import 'package:sales/data/repositories/category_database.dart';
-import 'package:sales/data/repositories/core_database.dart';
-import 'package:sales/data/repositories/data_sync_database.dart';
-import 'package:sales/data/repositories/order_database.dart';
-import 'package:sales/data/repositories/order_item_database.dart';
-import 'package:sales/data/repositories/order_with_items_database.dart';
-import 'package:sales/data/repositories/product_database.dart';
-import 'package:sales/data/repositories/report_database.dart';
-import 'package:sales/data/source/local_postgres/local_postgres_storage.dart';
+import 'package:sales/data/repositories/category_database_repository.dart';
+import 'package:sales/data/repositories/core_database_repository.dart';
+import 'package:sales/data/repositories/data_sync_database_repository.dart';
+import 'package:sales/data/repositories/order_database_repository.dart';
+import 'package:sales/data/repositories/order_item_database_repository.dart';
+import 'package:sales/data/repositories/order_with_items_database_repository.dart';
+import 'package:sales/data/repositories/product_database_repository.dart';
+import 'package:sales/data/repositories/report_database_repository.dart';
+import 'package:sales/data/source/postgres/postgres_category_impl.dart';
+import 'package:sales/data/source/postgres/postgres_core_impl.dart';
+import 'package:sales/data/source/postgres/postgres_data_sync_impl.dart';
+import 'package:sales/data/source/postgres/postgres_order_impl.dart';
+import 'package:sales/data/source/postgres/postgres_order_item_impl.dart';
+import 'package:sales/data/source/postgres/postgres_order_with_items_impl.dart';
+import 'package:sales/data/source/postgres/postgres_product_impl.dart';
+import 'package:sales/data/source/postgres/postgres_report_impl.dart';
 import 'package:sales/domain/repositories/app_version_repository.dart';
 import 'package:sales/domain/repositories/auth_repository.dart';
 import 'package:sales/domain/repositories/backup_restore_repository.dart';
@@ -131,7 +138,7 @@ Future<void> setupDependencies() async {
   getIt.registerLazySingleton<FilePicker>(() => FilePicker.platform);
 
   _registerRepositories();
-  _registerDatabase();
+  _registerLocalPostgresDatabase();
   _registerUseCases();
   _registerServices();
 
@@ -195,17 +202,19 @@ void _registerRepositories() {
   getIt.registerLazySingleton<LastViewRepository>(() => LastViewRepositoryImpl(getIt()));
 }
 
-void _registerDatabase() {
-  final postgresDatabase = LocalPostgresStorageImpl(getIt());
-
-  getIt.registerLazySingleton<CoreDatabase>(() => postgresDatabase);
-  getIt.registerLazySingleton<CategoryDatabase>(() => postgresDatabase);
-  getIt.registerLazySingleton<DataSyncDatabase>(() => postgresDatabase);
-  getIt.registerLazySingleton<ProductDatabase>(() => postgresDatabase);
-  getIt.registerLazySingleton<OrderDatabase>(() => postgresDatabase);
-  getIt.registerLazySingleton<OrderItemDatabase>(() => postgresDatabase);
-  getIt.registerLazySingleton<OrderWithItemsDatabase>(() => postgresDatabase);
-  getIt.registerLazySingleton<ReportDatabase>(() => postgresDatabase);
+void _registerLocalPostgresDatabase() {
+  getIt.registerLazySingleton<CoreDatabaseRepository>(() => PostgresCoreImpl(getIt()));
+  getIt.registerLazySingleton<CategoryDatabaseRepository>(() => PostgresCategoryImpl(getIt()));
+  getIt.registerLazySingleton<DataSyncDatabaseRepository>(
+    () => PostgresDataSyncImpl(getIt(), getIt(), getIt()),
+  );
+  getIt.registerLazySingleton<ProductDatabaseRepository>(() => PostgresProductImpl(getIt()));
+  getIt.registerLazySingleton<OrderDatabaseRepository>(() => PostgresOrderImpl(getIt()));
+  getIt.registerLazySingleton<OrderItemDatabaseRepository>(() => PostgresOrderItemImpl(getIt()));
+  getIt.registerLazySingleton<OrderWithItemsDatabaseRepository>(
+    () => PostgresOrderWithItemsImpl(getIt(), getIt(), getIt(), getIt()),
+  );
+  getIt.registerLazySingleton<ReportDatabaseRepository>(() => PostgresReportImpl(getIt(), getIt(), getIt()));
 }
 
 void _registerAppUseCases() {
