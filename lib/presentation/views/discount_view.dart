@@ -26,6 +26,7 @@ class _DiscountViewState extends ConsumerState<DiscountView> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(discountProvider.notifier).initialize();
+      ref.read(discountProvider).tour.start(context);
     });
   }
 
@@ -148,8 +149,8 @@ class _DiscountViewState extends ConsumerState<DiscountView> {
                   FeaturesTour(
                     enabled: index == 0,
                     controller: state.tour,
-                    index: 3,
-                    introduce: Text('Nhấn vào đây để xem chi tiết đơn hàng'.tr),
+                    index: 2,
+                    introduce: Text('Nhấn vào đây để chép mã giảm giá'.tr),
                     child: IconButton(
                       onPressed: () {
                         copyDiscount(context, notifier, discount);
@@ -160,8 +161,8 @@ class _DiscountViewState extends ConsumerState<DiscountView> {
                   FeaturesTour(
                     enabled: index == 0,
                     controller: state.tour,
-                    index: 5,
-                    introduce: Text('Nhấn vào đây để sao chép chi tiết đơn hàng'.tr),
+                    index: 3,
+                    introduce: Text('Nhấn vào đây để xoá mã giảm giá'.tr),
                     child: IconButton(
                       onPressed: () {
                         removeDiscount(context, notifier, discount);

@@ -310,8 +310,8 @@ final en = <String, dynamic>{
   // 'Tối đa': 'Tối đa',  // Duplicated
   // 'Hành động': 'Action',  // Duplicated
   // 'Không': 'No',  // Duplicated
-  'Nhấn vào đây để xem chi tiết đơn hàng': 'Tap here to view order details',
-  'Nhấn vào đây để sao chép chi tiết đơn hàng': 'Tap here to copy order details',
+  'Nhấn vào đây để chép mã giảm giá': 'Nhấn vào đây để chép mã giảm giá',
+  'Nhấn vào đây để xoá mã giảm giá': 'Nhấn vào đây để xoá mã giảm giá',
   'Đã sao chép mã: @{code}': 'Code copied: @{code}',
   // 'Xác nhận': 'Confirm',  // Duplicated
   'Bạn có chắc muốn xoá mã giảm giá @{code} không?': 'Are you sure you want to delete the discount code @{code}?',
@@ -329,9 +329,9 @@ final en = <String, dynamic>{
   'Ngày Giờ': 'Date & Time',
   'Trạng Thái': 'Status',
   // 'Hành động': 'Action',  // Duplicated
-  // 'Nhấn vào đây để xem chi tiết đơn hàng': 'Click here to view order details',
+  'Nhấn vào đây để xem chi tiết đơn hàng': 'Click here to view order details',
   'Nhấn vào đây để cập nhật chi tiết đơn hàng': 'Click here to update order details',
-  // 'Nhấn vào đây để sao chép chi tiết đơn hàng': 'Click here to duplicate order details',
+  'Nhấn vào đây để sao chép chi tiết đơn hàng': 'Click here to duplicate order details',
   'Nhấn vào đây để xoá đơn hàng': 'Click here to delete the order',
   // 'Xác nhận': 'Confirm',  // Duplicated
   'Bạn có chắc muốn xoá đơn này không?': 'Are you sure you want to delete this order?',
@@ -352,7 +352,11 @@ final en = <String, dynamic>{
   '@path_./lib/presentation/views/report_view.dart': '',
   'Nhấn vào đây để hiển thị tuỳ chọn bộ lọc cho báo cáo': 'Click here to display filter options for the report',
   'Sản phẩm và số lượng bán tương ứng:': 'Products and corresponding sales quantities:',
-  'Doanh thu và lợi nhuận:': 'Revenue and profit:',
+  // 'Tên Sản Phẩm': 'Product Name',  // Duplicated
+  // 'Số Lượng': 'Quantity',  // Duplicated
+  'Doanh thu và lợi nhuận:': 'Revenue and Profit:',
+  'Doanh thu': 'Revenue',
+  'Lợi nhuận': 'Profit',
   'Doanh thu: @{price}': 'Revenue: @{price}',
   'Lợi nhuận: @{price}': 'Profit: @{price}',
   // 'Bộ lọc': 'Filter',  // Duplicated
