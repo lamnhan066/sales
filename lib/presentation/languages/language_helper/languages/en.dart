@@ -109,6 +109,7 @@ final en = <String, dynamic>{
   'Chọn vị trí lưu và lưu bản sao lưu...': 'Select the save location and save the backup...',
   'Sao lưu đã hoàn tất tại': 'Backup completed at',
   'Đang lấy dữ liệu đã sao lưu...': 'Retrieving backed-up data...',
+  'Xoá tất cả dữ liệu hiện tại...': 'Delete all current data...',
   'Đang tiến hành khôi phục Loại Hàng...': 'Restoring Categories...',
   'Đang tiến hành khôi phục Sản Phẩm...': 'Restoring Products...',
   'Đang tiến hành khôi phục Đơn Hàng và Chi Tiết Đơn hàng...': 'Restoring Orders and Order Details...',
