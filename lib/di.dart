@@ -69,6 +69,7 @@ import 'package:sales/domain/usecases/data_services/download_template_usecase.da
 import 'package:sales/domain/usecases/data_services/import_data_usecase.dart';
 import 'package:sales/domain/usecases/data_services/load_server_configuration_usecase.dart';
 import 'package:sales/domain/usecases/data_services/load_server_connection_usecase.dart';
+import 'package:sales/domain/usecases/data_services/remove_all_database_usecase.dart';
 import 'package:sales/domain/usecases/data_services/replace_database_usecase.dart';
 import 'package:sales/domain/usecases/data_services/save_server_configuration_usecase.dart';
 import 'package:sales/domain/usecases/discount/add_all_discounts_usecase.dart';
@@ -312,6 +313,7 @@ void _registerReportUseCases() {
 
 void _registerDatabaseUseCases() {
   getIt
+    ..registerLazySingleton(() => RemoveAllDatabaseUseCase(getIt()))
     ..registerLazySingleton<LoadServerConfigurationUseCase>(() => LoadServerConfigurationUseCase(getIt()))
     ..registerLazySingleton<SaveServerConfigurationUseCase>(() => SaveServerConfigurationUseCase(getIt()))
     ..registerLazySingleton<LoadServerConnectionUsecase>(() => LoadServerConnectionUsecase(getIt()))
