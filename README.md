@@ -5,6 +5,10 @@
 
 ## Các Chức Năng Đã Thực Hiện
 
+### Mã nguồn
+
+- [Github](https://github.com/lamnhan066/sales)
+
 ### Các Chức Năng Cơ Sở
 
 1. Trang Đăng nhập (Login):
