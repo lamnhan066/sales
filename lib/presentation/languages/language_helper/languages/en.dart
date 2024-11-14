@@ -112,6 +112,7 @@ final en = <String, dynamic>{
   'Đang tiến hành khôi phục Loại Hàng...': 'Restoring Categories...',
   'Đang tiến hành khôi phục Sản Phẩm...': 'Restoring Products...',
   'Đang tiến hành khôi phục Đơn Hàng và Chi Tiết Đơn hàng...': 'Restoring Orders and Order Details...',
+  'Đang tiếm hành khôi phục Khuyến Mãi': 'Restoring Promotion in Progress',
   'Khôi phục đã hoàn tất': 'Restore completed',
 
   ///===========================================================================
@@ -123,6 +124,7 @@ final en = <String, dynamic>{
   'Sản Phẩm': 'Products',
   'Báo Cáo': 'Reports',
   'Cài Đặt': 'Settings',
+  'Khuyến Mãi': 'Promotion',
   'Đăng Xuất': 'Logout',
 
   ///===========================================================================
@@ -297,6 +299,25 @@ final en = <String, dynamic>{
   ),
 
   ///===========================================================================
+  /// Path: ./lib/presentation/views/discount_view.dart
+  ///===========================================================================
+  '@path_./lib/presentation/views/discount_view.dart': '',
+  'Nhấn vào đây để thêm mã giảm giá': 'Tap here to add a discount code',
+  // 'STT': 'STT',  // Duplicated
+  'Mã': 'Code',
+  'Phần trăm': 'Percentage',
+  // 'Tối đa': 'Tối đa',  // Duplicated
+  // 'Hành động': 'Action',  // Duplicated
+  // 'Không': 'No',  // Duplicated
+  'Nhấn vào đây để xem chi tiết đơn hàng': 'Tap here to view order details',
+  'Nhấn vào đây để sao chép chi tiết đơn hàng': 'Tap here to copy order details',
+  'Đã sao chép mã: @{code}': 'Code copied: @{code}',
+  // 'Xác nhận': 'Confirm',  // Duplicated
+  'Bạn có chắc muốn xoá mã giảm giá @{code} không?': 'Are you sure you want to delete the discount code @{code}?',
+  // 'Đồng ý': 'Agree',  // Duplicated
+  // 'Huỷ': 'Cancel',  // Duplicated
+
+  ///===========================================================================
   /// Path: ./lib/presentation/views/orders_view.dart
   ///===========================================================================
   '@path_./lib/presentation/views/orders_view.dart': '',
@@ -307,9 +328,9 @@ final en = <String, dynamic>{
   'Ngày Giờ': 'Date & Time',
   'Trạng Thái': 'Status',
   // 'Hành động': 'Action',  // Duplicated
-  'Nhấn vào đây để xem chi tiết đơn hàng': 'Click here to view order details',
+  // 'Nhấn vào đây để xem chi tiết đơn hàng': 'Click here to view order details',
   'Nhấn vào đây để cập nhật chi tiết đơn hàng': 'Click here to update order details',
-  'Nhấn vào đây để sao chép chi tiết đơn hàng': 'Click here to duplicate order details',
+  // 'Nhấn vào đây để sao chép chi tiết đơn hàng': 'Click here to duplicate order details',
   'Nhấn vào đây để xoá đơn hàng': 'Click here to delete the order',
   // 'Xác nhận': 'Confirm',  // Duplicated
   'Bạn có chắc muốn xoá đơn này không?': 'Are you sure you want to delete this order?',
@@ -375,6 +396,21 @@ final en = <String, dynamic>{
   // 'Huỷ': 'Cancel',  // Duplicated
 
   ///===========================================================================
+  /// Path: ./lib/presentation/widgets/discount_dialogs.dart
+  ///===========================================================================
+  '@path_./lib/presentation/widgets/discount_dialogs.dart': '',
+  'Vui lòng chỉ nhập số': 'Please enter only numbers',
+  'Số phải lớn hơn 0': 'The number must be greater than 0',
+  'Số phải <= 100': 'The number must be <= 100',
+  // 'Vui lòng chỉ nhập số': 'Please enter only numbers',  // Duplicated
+  'Thêm Mã Giảm Giá': 'Add Discount Code',
+  'Số % giảm (0 - 100)': 'Discount percentage (0 - 100)',
+  'Số lượng mã': 'Number of codes',
+  'Giá giảm tối đa': 'Maximum discount amount',
+  'Không giới hạn giá giảm': 'No discount limit',
+  // 'Thêm': 'Add',  // Duplicated
+
+  ///===========================================================================
   /// Path: ./lib/presentation/widgets/order_filter_dialog.dart
   ///===========================================================================
   '@path_./lib/presentation/widgets/order_filter_dialog.dart': '',
@@ -387,6 +423,7 @@ final en = <String, dynamic>{
   ///===========================================================================
   '@path_./lib/presentation/widgets/order_form_dialog.dart': '',
   'Chọn Sản Phẩm': 'Select Product',
+  'Mã đã nhập không tồn tại hoặc đã được sử dụng': 'The entered code does not exist or has already been used',
   'Có sản phẩm không đủ số lượng trong kho nên không thể Sao chép.\n'
       'Vui lòng cập nhật thêm sản phẩm để tiếp tục!': 'Some products do not have enough stock to duplicate.\n'
       'Please update the product stock to continue!',
@@ -399,6 +436,12 @@ final en = <String, dynamic>{
   'Đơn Giá': 'Unit Price',
   // 'Thành Tiền': 'Total Price',
   'Hành Động': 'Action',
+  'Giảm giá': 'Giảm giá',
+  // 'Tối đa': 'Tối đa',  // Duplicated
+  // 'Giảm giá': 'Giảm giá',  // Duplicated
+  'Tổng': 'Tổng',
+  'Mã Giảm Giá': 'Mã Giảm Giá',
+  'Kiểm Tra': 'Kiểm Tra',
 
   ///===========================================================================
   /// Path: ./lib/presentation/widgets/product_form_dialog.dart
@@ -407,7 +450,7 @@ final en = <String, dynamic>{
   'Mã sản phẩm': 'Product Code',
   // 'Tên sản phẩm': 'Product Name',
   // 'Giá nhập': 'Purchase Price',  // Duplicated
-  'Vui lòng chỉ nhập số': 'Please enter numbers only',
+  // 'Vui lòng chỉ nhập số': 'Please enter numbers only',
   // 'Giá bán': 'Selling Price',  // Duplicated
   // 'Vui lòng chỉ nhập số': 'Please enter numbers only',  // Duplicated
   // 'Số lượng': 'Quantity',  // Duplicated
