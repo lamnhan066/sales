@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/core/extensions/data_time_extensions.dart';
 import 'package:sales/core/extensions/price_extensions.dart';
+import 'package:sales/domain/entities/product.dart';
 import 'package:sales/domain/entities/ranges.dart';
 import 'package:sales/presentation/riverpod/notifiers/report_provider.dart';
 import 'package:sales/presentation/riverpod/states/report_state.dart';
@@ -86,13 +87,39 @@ class _ReportViewState extends ConsumerState<ReportView> {
           ),
         ),
         Expanded(
-          child: ListView.builder(
-            itemCount: data.length,
-            itemBuilder: (context, index) {
-              final entry = data.elementAt(index);
-              return Center(child: Text('${entry.key.name} - ${entry.value}'));
-            },
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 400),
+            child: DataTable(
+              dataRowMinHeight: 68,
+              dataRowMaxHeight: 68,
+              columnSpacing: 30,
+              horizontalMargin: 10,
+              columns: _buildDataColumns(),
+              rows: [
+                for (int i = 0; i < data.length; i++) _buildDataRows(data.elementAt(i)),
+              ],
+            ),
           ),
+        ),
+      ],
+    );
+  }
+
+  List<DataColumn> _buildDataColumns() {
+    return <DataColumn>[
+      DataColumn(label: Text('Tên Sản Phẩm'.tr)),
+      DataColumn(numeric: true, label: Text('Số Lượng'.tr)),
+    ];
+  }
+
+  DataRow _buildDataRows(MapEntry<Product, int> element) {
+    return DataRow(
+      cells: [
+        DataCell(
+          Text(element.key.name),
+        ),
+        DataCell(
+          Text('${element.value}'),
         ),
       ],
     );
@@ -108,19 +135,32 @@ class _ReportViewState extends ConsumerState<ReportView> {
             fontSize: 20,
           ),
         ),
+        const SizedBox(height: 16),
         Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                'Doanh thu: @{price}'.trP({
-                  'price': state.revenue.toPriceDigit(),
-                }),
+              Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(
+                      text: '${'Doanh thu'.tr}: ',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    TextSpan(text: state.revenue.toPriceDigit()),
+                  ],
+                ),
               ),
-              Text(
-                'Lợi nhuận: @{price}'.trP({
-                  'price': state.profit.toPriceDigit(),
-                }),
+              Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(
+                      text: '${'Lợi nhuận'.tr}: ',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    TextSpan(text: state.profit.toPriceDigit()),
+                  ],
+                ),
               ),
             ],
           ),
