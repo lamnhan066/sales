@@ -15,11 +15,11 @@ class BackupData {
 
   factory BackupData.fromMap(Map<String, dynamic> map) {
     return BackupData(
-      categories: List<Category>.from(map['categories']!.map(Category.fromMap)),
-      products: List<Product>.from(map['products']?.map(Product.fromMap)),
+      categories: List<Category>.from(map['categories']!.map((x) => Category.fromMap(x))),
+      products: List<Product>.from(map['products']?.map((x) => Product.fromMap(x))),
       orderWithItems:
           List<OrderWithItemsParams>.from(map['orderWithItems']?.map((x) => OrderWithItemsParams.fromMap(x))),
-      discounts: List<Discount>.from(map['discounts']?.map(Discount.fromMap)),
+      discounts: List<Discount>.from(map['discounts']?.map((x) => Discount.fromMap(x))),
     );
   }
 
