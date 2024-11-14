@@ -78,6 +78,7 @@ import 'package:sales/domain/usecases/discount/get_all_available_discounts_useca
 import 'package:sales/domain/usecases/discount/get_all_discounts_usecase.dart';
 import 'package:sales/domain/usecases/discount/get_discount_by_code_usecase.dart';
 import 'package:sales/domain/usecases/discount/get_discounts_by_order_id_usecase.dart';
+import 'package:sales/domain/usecases/discount/remove_discount_usecase.dart';
 import 'package:sales/domain/usecases/discount/update_discount_usecase.dart';
 import 'package:sales/domain/usecases/last_view/get_last_view_usecase.dart';
 import 'package:sales/domain/usecases/last_view/get_save_last_view_usecase.dart';
@@ -356,7 +357,8 @@ void _registerDiscountUseCases() {
     ..registerLazySingleton(() => GetDiscountsByOrderIdUseCase(getIt()))
     ..registerLazySingleton(() => GetAllAvailableDiscountsUseCase(getIt()))
     ..registerLazySingleton(() => GetAllDiscountsUseCase(getIt()))
-    ..registerLazySingleton(() => AddAllDiscountsUseCase(getIt()));
+    ..registerLazySingleton(() => AddAllDiscountsUseCase(getIt()))
+    ..registerLazySingleton(() => RemoveDiscountUseCase(getIt()));
 }
 
 void _registerServices() {
