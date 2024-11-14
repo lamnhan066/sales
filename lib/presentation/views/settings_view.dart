@@ -144,7 +144,11 @@ class SettingsView extends ConsumerWidget {
             ],
           ),
         ),
-        if (state.backupRestoreStatus.isNotEmpty) Text(state.backupRestoreStatus),
+        if (state.backupRestoreStatus.isNotEmpty)
+          Text(
+            state.backupRestoreStatus,
+            textAlign: TextAlign.center,
+          ),
       ],
     );
   }
