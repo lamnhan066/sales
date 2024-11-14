@@ -116,3 +116,4 @@
 - CSDL:
   - Sử dụng Postgres.app để quản lý server.
   - Sử dụng pgAdmin 4 để quản lý dữ liệu.
+- Sử dụng Git và Github để quản lý và lưu trữ mã nguồn.
