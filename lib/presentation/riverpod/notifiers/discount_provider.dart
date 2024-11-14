@@ -10,6 +10,7 @@ import 'package:sales/domain/usecases/app/get_item_per_page_usecase.dart';
 import 'package:sales/domain/usecases/discount/add_discount_usecase.dart';
 import 'package:sales/domain/usecases/discount/get_all_available_discounts_usecase.dart';
 import 'package:sales/domain/usecases/discount/get_discount_by_code_usecase.dart';
+import 'package:sales/domain/usecases/discount/remove_discount_usecase.dart';
 import 'package:sales/domain/usecases/discount/update_discount_usecase.dart';
 import 'package:sales/presentation/riverpod/states/discount_state.dart';
 
@@ -20,6 +21,7 @@ final discountProvider = StateNotifierProvider<DiscountNotifier, DiscountState>(
     addDiscountUseCase: getIt(),
     updateDiscountUseCase: getIt(),
     getItemPerPageUseCase: getIt(),
+    removeDiscountUseCase: getIt(),
   );
 });
 
@@ -30,6 +32,7 @@ class DiscountNotifier extends StateNotifier<DiscountState> {
     required this.addDiscountUseCase,
     required this.updateDiscountUseCase,
     required this.getItemPerPageUseCase,
+    required this.removeDiscountUseCase,
   }) : super(DiscountState(tour: FeaturesTourController('DiscountView')));
 
   final GetAllAvailableDiscountsUseCase getAllAvailableDiscountsUseCase;
@@ -37,6 +40,7 @@ class DiscountNotifier extends StateNotifier<DiscountState> {
   final AddDiscountUseCase addDiscountUseCase;
   final UpdateDiscountUseCase updateDiscountUseCase;
   final GetItemPerPageUseCase getItemPerPageUseCase;
+  final RemoveDiscountUseCase removeDiscountUseCase;
 
   Future<void> initialize() async {
     state = state.copyWith(isLoading: true);
@@ -88,12 +92,15 @@ class DiscountNotifier extends StateNotifier<DiscountState> {
 
   Future<void> addDiscountPercent(AddDiscountParams params) async {
     await addDiscountUseCase(params);
-    await fetch();
+    await fetch(resetPage: true);
   }
 
   Future<void> copyDiscount(Discount discount) async {
     await Clipboard.setData(ClipboardData(text: discount.code));
   }
 
-  Future<void> removeDiscount(Discount discount) async {}
+  Future<void> removeDiscount(Discount discount) async {
+    await removeDiscountUseCase(discount);
+    await fetch();
+  }
 }
