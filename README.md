@@ -3,6 +3,8 @@
 - Họ và tên: Lâm Thành Nhân
 - MSSV: 22880253
 
+- Tự chấm điểm: 10
+
 ## Các Chức Năng Đã Thực Hiện
 
 ### Mã nguồn
@@ -83,7 +85,8 @@
 
 ### Các Chức Năng Tự Chọn
 
-- Auto save khi tạo đơn hàng, thêm mới sản phẩm (0.25): Khi người dùng mở trang đơn hàng và sản phẩm thì có 1 thông báo hiện lên nếu có đơn hàng nháp để người dùng tiếp tục tạo đơn hoặc huỷ đơn nháp.
+- Auto save khi tạo đơn hàng, thêm mới sản phẩm (0.25):
+  - Khi người dùng mở trang đơn hàng và sản phẩm thì có 1 thông báo hiện lên nếu có đơn hàng nháp để người dùng tiếp tục tạo đơn hoặc huỷ đơn nháp.
 - Tự động thay đổi sắp xếp hợp lí các thành phần theo độ rộng màn hình (responsive layout) (0.5 điểm)
 - Bổ sung khuyến mãi giảm giá (1 điểm):
   - Khuyến mãi sẽ ở dưới dạng phần trăm giảm và có thể xác định số tiền giảm tối đa.
