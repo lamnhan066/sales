@@ -271,13 +271,13 @@ final en = <String, dynamic>{
   'Tổng cộng': 'Total',
   'Top 5 sản phẩm bán chạy': 'Top 5 Bestselling Products',
   'Tên sản phẩm': 'Product Name',
-// 'Số lượng': 'Số lượng',  // Duplicated
+  // 'Số lượng': 'Số lượng',  // Duplicated
   'Top 5 sản phẩm sắp hết hàng': 'Top 5 Products Nearly Out of Stock',
-// 'Tên sản phẩm': 'Tên sản phẩm',  // Duplicated
-// 'Số lượng': 'Số lượng',  // Duplicated
-  'Tổng doanh thu trong ngày': 'Total revenue for the day',
+  // 'Tên sản phẩm': 'Tên sản phẩm',  // Duplicated
+  // 'Số lượng': 'Số lượng',  // Duplicated
+  'Tổng doanh thu trong ngày': 'Total revenue per day',
   '@{dailyRevenue} đồng': '@{dailyRevenue} VND',
-  'Tổng số đơn hàng trong ngày': 'Total number of orders for the day',
+  'Tổng số đơn hàng trong ngày': 'Total orders per day',
   '@{count} đơn': const LanguageConditions(
     param: 'count',
     conditions: {

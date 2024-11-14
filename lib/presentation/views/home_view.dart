@@ -4,6 +4,7 @@ import 'package:language_helper/language_helper.dart';
 import 'package:sales/domain/entities/views_model.dart';
 import 'package:sales/presentation/riverpod/notifiers/home_provider.dart';
 import 'package:sales/presentation/views/dashboard_view.dart';
+import 'package:sales/presentation/views/discount_view.dart';
 import 'package:sales/presentation/views/login_view.dart';
 import 'package:sales/presentation/views/orders_view.dart';
 import 'package:sales/presentation/views/products_view.dart';
@@ -27,6 +28,7 @@ class HomeView extends ConsumerWidget {
         ViewsModel.products => 'Sản Phẩm'.tr,
         ViewsModel.report => 'Báo Cáo'.tr,
         ViewsModel.settings => 'Cài Đặt'.tr,
+        ViewsModel.discount => 'Khuyến Mãi'.tr,
       };
     }
 
@@ -90,6 +92,7 @@ class HomeView extends ConsumerWidget {
         ViewsModel.products => const ProductsView(),
         ViewsModel.report => const ReportView(),
         ViewsModel.settings => const SettingsView(),
+        ViewsModel.discount => const DiscountView(),
       };
     }
 

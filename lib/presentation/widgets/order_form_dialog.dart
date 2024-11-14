@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/core/extensions/price_extensions.dart';
 import 'package:sales/core/utils/date_time_utils.dart';
+import 'package:sales/domain/entities/discount.dart';
 import 'package:sales/domain/entities/order.dart';
 import 'package:sales/domain/entities/order_item.dart';
 import 'package:sales/domain/entities/order_status.dart';
@@ -23,11 +24,14 @@ class OrderFormDialog extends StatefulWidget {
     required this.tempOrder,
     required this.orderItems,
     required this.products,
+    required this.discounts,
     required this.validateForm,
     required this.addProduct,
     required this.removeProduct,
     required this.onStatusChanged,
     required this.onQuantityChanged,
+    required this.getDiscountByCode,
+    required this.onDiscountsChanged,
     super.key,
   });
 
@@ -38,11 +42,14 @@ class OrderFormDialog extends StatefulWidget {
   final Order tempOrder;
   final List<OrderItem> orderItems;
   final List<Product> products;
+  final List<Discount> discounts;
   final VoidCallback validateForm;
   final Future<OrderItem> Function(Product product) addProduct;
   final Future<void> Function(Product product) removeProduct;
   final Future<void> Function(OrderStatus status) onStatusChanged;
   final Future<void> Function(OrderItem orderItem) onQuantityChanged;
+  final Future<Discount?> Function(String code) getDiscountByCode;
+  final void Function(List<Discount> values) onDiscountsChanged;
 
   @override
   State<OrderFormDialog> createState() => _OrderFormDialogState();
@@ -69,6 +76,10 @@ class _OrderFormDialogState extends State<OrderFormDialog> {
 
   bool isNotEnoughQuantityInStock = false;
 
+  String discountCode = '';
+  Discount? discount;
+  String? discountError;
+
   @override
   void initState() {
     initialize();
@@ -76,6 +87,10 @@ class _OrderFormDialogState extends State<OrderFormDialog> {
   }
 
   void initialize() {
+    // TODO(lamnhan066): Hiện tại chỉ hỗ trợ hiển thị 1 mã giảm giá trên mỗi đơn
+    discount = widget.discounts.isEmpty ? null : widget.discounts.first;
+    discountCode = discount?.code ?? '';
+
     orderItems = [...widget.orderItems];
     for (final product in widget.products) {
       if (widget.isTemporary) {
@@ -157,6 +172,20 @@ class _OrderFormDialogState extends State<OrderFormDialog> {
     });
   }
 
+  Future<void> checkDiscountCode() async {
+    final temp = await widget.getDiscountByCode(discountCode);
+    setState(() {
+      discount = temp;
+    });
+    if (temp == null) {
+      discountError = 'Mã đã nhập không tồn tại hoặc đã được sử dụng'.tr;
+      widget.onDiscountsChanged([]);
+    } else {
+      discountError = null;
+      widget.onDiscountsChanged([discount!]);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return isNotEnoughQuantityInStock
@@ -217,6 +246,9 @@ class _OrderFormDialogState extends State<OrderFormDialog> {
                               var total = 0;
                               for (final order in orderItems) {
                                 total += order.totalPrice;
+                              }
+                              if (discount != null) {
+                                total = discount!.calculate(total);
                               }
                               return SingleChildScrollView(
                                 child: DataTable(
@@ -362,12 +394,41 @@ class _OrderFormDialogState extends State<OrderFormDialog> {
                                         DataCell.empty,
                                         DataCell.empty,
                                         DataCell.empty,
-                                        const DataCell(
+                                        DataCell(
                                           Center(
                                             child: Text(
-                                              'Tổng',
+                                              (discount?.hasMaxPrice ?? false)
+                                                  ? '${'Giảm giá'.tr}\n${'Tối đa'.tr}'
+                                                  : 'Giảm giá'.tr,
                                               textAlign: TextAlign.center,
-                                              style: TextStyle(fontWeight: FontWeight.bold),
+                                              style: const TextStyle(fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                        ),
+                                        DataCell(
+                                          Center(
+                                            child: Text(
+                                              (discount?.hasMaxPrice ?? false)
+                                                  ? '${discount?.percent ?? 0}%\n${discount?.maxPrice.toPriceDigit()}'
+                                                  : '${discount?.percent ?? 0}%',
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ),
+                                        ),
+                                        if (!widget.readOnly) DataCell.empty,
+                                      ],
+                                    ),
+                                    DataRow(
+                                      cells: [
+                                        DataCell.empty,
+                                        DataCell.empty,
+                                        DataCell.empty,
+                                        DataCell(
+                                          Center(
+                                            child: Text(
+                                              'Tổng'.tr,
+                                              textAlign: TextAlign.center,
+                                              style: const TextStyle(fontWeight: FontWeight.bold),
                                             ),
                                           ),
                                         ),
@@ -396,6 +457,37 @@ class _OrderFormDialogState extends State<OrderFormDialog> {
                           ),
                         ],
                       ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Flexible(
+                          child: BoxWInput(
+                            enabled: !widget.readOnly,
+                            readOnly: widget.readOnly,
+                            title: 'Mã Giảm Giá'.tr,
+                            initial: discount?.code,
+                            validator: (_) => discountError,
+                            onChanged: (value) {
+                              setState(() {
+                                discountError = null;
+                                discountCode = value;
+                              });
+                            },
+                          ),
+                        ),
+                        if (!widget.readOnly)
+                          Builder(
+                            builder: (context) {
+                              final isValidDiscount =
+                                  discountError == null && discount != null && discountCode == discount?.code;
+                              return FilledButton(
+                                onPressed: discountCode.length == 6 && !isValidDiscount ? checkDiscountCode : null,
+                                child: Text('Kiểm Tra'.tr),
+                              );
+                            },
+                          ),
+                      ],
                     ),
                   ],
                 ),

@@ -10,6 +10,8 @@ import 'package:sales/domain/usecases/backup_restore/backup_database_usecase.dar
 import 'package:sales/domain/usecases/backup_restore/restore_database_usecase.dart';
 import 'package:sales/domain/usecases/categories/add_all_categories_usecase.dart';
 import 'package:sales/domain/usecases/categories/get_all_categories.dart';
+import 'package:sales/domain/usecases/discount/add_all_discounts_usecase.dart';
+import 'package:sales/domain/usecases/discount/get_all_discounts_usecase.dart';
 import 'package:sales/domain/usecases/last_view/get_save_last_view_usecase.dart';
 import 'package:sales/domain/usecases/last_view/set_save_last_view_usecase.dart';
 import 'package:sales/domain/usecases/order_with_items/add_all_orders_with_items_usecase.dart';
@@ -32,11 +34,12 @@ final settingsProvider = StateNotifierProvider<SettingsNotifier, SettingsState>(
     addAllOrdersWithItemsUseCase: getIt(),
     getSaveLastViewUsecase: getIt(),
     setSaveLastViewUseCase: getIt(),
+    getAllDiscountsUseCase: getIt(),
+    addAllDiscountsUseCase: getIt(),
   );
 });
 
 class SettingsNotifier extends StateNotifier<SettingsState> {
-
   SettingsNotifier({
     required this.changeItemPerPageUseCase,
     required this.getItemPerPageUseCase,
@@ -50,6 +53,8 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
     required this.addAllOrdersWithItemsUseCase,
     required this.getSaveLastViewUsecase,
     required this.setSaveLastViewUseCase,
+    required this.getAllDiscountsUseCase,
+    required this.addAllDiscountsUseCase,
   }) : super(SettingsState()) {
     initialize();
   }
@@ -65,6 +70,8 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
   final AddAllOrdersWithItemsUseCase addAllOrdersWithItemsUseCase;
   final GetSaveLastViewUsecase getSaveLastViewUsecase;
   final SetSaveLastViewUseCase setSaveLastViewUseCase;
+  final GetAllDiscountsUseCase getAllDiscountsUseCase;
+  final AddAllDiscountsUseCase addAllDiscountsUseCase;
 
   Future<void> initialize() async {
     state = state.copyWith(isLoading: true);
@@ -102,12 +109,14 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
       final products = await getAllProductsUseCase(NoParams());
       final categories = await getAllCategoriesUsecCase(NoParams());
       final ordersWithItems = await getAllOrdersWithItemsUseCase(NoParams());
+      final discounts = await getAllDiscountsUseCase(NoParams());
 
       state = state.copyWith(backupRestoreStatus: 'Chọn vị trí lưu và lưu bản sao lưu...'.tr);
       final data = BackupData(
         categories: categories,
         products: products,
         orderWithItems: ordersWithItems,
+        discounts: discounts,
       );
 
       await backupDatabaseUseCase(data);
@@ -131,6 +140,9 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
 
       state = state.copyWith(backupRestoreStatus: 'Đang tiến hành khôi phục Đơn Hàng và Chi Tiết Đơn hàng...'.tr);
       await addAllOrdersWithItemsUseCase(data.orderWithItems);
+
+      state = state.copyWith(backupRestoreStatus: 'Đang tiếm hành khôi phục Khuyến Mãi'.tr);
+      await addAllDiscountsUseCase(data.discounts);
 
       state = state.copyWith(backupRestoreStatus: 'Khôi phục đã hoàn tất'.tr);
     } on Failure catch (e) {

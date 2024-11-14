@@ -1,6 +1,7 @@
 import 'package:boxw/boxw.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide DataCell, DataColumn, DataRow, DataTable;
 import 'package:language_helper/language_helper.dart';
+import 'package:sales/presentation/widgets/data_table_plus.dart';
 
 /// Nút tắt
 class CircleCloseButton extends StatelessWidget {
@@ -74,5 +75,17 @@ Buttons confirmCancelButtons({
           ),
         ),
     ],
+  );
+}
+
+DataColumn headerTextColumn(String text, {bool numeric = false}) {
+  return DataColumn(
+    numeric: numeric,
+    headingRowAlignment: MainAxisAlignment.center,
+    label: Text(
+      text,
+      textAlign: TextAlign.center,
+      style: const TextStyle(fontWeight: FontWeight.bold),
+    ),
   );
 }

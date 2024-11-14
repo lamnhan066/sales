@@ -257,7 +257,7 @@ class _OrdersViewState extends ConsumerState<OrdersView> {
     );
 
     if (result != null) {
-      await notifier.updateOrderWithItems(result.order, result.orderItems);
+      await notifier.updateOrderWithItems(result);
     }
   }
 
@@ -272,7 +272,7 @@ class _OrdersViewState extends ConsumerState<OrdersView> {
     );
 
     if (result != null) {
-      await notifier.addOrderWithItems(result.order, result.orderItems);
+      await notifier.addOrderWithItems(result);
     }
   }
 
@@ -301,7 +301,7 @@ class _OrdersViewState extends ConsumerState<OrdersView> {
     );
 
     if (result != null) {
-      await notifier.addOrderWithItems(result.order, result.orderItems);
+      await notifier.addOrderWithItems(result);
     }
   }
 

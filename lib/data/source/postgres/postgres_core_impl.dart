@@ -47,6 +47,9 @@ class PostgresCoreImpl implements CoreDatabaseRepository {
       await session.execute('DELETE FROM categories');
       await session.execute('ALTER SEQUENCE categories_sequence RESTART');
       await session.execute('UPDATE categories SET c_id = DEFAULT');
+      await session.execute('DELETE FROM discounts');
+      await session.execute('ALTER SEQUENCE discounts_sequence RESTART');
+      await session.execute('UPDATE discounts SET c_id = DEFAULT');
     });
   }
 }

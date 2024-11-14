@@ -232,8 +232,8 @@ class MemoryStorageImpl implements MemoryStorage {
   }
 
   @override
-  Future<void> addOrderWithItems(OrderWithItemsParamsModel params) async {
-    await addOrder(params.order);
+  Future<int> addOrderWithItems(OrderWithItemsParamsModel params) async {
+    final orderId = await addOrder(params.order);
     for (final orderItem in params.orderItems) {
       await addOrderItem(orderItem);
 
@@ -242,6 +242,7 @@ class MemoryStorageImpl implements MemoryStorage {
       product = product.copyWith(count: product.count - orderItem.quantity);
       await updateProduct(product);
     }
+    return orderId;
   }
 
   @override

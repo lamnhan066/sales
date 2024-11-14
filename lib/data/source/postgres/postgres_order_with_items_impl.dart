@@ -8,16 +8,27 @@ import 'package:sales/data/repositories/order_item_database_repository.dart';
 import 'package:sales/data/repositories/order_with_items_database_repository.dart';
 import 'package:sales/data/repositories/product_database_repository.dart';
 import 'package:sales/data/source/postgres/postgres_core_impl.dart';
+import 'package:sales/data/source/postgres/postgres_order_impl.dart';
+import 'package:sales/data/source/postgres/postgres_order_item_impl.dart';
+import 'package:sales/data/source/postgres/postgres_product_impl.dart';
 import 'package:sales/domain/entities/get_order_items_params.dart';
 
 class PostgresOrderWithItemsImpl implements OrderWithItemsDatabaseRepository {
-  const PostgresOrderWithItemsImpl(this._core, this._product, this._order, this._orderItem);
+  const PostgresOrderWithItemsImpl(
+    CoreDatabaseRepository core,
+    ProductDatabaseRepository product,
+    OrderDatabaseRepository order,
+    OrderItemDatabaseRepository orderItem,
+  )   : _core = core as PostgresCoreImpl,
+        _product = product as PostgresProductImpl,
+        _order = order as PostgresOrderImpl,
+        _orderItem = orderItem as PostgresOrderItemImpl;
 
-  final CoreDatabaseRepository _core;
-  final ProductDatabaseRepository _product;
-  final OrderDatabaseRepository _order;
-  final OrderItemDatabaseRepository _orderItem;
-  Connection get _connection => (_core as PostgresCoreImpl).connection;
+  final PostgresCoreImpl _core;
+  final PostgresProductImpl _product;
+  final PostgresOrderImpl _order;
+  final PostgresOrderItemImpl _orderItem;
+  Connection get _connection => _core.connection;
 
   @override
   Future<void> addAllOrdersWithItems(List<OrderWithItemsParamsModel> orderWithItems) async {
@@ -27,7 +38,7 @@ class PostgresOrderWithItemsImpl implements OrderWithItemsDatabaseRepository {
   }
 
   @override
-  Future<void> addOrderWithItems(OrderWithItemsParamsModel params) async {
+  Future<int> addOrderWithItems(OrderWithItemsParamsModel params) async {
     final orderId = await _order.addOrder(params.order);
     for (var orderItem in params.orderItems) {
       orderItem = orderItem.copyWith(orderId: orderId);
@@ -38,6 +49,7 @@ class PostgresOrderWithItemsImpl implements OrderWithItemsDatabaseRepository {
       product = product.copyWith(count: product.count - orderItem.quantity);
       await _product.updateProduct(product);
     }
+    return orderId;
   }
 
   @override
@@ -79,46 +91,49 @@ class PostgresOrderWithItemsImpl implements OrderWithItemsDatabaseRepository {
   @override
   Future<void> removeOrderWithItems(OrderModel order) async {
     await _connection.runTx((session) async {
-      final orderItems = await _orderItem.getOrderItems(GetOrderItemsParams(orderId: order.id));
+      final orderItems = await _orderItem.getOrderItems(GetOrderItemsParams(orderId: order.id), session);
       for (final orderItem in orderItems) {
         final tempOrderItems = orderItem.copyWith(deleted: true);
-        await _orderItem.updateOrderItem(tempOrderItems);
+        await _orderItem.updateOrderItem(tempOrderItems, session);
 
         // Cập nhật lại số lượng sản phẩm.
-        var product = await _product.getProductById(orderItem.productId);
+        var product = await _product.getProductById(orderItem.productId, session);
         product = product.copyWith(count: product.count + orderItem.quantity);
-        await _product.updateProduct(product);
+        await _product.updateProduct(product, session);
       }
-      await _order.removeOrder(order);
+      await _order.removeOrder(order, session);
     });
   }
 
   @override
   Future<void> updateOrderWithItems(OrderWithItemsParamsModel params) async {
     await _connection.runTx((session) async {
-      await _order.updateOrder(params.order);
-      final orderItemsFromDatabase = await _orderItem.getOrderItems(GetOrderItemsParams(orderId: params.order.id));
+      await _order.updateOrder(params.order, session);
+      final orderItemsFromDatabase = await _orderItem.getOrderItems(
+        GetOrderItemsParams(orderId: params.order.id),
+        session,
+      );
 
       // Thêm và chỉnh sửa chi tiết đơn hàng
       for (final orderItem in params.orderItems) {
         final index = orderItemsFromDatabase.indexWhere((e) => e.id == orderItem.id);
         if (index == -1) {
-          await _orderItem.addOrderItem(orderItem);
+          await _orderItem.addOrderItem(orderItem, session);
 
           // Cập nhật lại số lượng sản phẩm.
-          var product = await _product.getProductById(orderItem.productId);
+          var product = await _product.getProductById(orderItem.productId, session);
           product = product.copyWith(count: product.count - orderItem.quantity);
-          await _product.updateProduct(product);
+          await _product.updateProduct(product, session);
         } else {
-          await _orderItem.updateOrderItem(orderItem);
+          await _orderItem.updateOrderItem(orderItem, session);
 
           // Cập nhật lại số lượng sản phẩm.
           final databaseCount = orderItemsFromDatabase[index].quantity;
           final newCount = orderItem.quantity;
           final differentCount = databaseCount - newCount;
-          var product = await _product.getProductById(orderItem.productId);
+          var product = await _product.getProductById(orderItem.productId, session);
           product = product.copyWith(count: product.count + differentCount);
-          await _product.updateProduct(product);
+          await _product.updateProduct(product, session);
         }
       }
 

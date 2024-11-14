@@ -7,6 +7,7 @@ import 'package:sales/core/usecases/usecase.dart';
 import 'package:sales/data/repositories/category_database_repository.dart';
 import 'package:sales/data/repositories/core_database_repository.dart';
 import 'package:sales/data/repositories/data_sync_database_repository.dart';
+import 'package:sales/data/repositories/discount_database_repository.dart';
 import 'package:sales/data/repositories/order_database_repository.dart';
 import 'package:sales/data/repositories/order_item_database_repository.dart';
 import 'package:sales/data/repositories/order_with_items_database_repository.dart';
@@ -15,6 +16,7 @@ import 'package:sales/data/repositories/report_database_repository.dart';
 import 'package:sales/data/source/postgres/postgres_category_impl.dart';
 import 'package:sales/data/source/postgres/postgres_core_impl.dart';
 import 'package:sales/data/source/postgres/postgres_data_sync_impl.dart';
+import 'package:sales/data/source/postgres/postgres_discount_impl.dart';
 import 'package:sales/data/source/postgres/postgres_order_impl.dart';
 import 'package:sales/data/source/postgres/postgres_order_item_impl.dart';
 import 'package:sales/data/source/postgres/postgres_order_with_items_impl.dart';
@@ -26,6 +28,7 @@ import 'package:sales/domain/repositories/backup_restore_repository.dart';
 import 'package:sales/domain/repositories/brightness_repository.dart';
 import 'package:sales/domain/repositories/category_repository.dart';
 import 'package:sales/domain/repositories/data_importer_repository.dart';
+import 'package:sales/domain/repositories/discount_repository.dart';
 import 'package:sales/domain/repositories/language_repository.dart';
 import 'package:sales/domain/repositories/last_view_repository.dart';
 import 'package:sales/domain/repositories/license_repository.dart';
@@ -68,6 +71,13 @@ import 'package:sales/domain/usecases/data_services/load_server_configuration_us
 import 'package:sales/domain/usecases/data_services/load_server_connection_usecase.dart';
 import 'package:sales/domain/usecases/data_services/replace_database_usecase.dart';
 import 'package:sales/domain/usecases/data_services/save_server_configuration_usecase.dart';
+import 'package:sales/domain/usecases/discount/add_all_discounts_usecase.dart';
+import 'package:sales/domain/usecases/discount/add_discount_usecase.dart';
+import 'package:sales/domain/usecases/discount/get_all_available_discounts_usecase.dart';
+import 'package:sales/domain/usecases/discount/get_all_discounts_usecase.dart';
+import 'package:sales/domain/usecases/discount/get_discount_by_code_usecase.dart';
+import 'package:sales/domain/usecases/discount/get_discounts_by_order_id_usecase.dart';
+import 'package:sales/domain/usecases/discount/update_discount_usecase.dart';
 import 'package:sales/domain/usecases/last_view/get_last_view_usecase.dart';
 import 'package:sales/domain/usecases/last_view/get_save_last_view_usecase.dart';
 import 'package:sales/domain/usecases/last_view/set_last_view_usecase.dart';
@@ -113,6 +123,7 @@ import 'package:sales/infrastructure/respositories/app_version_repository_impl.d
 import 'package:sales/infrastructure/respositories/backup_restore_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/brightness_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/category_repository_impl.dart';
+import 'package:sales/infrastructure/respositories/discount_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/language_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/last_view_repository_impl.dart';
 import 'package:sales/infrastructure/respositories/license_repository_impl.dart';
@@ -180,6 +191,7 @@ void _registerUseCases() {
   _registerPrintUseCases();
   _registerLicenseUseCases();
   _registerLastViewUseCases();
+  _registerDiscountUseCases();
 }
 
 void _registerRepositories() {
@@ -201,7 +213,8 @@ void _registerRepositories() {
     ..registerLazySingleton<TemporaryDataRepository>(() => TemporaryDataRepositoryImpl(getIt()))
     ..registerLazySingleton<PrintRepository>(PrintRepositoryImpl.new)
     ..registerLazySingleton<LicenseRepository>(() => LicenseRepositoryImpl(getIt()))
-    ..registerLazySingleton<LastViewRepository>(() => LastViewRepositoryImpl(getIt()));
+    ..registerLazySingleton<LastViewRepository>(() => LastViewRepositoryImpl(getIt()))
+    ..registerLazySingleton<DiscountRepository>(() => DiscountRepositoryImpl(getIt()));
 }
 
 void _registerLocalPostgresDatabase() {
@@ -217,7 +230,8 @@ void _registerLocalPostgresDatabase() {
     ..registerLazySingleton<OrderWithItemsDatabaseRepository>(
       () => PostgresOrderWithItemsImpl(getIt(), getIt(), getIt(), getIt()),
     )
-    ..registerLazySingleton<ReportDatabaseRepository>(() => PostgresReportImpl(getIt(), getIt(), getIt()));
+    ..registerLazySingleton<ReportDatabaseRepository>(() => PostgresReportImpl(getIt(), getIt(), getIt()))
+    ..registerLazySingleton<DiscountDatabaseRepository>(() => PostgresDiscountImpl(getIt()));
 }
 
 void _registerAppUseCases() {
@@ -330,6 +344,17 @@ void _registerLastViewUseCases() {
     ..registerLazySingleton<GetSaveLastViewUsecase>(() => GetSaveLastViewUsecase(getIt()))
     ..registerLazySingleton<SetLastViewUseCase>(() => SetLastViewUseCase(getIt()))
     ..registerLazySingleton<SetSaveLastViewUseCase>(() => SetSaveLastViewUseCase(getIt()));
+}
+
+void _registerDiscountUseCases() {
+  getIt
+    ..registerLazySingleton(() => AddDiscountUseCase(getIt()))
+    ..registerLazySingleton(() => UpdateDiscountUseCase(getIt()))
+    ..registerLazySingleton(() => GetDiscountByCodeUseCase(getIt()))
+    ..registerLazySingleton(() => GetDiscountsByOrderIdUseCase(getIt()))
+    ..registerLazySingleton(() => GetAllAvailableDiscountsUseCase(getIt()))
+    ..registerLazySingleton(() => GetAllDiscountsUseCase(getIt()))
+    ..registerLazySingleton(() => AddAllDiscountsUseCase(getIt()));
 }
 
 void _registerServices() {

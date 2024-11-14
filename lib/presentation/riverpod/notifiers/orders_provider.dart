@@ -2,15 +2,20 @@ import 'package:features_tour/features_tour.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sales/core/usecases/usecase.dart';
 import 'package:sales/di.dart';
+import 'package:sales/domain/entities/discount.dart';
 import 'package:sales/domain/entities/get_order_items_params.dart';
 import 'package:sales/domain/entities/get_order_params.dart';
 import 'package:sales/domain/entities/order.dart';
 import 'package:sales/domain/entities/order_item.dart';
+import 'package:sales/domain/entities/order_result.dart';
 import 'package:sales/domain/entities/order_with_items_params.dart';
 import 'package:sales/domain/entities/product.dart';
 import 'package:sales/domain/entities/ranges.dart';
 import 'package:sales/domain/usecases/app/get_item_per_page_usecase.dart';
 import 'package:sales/domain/usecases/app/print_image_bytes_as_pdf_usecase.dart';
+import 'package:sales/domain/usecases/discount/get_discount_by_code_usecase.dart';
+import 'package:sales/domain/usecases/discount/get_discounts_by_order_id_usecase.dart';
+import 'package:sales/domain/usecases/discount/update_discount_usecase.dart';
 import 'package:sales/domain/usecases/order_with_items/add_order_with_items_usecase.dart';
 import 'package:sales/domain/usecases/order_with_items/get_next_order_item_id_usecase.dart';
 import 'package:sales/domain/usecases/order_with_items/get_order_items_usecase.dart';
@@ -40,6 +45,9 @@ final ordersProvider = StateNotifierProvider<OrdersNotifier, OrdersState>((ref) 
     saveTemporaryOrderWithItemsUseCase: getIt(),
     removeTemporaryOrderWithItemsUseCase: getIt(),
     printImageBytesAsPdfUseCase: getIt(),
+    getDiscountByCodeUseCase: getIt(),
+    getDiscountsByOrderIdUseCase: getIt(),
+    updateDiscountUseCase: getIt(),
   );
 });
 
@@ -58,6 +66,9 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
     required SaveTemporaryOrderWithItemsUseCase saveTemporaryOrderWithItemsUseCase,
     required RemoveTemporaryOrderWithItemsUseCase removeTemporaryOrderWithItemsUseCase,
     required PrintImageBytesAsPdfUseCase printImageBytesAsPdfUseCase,
+    required this.getDiscountByCodeUseCase,
+    required this.getDiscountsByOrderIdUseCase,
+    required this.updateDiscountUseCase,
   })  : _getOrdersUseCase = getOrdersUseCase,
         _getOrderItemsUseCase = getOrderItemsUseCase,
         _getAllProductsUseCase = getAllProductsUseCase,
@@ -85,6 +96,9 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
   final SaveTemporaryOrderWithItemsUseCase _saveTemporaryOrderWithItemsUseCase;
   final RemoveTemporaryOrderWithItemsUseCase _removeTemporaryOrderWithItemsUseCase;
   final PrintImageBytesAsPdfUseCase _printImageBytesAsPdfUseCase;
+  final GetDiscountByCodeUseCase getDiscountByCodeUseCase;
+  final GetDiscountsByOrderIdUseCase getDiscountsByOrderIdUseCase;
+  final UpdateDiscountUseCase updateDiscountUseCase;
 
   Future<void> initialize() async {
     state = state.copyWith(isLoading: true);
@@ -153,17 +167,35 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
     return _getOrderItemsUseCase(GetOrderItemsParams(orderId: orderId));
   }
 
-  Future<void> updateOrderWithItems(Order order, List<OrderItem> orderItems) async {
-    if (orderItems.isEmpty) {
-      await _removeOrderWithItemsUseCase(order);
+  Future<void> updateOrderWithItems(OrderResult result) async {
+    if (result.orderItems.isEmpty) {
+      await _removeOrderWithItemsUseCase(result.order);
     } else {
-      await _updateOrderWithItemsUseCase(OrderWithItemsParams(order: order, orderItems: orderItems));
+      await _updateOrderWithItemsUseCase(OrderWithItemsParams(order: result.order, orderItems: result.orderItems));
+    }
+    if (result.discount != null) {
+      // Bỏ liên kết các mã giảm giá cũ để tải sử dụng
+      final oldDiscounts = await getDiscountsByOrderId(result.order.id);
+      if (oldDiscounts.isNotEmpty) {
+        for (final d in oldDiscounts) {
+          await updateDiscountUseCase(d.copyWithNoOrderId());
+        }
+      }
+      final discount = result.discount!.copyWith(orderId: result.order.id);
+
+      // Liên kết mã giảm giá mới
+      await updateDiscountUseCase(discount);
     }
     await fetchOrders();
   }
 
-  Future<void> addOrderWithItems(Order order, List<OrderItem> orderItems) async {
-    await _addOrderWithItemsUseCase(OrderWithItemsParams(order: order, orderItems: orderItems));
+  Future<void> addOrderWithItems(OrderResult result) async {
+    final orderId =
+        await _addOrderWithItemsUseCase(OrderWithItemsParams(order: result.order, orderItems: result.orderItems));
+    if (result.discount != null) {
+      final discount = result.discount!.copyWith(orderId: orderId);
+      await updateDiscountUseCase(discount);
+    }
     await fetchOrders();
   }
 
@@ -202,5 +234,13 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
 
   void closeDraftDialog() {
     state = state.copyWith(isShownDraftDialog: false, hasDraft: false);
+  }
+
+  Future<Discount?> getDiscountByCode(String code) {
+    return getDiscountByCodeUseCase(code);
+  }
+
+  Future<List<Discount>> getDiscountsByOrderId(int orderId) {
+    return getDiscountsByOrderIdUseCase(orderId);
   }
 }

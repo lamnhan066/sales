@@ -81,7 +81,8 @@
 
 - Auto save khi tạo đơn hàng, thêm mới sản phẩm (0.25): Khi người dùng mở trang đơn hàng và sản phẩm thì có 1 thông báo hiện lên nếu có đơn hàng nháp để người dùng tiếp tục tạo đơn hoặc huỷ đơn nháp.
 - Tự động thay đổi sắp xếp hợp lí các thành phần theo độ rộng màn hình (responsive layout) (0.5 điểm)
-- TODO: Bổ sung khuyến mãi giảm giá (1 điểm)
+- Bổ sung khuyến mãi giảm giá (1 điểm):
+  - Khuyến mãi sẽ ở dưới dạng phần trăm giảm và có thể xác định số tiền giảm tối đa.
 - Thêm chế độ dùng thử - cho phép xài full phần mềm trong 15 ngày. Hết 15 ngày bắt đăng kí (mã code hay cách kích hoạt nào đó) (0.5 điểm):
   - Kiểm tra người dùng có đã sử dụng trial chưa, nếu chưa thì hiển thị hộp thoại để kích hoạt.
   - Nếu người dùng đã hết hạn dùng thử thì hiển thị hộp thoại để người dùng nhập mã kích hoạt. Khi người dùng nhập đúng mã là `22880253` thì người dùng sẽ được sử dụng thêm 30 ngày.

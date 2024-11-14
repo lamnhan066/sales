@@ -12,6 +12,9 @@ enum ViewsModel {
   /// Báo cáo.
   report,
 
+  /// Khuyến mãi.
+  discount,
+
   /// Cài đăt.
-  settings;
+  settings,
 }

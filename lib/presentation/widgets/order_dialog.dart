@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:language_helper/language_helper.dart';
 import 'package:sales/core/constants/app_configs.dart';
 import 'package:sales/core/utils/price_utils.dart';
+import 'package:sales/domain/entities/discount.dart';
 import 'package:sales/domain/entities/order.dart';
 import 'package:sales/domain/entities/order_item.dart';
 import 'package:sales/domain/entities/order_result.dart';
@@ -178,6 +179,20 @@ Future<OrderResult?> _orderDialog({
     orderItems[index] = item;
   }
 
+  Future<Discount?> getDiscountByCode(String code) {
+    return notifier.getDiscountByCode(code);
+  }
+
+  Future<List<Discount>> getDiscountsByOrderId(int id) {
+    return notifier.getDiscountsByOrderIdUseCase(id);
+  }
+
+  var discounts = await getDiscountsByOrderId(resultOrder.id);
+
+  void onDiscountsChanged(List<Discount> values) {
+    discounts = values;
+  }
+
   if (context.mounted) {
     final dialogWidth = MediaQuery.sizeOf(context).width * AppConfigs.dialogWidthRatio;
     final result = await boxWDialog<bool>(
@@ -197,11 +212,14 @@ Future<OrderResult?> _orderDialog({
           tempOrder: resultOrder,
           orderItems: orderItems,
           products: products,
+          discounts: discounts,
           validateForm: validateForm,
           addProduct: addProduct,
           removeProduct: removeProduct,
           onStatusChanged: statusChanged,
           onQuantityChanged: quantityChanged,
+          getDiscountByCode: getDiscountByCode,
+          onDiscountsChanged: onDiscountsChanged,
         ),
       ),
       buttons: (context) {
@@ -243,7 +261,12 @@ Future<OrderResult?> _orderDialog({
 
     if (result ?? false) {
       await notifier.removeTemporaryOrderWithItems();
-      return OrderResult(order: resultOrder, orderItems: orderItems);
+      return OrderResult(
+        order: resultOrder,
+        orderItems: orderItems,
+        // TODO(lamnhan066): Hiện tại chỉ hỗ trợ 1 discount cho mỗi đơn hàng
+        discount: discounts.isNotEmpty ? discounts.first : null,
+      );
     }
 
     await notifier.saveTemporaryOrderWithItems(
