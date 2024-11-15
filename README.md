@@ -3,7 +3,7 @@
 - Họ và tên: Lâm Thành Nhân
 - MSSV: 22880253
 
-- Tự chấm điểm: 10
+- Tự chấm điểm: 9.5
 
 ## Các Chức Năng Đã Thực Hiện
 
