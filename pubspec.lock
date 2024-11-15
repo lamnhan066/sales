@@ -166,6 +166,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.7"
+  dmg:
+    dependency: "direct dev"
+    description:
+      name: dmg
+      sha256: "4f27e7fb7b2b8e9f8d31fe0dbf2e0144716edcffd8c051b5ebeb18f679955f8b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.0"
   easy_image_viewer:
     dependency: "direct main"
     description:

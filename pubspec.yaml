@@ -54,6 +54,7 @@ dependencies:
   easy_image_viewer: ^1.5.1
 
 dev_dependencies:
+  dmg: ^0.1.0
   flutter_test:
     sdk: flutter
 
