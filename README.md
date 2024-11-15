@@ -49,24 +49,19 @@
     - Thêm mới loại sản phẩm.
     - Cho phép import dữ liệu từ tập tin Excel.
     - Dữ liệu mẫu:
-        - Loại sản phẩm: có 3 loại
+        - Loại sản phẩm: có 3 loại là Điện Thoại, Máy Tính, Màn Hình.
         - Sản phẩm:
             - Mỗi loại sản phẩm có tối thiểu 22 sản phẩm.
             - Mỗi sản phẩm có tối thiểu 3 hình.
             - Dữ liệu mẫu là thật (từ trang thegioididong.com).
-    - Dữ liệu từ 3 nguồn:
+    - Dữ liệu từ 2 nguồn:
         - Memory.
-        - Shared Preferences.
         - Postgres:
             - Tìm hiểu cách sử dụng pgAdmin:
                 - Cách tạo bảng thông qua GUI (ERD tool).
                 - Cách để tự động tạo id (tự động tăng số) thông qua sequence.
             - Tìm hiểu cách sử dụng postgres:
                 - Cách để lấy được số hiện tại của trình tự động tạo số.
-        - Có 3 loại sản phẩm: Điện Thoại, Máy Tính, Màn Hình.
-        - Mỗi loại sản phẩm có 22 sản phẩm.
-        - Mỗi sản phẩm có ít nhất 3 hình (hình ảnh có thể là đường dẫn từ máy tính hoặc URL).
-        - Dữ liệu thật lấy từ thegioididong.com.
 
 4. Trang Đơn Hàng (Orders):
 
