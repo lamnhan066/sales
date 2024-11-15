@@ -4,7 +4,6 @@ import 'package:features_tour/features_tour.dart';
 import 'package:flutter/material.dart' hide DataCell, DataColumn, DataRow, DataTable;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:language_helper/language_helper.dart';
-import 'package:sales/core/constants/app_configs.dart';
 import 'package:sales/core/extensions/data_time_extensions.dart';
 import 'package:sales/core/extensions/price_extensions.dart';
 import 'package:sales/core/utils/date_time_utils.dart';
@@ -13,6 +12,7 @@ import 'package:sales/domain/entities/product.dart';
 import 'package:sales/presentation/riverpod/notifiers/dashboard_provider.dart';
 import 'package:sales/presentation/riverpod/states/dashboard_state.dart';
 import 'package:sales/presentation/widgets/data_table_plus.dart';
+import 'package:sales/presentation/widgets/toolbar.dart';
 
 /// Màn hình tổng quan.
 class DashboardView extends ConsumerStatefulWidget {
@@ -89,30 +89,18 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
   }
 
   Widget _buildToolbar(BuildContext context, DashboardState state, DashboardNotifier notifier) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      child: SizedBox(
-        height: AppConfigs.toolbarHeight,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Spacer(),
-            Row(
-              children: [
-                FeaturesTour(
-                  controller: state.tour,
-                  index: 1,
-                  introduce: Text('Nhấn vào đây để chọn ngày thống kê ở trang tổng quan'.tr),
-                  child: IconButton(
-                    onPressed: () => _changeDate(state, notifier),
-                    icon: const Icon(Icons.calendar_month_rounded),
-                  ),
-                ),
-              ],
-            ),
-          ],
+    return Toolbar(
+      trailings: [
+        FeaturesTour(
+          controller: state.tour,
+          index: 1,
+          introduce: Text('Nhấn vào đây để chọn ngày thống kê ở trang tổng quan'.tr),
+          child: IconButton(
+            onPressed: () => _changeDate(state, notifier),
+            icon: const Icon(Icons.calendar_month_rounded),
+          ),
         ),
-      ),
+      ],
     );
   }
 

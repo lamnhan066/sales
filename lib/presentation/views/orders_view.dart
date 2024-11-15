@@ -55,9 +55,12 @@ class _OrdersViewState extends ConsumerState<OrdersView> {
                 controller: ordersState.tour,
                 index: 1,
                 introduce: Text('Nhấn vào đây để thêm đơn hàng'.tr),
-                child: FilledButton(
-                  onPressed: addOrder,
-                  child: const Icon(Icons.add),
+                child: Tooltip(
+                  message: 'Thêm đơn hàng mới'.tr,
+                  child: FilledButton(
+                    onPressed: addOrder,
+                    child: const Icon(Icons.add),
+                  ),
                 ),
               ),
             ],
@@ -66,11 +69,14 @@ class _OrdersViewState extends ConsumerState<OrdersView> {
                 controller: ordersState.tour,
                 index: 2,
                 introduce: Text('Nhấn vào đây để mở tuỳ chọn lọc đơn hàng'.tr),
-                child: IconButton(
-                  onPressed: filter,
-                  icon: ordersState.dateRange == null
-                      ? const Icon(Icons.filter_alt_off_rounded)
-                      : const Icon(Icons.filter_alt_rounded),
+                child: Tooltip(
+                  message: 'Bộ lọc đơn hàng'.tr,
+                  child: IconButton(
+                    onPressed: filter,
+                    icon: ordersState.dateRange == null
+                        ? const Icon(Icons.filter_alt_off_rounded)
+                        : const Icon(Icons.filter_alt_rounded),
+                  ),
                 ),
               ),
             ],

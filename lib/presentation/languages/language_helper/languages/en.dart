@@ -142,7 +142,9 @@ final en = <String, dynamic>{
   'Tìm kiếm sản phẩm theo tên tại đây': 'Search for products by name here',
   'Tìm Kiếm': 'Search',
   'Nhấn vào đây để hiển thị tuỳ chọn lọc sản phẩm': 'Click here to display product filter options',
-  'Nhấn vào đây để hiển thị tuỳ chọn sắp xếp sản phẩm': 'Click here to display product sorting options',
+  'Lọc sản phẩm': 'Filter products',
+  'Nhấn vào đây để hiển thị tuỳ chọn sắp xếp sản phẩm': 'Tap here to display product sorting options',
+  'Sắp xếp sản phẩm': 'Sort products',
   'STT': 'No.',
   'ID': 'ID',
   'Tên': 'Name',
@@ -304,6 +306,7 @@ final en = <String, dynamic>{
   ///===========================================================================
   '@path_./lib/presentation/views/discount_view.dart': '',
   'Nhấn vào đây để thêm mã giảm giá': 'Tap here to add a discount code',
+  'Thêm khuyến mãi': 'Thêm khuyến mãi',
   // 'STT': 'STT',  // Duplicated
   'Mã': 'Code',
   'Phần trăm': 'Percentage',
@@ -323,7 +326,9 @@ final en = <String, dynamic>{
   ///===========================================================================
   '@path_./lib/presentation/views/orders_view.dart': '',
   'Nhấn vào đây để thêm đơn hàng': 'Click here to add an order',
-  'Nhấn vào đây để mở tuỳ chọn lọc đơn hàng': 'Click here to open order filter options',
+  'Thêm đơn hàng mới': 'Add new order',
+  'Nhấn vào đây để mở tuỳ chọn lọc đơn hàng': 'Tap here to open order filter options',
+  'Bộ lọc đơn hàng': 'Order filter',
   // 'Error: @{error}': 'Error: @{error}',  // Duplicated
   // 'STT': 'No.',  // Duplicated
   'Ngày Giờ': 'Date & Time',
@@ -351,6 +356,7 @@ final en = <String, dynamic>{
   ///===========================================================================
   '@path_./lib/presentation/views/report_view.dart': '',
   'Nhấn vào đây để hiển thị tuỳ chọn bộ lọc cho báo cáo': 'Click here to display filter options for the report',
+  'Lọc báo cáo theo thời gian': 'Filter report by time',
   'Sản phẩm và số lượng bán tương ứng:': 'Products and corresponding sales quantities:',
   // 'Tên Sản Phẩm': 'Product Name',  // Duplicated
   // 'Số Lượng': 'Quantity',  // Duplicated

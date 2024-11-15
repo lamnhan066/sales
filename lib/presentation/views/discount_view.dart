@@ -48,9 +48,12 @@ class _DiscountViewState extends ConsumerState<DiscountView> {
                 controller: state.tour,
                 index: 1,
                 introduce: Text('Nhấn vào đây để thêm mã giảm giá'.tr),
-                child: FilledButton(
-                  onPressed: () => addDiscount(context, notifier),
-                  child: const Icon(Icons.add),
+                child: Tooltip(
+                  message: 'Thêm khuyến mãi'.tr,
+                  child: FilledButton(
+                    onPressed: () => addDiscount(context, notifier),
+                    child: const Icon(Icons.add),
+                  ),
                 ),
               ),
             ],

@@ -66,9 +66,12 @@ class _ReportViewState extends ConsumerState<ReportView> {
           controller: state.tour,
           index: 1,
           introduce: Text('Nhấn vào đây để hiển thị tuỳ chọn bộ lọc cho báo cáo'.tr),
-          child: IconButton(
-            onPressed: () => _updateFilters(context, notifier, state),
-            icon: const Icon(Icons.calendar_month_rounded),
+          child: Tooltip(
+            message: 'Lọc báo cáo theo thời gian'.tr,
+            child: IconButton(
+              onPressed: () => _updateFilters(context, notifier, state),
+              icon: const Icon(Icons.calendar_month_rounded),
+            ),
           ),
         ),
       ],

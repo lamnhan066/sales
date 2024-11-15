@@ -6,7 +6,6 @@ import 'package:features_tour/features_tour.dart';
 import 'package:flutter/material.dart' hide DataCell, DataColumn, DataRow, DataTable;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:language_helper/language_helper.dart';
-import 'package:sales/core/constants/app_configs.dart';
 import 'package:sales/core/errors/failure.dart';
 import 'package:sales/core/extensions/price_extensions.dart';
 import 'package:sales/domain/entities/data_import_result.dart';
@@ -20,6 +19,7 @@ import 'package:sales/presentation/widgets/data_table_plus.dart';
 import 'package:sales/presentation/widgets/page_chooser_dialog.dart';
 import 'package:sales/presentation/widgets/product_dialog.dart';
 import 'package:sales/presentation/widgets/product_filter_dialog.dart';
+import 'package:sales/presentation/widgets/toolbar.dart';
 
 class ProductsView extends ConsumerStatefulWidget {
   const ProductsView({super.key, this.chooseProduct = false});
@@ -93,93 +93,90 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
   }
 
   Widget _buildToolbar(BuildContext context, ProductsState state, ProductsNotifier notifier) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      child: SizedBox(
-        height: AppConfigs.toolbarHeight,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            FeaturesTour(
-              controller: state.tour,
-              index: 1,
-              introduce: Text('Nhấn vào đây để thêm sản phẩm mới'.tr),
-              child: Tooltip(
-                message: 'Thêm sản phẩm mới'.tr,
-                child: FilledButton(
-                  onPressed: addProduct,
-                  child: const Icon(Icons.add),
-                ),
-              ),
+    return Toolbar(
+      leadings: [
+        FeaturesTour(
+          controller: state.tour,
+          index: 1,
+          introduce: Text('Nhấn vào đây để thêm sản phẩm mới'.tr),
+          child: Tooltip(
+            message: 'Thêm sản phẩm mới'.tr,
+            child: FilledButton(
+              onPressed: addProduct,
+              child: const Icon(Icons.add),
             ),
-            Row(
-              children: [
-                FeaturesTour(
-                  controller: state.tour,
-                  index: 1.5,
-                  introduce: Text('Nhấn vào đây để tải xuống mẫu dữ liệu'.tr),
-                  child: Tooltip(
-                    message: 'Tải xuống dữ liệu mẫu'.tr,
-                    child: IconButton(
-                      onPressed: () => _downloadTemplate(notifier),
-                      icon: const Icon(Icons.download_rounded),
-                    ),
-                  ),
-                ),
-                FeaturesTour(
-                  controller: state.tour,
-                  index: 2,
-                  introduce: Text('Nhấn vào đây để tải lên dữ liệu từ Excel'.tr),
-                  child: Tooltip(
-                    message: 'Tải lên dữ liệu từ Excel'.tr,
-                    child: IconButton(
-                      onPressed: () => _loadDataFromExcel(context),
-                      icon: const Icon(Icons.upload_rounded),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: 200,
-                  child: FeaturesTour(
-                    controller: state.tour,
-                    index: 3,
-                    introduce: Text('Tìm kiếm sản phẩm theo tên tại đây'.tr),
-                    child: BoxWInput(
-                      controller: searchTextController,
-                      focusNode: searchTextFocus,
-                      hintText: 'Tìm Kiếm'.tr,
-                      hintStyle: const TextStyle(color: Colors.grey),
-                      onChanged: (value) {
-                        startSearchAfterDelay(notifier, value);
-                      },
-                      suffixIcon: const Icon(Icons.search),
-                    ),
-                  ),
-                ),
-                FeaturesTour(
-                  controller: state.tour,
-                  index: 4,
-                  introduce: Text('Nhấn vào đây để hiển thị tuỳ chọn lọc sản phẩm'.tr),
-                  child: IconButton(
-                    onPressed: showFilterDialog,
-                    icon: const Icon(Icons.filter_alt_rounded),
-                  ),
-                ),
-                const SizedBox(width: 6),
-                FeaturesTour(
-                  controller: state.tour,
-                  index: 5,
-                  introduce: Text('Nhấn vào đây để hiển thị tuỳ chọn sắp xếp sản phẩm'.tr),
-                  child: IconButton(
-                    onPressed: showSortDialog,
-                    icon: const Icon(Icons.sort_rounded),
-                  ),
-                ),
-              ],
-            ),
-          ],
+          ),
         ),
-      ),
+      ],
+      trailings: [
+        FeaturesTour(
+          controller: state.tour,
+          index: 1.5,
+          introduce: Text('Nhấn vào đây để tải xuống mẫu dữ liệu'.tr),
+          child: Tooltip(
+            message: 'Tải xuống dữ liệu mẫu'.tr,
+            child: IconButton(
+              onPressed: () => _downloadTemplate(notifier),
+              icon: const Icon(Icons.download_rounded),
+            ),
+          ),
+        ),
+        FeaturesTour(
+          controller: state.tour,
+          index: 2,
+          introduce: Text('Nhấn vào đây để tải lên dữ liệu từ Excel'.tr),
+          child: Tooltip(
+            message: 'Tải lên dữ liệu từ Excel'.tr,
+            child: IconButton(
+              onPressed: () => _loadDataFromExcel(context),
+              icon: const Icon(Icons.upload_rounded),
+            ),
+          ),
+        ),
+        SizedBox(
+          width: 200,
+          child: FeaturesTour(
+            controller: state.tour,
+            index: 3,
+            introduce: Text('Tìm kiếm sản phẩm theo tên tại đây'.tr),
+            child: BoxWInput(
+              controller: searchTextController,
+              focusNode: searchTextFocus,
+              hintText: 'Tìm Kiếm'.tr,
+              hintStyle: const TextStyle(color: Colors.grey),
+              onChanged: (value) {
+                startSearchAfterDelay(notifier, value);
+              },
+              suffixIcon: const Icon(Icons.search),
+            ),
+          ),
+        ),
+        FeaturesTour(
+          controller: state.tour,
+          index: 4,
+          introduce: Text('Nhấn vào đây để hiển thị tuỳ chọn lọc sản phẩm'.tr),
+          child: Tooltip(
+            message: 'Lọc sản phẩm'.tr,
+            child: IconButton(
+              onPressed: showFilterDialog,
+              icon: const Icon(Icons.filter_alt_rounded),
+            ),
+          ),
+        ),
+        const SizedBox(width: 6),
+        FeaturesTour(
+          controller: state.tour,
+          index: 5,
+          introduce: Text('Nhấn vào đây để hiển thị tuỳ chọn sắp xếp sản phẩm'.tr),
+          child: Tooltip(
+            message: 'Sắp xếp sản phẩm'.tr,
+            child: IconButton(
+              onPressed: showSortDialog,
+              icon: const Icon(Icons.sort_rounded),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
