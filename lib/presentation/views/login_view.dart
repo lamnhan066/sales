@@ -141,7 +141,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
                   ),
                 ),
                 const Divider(),
-                buildLicense(ref),
+                Center(child: buildLicense(ref)),
                 const Spacer(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -31,8 +31,9 @@ class SettingsView extends ConsumerWidget {
           child: Column(
             children: [
               BoxWRect(
+                alignment: Alignment.center,
                 borderColor: Colors.grey,
-                child: buildLicense(ref),
+                child: Center(child: buildLicense(ref)),
               ),
               _buildLanguage(ref),
               _buildBrightness(ref),
