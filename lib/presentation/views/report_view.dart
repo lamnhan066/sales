@@ -44,12 +44,15 @@ class _ReportViewState extends ConsumerState<ReportView> {
       body: Column(
         children: [
           _buildToolbar(context, notifier, state),
-          ConstrainedBox(
-            constraints: const BoxConstraints(maxHeight: 400),
-            child: _buildProductReport(context, notifier, state),
-          ),
           Expanded(
-            child: _buildRevenueReport(context, notifier, state),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  _buildProductReport(context, notifier, state),
+                  _buildRevenueReport(context, notifier, state),
+                ],
+              ),
+            ),
           ),
         ],
       ),
@@ -89,9 +92,9 @@ class _ReportViewState extends ConsumerState<ReportView> {
             fontSize: 20,
           ),
         ),
-        Expanded(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 400),
+        ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 400, maxHeight: 400),
+          child: SingleChildScrollView(
             child: DataTable(
               dataRowMinHeight: 68,
               dataRowMaxHeight: 68,
@@ -170,7 +173,8 @@ class _ReportViewState extends ConsumerState<ReportView> {
         ),
         // Chỉ hiển thị biểu đồ khi thu nhập lớn hơn 0
         if (state.revenue > 0)
-          Expanded(
+          SizedBox(
+            height: 250,
             child: PieChart(
               PieChartData(
                 pieTouchData: PieTouchData(
