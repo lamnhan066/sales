@@ -45,80 +45,89 @@ class _OrdersViewState extends ConsumerState<OrdersView> {
     return Scaffold(
       body: Column(
         children: [
-          Toolbar(
-            leadings: [
-              FeaturesTour(
-                controller: ordersState.tour,
-                index: 1,
-                introduce: Text('Nhấn vào đây để thêm đơn hàng'.tr),
-                child: Tooltip(
-                  message: 'Thêm đơn hàng mới'.tr,
-                  child: FilledButton(
-                    onPressed: addOrder,
-                    child: const Icon(Icons.add),
-                  ),
-                ),
-              ),
-            ],
-            trailings: [
-              FeaturesTour(
-                controller: ordersState.tour,
-                index: 2,
-                introduce: Text('Nhấn vào đây để mở tuỳ chọn lọc đơn hàng'.tr),
-                child: Tooltip(
-                  message: 'Bộ lọc đơn hàng'.tr,
-                  child: IconButton(
-                    onPressed: filter,
-                    icon: ordersState.dateRange == null
-                        ? const Icon(Icons.filter_alt_off_rounded)
-                        : const Icon(Icons.filter_alt_rounded),
-                  ),
-                ),
-              ),
-            ],
+          _buildToolbar(ordersState),
+          _buildTable(ordersState, ordersNotifier),
+          _buildPagination(ordersState, ordersNotifier),
+        ],
+      ),
+    );
+  }
+
+  Padding _buildPagination(OrdersState ordersState, OrdersNotifier ordersNotifier) {
+    return Padding(
+      padding: const EdgeInsets.all(12),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          IconButton(
+            onPressed: ordersState.page == 1 ? null : ordersNotifier.goToPreviousPage,
+            icon: const Icon(Icons.arrow_back_ios_rounded),
           ),
-          if (ordersState.isLoading)
-            const Center(child: CircularProgressIndicator())
-          else if (ordersState.error.isNotEmpty)
-            Center(child: Text('Error: @{error}'.trP({'error': ordersState.error})))
-          else
-            Expanded(
-              child: SingleChildScrollView(
-                child: SizedBox(
-                  width: double.infinity,
-                  child: DataTable(
-                    dataRowMinHeight: 68,
-                    dataRowMaxHeight: 68,
-                    columnSpacing: 30,
-                    horizontalMargin: 10,
-                    columns: _buildColumns(),
-                    rows: _buildRows(ordersState, ordersNotifier),
-                  ),
-                ),
-              ),
-            ),
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(
-                  onPressed: ordersState.page == 1 ? null : ordersNotifier.goToPreviousPage,
-                  icon: const Icon(Icons.arrow_back_ios_rounded),
-                ),
-                IconButton(
-                  onPressed: choosePage,
-                  icon: Text('${ordersState.page}/${ordersState.totalPage}'),
-                ),
-                IconButton(
-                  onPressed: ordersState.page == ordersState.totalPage ? null : ordersNotifier.goToNextPage,
-                  icon: const Icon(Icons.arrow_forward_ios_rounded),
-                ),
-              ],
-            ),
+          IconButton(
+            onPressed: choosePage,
+            icon: Text('${ordersState.page}/${ordersState.totalPage}'),
+          ),
+          IconButton(
+            onPressed: ordersState.page == ordersState.totalPage ? null : ordersNotifier.goToNextPage,
+            icon: const Icon(Icons.arrow_forward_ios_rounded),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildTable(OrdersState ordersState, OrdersNotifier ordersNotifier) {
+    return ordersState.error.isNotEmpty
+        ? Center(child: Text('Error: @{error}'.trP({'error': ordersState.error})))
+        : Expanded(
+            child: SingleChildScrollView(
+              child: SizedBox(
+                width: double.infinity,
+                child: DataTable(
+                  dataRowMinHeight: 68,
+                  dataRowMaxHeight: 68,
+                  columnSpacing: 30,
+                  horizontalMargin: 10,
+                  columns: _buildColumns(),
+                  rows: _buildRows(ordersState, ordersNotifier),
+                ),
+              ),
+            ),
+          );
+  }
+
+  Toolbar _buildToolbar(OrdersState ordersState) {
+    return Toolbar(
+      leadings: [
+        FeaturesTour(
+          controller: ordersState.tour,
+          index: 1,
+          introduce: Text('Nhấn vào đây để thêm đơn hàng'.tr),
+          child: Tooltip(
+            message: 'Thêm đơn hàng mới'.tr,
+            child: FilledButton(
+              onPressed: addOrder,
+              child: const Icon(Icons.add),
+            ),
+          ),
+        ),
+      ],
+      trailings: [
+        FeaturesTour(
+          controller: ordersState.tour,
+          index: 2,
+          introduce: Text('Nhấn vào đây để mở tuỳ chọn lọc đơn hàng'.tr),
+          child: Tooltip(
+            message: 'Bộ lọc đơn hàng'.tr,
+            child: IconButton(
+              onPressed: filter,
+              icon: ordersState.dateRange == null
+                  ? const Icon(Icons.filter_alt_off_rounded)
+                  : const Icon(Icons.filter_alt_rounded),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
