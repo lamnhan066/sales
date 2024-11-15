@@ -5,6 +5,7 @@ import 'package:language_helper/language_helper.dart';
 import 'package:sales/presentation/riverpod/notifiers/app_settings_provider.dart';
 import 'package:sales/presentation/riverpod/notifiers/settings_provider.dart';
 import 'package:sales/presentation/riverpod/states/settings_state.dart';
+import 'package:sales/presentation/widgets/licenses.dart';
 
 /// Màn hình cài đặt.
 class SettingsView extends ConsumerWidget {
@@ -29,6 +30,10 @@ class SettingsView extends ConsumerWidget {
           constraints: const BoxConstraints(maxWidth: 700),
           child: Column(
             children: [
+              BoxWRect(
+                borderColor: Colors.grey,
+                child: buildLicense(ref),
+              ),
               _buildLanguage(ref),
               _buildBrightness(ref),
               _buildSaveLastView(notifier, state),
