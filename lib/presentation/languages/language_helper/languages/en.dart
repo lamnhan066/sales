@@ -100,6 +100,7 @@ final en = <String, dynamic>{
   'Không thể kích hoạt bản dùng thử': 'Unable to activate the trial version',
   // 'Không thể kích hoạt bản dùng thử': 'Unable to activate the trial version',  // Duplicated
   'Không thể kích hoạt với mã đã nhập': 'Unable to activate with the entered code',
+  // 'Không thể kích hoạt với mã đã nhập': 'Không thể kích hoạt với mã đã nhập',  // Duplicated
 
   ///===========================================================================
   /// Path: ./lib/presentation/riverpod/notifiers/settings_provider.dart
@@ -235,19 +236,6 @@ final en = <String, dynamic>{
   // 'Huỷ': 'Cancel',  // Duplicated
   'Đang tự động đăng nhập...': 'Logging in automatically...',
   // 'Huỷ': 'Cancel',  // Duplicated
-  'Bạn đang sử dụng bản quyền. Còn @{day} ngày.': 'You are using a licensed version. @{day} days remaining.',
-  'Kích Hoạt': 'Activate',
-  'Bạn đã hết thời gian dùng thử.\nVui lòng nhập mã để kích hoạt ứng dụng':
-      'Your trial period has ended.\nPlease enter a code to activate the application.',
-  'Bạn đang sử dụng bản dùng thử. Còn @{day} ngày.': 'You are using a trial version. @{day} days remaining.',
-  // 'Kích Hoạt': 'Kích Hoạt',  // Duplicated
-  'Bạn đã hết thời gian sử dụng.\nVui lòng nhập mã để kích hoạt ứng dụng':
-      'Your usage period has ended.\nPlease enter a code to activate the application.',
-  'Bạn có 15 ngày để dùng thử.\nVui lòng nhấn Kích Hoạt để tiếp tục':
-      'You have 15 days to try.\nPlease press Activate to continue.',
-  // 'Kích Hoạt': 'Kích Hoạt',  // Duplicated
-  'Mã kích hoạt': 'Activation Code',
-  // 'Kích Hoạt': 'Kích Hoạt',  // Duplicated
 
   ///===========================================================================
   /// Path: ./lib/presentation/views/settings_view.dart
@@ -325,11 +313,11 @@ final en = <String, dynamic>{
   /// Path: ./lib/presentation/views/orders_view.dart
   ///===========================================================================
   '@path_./lib/presentation/views/orders_view.dart': '',
+  // 'Error: @{error}': 'Error: @{error}',  // Duplicated
   'Nhấn vào đây để thêm đơn hàng': 'Click here to add an order',
   'Thêm đơn hàng mới': 'Add new order',
   'Nhấn vào đây để mở tuỳ chọn lọc đơn hàng': 'Tap here to open order filter options',
   'Bộ lọc đơn hàng': 'Order filter',
-  // 'Error: @{error}': 'Error: @{error}',  // Duplicated
   // 'STT': 'No.',  // Duplicated
   'Ngày Giờ': 'Date & Time',
   'Trạng Thái': 'Status',
@@ -453,6 +441,24 @@ final en = <String, dynamic>{
   'Tổng': 'Tổng',
   'Mã Giảm Giá': 'Mã Giảm Giá',
   'Kiểm Tra': 'Kiểm Tra',
+
+  ///===========================================================================
+  /// Path: ./lib/presentation/widgets/licenses.dart
+  ///===========================================================================
+  '@path_./lib/presentation/widgets/licenses.dart': '',
+  'Bạn đang sử dụng bản quyền. Còn @{day} ngày.': 'You are using a licensed version. @{day} days remaining.',
+  'Bạn đã hết thời gian dùng thử.\nVui lòng nhập mã để kích hoạt ứng dụng':
+      'Your trial period has ended.\nPlease enter a code to activate the application',
+  'Bạn đang sử dụng bản dùng thử. Còn @{day} ngày.': 'You are using a trial version. @{day} days remaining.',
+  'Kích Hoạt': 'Activate',
+  'Bạn đã hết thời gian sử dụng.\nVui lòng nhập mã để kích hoạt ứng dụng':
+      'Your usage period has ended.\nPlease enter a code to activate the application',
+  'Bạn có 15 ngày để dùng thử.\nVui lòng nhấn Kích Hoạt để tiếp tục':
+      'You have 15 days to try.\nPlease press Activate to continue',
+  // 'Kích Hoạt': 'Activate',  // Duplicated
+  'Mã kích hoạt': 'Activation code',
+  'Gia Hạn': 'Renew',
+  // 'Kích Hoạt': 'Activate',  // Duplicated
 
   ///===========================================================================
   /// Path: ./lib/presentation/widgets/product_form_dialog.dart
