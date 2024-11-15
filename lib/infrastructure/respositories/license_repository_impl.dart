@@ -5,14 +5,18 @@ import 'package:sales/domain/repositories/license_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LicenseRepositoryImpl implements LicenseRepository {
-
   const LicenseRepositoryImpl(this._prefs);
   final SharedPreferences _prefs;
 
   @override
   Future<License> active(LicenseParams params) async {
     if (params.code == '22880253') {
-      final license = ActiveLicense(DateTime.now(), 30);
+      var license = await getLicense(params.user);
+      if (license is ActiveLicense) {
+        license = license.copyWith(expiredDays: license.expiredDays + 30) as ActiveLicense;
+      } else {
+        license = ActiveLicense(DateTime.now(), 30);
+      }
       await _prefs.setString(_getPrefix(params.user), license.toJson());
       return license;
     }

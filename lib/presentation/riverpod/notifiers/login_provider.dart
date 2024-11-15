@@ -40,7 +40,6 @@ final loginProvider = StateNotifierProvider<LoginNotifier, LoginState>((ref) {
 });
 
 class LoginNotifier extends StateNotifier<LoginState> {
-
   LoginNotifier({
     required LoginUseCase loginUseCase,
     required AutoLoginUseCase autoLoginUseCase,
@@ -230,6 +229,15 @@ class LoginNotifier extends StateNotifier<LoginState> {
         license: license,
         licenseError: 'Không thể kích hoạt với mã đã nhập'.tr,
       );
+    }
+  }
+
+  Future<void> renew(String code) async {
+    final license = await _activeLicenseUseCase(LicenseParams(user: state.user, code: code));
+    if (license is! NoLicense) {
+      state = state.copyWith(license: license, licenseError: '', error: '');
+    } else {
+      state = state.copyWith(licenseError: 'Không thể kích hoạt với mã đã nhập'.tr);
     }
   }
 }
