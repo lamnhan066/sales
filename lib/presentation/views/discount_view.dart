@@ -7,6 +7,7 @@ import 'package:sales/core/extensions/price_extensions.dart';
 import 'package:sales/domain/entities/discount.dart';
 import 'package:sales/presentation/riverpod/notifiers/discount_provider.dart';
 import 'package:sales/presentation/riverpod/states/discount_state.dart';
+import 'package:sales/presentation/widgets/common_components.dart';
 import 'package:sales/presentation/widgets/data_table_plus.dart';
 import 'package:sales/presentation/widgets/discount_dialogs.dart';
 import 'package:sales/presentation/widgets/page_chooser_dialog.dart';
@@ -34,10 +35,6 @@ class _DiscountViewState extends ConsumerState<DiscountView> {
   Widget build(BuildContext context) {
     final state = ref.watch(discountProvider);
     final notifier = ref.read(discountProvider.notifier);
-
-    if (state.isLoading) {
-      return const SizedBox.shrink();
-    }
 
     return Scaffold(
       body: Column(
@@ -81,27 +78,19 @@ class _DiscountViewState extends ConsumerState<DiscountView> {
 
   List<DataColumn> _buildColumns() {
     return [
-      DataColumn(
-        headingRowAlignment: MainAxisAlignment.center,
-        label: Text('STT'.tr, textAlign: TextAlign.center),
-      ),
+      headerTextColumn('STT'.tr),
       IntrinsicDataColumn(
         flex: 1,
         headingRowAlignment: MainAxisAlignment.center,
-        label: Text('Mã'.tr, textAlign: TextAlign.center),
+        label: Text(
+          'Mã'.tr,
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
       ),
-      DataColumn(
-        headingRowAlignment: MainAxisAlignment.center,
-        label: Text('Phần trăm'.tr, textAlign: TextAlign.center),
-      ),
-      DataColumn(
-        headingRowAlignment: MainAxisAlignment.center,
-        label: Text('Tối đa'.tr, textAlign: TextAlign.center),
-      ),
-      DataColumn(
-        headingRowAlignment: MainAxisAlignment.center,
-        label: Text('Hành động'.tr, textAlign: TextAlign.center),
-      ),
+      headerTextColumn('Phần trăm'.tr),
+      headerTextColumn('Tối đa'.tr),
+      headerTextColumn('Hành động'.tr),
     ];
   }
 

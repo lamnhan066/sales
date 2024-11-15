@@ -59,10 +59,6 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
     final productState = ref.watch(productsProvider);
     final productNotifier = ref.read(productsProvider.notifier);
 
-    if (productState.isLoading) {
-      return const SizedBox.shrink();
-    }
-
     if (productState.error.isNotEmpty) {
       return Center(child: Text('Error: @{error}'.trP({'error': productState.error})));
     }

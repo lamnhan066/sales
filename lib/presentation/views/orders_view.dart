@@ -36,10 +36,6 @@ class _OrdersViewState extends ConsumerState<OrdersView> {
     final ordersState = ref.watch(ordersProvider);
     final ordersNotifier = ref.read(ordersProvider.notifier);
 
-    if (ordersState.isLoading) {
-      return const SizedBox.shrink();
-    }
-
     if (ordersState.hasDraft) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _showHasDraftDialog(context, ordersNotifier, ordersState);
@@ -128,23 +124,18 @@ class _OrdersViewState extends ConsumerState<OrdersView> {
 
   List<DataColumn> _buildColumns() {
     return [
-      DataColumn(
-        headingRowAlignment: MainAxisAlignment.center,
-        label: Text('STT'.tr, textAlign: TextAlign.center),
-      ),
+      headerTextColumn('STT'.tr),
       IntrinsicDataColumn(
         flex: 1,
         headingRowAlignment: MainAxisAlignment.center,
-        label: Text('Ngày Giờ'.tr, textAlign: TextAlign.center),
+        label: Text(
+          'Ngày Giờ'.tr,
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
       ),
-      DataColumn(
-        headingRowAlignment: MainAxisAlignment.center,
-        label: Text('Trạng Thái'.tr, textAlign: TextAlign.center),
-      ),
-      DataColumn(
-        headingRowAlignment: MainAxisAlignment.center,
-        label: Text('Hành động'.tr, textAlign: TextAlign.center),
-      ),
+      headerTextColumn('Trạng Thái'.tr),
+      headerTextColumn('Hành động'.tr),
     ];
   }
 

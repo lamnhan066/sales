@@ -38,10 +38,6 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     final dashboardNotifier = ref.read(dashboardNotifierProvider.notifier);
     final dashboardState = ref.watch(dashboardNotifierProvider);
 
-    if (dashboardState.isLoading) {
-      return const SizedBox.shrink();
-    }
-
     if (dashboardState.error.isNotEmpty) {
       return Center(child: Text('Error: @{error}'.trP({'error': dashboardState.error})));
     }
