@@ -30,7 +30,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  get_it: ^8.0.2
+  get_it: ^7.2.0
   language_helper: ^0.11.3+1
   boxw: ^0.0.48
   shared_preferences: ^2.3.2
@@ -64,6 +64,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   icons_launcher: ^3.0.0
+  msix: ^3.16.8
   very_good_analysis: ^6.0.0
 
 # For information on the generic Dart part of this file, see the
@@ -114,3 +115,11 @@ icons_launcher:
       enable: true
     windows:
       enable: true
+
+msix_config:
+  display_name: Sales
+  publisher_display_name: Lam Thanh Nhan
+  identity_name: dev.lamnhan.sales
+  msix_version: 1.0.0.0
+  logo_path: assets/images/logo.png
+  capabilities: internetClient
