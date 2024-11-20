@@ -193,8 +193,8 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
 
   List<DataColumn> _buildDataColumns(BuildContext context) {
     return [
-      _headerTextColumn('STT'.tr),
-      _headerTextColumn('ID'.tr),
+      headerTextColumn('STT'.tr),
+      headerTextColumn('ID'.tr),
       IntrinsicDataColumn(
         flex: 1,
         headingRowAlignment: MainAxisAlignment.center,
@@ -204,24 +204,12 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
-      _headerTextColumn('Giá nhập'.tr, numeric: true),
-      _headerTextColumn('Giá bán'.tr, numeric: true),
-      _headerTextColumn('Loại hàng'.tr),
-      _headerTextColumn('Số lượng'.tr, numeric: true),
-      _headerTextColumn('Hành động'.tr),
+      headerTextColumn('Giá nhập'.tr, numeric: true),
+      headerTextColumn('Giá bán'.tr, numeric: true),
+      headerTextColumn('Loại hàng'.tr),
+      headerTextColumn('Số lượng'.tr, numeric: true),
+      headerTextColumn('Hành động'.tr),
     ];
-  }
-
-  DataColumn _headerTextColumn(String text, {bool numeric = false}) {
-    return DataColumn(
-      numeric: numeric,
-      headingRowAlignment: MainAxisAlignment.center,
-      label: Text(
-        text,
-        textAlign: TextAlign.center,
-        style: const TextStyle(fontWeight: FontWeight.bold),
-      ),
-    );
   }
 
   List<DataRow> _buildDataRows(BuildContext context, ProductsState state, ProductsNotifier notifier) {
