@@ -294,15 +294,15 @@ final en = <String, dynamic>{
   ///===========================================================================
   '@path_./lib/presentation/views/discount_view.dart': '',
   'Nhấn vào đây để thêm mã giảm giá': 'Tap here to add a discount code',
-  'Thêm khuyến mãi': 'Thêm khuyến mãi',
+  'Thêm khuyến mãi': 'Add promotion',
   // 'STT': 'STT',  // Duplicated
   'Mã': 'Code',
   'Phần trăm': 'Percentage',
-  // 'Tối đa': 'Tối đa',  // Duplicated
+  // 'Tối đa': 'Maximum',  // Duplicated
   // 'Hành động': 'Action',  // Duplicated
   // 'Không': 'No',  // Duplicated
-  'Nhấn vào đây để chép mã giảm giá': 'Nhấn vào đây để chép mã giảm giá',
-  'Nhấn vào đây để xoá mã giảm giá': 'Nhấn vào đây để xoá mã giảm giá',
+  'Nhấn vào đây để chép mã giảm giá': 'Tap here to copy the discount code',
+  'Nhấn vào đây để xoá mã giảm giá': 'Tap here to delete the discount code',
   'Đã sao chép mã: @{code}': 'Code copied: @{code}',
   // 'Xác nhận': 'Confirm',  // Duplicated
   'Bạn có chắc muốn xoá mã giảm giá @{code} không?': 'Are you sure you want to delete the discount code @{code}?',
