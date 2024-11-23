@@ -3,7 +3,6 @@ import 'package:sales/domain/repositories/language_repository.dart';
 import 'package:sales/presentation/languages/language_helper/language_data.dart';
 
 class LanguageRepositoryImpl implements LanguageRepository {
-
   const LanguageRepositoryImpl(this._languageHelper);
   final LanguageHelper _languageHelper;
 
@@ -25,5 +24,10 @@ class LanguageRepositoryImpl implements LanguageRepository {
   @override
   Future<Set<LanguageCodes>> getSupportedLanguages() async {
     return _languageHelper.codes;
+  }
+
+  @override
+  Stream<LanguageCodes> onLanguageChanged() {
+    return _languageHelper.stream;
   }
 }

@@ -5,4 +5,5 @@ abstract interface class LanguageRepository {
   Future<Set<LanguageCodes>> getSupportedLanguages();
   Future<LanguageCodes> getCurrentLanguage();
   Future<void> changeLanguage(LanguageCodes code);
+  Stream<LanguageCodes> onLanguageChanged();
 }

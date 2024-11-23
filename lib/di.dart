@@ -50,6 +50,7 @@ import 'package:sales/domain/usecases/app/get_current_language_usecase.dart';
 import 'package:sales/domain/usecases/app/get_item_per_page_usecase.dart';
 import 'package:sales/domain/usecases/app/get_supported_languages_usecase.dart';
 import 'package:sales/domain/usecases/app/initialize_language_usecase.dart';
+import 'package:sales/domain/usecases/app/on_language_changed_usecase.dart';
 import 'package:sales/domain/usecases/app/print_image_bytes_as_pdf_usecase.dart';
 import 'package:sales/domain/usecases/app/set_brightness_usecase.dart';
 import 'package:sales/domain/usecases/auth/auto_login_usecase.dart';
@@ -157,6 +158,13 @@ Future<void> setupDependencies() async {
   _registerServices();
 
   await getIt<InitializeLanguageUseCase>()(NoParams());
+  _updateFeaturesTourGlobalConfigurations();
+  getIt<OnLanguageChangedUseCase>()(NoParams()).listen((value) {
+    _updateFeaturesTourGlobalConfigurations();
+  });
+}
+
+void _updateFeaturesTourGlobalConfigurations() {
   FeaturesTour.setGlobalConfig(
     childConfig: ChildConfig(
       isAnimateChild: false,
@@ -240,6 +248,7 @@ void _registerAppUseCases() {
   getIt
     ..registerLazySingleton<GetAppVersionUseCase>(() => GetAppVersionUseCase(getIt()))
     ..registerLazySingleton<InitializeLanguageUseCase>(() => InitializeLanguageUseCase(getIt()))
+    ..registerLazySingleton<OnLanguageChangedUseCase>(() => OnLanguageChangedUseCase(getIt()))
     ..registerLazySingleton<GetCurrentLanguageUseCase>(() => GetCurrentLanguageUseCase(getIt()))
     ..registerLazySingleton<GetSupportedLanguagesUseCase>(() => GetSupportedLanguagesUseCase(getIt()))
     ..registerLazySingleton<ChangeLanguageUseCase>(() => ChangeLanguageUseCase(getIt()))
