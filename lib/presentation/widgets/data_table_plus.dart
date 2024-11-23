@@ -100,19 +100,20 @@ class DataColumn {
   /// If null, then defaults to [MainAxisAlignment.start].
   final MainAxisAlignment? headingRowAlignment;
 
-  /// How the horizontal extents of the column of this table should be determined.
+  /// How the horizontal extents of this column of the table should be determined.
   ///
   /// The [FixedColumnWidth] class can be used to specify a specific width in
-  /// pixels. That is the cheapest way to size a table's columns.
+  /// pixels. This is the cheapest way to size a table's columns.
   ///
   /// The layout performance of the table depends critically on which column
   /// sizing algorithms are used here. In particular, [IntrinsicColumnWidth] is
   /// quite expensive because it needs to measure each cell in the column to
   /// determine the intrinsic size of the column.
   ///
-  /// If this is set to null, the table uses the default behavior instead.
-  /// By default, that uses `IntrinsicColumnWidth(flex: 1.0)` if the column
-  /// has only text and `IntrinsicColumnWidth()` for others.
+  /// If this property is `null`, the table applies a default behavior:
+  /// - If the table has exactly one column identified as the only text column
+  ///   (i.e., all the rest are numeric), that column uses `IntrinsicColumnWidth(flex: 1.0)`.
+  /// - All other columns use `IntrinsicColumnWidth()`.
   final TableColumnWidth? columnWidth;
 }
 
