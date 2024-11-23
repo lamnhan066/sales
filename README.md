@@ -118,17 +118,17 @@
   - Sử dụng Postgres.app để quản lý server.
   - Sử dụng pgAdmin 4 để quản lý server và dữ liệu.
 - Sử dụng Git và Github để quản lý và lưu trữ mã nguồn.
+- Build bản cài đặt cho macos và windows.
 
 ## Build
 
 ### Windows
 
-- flutter build windows --release --obfuscate --split-debug-info=windows-debug-info
 - dart run msix:create
 
 ### MacOS
 
-- flutter build macos --release --obfuscate --split-debug-info=macos-debug-info
+- dart run dmg --sign-certificate "Developer ID Application: [Company Name]"
 
 ## Database
 
