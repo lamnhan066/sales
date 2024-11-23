@@ -9,6 +9,7 @@
 
 ### Mã nguồn
 
+- [Video Youtube](https://youtu.be/orKD1-g8RyY)
 - [Github](https://github.com/lamnhan066/sales)
 
 ### Các Chức Năng Cơ Sở (5.0)
@@ -16,8 +17,11 @@
 1. Trang Đăng nhập (Login):
 
     - Thông tin đăng nhập:
-    - Tên đăng nhập: `postgres` (Đây cũng là tên đăng nhập mặc định của Postgres).
-    - Mật khẩu: `sales`.
+        - Tên đăng nhập: `postgres` (Đây cũng là tên đăng nhập mặc định của Postgres).
+        - Mật khẩu: `sales`.
+    - Thông tin server Postgres:
+        - Host: `localhost`.
+        - Database: `sales`.
     - Nếu có thông tin đăng nhập lưu từ lần trước thì tự động đăng nhập và đi vào màn hình chính luôn.
     - Thông tin đăng nhập cần phải được mã hóa.
     - Màn hình đăng nhập cần hiển thị thông tin phiên bản của chương trình.
@@ -54,8 +58,7 @@
             - Mỗi loại sản phẩm có tối thiểu 22 sản phẩm.
             - Mỗi sản phẩm có tối thiểu 3 hình.
             - Dữ liệu mẫu là thật (từ trang thegioididong.com).
-    - Dữ liệu từ 2 nguồn:
-        - Memory.
+    - Dữ liệu:
         - Postgres:
             - Tìm hiểu cách sử dụng pgAdmin:
                 - Cách tạo bảng thông qua GUI (ERD tool).
@@ -113,13 +116,14 @@
   - Chế độ sáng/tối.
 - CSDL:
   - Sử dụng Postgres.app để quản lý server.
-  - Sử dụng pgAdmin 4 để quản lý dữ liệu.
+  - Sử dụng pgAdmin 4 để quản lý server và dữ liệu.
 - Sử dụng Git và Github để quản lý và lưu trữ mã nguồn.
 
 ## Build
 
 ### Windows
 
+- flutter build windows --release --obfuscate --split-debug-info=windows-debug-info
 - dart run msix:create
 
 ### MacOS
