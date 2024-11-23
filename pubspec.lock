@@ -233,9 +233,10 @@ packages:
   features_tour:
     dependency: "direct main"
     description:
-      path: "/Users/thanhnhan/Documents/Development/Projects/Flutter Plugin/features_tour"
-      relative: false
-    source: path
+      name: features_tour
+      sha256: "07f70613962a5abbefc26f9dd5058ea34031fcdc48c66b1a320acab43c8ecf08"
+      url: "https://pub.dev"
+    source: hosted
     version: "0.4.8"
   ffi:
     dependency: transitive

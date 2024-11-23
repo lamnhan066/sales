@@ -120,7 +120,6 @@
 
 ### Windows
 
-- flutter build windows --release --obfuscate --split-debug-info=windows-debug-info
 - dart run msix:create
 
 ### MacOS
