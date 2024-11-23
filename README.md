@@ -11,7 +11,7 @@
 
 - [Github](https://github.com/lamnhan066/sales)
 
-### Các Chức Năng Cơ Sở
+### Các Chức Năng Cơ Sở (5.0)
 
 1. Trang Đăng nhập (Login):
 
@@ -78,7 +78,7 @@
     - Cho phép lưu chức năng lần cuối mở.
     - Sao lưu/Khôi phục Database.
 
-### Các Chức Năng Tự Chọn
+### Các Chức Năng Tự Chọn (4.25)
 
 - Auto save khi tạo đơn hàng, thêm mới sản phẩm (0.25):
   - Khi người dùng mở trang đơn hàng và sản phẩm thì có 1 thông báo hiện lên nếu có đơn hàng nháp để người dùng tiếp tục tạo đơn hoặc huỷ đơn nháp.
@@ -120,5 +120,9 @@
 
 ### Windows
 
-- flutter build windows --release
+- flutter build windows --release --obfuscate --split-debug-info=windows-debug-info
 - dart run msix:create
+
+### MacOS
+
+- flutter build macos --release --obfuscate --split-debug-info=macos-debug-info
