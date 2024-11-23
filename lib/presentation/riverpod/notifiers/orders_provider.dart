@@ -66,10 +66,13 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
     required SaveTemporaryOrderWithItemsUseCase saveTemporaryOrderWithItemsUseCase,
     required RemoveTemporaryOrderWithItemsUseCase removeTemporaryOrderWithItemsUseCase,
     required PrintImageBytesAsPdfUseCase printImageBytesAsPdfUseCase,
-    required this.getDiscountByCodeUseCase,
-    required this.getDiscountsByOrderIdUseCase,
-    required this.updateDiscountUseCase,
-  })  : _getOrdersUseCase = getOrdersUseCase,
+    required GetDiscountByCodeUseCase getDiscountByCodeUseCase,
+    required GetDiscountsByOrderIdUseCase getDiscountsByOrderIdUseCase,
+    required UpdateDiscountUseCase updateDiscountUseCase,
+  })  : _updateDiscountUseCase = updateDiscountUseCase,
+        _getDiscountsByOrderIdUseCase = getDiscountsByOrderIdUseCase,
+        _getDiscountByCodeUseCase = getDiscountByCodeUseCase,
+        _getOrdersUseCase = getOrdersUseCase,
         _getOrderItemsUseCase = getOrderItemsUseCase,
         _getAllProductsUseCase = getAllProductsUseCase,
         _getNextOrderIdUseCase = getNextOrderIdUseCase,
@@ -96,9 +99,9 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
   final SaveTemporaryOrderWithItemsUseCase _saveTemporaryOrderWithItemsUseCase;
   final RemoveTemporaryOrderWithItemsUseCase _removeTemporaryOrderWithItemsUseCase;
   final PrintImageBytesAsPdfUseCase _printImageBytesAsPdfUseCase;
-  final GetDiscountByCodeUseCase getDiscountByCodeUseCase;
-  final GetDiscountsByOrderIdUseCase getDiscountsByOrderIdUseCase;
-  final UpdateDiscountUseCase updateDiscountUseCase;
+  final GetDiscountByCodeUseCase _getDiscountByCodeUseCase;
+  final GetDiscountsByOrderIdUseCase _getDiscountsByOrderIdUseCase;
+  final UpdateDiscountUseCase _updateDiscountUseCase;
 
   Future<void> initialize() async {
     state = state.copyWith(isLoading: true);
@@ -178,13 +181,13 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
       final oldDiscounts = await getDiscountsByOrderId(result.order.id);
       if (oldDiscounts.isNotEmpty) {
         for (final d in oldDiscounts) {
-          await updateDiscountUseCase(d.copyWithNoOrderId());
+          await _updateDiscountUseCase(d.copyWithNoOrderId());
         }
       }
       final discount = result.discount!.copyWith(orderId: result.order.id);
 
       // Liên kết mã giảm giá mới
-      await updateDiscountUseCase(discount);
+      await _updateDiscountUseCase(discount);
     }
     await fetchOrders();
   }
@@ -194,7 +197,7 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
         await _addOrderWithItemsUseCase(OrderWithItemsParams(order: result.order, orderItems: result.orderItems));
     if (result.discount != null) {
       final discount = result.discount!.copyWith(orderId: orderId);
-      await updateDiscountUseCase(discount);
+      await _updateDiscountUseCase(discount);
     }
     await fetchOrders();
   }
@@ -237,10 +240,10 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
   }
 
   Future<Discount?> getDiscountByCode(String code) {
-    return getDiscountByCodeUseCase(code);
+    return _getDiscountByCodeUseCase(code);
   }
 
   Future<List<Discount>> getDiscountsByOrderId(int orderId) {
-    return getDiscountsByOrderIdUseCase(orderId);
+    return _getDiscountsByOrderIdUseCase(orderId);
   }
 }

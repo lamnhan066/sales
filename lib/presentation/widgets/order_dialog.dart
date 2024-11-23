@@ -184,7 +184,7 @@ Future<OrderResult?> _orderDialog({
   }
 
   Future<List<Discount>> getDiscountsByOrderId(int id) {
-    return notifier.getDiscountsByOrderIdUseCase(id);
+    return notifier.getDiscountsByOrderId(id);
   }
 
   var discounts = await getDiscountsByOrderId(resultOrder.id);

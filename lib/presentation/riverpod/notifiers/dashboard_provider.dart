@@ -26,37 +26,45 @@ final dashboardNotifierProvider = StateNotifierProvider<DashboardNotifier, Dashb
 });
 
 class DashboardNotifier extends StateNotifier<DashboardState> {
-
   DashboardNotifier({
-    required this.getDailyOrderCountUseCase,
-    required this.getDailyRevenueUseCase,
-    required this.getFiveHighestSalesProductsUseCase,
-    required this.getFiveLowStockProductsUseCase,
-    required this.getDailyRevenueForMonthUseCase,
-    required this.getThreeRecentOrdersUseCase,
-    required this.getTotalProductCountUseCase,
-  }) : super(DashboardState(
-          reportDateTime: DateTime.now(),
-          tour: FeaturesTourController('DashboardView'),
-        ),);
-  final GetDailyOrderCountUseCase getDailyOrderCountUseCase;
-  final GetDailyRevenueUseCase getDailyRevenueUseCase;
-  final GetFiveHighestSalesProductsUseCase getFiveHighestSalesProductsUseCase;
-  final GetFiveLowStockProductsUseCase getFiveLowStockProductsUseCase;
-  final GetDailyRevenueForMonth getDailyRevenueForMonthUseCase;
-  final GetThreeRecentOrdersUseCase getThreeRecentOrdersUseCase;
-  final GetTotalProductCountUseCase getTotalProductCountUseCase;
+    required GetDailyOrderCountUseCase getDailyOrderCountUseCase,
+    required GetDailyRevenueUseCase getDailyRevenueUseCase,
+    required GetFiveHighestSalesProductsUseCase getFiveHighestSalesProductsUseCase,
+    required GetFiveLowStockProductsUseCase getFiveLowStockProductsUseCase,
+    required GetDailyRevenueForMonth getDailyRevenueForMonthUseCase,
+    required GetThreeRecentOrdersUseCase getThreeRecentOrdersUseCase,
+    required GetTotalProductCountUseCase getTotalProductCountUseCase,
+  })  : _getTotalProductCountUseCase = getTotalProductCountUseCase,
+        _getThreeRecentOrdersUseCase = getThreeRecentOrdersUseCase,
+        _getDailyRevenueForMonthUseCase = getDailyRevenueForMonthUseCase,
+        _getFiveLowStockProductsUseCase = getFiveLowStockProductsUseCase,
+        _getFiveHighestSalesProductsUseCase = getFiveHighestSalesProductsUseCase,
+        _getDailyRevenueUseCase = getDailyRevenueUseCase,
+        _getDailyOrderCountUseCase = getDailyOrderCountUseCase,
+        super(
+          DashboardState(
+            reportDateTime: DateTime.now(),
+            tour: FeaturesTourController('DashboardView'),
+          ),
+        );
+  final GetDailyOrderCountUseCase _getDailyOrderCountUseCase;
+  final GetDailyRevenueUseCase _getDailyRevenueUseCase;
+  final GetFiveHighestSalesProductsUseCase _getFiveHighestSalesProductsUseCase;
+  final GetFiveLowStockProductsUseCase _getFiveLowStockProductsUseCase;
+  final GetDailyRevenueForMonth _getDailyRevenueForMonthUseCase;
+  final GetThreeRecentOrdersUseCase _getThreeRecentOrdersUseCase;
+  final GetTotalProductCountUseCase _getTotalProductCountUseCase;
 
   Future<void> loadDashboardData() async {
     state = state.copyWith(isLoading: true, error: '');
     try {
-      final totalProductCountFuture = getTotalProductCountUseCase(NoParams());
-      final fiveLowStockProductsFuture = getFiveLowStockProductsUseCase(NoParams());
-      final fiveHighestSalesProductsFuture = getFiveHighestSalesProductsUseCase(NoParams());
-      final dailyOrderCountFuture = getDailyOrderCountUseCase(state.reportDateTime);
-      final dailyRevenueFuture = getDailyRevenueUseCase(state.reportDateTime);
-      final threeRecentOrdersFuture = getThreeRecentOrdersUseCase(NoParams());
-      final dailyRevenueForMonthFuture = getDailyRevenueForMonthUseCase(state.reportDateTime);
+      final totalProductCountFuture = _getTotalProductCountUseCase(NoParams());
+      final fiveLowStockProductsFuture = _getFiveLowStockProductsUseCase(NoParams());
+      final fiveHighestSalesProductsFuture = _getFiveHighestSalesProductsUseCase(NoParams());
+      final dailyOrderCountFuture = _getDailyOrderCountUseCase(state.reportDateTime);
+      final dailyRevenueFuture = _getDailyRevenueUseCase(state.reportDateTime);
+      final threeRecentOrdersFuture = _getThreeRecentOrdersUseCase(NoParams());
+      final dailyRevenueForMonthFuture = _getDailyRevenueForMonthUseCase(state.reportDateTime);
 
       final results = await Future.wait([
         totalProductCountFuture,

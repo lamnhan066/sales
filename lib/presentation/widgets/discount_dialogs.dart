@@ -131,7 +131,7 @@ Future<void> addDiscountDialog(BuildContext context, DiscountNotifier notifier) 
   await validatorController.close();
 
   if (result ?? false) {
-    await notifier.addDiscountUseCase(
+    await notifier.addDiscountPercent(
       AddDiscountParams(
         percent: int.parse(percent),
         maxPrice: int.parse(maxPrice),

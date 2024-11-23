@@ -27,34 +27,40 @@ final discountProvider = StateNotifierProvider<DiscountNotifier, DiscountState>(
 
 class DiscountNotifier extends StateNotifier<DiscountState> {
   DiscountNotifier({
-    required this.getAllAvailableDiscountsUseCase,
-    required this.getDiscountByCodeUseCase,
-    required this.addDiscountUseCase,
-    required this.updateDiscountUseCase,
-    required this.getItemPerPageUseCase,
-    required this.removeDiscountUseCase,
-  }) : super(DiscountState(tour: FeaturesTourController('DiscountView')));
+    required GetAllAvailableDiscountsUseCase getAllAvailableDiscountsUseCase,
+    required GetDiscountByCodeUseCase getDiscountByCodeUseCase,
+    required AddDiscountUseCase addDiscountUseCase,
+    required UpdateDiscountUseCase updateDiscountUseCase,
+    required GetItemPerPageUseCase getItemPerPageUseCase,
+    required RemoveDiscountUseCase removeDiscountUseCase,
+  })  : _removeDiscountUseCase = removeDiscountUseCase,
+        _getItemPerPageUseCase = getItemPerPageUseCase,
+        _updateDiscountUseCase = updateDiscountUseCase,
+        _addDiscountUseCase = addDiscountUseCase,
+        _getDiscountByCodeUseCase = getDiscountByCodeUseCase,
+        _getAllAvailableDiscountsUseCase = getAllAvailableDiscountsUseCase,
+        super(DiscountState(tour: FeaturesTourController('DiscountView')));
 
-  final GetAllAvailableDiscountsUseCase getAllAvailableDiscountsUseCase;
-  final GetDiscountByCodeUseCase getDiscountByCodeUseCase;
-  final AddDiscountUseCase addDiscountUseCase;
-  final UpdateDiscountUseCase updateDiscountUseCase;
-  final GetItemPerPageUseCase getItemPerPageUseCase;
-  final RemoveDiscountUseCase removeDiscountUseCase;
+  final GetAllAvailableDiscountsUseCase _getAllAvailableDiscountsUseCase;
+  final GetDiscountByCodeUseCase _getDiscountByCodeUseCase;
+  final AddDiscountUseCase _addDiscountUseCase;
+  final UpdateDiscountUseCase _updateDiscountUseCase;
+  final GetItemPerPageUseCase _getItemPerPageUseCase;
+  final RemoveDiscountUseCase _removeDiscountUseCase;
 
   Future<void> initialize() async {
     state = state.copyWith(isLoading: true);
-    final perPage = await getItemPerPageUseCase(NoParams());
+    final perPage = await _getItemPerPageUseCase(NoParams());
     await fetch(resetPage: true);
     state = state.copyWith(perPage: perPage, isLoading: false);
   }
 
   Future<void> fetch({bool resetPage = false}) async {
-    final perpage = await getItemPerPageUseCase(NoParams());
+    final perpage = await _getItemPerPageUseCase(NoParams());
     var page = state.page;
     if (resetPage) page = 1;
 
-    final discounts = await getAllAvailableDiscountsUseCase(
+    final discounts = await _getAllAvailableDiscountsUseCase(
       PaginationParams(
         page: page,
         perpage: perpage,
@@ -82,16 +88,16 @@ class DiscountNotifier extends StateNotifier<DiscountState> {
   }
 
   Future<Discount?> getDiscountByCode(String code) {
-    return getDiscountByCodeUseCase(code);
+    return _getDiscountByCodeUseCase(code);
   }
 
   Future<void> updateDiscount(Discount discount) async {
-    await updateDiscountUseCase(discount);
+    await _updateDiscountUseCase(discount);
     await fetch();
   }
 
   Future<void> addDiscountPercent(AddDiscountParams params) async {
-    await addDiscountUseCase(params);
+    await _addDiscountUseCase(params);
     await fetch(resetPage: true);
   }
 
@@ -100,7 +106,7 @@ class DiscountNotifier extends StateNotifier<DiscountState> {
   }
 
   Future<void> removeDiscount(Discount discount) async {
-    await removeDiscountUseCase(discount);
+    await _removeDiscountUseCase(discount);
     await fetch();
   }
 }

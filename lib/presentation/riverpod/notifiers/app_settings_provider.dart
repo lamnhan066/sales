@@ -23,22 +23,26 @@ final appSettingsProvider = StateNotifierProvider<AppSettingsProvider, AppSettin
 
 class AppSettingsProvider extends StateNotifier<AppSettingsState> {
   AppSettingsProvider({
-    required this.getCurrentLanguageUseCase,
-    required this.getSupportedLanguagesUseCase,
-    required this.changeLanguageUseCase,
-    required this.setBrightnessUseCase,
+    required GetCurrentLanguageUseCase getCurrentLanguageUseCase,
+    required GetSupportedLanguagesUseCase getSupportedLanguagesUseCase,
+    required ChangeLanguageUseCase changeLanguageUseCase,
+    required SetBrightnessUseCase setBrightnessUseCase,
     required this.getCurrentBrightnessUseCase,
-  }) : super(const AppSettingsState());
+  })  : _setBrightnessUseCase = setBrightnessUseCase,
+        _changeLanguageUseCase = changeLanguageUseCase,
+        _getSupportedLanguagesUseCase = getSupportedLanguagesUseCase,
+        _getCurrentLanguageUseCase = getCurrentLanguageUseCase,
+        super(const AppSettingsState());
 
-  final GetCurrentLanguageUseCase getCurrentLanguageUseCase;
-  final GetSupportedLanguagesUseCase getSupportedLanguagesUseCase;
-  final ChangeLanguageUseCase changeLanguageUseCase;
-  final SetBrightnessUseCase setBrightnessUseCase;
+  final GetCurrentLanguageUseCase _getCurrentLanguageUseCase;
+  final GetSupportedLanguagesUseCase _getSupportedLanguagesUseCase;
+  final ChangeLanguageUseCase _changeLanguageUseCase;
+  final SetBrightnessUseCase _setBrightnessUseCase;
   final GetCurrentBrightnessUseCase getCurrentBrightnessUseCase;
 
   Future<void> initialize() async {
-    final currentLanguage = await getCurrentLanguageUseCase(NoParams());
-    final supportedLanguages = await getSupportedLanguagesUseCase(NoParams());
+    final currentLanguage = await _getCurrentLanguageUseCase(NoParams());
+    final supportedLanguages = await _getSupportedLanguagesUseCase(NoParams());
     final brightness = await getCurrentBrightnessUseCase(NoParams());
     state = state.copyWith(
       currentlanguage: currentLanguage,
@@ -48,21 +52,21 @@ class AppSettingsProvider extends StateNotifier<AppSettingsState> {
   }
 
   Future<LanguageCodes> getCurrentLanguage() {
-    return getCurrentLanguageUseCase(NoParams());
+    return _getCurrentLanguageUseCase(NoParams());
   }
 
   Future<Set<LanguageCodes>> getSupportedLanguages() async {
-    return getSupportedLanguagesUseCase(NoParams());
+    return _getSupportedLanguagesUseCase(NoParams());
   }
 
   Future<void> changeLanguage(LanguageCodes code) async {
     state = state.copyWith(currentlanguage: code);
-    await changeLanguageUseCase(code);
+    await _changeLanguageUseCase(code);
   }
 
   Future<void> setBrightness(Brightness brightness) async {
     state = state.copyWith(brightness: brightness);
-    await setBrightnessUseCase(brightness);
+    await _setBrightnessUseCase(brightness);
   }
 
   Future<Brightness> getCurrentBrightness() {
